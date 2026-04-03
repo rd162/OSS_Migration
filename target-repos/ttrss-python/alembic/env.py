@@ -1,6 +1,6 @@
 """
 Alembic migration environment.
-target_metadata = Base.metadata ensures autogenerate sees all 10 models (CG-06, R06).
+target_metadata = Base.metadata ensures autogenerate sees all 31 models (CG-06, R06).
 DATABASE_URL is read from environment — not from alembic.ini (R03, AR01).
 
 New: no PHP equivalent — Alembic replaces ttrss/classes/dbupdater.php:DbUpdater

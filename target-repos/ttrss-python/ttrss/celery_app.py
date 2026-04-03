@@ -14,7 +14,7 @@ import os
 
 from celery import Celery
 
-# Source: ttrss/update_daemon2.php (line 1 — define_default('DAEMON_SLEEP_INTERVAL', 120))
+# Source: ttrss/include/rssfuncs.php (lines 3-4 — DAEMON_FEED_LIMIT / DAEMON_SLEEP_INTERVAL defines)
 # New: Celery broker/backend via env var (PHP used no message broker — direct fork)
 celery_app = Celery(
     "ttrss",
@@ -29,14 +29,14 @@ celery_app.conf.update(
     # Each prefork worker process gets its own asyncio event loop via asyncio.run().
     worker_pool="prefork",
     worker_concurrency=int(os.environ.get("CELERY_CONCURRENCY", "2")),
-    # Source: ttrss/update_daemon2.php:define_default('DAEMON_FEED_LIMIT', 500) (line 2)
+    # Source: ttrss/include/rssfuncs.php line 3 — define_default('DAEMON_FEED_LIMIT', 500)
     # R20: task-level max_retries + backoff configured on the tasks themselves
     task_serializer="json",
     result_serializer="json",
     accept_content=["json"],
     timezone="UTC",
     enable_utc=True,
-    # Source: ttrss/update_daemon2.php (line 3 — DAEMON_SLEEP_INTERVAL = 120 seconds)
+    # Source: ttrss/include/rssfuncs.php line 4 — define_default('DAEMON_SLEEP_INTERVAL', 120)
     beat_schedule={
         "dispatch-feed-updates": {
             "task": "ttrss.tasks.feed_tasks.dispatch_feed_updates",

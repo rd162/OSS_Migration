@@ -1,7 +1,7 @@
 """
 Pluggy hook specifications — 24 hooks matching PHP PluginHost constants (specs/05-plugin-system.md).
 
-Source: ttrss/classes/pluginhost.php (lines 15-41 — HOOK_* integer constants 1-24)
+Source: ttrss/classes/pluginhost.php (lines 18-41 — HOOK_* integer constants 1-24)
         ttrss/classes/pluginhost.php (lines 43-45 — KIND_ALL/SYSTEM/USER constants)
         ttrss/classes/pluginhost.php:run_hooks/get_hooks (invocation patterns)
         ttrss/include/functions.php:authenticate_user (HOOK_AUTH_USER firstresult, lines 711-718)
@@ -45,7 +45,7 @@ KIND_USER = 3
 class TtRssHookSpec:
     """
     All 24 TT-RSS hook specifications.
-    Source: ttrss/classes/pluginhost.php (HOOK_* constants, lines 15-41)
+    Source: ttrss/classes/pluginhost.php (HOOK_* constants, lines 18-41)
     """
 
     # --- HOOK_ARTICLE_BUTTON = 1 ---

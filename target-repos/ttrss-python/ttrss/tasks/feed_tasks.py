@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 # Source: ttrss/include/functions.php:fetch_file_contents (lines 197-365, cURL timeout config)
 HTTP_TIMEOUT = httpx.Timeout(connect=10.0, read=45.0, write=10.0, pool=5.0)
 
-# Source: ttrss/include/rssfuncs.php line 2 — define_default('DAEMON_FEED_LIMIT', 500)
+# Source: ttrss/include/rssfuncs.php line 3 — define_default('DAEMON_FEED_LIMIT', 500)
 DAEMON_FEED_LIMIT = 500
 
 

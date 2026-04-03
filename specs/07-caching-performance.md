@@ -63,6 +63,9 @@
 ## File-Based Caching
 
 ### SimplePie Feed Cache
+
+> **Note:** The cache directory is named 'simplepie' for historical reasons. The actual feed parsing uses a custom FeedParser class (see spec 01). SimplePie was removed from the codebase but the cache directory name was retained.
+
 - **Directory**: `CACHE_DIR/simplepie/`
 - **Filename**: `sha1($fetch_url).xml`
 - **Short TTL**: 30 seconds (avoid duplicate fetches during same request cycle)

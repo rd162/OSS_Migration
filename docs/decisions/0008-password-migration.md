@@ -6,7 +6,13 @@
 
 ## Context
 
-The PHP codebase stores user passwords as SHA1 hashes (via `sha1()`) with a salt stored alongside in the `ttrss_users` table (`pwd_hash` column, format `sha1:salt:hash`). Some older records may use unsalted MD5. SHA1 is cryptographically broken for collision resistance and considered inadequate for password storage — it lacks key stretching, making brute-force attacks feasible with modern GPUs.
+The PHP codebase stores user passwords in the `ttrss_users` table (`pwd_hash` column) using several hash formats:
+
+- **Unsalted SHA1**: `SHA1:<sha1_hash>` (e.g., `SHA1:5baa61e4...`)
+- **Salted SHA1**: `SHA1X:<salt>:<sha1_hash>`
+- **Salted SHA256 (MODE2)**: `MODE2:<sha256_hash>` (salt prepended to password before hashing)
+
+SHA1 is cryptographically broken for collision resistance and considered inadequate for password storage — it lacks key stretching, making brute-force attacks feasible with modern GPUs.
 
 The Python migration must upgrade to a modern password hashing algorithm (bcrypt, argon2, or scrypt) while preserving the ability for existing users to log in without a forced password reset.
 
@@ -15,7 +21,7 @@ The Python migration must upgrade to a modern password hashing algorithm (bcrypt
 ### A: Dual-Hash with Gradual Migration
 
 On login, check the hash format:
-1. If legacy (`sha1:salt:hash`): verify with SHA1, then re-hash with bcrypt/argon2 and update the DB row
+1. If legacy (`SHA1:...`, `SHA1X:...`, or `MODE2:...`): verify with the appropriate legacy algorithm, then re-hash with bcrypt/argon2 and update the DB row
 2. If modern (`$2b$...` or `$argon2id$...`): verify with the modern algorithm directly
 
 Over time, all active users migrate automatically. Dormant accounts retain old hashes until login or admin action.

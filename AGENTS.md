@@ -31,12 +31,12 @@ OSS_Migration/
 │   ├── 0003-database-engine.md
 │   ├── 0004-frontend-strategy.md
 │   ├── 0005-call-graph-analysis.md
-│   ├── 0006-orm-vs-raw-sql.md
+│   ├── 0006-orm-strategy.md
 │   ├── 0007-session-management.md
-│   ├── 0008-password-hash-migration.md
+│   ├── 0008-password-migration.md
 │   ├── 0009-feed-credential-encryption.md
-│   ├── 0010-plugin-system-implementation.md
-│   ├── 0011-background-worker-architecture.md
+│   ├── 0010-plugin-system.md
+│   ├── 0011-background-worker.md
 │   ├── 0012-logging-strategy.md
 │   ├── 0013-i18n-approach.md
 │   ├── 0014-feed-parsing-library.md

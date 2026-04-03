@@ -74,7 +74,9 @@ Migrating TT-RSS from PHP to Python serves a terminal value: **reliable, secure,
 
 The solution space was narrowed from broad options to concrete decisions via ADRs 0001-0015:
 
-| Dimension | Decision | ADR |
+> **Note:** These are preliminary recommendations from ADR analysis. Final decisions pending acceptance.
+
+| Dimension | Preliminary Recommendation | ADR |
 |-----------|----------|-----|
 | Migration flow | Granular hybrid (entity-first + vertical slice) | ADR-0001 |
 | Web framework | Flask | ADR-0002 |

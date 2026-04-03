@@ -7,7 +7,7 @@
 
 ## Context
 
-The PHP→Python migration requires a structured approach for ordering work across ~18,600 lines of application PHP code, 35 database tables, and 11 JavaScript files. Five flow variants were analyzed in `specs/09-migration-dimensions.md`, each driving migration by a different dimension.
+The PHP→Python migration requires a structured approach for ordering work across ~18,600 lines of application PHP code, 35 database tables, and 11 JavaScript files. Five flow variants were analyzed in `specs/10-migration-dimensions.md`, each driving migration by a different dimension.
 
 The choice of variant determines:
 - What gets built first

@@ -10,7 +10,7 @@ The PHP codebase runs a background feed update daemon (`update_daemon2.php`) tha
 - Forks child processes via `pcntl_fork()` to update feeds in parallel
 - Uses `flock()` on a lockfile to prevent multiple daemon instances
 - Runs in an infinite loop with configurable sleep intervals (`DAEMON_SLEEP_INTERVAL`)
-- Supports a configurable number of parallel child processes (`DAEMON_FEED_LIMIT`)
+- Supports a configurable max feeds per update cycle (`DAEMON_FEED_LIMIT=500`) and parallel child processes (`MAX_JOBS=2`)
 - Performs housekeeping tasks: session garbage collection, feed purging, OPML auto-import
 
 Additionally, `update.php` provides CLI commands for one-shot operations (update all feeds, update single feed, user management). Some deployments use cron instead of the daemon.

@@ -1,94 +1,16 @@
 # 00 — Project Charter
 
-Mission, Goals, Premises (Assumptions That Must Hold), and Constraints for the TT-RSS PHP→Python migration.
+Mission, Goals, Premises, Constraints, and Traceability for the TT-RSS PHP-to-Python migration.
 
-## Phase 0: Bottom-Up Requirements Saturation
+## Requirements Discovery
 
-### CoK Triple Expansion
-
-**L5 — Topics** (explicit and implied):
-```
-Explicit:  PHP-to-Python migration, TT-RSS, RSS aggregator, behavioral preservation
-Implied:   web framework selection, ORM mapping, feed parsing, authentication,
-           plugin architecture, background processing, database migration,
-           deployment modernization, security hardening, API compatibility,
-           frontend adaptation, i18n preservation, testing strategy
-```
-
-**L4 — Areas** (solution patterns):
-```
-(PHP migration, belongs_to, language_migration)
-(language_migration, has_pattern, {strangler_fig, big_bang, parallel_run, incremental_rewrite})
-(RSS aggregator, belongs_to, content_aggregation)
-(content_aggregation, has_pattern, {feed_polling, push_notification, pub_sub})
-(behavioral_preservation, belongs_to, system_equivalence)
-(system_equivalence, has_pattern, {contract_testing, shadow_traffic, regression_suite})
-```
-
-**L3 — Fields** (delivery mechanisms):
-```
-(language_migration, implements_via, {web_frameworks, ORMs, task_queues, containerization})
-(content_aggregation, implements_via, {HTTP_clients, XML_parsers, scheduling_engines})
-(system_equivalence, implements_via, {integration_tests, API_contract_tests, diff_testing})
-```
-
-**L2 — Disciplines** (cross-cutting concerns):
-```
-(web_frameworks, grounded_in, software_engineering)
-(software_engineering, mandates, {security, testing, observability, documentation})
-(ORMs, grounded_in, data_engineering)
-(data_engineering, mandates, {schema_integrity, migration_safety, backup_strategy})
-(containerization, grounded_in, devops)
-(devops, mandates, {CI_CD, reproducibility, environment_parity})
-```
-
-**L1 — Domains**:
-```
-(software_engineering, part_of, technology) ✓
-(data_engineering, part_of, technology) ✓
-(devops, part_of, technology) ✓
-Disjoint from: arts, humanities, natural_sciences ✓
-```
-
-### Saturation Output
-
-```
-L5 → {PHP migration, Python, TT-RSS, RSS, feed parsing, auth, plugins, daemon,
-       DB migration, deploy, security, API, frontend, i18n, testing}
-L4 → [language_migration]+{strangler_fig, incremental_rewrite}
-      [content_aggregation]+{feed_polling, pub_sub}
-      [system_equivalence]+{contract_testing, regression_suite}
-L3 → [web_frameworks]+{Flask, FastAPI, Django}
-      [ORMs]+{SQLAlchemy, Alembic}
-      [task_queues]+{Celery, asyncio}
-      [containerization]+{Docker, docker-compose}
-L2 → [software_engineering]+{security, testing, observability}
-      [data_engineering]+{schema_integrity, migration_safety}
-      [devops]+{CI_CD, reproducibility}
-L1 → [technology] ✓
-
-Requirements:
-  L4: behavioral preservation via contract testing, incremental migration strategy
-  L3: framework + ORM + task queue + container decisions
-  L2: security hardening mandatory, CI/CD mandatory, testing mandatory
-Solution Space: {Flask+SQLAlchemy+Celery, FastAPI+SQLAlchemy+ARQ, Django+DjangoORM+Celery}
-```
+Bottom-up analysis of the TT-RSS PHP codebase was performed across ten dimensions: architecture (spec 01), database schema (02), API/routing (03), frontend (04), plugin system (05), security (06), caching/performance (07), deployment (08), source inventory (09), and migration dimensions (10). Business rules were extracted in spec 11 and the testing strategy defined in spec 12. Findings from all twelve specs feed directly into the goals, premises, and constraints below.
 
 ---
 
-## Phase 1: Top-Down Intent Inference
+## Mission Derivation
 
-### "Why?" Recursion (W-Functor)
-
-```
-"Migrate TT-RSS from PHP to Python"
-→ why? "To modernize the technology stack"
-→ why? "To improve maintainability, security, and developer productivity"
-→ why? "To ensure long-term viability and reduce operational risk"
-→ why? "To deliver reliable, secure software that serves its users"
-→ why? "Reliable, secure software is intrinsically valuable"
-         ← tautology = Mission
-```
+Migrating TT-RSS from PHP to Python serves a terminal value: **reliable, secure, maintainable software that serves its users**. Python is the vehicle for achieving improved maintainability, security posture, and developer productivity — not an end in itself.
 
 ---
 
@@ -97,8 +19,6 @@ Solution Space: {Flask+SQLAlchemy+Celery, FastAPI+SQLAlchemy+ARQ, Django+DjangoO
 ### M — Mission
 
 **Deliver a reliable, secure, and maintainable RSS aggregation platform by migrating TT-RSS from PHP to Python, preserving all functional behavior while improving the technology foundation.**
-
-The mission is NOT "rewrite in Python" (that's a goal). The mission is the terminal value: reliable, secure, maintainable software that serves users. Python is the vehicle, not the destination.
 
 ### G — Goals
 
@@ -146,38 +66,69 @@ The mission is NOT "rewrite in Python" (that's a goal). The mission is the termi
 | C9 | **Preserve plugin hook IDs and names** for documentation continuity | Minor confusion |
 | C10 | **Keep deployment simple** (single docker-compose up) | Ops complexity |
 | C11 | **Incremental migration** (avoid big-bang rewrite) | Risk of partial failure |
-| C12 | **Test coverage ≥ 80%** for migrated code | Quality risk |
+| C12 | **Test coverage >= 80%** for migrated code | Quality risk |
 
-### Solution Space
+---
 
-From Phase 0 saturation:
+## Solution Space (narrowed by 15 ADRs)
 
-```
-Framework:  {Flask+SQLAlchemy+Celery, FastAPI+SQLAlchemy+ARQ, Django+DjangoORM+Celery}
-Database:   {MySQL/MariaDB (keep), PostgreSQL (migrate), Dual (both)}
-Frontend:   {Keep existing JS, htmx rewrite, React/Vue SPA, Jinja2+htmx+Alpine}
-Migration:  {Entity-first, Call-graph-first, Vertical-slice, Hybrid, Granular}
-Testing:    {pytest + contract tests, parallel-run validation, shadow traffic}
-Deployment: {Docker + docker-compose, Kubernetes, bare metal}
-```
+The solution space was narrowed from broad options to concrete decisions via ADRs 0001-0015:
 
-Pending ADRs narrow this space: see `docs/decisions/` directory.
+| Dimension | Decision | ADR |
+|-----------|----------|-----|
+| Migration flow | Granular hybrid (entity-first + vertical slice) | ADR-0001 |
+| Web framework | Flask | ADR-0002 |
+| Database engine | PostgreSQL only | ADR-0003 |
+| Frontend strategy | Keep existing JS, serve from Flask | ADR-0004 |
+| Call graph analysis | Automated extraction with NetworkX | ADR-0005 |
+| ORM strategy | SQLAlchemy declarative models | ADR-0006 |
+| Session management | Flask-Login + server-side sessions | ADR-0007 |
+| Password migration | Transparent SHA1-to-bcrypt upgrade on login | ADR-0008 |
+| Feed credential encryption | Fernet symmetric encryption | ADR-0009 |
+| Plugin system | Entry-point based with hook registry | ADR-0010 |
+| Background worker | Celery with Redis broker | ADR-0011 |
+| Logging | Python stdlib logging + structured JSON | ADR-0012 |
+| i18n | Python gettext with existing .po/.mo files | ADR-0013 |
+| Feed parsing | feedparser library | ADR-0014 |
+| HTTP client | httpx (async-capable) | ADR-0015 |
+
+---
+
+## Anti-Patterns to Avoid
+
+These are specific to patterns found in the TT-RSS PHP source:
+
+| Anti-Pattern | Why Dangerous | Mitigation |
+|-------------|---------------|------------|
+| Replicate `db_fetch_assoc` iteration pattern | Verbose, error-prone manual row iteration | Use SQLAlchemy result sets and ORM queries directly (ADR-0006) |
+| Replicate `$_SESSION` global access pattern | Untestable, hidden coupling | Use dependency injection or Flask `g` / Flask-Login `current_user` (ADR-0007) |
+| Replicate dual-DB SQL branches (MySQL + PostgreSQL) | Double testing burden, divergent behavior | PostgreSQL only (ADR-0003) |
+| Replicate `htmlspecialchars()` calls | Easy to miss, leads to XSS | Use Jinja2 autoescape (on by default) |
+| Replicate `functions.php` / `functions2.php` monolith | 3000+ line god-files, impossible to test | Split by domain: `feeds.py`, `articles.py`, `users.py`, etc. |
+| Replicate singleton pattern for `Db` / `PluginHost` | Hidden global state, blocks testing | Use Flask extensions and dependency injection (ADR-0010) |
+| Gold-plating during migration | Adding features breaks behavioral parity | Strict parity constraint (C3); improvements come after migration |
+| Frontend rewrite during backend migration | Two moving targets, compounding risk | Keep existing JS in Phase 1 (ADR-0004) |
 
 ---
 
 ## Cross-Reference to Specs and ADRs
 
-| Charter Element | Primary Spec | Related ADR |
+| Charter Element | Primary Spec | Related ADRs |
 |-------------|-------------|-------------|
-| G1 (functional migration) | 01-architecture, 09-source-index | ADR-0001 (flow variant) |
-| G2 (API contract) | 03-api-routing | ADR-0004 (frontend) |
-| G3 (database schema) | 02-database | ADR-0003 (DB engine) |
-| G4 (security) | 06-security | — |
-| G5 (deployment) | 08-deployment | — |
-| G6 (plugin system) | 05-plugin-system | — |
-| P1-P8 (premises) | All specs | ADR-0002 (framework), ADR-0005 (call graph) |
+| G1 (functional migration) | 01-architecture, 09-source-index, 11-business-rules | ADR-0001, ADR-0005 |
+| G2 (API contract) | 03-api-routing | ADR-0004 |
+| G3 (database schema) | 02-database | ADR-0003, ADR-0006 |
+| G4 (security) | 06-security | ADR-0008, ADR-0009 |
+| G5 (deployment) | 08-deployment | ADR-0011, ADR-0012 |
+| G6 (plugin system) | 05-plugin-system | ADR-0010 |
+| P1 (RSS parsing) | 07-caching-performance | ADR-0014 |
+| P2 (ORM modeling) | 02-database | ADR-0006 |
+| P7 (background worker) | 07-caching-performance | ADR-0011 |
+| P8 (i18n) | 08-deployment | ADR-0013 |
 | C1-C6 (hard constraints) | AGENTS.md | — |
-| Solution Space | 10-migration-dimensions | ADR-0001 through ADR-0005 |
+| C7 (single DB engine) | 02-database | ADR-0003 |
+| Solution Space | 10-migration-dimensions | ADR-0001 through ADR-0015 |
+| Testing strategy | 12-testing-strategy | ADR-0001, ADR-0005 |
 
 ---
 
@@ -190,26 +141,20 @@ Pending ADRs narrow this space: see `docs/decisions/` directory.
 | REST API backward compatible | G2 | G2 | C3 | 03-api-routing | Not started |
 | Feed update daemon equivalent | G1, P7 | G1 | — | 07-caching-performance | Not started |
 | 24 plugin hooks preserved | G6 | G6 | C9 | 05-plugin-system | Not started |
-| SHA1→bcrypt password migration | G4 | G4 | — | 06-security | Not started |
+| SHA1-to-bcrypt password migration | G4 | G4 | — | 06-security | Not started |
 | Prepared statements (no SQL injection) | G4 | G4 | — | 06-security | Not started |
 | SSL verification for feed fetching | G4 | G4 | — | 06-security | Not started |
+| Feed credential encryption (Fernet) | G4 | G4 | — | 06-security | Not started |
 | Docker deployment | G5 | G5 | C10 | 08-deployment | Not started |
 | CI/CD pipeline | G5 | G5 | — | 08-deployment | Not started |
-| i18n (18+ locales) | G1, P8 | G1 | — | 08-deployment | Not started |
+| i18n (18+ locales via gettext) | G1, P8 | G1 | — | 08-deployment | Not started |
 | Counter cache system | G1 | G1 | — | 07-caching-performance | Not started |
-| Session management | G1 | G1 | — | 06-security | Not started |
+| Session management (Flask-Login) | G1 | G1 | — | 06-security | Not started |
 | Frontend serves unchanged | G2, P3 | G2 | — | 04-frontend | Not started |
-
----
-
-## Anti-Patterns to Avoid
-
-| Anti-Pattern | Why Dangerous | Mitigation |
-|-------------|---------------|------------|
-| Big-bang rewrite | High risk of incomplete migration | Use incremental variant (ADR-0001) |
-| Gold-plating | Adding features during migration | Strict behavioral parity (C3) |
-| Skipping Phase 0 models | Business logic has no foundation | Entity-first or hybrid variant |
-| Ignoring security findings | Replicating known vulnerabilities | G4 explicitly requires fixes |
-| Over-engineering plugin system | Python's module system is simpler | Keep hooks, simplify discovery |
-| Dual-DB support "just in case" | Double testing burden | Decide in ADR-0003 |
-| Frontend rewrite during backend migration | Two moving targets | ADR-0004 recommends Phase 1: keep JS |
+| Article scoring rules preserved | G1 | G1 | C3 | 11-business-rules | Not started |
+| Feed update interval logic preserved | G1 | G1 | C3 | 11-business-rules | Not started |
+| Label/filter business rules preserved | G1 | G1 | C3 | 11-business-rules | Not started |
+| OPML import/export parity | G1 | G1 | C3 | 11-business-rules | Not started |
+| User preference system preserved | G1 | G1 | C3 | 11-business-rules | Not started |
+| Test coverage >= 80% | — | — | C12 | 12-testing-strategy | Not started |
+| Contract tests for all API endpoints | G2 | G2 | C3 | 12-testing-strategy | Not started |

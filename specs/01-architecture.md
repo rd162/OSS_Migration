@@ -178,6 +178,149 @@ ttrssMailer extends PHPMailer
    g. Expire cached files and lock files
 ```
 
+## Sequence Diagrams
+
+### 1. Sequence Diagram: Feed Update Flow (text-based, mermaid-compatible)
+
+```
+sequenceDiagram
+    participant D as update_daemon2.php
+    participant R as rssfuncs.php
+    participant F as fetch_file_contents()
+    participant P as FeedParser
+    participant DB as Database
+    participant C as ccache.php
+    participant PH as PluginHost
+
+    D->>DB: Query feeds needing update (last_updated + interval check)
+    DB-->>D: Feed list
+    loop Each feed
+        D->>DB: SET last_update_started = NOW()
+        D->>R: update_rss_feed($feed_id)
+        R->>F: fetch_file_contents($feed_url, auth)
+        F-->>R: XML data (or error)
+        alt Fetch failed
+            R->>DB: UPDATE feeds SET last_error = $error
+        else Fetch succeeded
+            R->>PH: run_hooks(HOOK_FEED_FETCHED)
+            R->>P: new FeedParser($xml)
+            P-->>R: Parsed items
+            loop Each article
+                R->>DB: SELECT by GUID (dedup check)
+                alt New article
+                    R->>DB: INSERT ttrss_entries
+                    R->>DB: INSERT ttrss_user_entries
+                    R->>R: get_article_filters() → calculate_article_score()
+                    R->>PH: run_hooks(HOOK_ARTICLE_FILTER)
+                else Existing article
+                    R->>DB: UPDATE date_updated
+                end
+            end
+            R->>C: ccache_update($feed_id)
+            R->>DB: UPDATE feeds SET last_updated = NOW(), last_error = ''
+        end
+    end
+    D->>PH: run_hooks(HOOK_UPDATE_TASK)
+    D->>R: housekeeping_common() [expire cache, locks, error log]
+```
+
+### 2. Sequence Diagram: AJAX Request Lifecycle
+
+```
+sequenceDiagram
+    participant Browser as Browser (JS)
+    participant BE as backend.php
+    participant H as Handler class
+    participant DB as Database
+    participant PH as PluginHost
+
+    Browser->>BE: POST backend.php?op=feeds&method=view&feed=5
+    BE->>BE: Load bootstrap (autoload→sessions→functions→config)
+    BE->>PH: init_plugins()
+    BE->>BE: login_sequence() / validate_session()
+    BE->>PH: lookup_handler("feeds", "view")
+    alt Plugin override
+        PH-->>BE: Plugin handler
+    else Default handler
+        BE->>H: new Feeds($_REQUEST)
+    end
+    BE->>BE: validate_csrf($_REQUEST['csrf_token'])
+    BE->>H: before("view")
+    BE->>H: view()
+    H->>DB: queryFeedHeadlines($feed, $limit, $view_mode...)
+    DB-->>H: Article rows
+    H->>H: format_headlines_list() → server-rendered HTML
+    H-->>BE: JSON {headlines, counters, runtime-info}
+    BE->>H: after()
+    BE-->>Browser: Content-Type: text/json (gzipped if enabled)
+```
+
+### 3. Sequence Diagram: Login Flow
+
+```
+sequenceDiagram
+    participant Browser
+    participant PHP as index.php
+    participant F as functions.php
+    participant PH as PluginHost
+    participant DB as Database
+    participant S as sessions.php
+
+    Browser->>PHP: POST login (user, password)
+    PHP->>F: login_sequence()
+    F->>F: authenticate_user($login, $password)
+    F->>PH: run_hooks(HOOK_AUTH_USER)
+    PH->>DB: SELECT pwd_hash, salt FROM ttrss_users
+    DB-->>PH: User record
+    PH->>PH: Verify password hash (SHA1/SHA256)
+    alt Auth success
+        PH-->>F: user_id
+        F->>S: Create session (uid, csrf_token, ip, user_agent, pwd_hash)
+        F->>DB: UPDATE ttrss_users SET last_login = NOW()
+        F->>F: load_user_plugins($uid)
+        F-->>PHP: Authenticated
+        PHP-->>Browser: Redirect to main UI
+    else Auth failure
+        PH-->>F: false
+        F-->>PHP: Login error
+        PHP-->>Browser: Show login form with error
+    end
+```
+
+### 4. Data Flow Diagram: Article Lifecycle
+
+```
+External RSS Feed
+    │
+    ▼
+fetch_file_contents() ──→ [HTTP 304?] ──→ Skip (no change)
+    │
+    ▼
+FeedParser.parse() ──→ [Invalid XML?] ──→ Store error, skip
+    │
+    ▼
+For each FeedItem:
+    │
+    ├──→ GUID construction (item_id → feed_link → title hash)
+    ├──→ Content hash (SHA1 of content)
+    ├──→ Dedup check (GUID match in ttrss_entries)
+    │       │
+    │       ├── EXISTS → Update date_updated only
+    │       └── NEW → INSERT ttrss_entries
+    │
+    ├──→ INSERT ttrss_user_entries (per subscribed user)
+    ├──→ Filter evaluation → Score calculation
+    │       │
+    │       ├── score < -500 → mark as read
+    │       ├── score > 1000 → mark as starred
+    │       ├── "catchup" action → mark as read
+    │       ├── "publish" action → mark as published
+    │       └── "label" action → add label
+    │
+    ├──→ ccache_update(feed) → ccache_update(category)
+    └──→ Plugin hooks: HOOK_ARTICLE_FILTER
+```
+
 ## Key Design Decisions
 
 ### 1. No ORM — Transactional Script Pattern
@@ -201,6 +344,53 @@ Headlines, article content, dialog fragments are all rendered as HTML strings in
 ### 5. Global State via $_SESSION
 Authentication state, user preferences, CSRF tokens stored in `$_SESSION`. Accessed directly throughout codebase.
 - **Migration implication**: Map to Flask session or Django middleware
+
+## Configuration Constants (config.php-dist)
+
+| Constant | Default | Type | Description |
+|----------|---------|------|-------------|
+| DB_TYPE | "pgsql" | string | Database engine |
+| DB_HOST | "localhost" | string | Database host |
+| DB_USER | "fox" | string | Database user |
+| DB_NAME | "fox" | string | Database name |
+| DB_PASS | "XXXXXX" | string | Database password |
+| DB_PORT | "" | string | Database port |
+| MYSQL_CHARSET | "UTF8" | string | MySQL charset |
+| SELF_URL_PATH | "http://example.org/tt-rss/" | string | Installation URL |
+| FEED_CRYPT_KEY | "" | string | 24-char AES key for feed passwords |
+| SINGLE_USER_MODE | false | bool | Single-user mode (bypasses auth) |
+| SIMPLE_UPDATE_MODE | false | bool | Browser-based feed updates |
+| PHP_EXECUTABLE | "/usr/bin/php" | string | PHP CLI path |
+| LOCK_DIRECTORY | "lock" | string | Lock file directory |
+| CACHE_DIR | "cache" | string | Cache directory |
+| ICONS_DIR | "feed-icons" | string | Feed icon directory |
+| ICONS_URL | "feed-icons" | string | Feed icon URL path |
+| AUTH_AUTO_CREATE | true | bool | Auto-create users from external auth |
+| AUTH_AUTO_LOGIN | true | bool | Auto-login for external auth |
+| FORCE_ARTICLE_PURGE | 0 | int | Force purge after N days (0=user choice) |
+| PUBSUBHUBBUB_HUB | "" | string | PuSH hub URL |
+| PUBSUBHUBBUB_ENABLED | false | bool | Enable PuSH |
+| SPHINX_ENABLED | false | bool | Enable Sphinx search |
+| SPHINX_SERVER | "localhost:9312" | string | Sphinx server |
+| SPHINX_INDEX | "ttrss, delta" | string | Sphinx index names |
+| ENABLE_REGISTRATION | false | bool | Allow self-registration |
+| REG_NOTIFY_ADDRESS | "user@your.domain.dom" | string | Admin email for registrations |
+| REG_MAX_USERS | 10 | int | Max registered users |
+| SESSION_COOKIE_LIFETIME | 86400 | int | Cookie lifetime (seconds) |
+| SESSION_CHECK_ADDRESS | 1 | int | IP validation strictness (0-3) |
+| SMTP_FROM_NAME | "Tiny Tiny RSS" | string | Email sender name |
+| SMTP_FROM_ADDRESS | "noreply@your.domain.dom" | string | Email sender address |
+| DIGEST_SUBJECT | "[tt-rss] New headlines for last 24 hours" | string | Digest email subject |
+| SMTP_SERVER | "" | string | SMTP server (blank=system MTA) |
+| SMTP_LOGIN | "" | string | SMTP username |
+| SMTP_PASSWORD | "" | string | SMTP password |
+| SMTP_SECURE | "" | string | SMTP security (ssl/tls/blank) |
+| CHECK_FOR_NEW_VERSION | true | bool | Auto-check for updates |
+| DETECT_ARTICLE_LANGUAGE | false | bool | Language detection |
+| ENABLE_GZIP_OUTPUT | false | bool | Gzip responses |
+| PLUGINS | "auth_internal, note, updater" | string | Enabled plugins |
+| LOG_DESTINATION | "sql" | string | Log target (sql/syslog/blank) |
+| CONFIG_VERSION | 26 | int | Config version |
 
 ### Source Files
 

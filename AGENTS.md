@@ -21,14 +21,26 @@ OSS_Migration/
 │   ├── 07-caching-performance.md
 │   ├── 08-deployment.md
 │   ├── 09-source-index.md
-│   └── 10-migration-dimensions.md
+│   ├── 10-migration-dimensions.md
+│   ├── 11-business-rules.md
+│   └── 12-testing-strategy.md
 ├── docs/decisions/        ← Architecture Decision Records (MADR convention)
 │   ├── README.md          ← Decision index + dependency graph
 │   ├── 0001-migration-flow-variant.md
 │   ├── 0002-python-framework.md
 │   ├── 0003-database-engine.md
 │   ├── 0004-frontend-strategy.md
-│   └── 0005-call-graph-analysis.md
+│   ├── 0005-call-graph-analysis.md
+│   ├── 0006-orm-vs-raw-sql.md
+│   ├── 0007-session-management.md
+│   ├── 0008-password-hash-migration.md
+│   ├── 0009-feed-credential-encryption.md
+│   ├── 0010-plugin-system-implementation.md
+│   ├── 0011-background-worker-architecture.md
+│   ├── 0012-logging-strategy.md
+│   ├── 0013-i18n-approach.md
+│   ├── 0014-feed-parsing-library.md
+│   └── 0015-http-client.md
 ├── memory/                ← Project memory (cross-session context)
 ├── rules/                 ← Supplementary rules if needed
 ├── source-repos/          ← READ-ONLY: PHP source (ttrss-php/)
@@ -76,6 +88,8 @@ OSS_Migration/
 | `08-deployment.md` | Docker, Nginx/PHP-FPM, CI/CD, environment config |
 | `09-source-index.md` | Complete file inventory with purpose annotations and cross-references |
 | `10-migration-dimensions.md` | Call graph, entity graph, frontend/backend dimensions, migration flow variants |
+| `11-business-rules.md` | 20 business rules with exact line refs, edge cases, search, digest, OPML, registration |
+| `12-testing-strategy.md` | Parity verification, 5 test categories, fixtures, test matrix for top 20 endpoints |
 
 ## Architecture Decisions (docs/decisions/)
 
@@ -86,6 +100,16 @@ OSS_Migration/
 | 0003 | Database Engine Choice | proposed — **P0, blocks models** |
 | 0004 | Frontend Migration Strategy | proposed — P1 |
 | 0005 | Automated Call Graph Analysis | proposed — P1 |
+| 0006 | ORM vs Raw SQL | proposed — P1 |
+| 0007 | Session Management | proposed — P1 |
+| 0008 | Password Hash Migration | proposed — P1 |
+| 0009 | Feed Credential Encryption | proposed — P1 |
+| 0010 | Plugin System Implementation | proposed — P2 |
+| 0011 | Background Worker Architecture | proposed — P1 |
+| 0012 | Logging Strategy | proposed — P2 |
+| 0013 | i18n Approach | proposed — P2 |
+| 0014 | Feed Parsing Library | proposed — P1 |
+| 0015 | HTTP Client | proposed — P1 |
 
 See `docs/decisions/README.md` for decision dependencies. ADR format follows [MADR](https://adr.github.io/madr/) convention.
 

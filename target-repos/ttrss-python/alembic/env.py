@@ -20,10 +20,10 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Import all models so they register with Base.metadata before autogenerate runs
-import ttrss.models  # noqa: F401 — side-effect import; registers all 10 mappers
+import ttrss.models  # noqa: F401 — side-effect import; registers all 31 mappers (Phase 1b)
 from ttrss.models.base import Base
 
-target_metadata = Base.metadata  # CG-06: single metadata for all 10 tables
+target_metadata = Base.metadata  # single metadata for all 31 active tables
 
 
 def get_url() -> str:

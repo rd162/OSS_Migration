@@ -1,7 +1,7 @@
 [project]
 name = "ttrss-python"
 version = "0.1.0"
-description = "TT-RSS PHP-to-Python migration — Phase 1a walking skeleton"
+description = "TT-RSS PHP-to-Python migration — Phase 1b (31 models, Celery tasks, Pluggy hooks)"
 requires-python = ">=3.11"
 dependencies = [
     "Flask>=3.0",
@@ -16,6 +16,12 @@ dependencies = [
     "argon2-cffi>=23.1",
     "cryptography>=42.0",
     "redis>=5.0",
+    "celery[redis]>=5.3",
+    "httpx>=0.27",
+    "feedparser>=6.0",
+    "lxml>=5.0",
+    "lxml-html-clean>=0.4",
+    "pluggy>=1.4",
 ]
 
 [project.optional-dependencies]

@@ -7,7 +7,7 @@
 
 ## Context
 
-The migration dimensions analysis (`specs/09-migration-dimensions.md`) identified 6 analysis dimensions and proposed using NetworkX + Leiden community detection to validate and refine the manually-identified module boundaries.
+The migration dimensions analysis (`specs/10-migration-dimensions.md`) identified 6 analysis dimensions and proposed using NetworkX + Leiden community detection to validate and refine the manually-identified module boundaries.
 
 This ADR decides whether to invest in building automated source code analysis tooling before starting migration, or proceed with the manual analysis already completed.
 

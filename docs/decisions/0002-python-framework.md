@@ -2,11 +2,16 @@
 
 - **Status**: accepted
 - **Date proposed**: 2026-04-03
-- **Deciders**: TBD
+- **Date accepted**: 2026-04-03
+- **Deciders**: Project lead (adversarial review, unanimous convergence)
 
 ## Context
 
-The PHP source uses a custom handler-based dispatch system (`backend.php` routes `?op=X&method=Y` to handler classes). The Python replacement needs:
+The PHP source uses a custom handler-based dispatch system (`backend.php` routes `?op=X&method=Y` to handler classes).
+
+**Spec references**: `specs/01-architecture.md` (handler-based dispatch, class hierarchy), `specs/03-api-routing.md` (entry points, RPC endpoints), `specs/04-frontend.md` (server-rendered HTML fragments, AJAX patterns), `specs/06-security.md` (CSRF — F6, sessions — F10, security headers — F7).
+
+The Python replacement needs:
 
 - HTTP routing with handler/blueprint organization
 - JSON response serialization

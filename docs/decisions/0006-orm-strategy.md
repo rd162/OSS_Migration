@@ -11,6 +11,8 @@ The PHP codebase uses raw SQL everywhere via a custom `db_query()` wrapper — o
 
 A Python migration must decide how to represent the data layer: full ORM mapping, a lighter query-builder approach, or continued raw SQL.
 
+**Spec references**: `specs/02-database.md` (35 tables, FK cascade map), `specs/01-architecture.md` (data access layer — raw SQL via Db adapter), `specs/06-security.md` (Finding F5: no prepared statements).
+
 ## Options
 
 ### A: SQLAlchemy ORM (Declarative Models)

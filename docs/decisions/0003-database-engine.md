@@ -2,11 +2,14 @@
 
 - **Status**: accepted
 - **Date proposed**: 2026-04-03
-- **Deciders**: TBD
+- **Date accepted**: 2026-04-03
+- **Deciders**: Project lead (adversarial review, unanimous convergence)
 
 ## Context
 
 The PHP source supports both MySQL and PostgreSQL via an adapter pattern. The Docker setup uses MariaDB 10.3 for development and MySQL 5.5 for production. Schema files exist in parallel for both engines (246 SQL files total).
+
+**Spec references**: `specs/02-database.md` (35 tables, dual-engine schema files, FK cascade map), `specs/07-caching-performance.md` (full-text search — Sphinx dependency), `specs/08-deployment.md` (Docker setup, MariaDB/PostgreSQL config).
 
 Moving to Python with SQLAlchemy, we can:
 1. Keep dual-database support (SQLAlchemy abstracts differences)

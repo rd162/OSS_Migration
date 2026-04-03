@@ -56,17 +56,18 @@ Migrating TT-RSS from PHP to Python serves a terminal value: **reliable, secure,
 | C4 | **Database compatibility** — must work with existing data (or provide automated migration) | Data preservation requirement |
 | C5 | **No secrets in repo** — config via environment variables | Security best practice |
 | C6 | **Spec traceability** — every migration phase references specs/ documents | Project rule (AGENTS.md) |
+| C7 | **Source code traceability** — every function, class, method, model, route in target code MUST have a comment tracing it to the PHP source origin (see AGENTS.md Rule 10) | AGENTS.md mandatory rule |
 
 #### Soft Constraints (violation = penalty, not rejection)
 
 | ID | Constraint | Penalty if violated |
 |----|-----------|-------------------|
-| C7 | **Prefer single database engine** (not dual MySQL+PostgreSQL) | Extra testing, complexity |
-| C8 | **Prefer established libraries** over custom implementations | Maintenance burden |
-| C9 | **Preserve plugin hook IDs and names** for documentation continuity | Minor confusion |
-| C10 | **Keep deployment simple** (single docker-compose up) | Ops complexity |
-| C11 | **Incremental migration** (avoid big-bang rewrite) | Risk of partial failure |
-| C12 | **Test coverage >= 80%** for migrated code | Quality risk |
+| C8 | **Prefer single database engine** (not dual MySQL+PostgreSQL) | Extra testing, complexity |
+| C9 | **Prefer established libraries** over custom implementations | Maintenance burden |
+| C10 | **Preserve plugin hook IDs and names** for documentation continuity | Minor confusion |
+| C11 | **Keep deployment simple** (single docker-compose up) | Ops complexity |
+| C12 | **Incremental migration** (avoid big-bang rewrite) | Risk of partial failure |
+| C13 | **Test coverage >= 80%** for migrated code | Quality risk |
 
 ---
 
@@ -74,25 +75,23 @@ Migrating TT-RSS from PHP to Python serves a terminal value: **reliable, secure,
 
 The solution space was narrowed from broad options to concrete decisions via ADRs 0001-0015:
 
-> **Note:** These are preliminary recommendations from ADR analysis. Final decisions pending acceptance.
-
-| Dimension | Preliminary Recommendation | ADR |
-|-----------|----------|-----|
-| Migration flow | Granular hybrid (entity-first + vertical slice) | ADR-0001 |
-| Web framework | Flask | ADR-0002 |
-| Database engine | PostgreSQL only | ADR-0003 |
-| Frontend strategy | Keep existing JS, serve from Flask | ADR-0004 |
-| Call graph analysis | Automated extraction with NetworkX | ADR-0005 |
-| ORM strategy | SQLAlchemy declarative models | ADR-0006 |
-| Session management | Flask-Login + server-side sessions | ADR-0007 |
-| Password migration | Transparent SHA1-to-bcrypt upgrade on login | ADR-0008 |
-| Feed credential encryption | Fernet symmetric encryption | ADR-0009 |
-| Plugin system | Entry-point based with hook registry | ADR-0010 |
-| Background worker | Celery with Redis broker | ADR-0011 |
-| Logging | Python stdlib logging + structured JSON | ADR-0012 |
-| i18n | Python gettext with existing .po/.mo files | ADR-0013 |
-| Feed parsing | feedparser library | ADR-0014 |
-| HTTP client | httpx (async-capable) | ADR-0015 |
+| Dimension | Decision | ADR | Status |
+|-----------|----------|-----|--------|
+| Migration flow | Variant D-revised (Walking Skeleton + Hybrid Entity-then-Graph) | ADR-0001 | **accepted** (P0) |
+| Web framework | Flask | ADR-0002 | **accepted** (P0) |
+| Database engine | PostgreSQL only (psycopg2 sync driver) | ADR-0003 | **accepted** (P0) |
+| Frontend strategy | Keep existing JS, serve from Flask | ADR-0004 | proposed (P1 Tier 3) |
+| Call graph analysis | Manual analysis (already complete — 8 communities, 10 clusters) | ADR-0005 | **accepted** (P1) |
+| ORM strategy | SQLAlchemy ORM (hybrid Core for complex queries) | ADR-0006 | **accepted** (P1) |
+| Session management | Flask-Login + Redis (server-side sessions) | ADR-0007 | **accepted** (P1) |
+| Password migration | Dual-hash gradual (argon2id, upgrade on login) | ADR-0008 | **accepted** (P1) |
+| Feed credential encryption | Fernet symmetric encryption (MultiFernet key rotation) | ADR-0009 | **accepted** (P1) |
+| Plugin system | pluggy (hook registry) | ADR-0010 | proposed (P2) |
+| Background worker | Celery with Redis broker | ADR-0011 | proposed (P1 Tier 2) |
+| Logging | structlog | ADR-0012 | proposed (P2) |
+| i18n | Python gettext with existing .po/.mo files | ADR-0013 | proposed (P2) |
+| Feed parsing | feedparser library | ADR-0014 | proposed (P1 Tier 2) |
+| HTTP client | httpx (async in Celery workers only) | ADR-0015 | proposed (P1 Tier 2) |
 
 ---
 
@@ -120,15 +119,15 @@ These are specific to patterns found in the TT-RSS PHP source:
 | G1 (functional migration) | 01-architecture, 09-source-index, 11-business-rules | ADR-0001, ADR-0005 |
 | G2 (API contract) | 03-api-routing | ADR-0004 |
 | G3 (database schema) | 02-database | ADR-0003, ADR-0006 |
-| G4 (security) | 06-security | ADR-0008, ADR-0009 |
+| G4 (security) | 06-security | ADR-0002 (CSRF, talisman), ADR-0007 (sessions), ADR-0008, ADR-0009 |
 | G5 (deployment) | 08-deployment | ADR-0011, ADR-0012 |
 | G6 (plugin system) | 05-plugin-system | ADR-0010 |
 | P1 (RSS parsing) | 07-caching-performance | ADR-0014 |
 | P2 (ORM modeling) | 02-database | ADR-0006 |
 | P7 (background worker) | 07-caching-performance | ADR-0011 |
 | P8 (i18n) | 08-deployment | ADR-0013 |
-| C1-C6 (hard constraints) | AGENTS.md | — |
-| C7 (single DB engine) | 02-database | ADR-0003 |
+| C1-C7 (hard constraints) | AGENTS.md | — |
+| C8 (single DB engine) | 02-database | ADR-0003 |
 | Solution Space | 10-migration-dimensions | ADR-0001 through ADR-0015 |
 | Testing strategy | 12-testing-strategy | ADR-0001, ADR-0005 |
 
@@ -136,27 +135,30 @@ These are specific to patterns found in the TT-RSS PHP source:
 
 ## Requirements Traceability Matrix
 
-| Requirement | Source | Goal | Constraint | Spec | Status |
-|------------|--------|------|-----------|------|--------|
-| All 35 DB tables modeled in Python | P2, G3 | G3 | C4 | 02-database | Not started |
-| All RPC endpoints preserved | G2 | G2 | C3 | 03-api-routing | Not started |
-| REST API backward compatible | G2 | G2 | C3 | 03-api-routing | Not started |
-| Feed update daemon equivalent | G1, P7 | G1 | — | 07-caching-performance | Not started |
-| 24 plugin hooks preserved | G6 | G6 | C9 | 05-plugin-system | Not started |
-| SHA1-to-bcrypt password migration | G4 | G4 | — | 06-security | Not started |
-| Prepared statements (no SQL injection) | G4 | G4 | — | 06-security | Not started |
-| SSL verification for feed fetching | G4 | G4 | — | 06-security | Not started |
-| Feed credential encryption (Fernet) | G4 | G4 | — | 06-security | Not started |
-| Docker deployment | G5 | G5 | C10 | 08-deployment | Not started |
-| CI/CD pipeline | G5 | G5 | — | 08-deployment | Not started |
-| i18n (18+ locales via gettext) | G1, P8 | G1 | — | 08-deployment | Not started |
-| Counter cache system | G1 | G1 | — | 07-caching-performance | Not started |
-| Session management (Flask-Login) | G1 | G1 | — | 06-security | Not started |
-| Frontend serves unchanged | G2, P3 | G2 | — | 04-frontend | Not started |
-| Article scoring rules preserved | G1 | G1 | C3 | 11-business-rules | Not started |
-| Feed update interval logic preserved | G1 | G1 | C3 | 11-business-rules | Not started |
-| Label/filter business rules preserved | G1 | G1 | C3 | 11-business-rules | Not started |
-| OPML import/export parity | G1 | G1 | C3 | 11-business-rules | Not started |
-| User preference system preserved | G1 | G1 | C3 | 11-business-rules | Not started |
-| Test coverage >= 80% | — | — | C12 | 12-testing-strategy | Not started |
-| Contract tests for all API endpoints | G2 | G2 | C3 | 12-testing-strategy | Not started |
+| Requirement | Source | Goal | Constraint | Spec | ADR | Status |
+|------------|--------|------|-----------|------|-----|--------|
+| All 35 DB tables modeled in Python | P2, G3 | G3 | C4 | 02-database | 0006 | **Phase 1a: 10/35** |
+| All RPC endpoints preserved | G2 | G2 | C3 | 03-api-routing | 0001 | Not started |
+| REST API backward compatible | G2 | G2 | C3 | 03-api-routing | 0001 | Not started |
+| Feed update daemon equivalent | G1, P7 | G1 | — | 07-caching-performance | 0011 | Not started |
+| 24 plugin hooks preserved | G6 | G6 | C9 | 05-plugin-system | 0010 | Not started |
+| SHA1-to-argon2id password migration | G4 | G4 | — | 06-security | 0008 | **Phase 1a ✓** |
+| Prepared statements (no SQL injection) | G4 | G4 | — | 06-security | 0006 | **Phase 1a ✓** |
+| SSL verification for feed fetching | G4 | G4 | — | 06-security | 0015 | Not started (Phase 3) |
+| Feed credential encryption (Fernet) | G4 | G4 | — | 06-security | 0009 | **Phase 1a ✓** |
+| Docker deployment | G5 | G5 | C10 | 08-deployment | 0001 | **Phase 1a (dev)** |
+| CI/CD pipeline | G5 | G5 | — | 08-deployment | — | Not started (Phase 6) |
+| i18n (18+ locales via gettext) | G1, P8 | G1 | — | 08-deployment | 0013 | Not started |
+| Counter cache system | G1 | G1 | — | 07-caching-performance | — | Not started |
+| Session management (Flask-Login + Redis) | G1 | G1 | — | 06-security | 0007 | **Phase 1a ✓** |
+| Frontend serves unchanged | G2, P3 | G2 | — | 04-frontend | 0004 | Not started |
+| Article scoring rules preserved | G1 | G1 | C3 | 11-business-rules | — | Not started |
+| Feed update interval logic preserved | G1 | G1 | C3 | 11-business-rules | — | Not started |
+| Label/filter business rules preserved | G1 | G1 | C3 | 11-business-rules | — | Not started |
+| OPML import/export parity | G1 | G1 | C3 | 11-business-rules | — | Not started |
+| User preference system preserved | G1 | G1 | C3 | 11-business-rules | — | Not started |
+| Test coverage >= 80% | — | — | C13 | 12-testing-strategy | — | **Phase 1a: 24 tests** |
+| Contract tests for all API endpoints | G2 | G2 | C3 | 12-testing-strategy | — | Not started |
+| Source traceability comments on all code | — | — | C7 | AGENTS.md Rule 10 | — | **Needs audit** |
+| Security headers (flask-talisman) | G4 | G4 | — | 06-security | 0002 | **Phase 1a ✓** |
+| CSRF protection (Flask-WTF) | G4 | G4 | — | 06-security | 0002 | **Phase 1a ✓** |

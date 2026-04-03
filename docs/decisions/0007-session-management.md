@@ -9,6 +9,8 @@
 
 The PHP codebase implements custom database-backed sessions in `include/sessions.php`. Sessions are stored in the `ttrss_sessions` table with custom `open`/`read`/`write`/`destroy`/`gc` handlers registered via `session_set_save_handler()`. The login flow (`authenticate()` in `functions.php`) validates IP address and User-Agent on each request, and sessions have a configurable timeout (`SESSION_COOKIE_LIFETIME`). API access uses a separate `sid` mechanism with its own session lookup.
 
+**Spec references**: `specs/06-security.md` (Finding F10: pwd_hash in session, Finding F6: weak CSRF tokens), `specs/01-architecture.md` (bootstrap chain — sessions.php), `specs/03-api-routing.md` (API session/sid mechanism).
+
 The Python replacement must support:
 - Web UI sessions (cookie-based, server-side state)
 - API sessions (token-based for mobile/third-party clients)

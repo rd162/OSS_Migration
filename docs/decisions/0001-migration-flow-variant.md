@@ -2,12 +2,15 @@
 
 - **Status**: accepted
 - **Date proposed**: 2026-04-03
-- **Deciders**: TBD
+- **Date accepted**: 2026-04-03
+- **Deciders**: Project lead (adversarial review, unanimous convergence)
 - **Depends on**: ADR-0002, ADR-0003
 
 ## Context
 
 The PHP→Python migration requires a structured approach for ordering work across ~18,600 lines of application PHP code, 35 database tables, and 11 JavaScript files. Five flow variants were analyzed in `specs/10-migration-dimensions.md`, each driving migration by a different dimension.
+
+**Spec references**: `specs/10-migration-dimensions.md` (6 dimensions, 5 flow variants, recommendation matrix), `specs/01-architecture.md` (application layers, handler hierarchy), `specs/09-source-index.md` (138-file inventory), `specs/00-project-charter.md` (goals G1-G6, constraints C1-C7).
 
 The choice of variant determines:
 - What gets built first

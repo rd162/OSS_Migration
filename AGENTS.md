@@ -63,6 +63,39 @@ OSS_Migration/
 8. Specs may include **reasonable code examples** to highlight important architectural decisions, but must not be a copy of the source
 9. When migrating, always verify behavior parity against the source spec before marking a component complete
 
+### Source Traceability Rule (MANDATORY)
+10. **Every meaningful code element** (function, class, method, model, route, constant) in `target-repos/` **MUST** have a traceability comment linking it to its PHP source origin. This is a hard constraint — code without traceability comments must not be committed.
+
+    **Traceability comment format** (use the most specific match available):
+
+    ```python
+    # Source: ttrss/classes/feeds.php:Feeds::view (lines 45-120)
+    def view_feed(feed_id: int, view_mode: str) -> dict:
+        ...
+
+    # Source: ttrss/include/functions.php:catchup_feed (lines 1094-1237)
+    def catchup_feed(feed_id: int, cat_view: bool, ...) -> None:
+        ...
+
+    # Source: ttrss/classes/db.php:Db (singleton pattern)
+    # Python equivalent: SQLAlchemy engine via Flask-SQLAlchemy extension
+    db = SQLAlchemy(model_class=Base)
+
+    # Source: ttrss/schema/ttrss_schema_pgsql.sql (table ttrss_feeds, lines 38-72)
+    class Feed(Base):
+        __tablename__ = "ttrss_feeds"
+        ...
+    ```
+
+    **Match levels** (use the most specific that applies):
+    - **Direct**: `function → function` or `class → class` (e.g., `Feeds::view` → `view_feed()`)
+    - **Method-level**: `Class::method` → Python method (e.g., `RPC::mark` → `rpc.mark_article()`)
+    - **File-level**: When a Python module aggregates logic from a single PHP file (e.g., `# Source: ttrss/include/ccache.php`)
+    - **Multi-file**: When a Python module synthesizes logic from multiple PHP files (e.g., `# Source: ttrss/include/functions.php + ttrss/include/functions2.php (query building)`)
+    - **Schema-level**: For models derived from SQL schema (e.g., `# Source: ttrss/schema/ttrss_schema_pgsql.sql (table ttrss_user_entries)`)
+    - **Inferred**: When Python code has no direct PHP equivalent but was inferred from PHP patterns (e.g., `# Inferred from: ttrss/include/sessions.php (session validation pattern, adapted for Flask-Login)`)
+    - **New**: When code is genuinely new with no PHP source (e.g., `# New: no PHP equivalent (Alembic migration infrastructure)`)
+
 ### Analysis Rules
 10. Use deep web research for any complicated architectural topic (PHP patterns, 3-tier architecture, ORM vs transactional script, etc.)
 11. For source code analysis dimensions (call graph, entity graph, etc.), consider using NetworkX and Leiden community detection
@@ -70,8 +103,23 @@ OSS_Migration/
 
 ### Quality Rules
 13. Preserve all functional behavior from the PHP source
-14. Fix known security issues during migration (SHA1→bcrypt, prepared statements, etc.) — document deviations in specs
+14. Fix known security issues during migration (SHA1→argon2id, prepared statements, etc.) — document deviations in specs
 15. Maintain spec-to-code traceability throughout the migration
+
+### Consistency Rule (MANDATORY)
+16. **When any status, decision, or phase changes**, update ALL locations that reference it in the same commit. This is a hard constraint — partial status updates create contradictions that compound across sessions.
+
+    **Mandatory update checklist** (run mentally before every status change):
+    - [ ] `AGENTS.md` — Architecture Decisions table (status column)
+    - [ ] `docs/decisions/README.md` — Decision Index table (status + priority columns)
+    - [ ] `docs/decisions/XXXX-*.md` — the ADR itself (Status, Date accepted, Deciders, Decision section)
+    - [ ] `specs/00-project-charter.md` — Solution Space table (decision + status columns)
+    - [ ] `specs/00-project-charter.md` — Requirements Traceability Matrix (status column)
+    - [ ] `specs/00-project-charter.md` — Cross-Reference table (if new ADR linkages discovered)
+    - [ ] `specs/10-migration-dimensions.md` — Recommendation Matrix (if flow variant affected)
+    - [ ] `memory/session_*.md` — session memory (current state for next session)
+
+    **Applies to**: ADR acceptance/rejection, phase completion, security finding remediation, requirement status changes, any table row that tracks status or decisions.
 
 ## Spec-Kit Index
 

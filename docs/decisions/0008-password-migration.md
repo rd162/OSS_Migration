@@ -17,6 +17,8 @@ SHA1 is cryptographically broken for collision resistance and considered inadequ
 
 The Python migration must upgrade to a modern password hashing algorithm (bcrypt, argon2, or scrypt) while preserving the ability for existing users to log in without a forced password reset.
 
+**Spec references**: `specs/06-security.md` (Finding F1: SHA1 password hashing — CRITICAL), `specs/02-database.md` (ttrss_users table, pwd_hash column).
+
 ## Options
 
 ### A: Dual-Hash with Gradual Migration

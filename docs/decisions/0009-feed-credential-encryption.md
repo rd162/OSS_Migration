@@ -9,6 +9,8 @@
 
 The PHP codebase encrypts feed authentication credentials (HTTP Basic Auth passwords stored in `ttrss_feeds.auth_pass`) using the `mcrypt` extension with AES-128-CBC. The encryption key is derived from `FEED_CRYPT_KEY` in `config.php`. The `mcrypt` PHP extension has been deprecated since PHP 7.1 and removed in PHP 7.2, making the existing encryption code unmaintainable even in PHP.
 
+**Spec references**: `specs/06-security.md` (Finding F3: deprecated mcrypt encryption — HIGH), `specs/02-database.md` (ttrss_feeds table, auth_pass column), `specs/07-caching-performance.md` (feed update daemon — decrypts auth_pass during fetch).
+
 The Python migration must:
 - Decrypt existing feed passwords encrypted with mcrypt AES-128-CBC
 - Re-encrypt them with a modern, maintained encryption library

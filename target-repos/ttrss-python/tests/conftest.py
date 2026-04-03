@@ -12,6 +12,7 @@ Setup:
   pytest
 """
 import os
+import socket
 
 from cryptography.fernet import Fernet
 
@@ -41,11 +42,21 @@ from ttrss import create_app  # noqa: E402
 from ttrss.extensions import db as _db  # noqa: E402
 
 
+def _port_open(host: str, port: int, timeout: float = 1.0) -> bool:
+    """Fast TCP probe — returns False in ≤timeout seconds if service is down."""
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except (OSError, ConnectionRefusedError):
+        return False
+
+
 @pytest.fixture(scope="session")
 def app():
     """
     Session-scoped Flask app for integration tests.
     Uses real Postgres (TEST_DATABASE_URL) — no SQLite (AR07).
+    Fails fast (≤2s) if Postgres or Redis is unreachable.
     """
     test_db_url = os.environ.get(
         "TEST_DATABASE_URL",
@@ -59,13 +70,39 @@ def app():
 
     test_redis_url = os.environ.get("TEST_REDIS_URL", "redis://localhost:6380/1")
 
+    # Fast-fail: probe Postgres and Redis TCP ports before attempting connections
+    # that would otherwise hang for minutes on default socket timeouts.
+    if not _port_open("localhost", 5433):
+        pytest.skip(
+            "PostgreSQL not reachable on localhost:5433. "
+            "Run: docker compose -f docker-compose.test.yml up -d"
+        )
+    if not _port_open("localhost", 6380):
+        pytest.skip(
+            "Redis not reachable on localhost:6380. "
+            "Run: docker compose -f docker-compose.test.yml up -d"
+        )
+
     from redis import Redis
+
+    # Fast-fail: verify Redis is actually responding (not just port-open).
+    try:
+        _test_redis = Redis.from_url(
+            test_redis_url, socket_timeout=3, socket_connect_timeout=3
+        )
+        _test_redis.ping()
+    except Exception as exc:
+        pytest.skip(f"Redis not responding on {test_redis_url}: {exc}")
+
+    # Append connect_timeout to Postgres URL so SQLAlchemy doesn't hang.
+    _sep = "&" if "?" in test_db_url else "?"
+    test_db_url_with_timeout = f"{test_db_url}{_sep}connect_timeout=5"
 
     application = create_app(
         {
             "TESTING": True,
-            "SQLALCHEMY_DATABASE_URI": test_db_url,
-            "SESSION_REDIS": Redis.from_url(test_redis_url),
+            "SQLALCHEMY_DATABASE_URI": test_db_url_with_timeout,
+            "SESSION_REDIS": _test_redis,
             "FEED_CRYPT_KEY": _TEST_FERNET_KEY.encode(),
             "WTF_CSRF_ENABLED": False,  # disabled in test client; CSRF tested separately
         }
@@ -74,6 +111,7 @@ def app():
     with application.app_context():
         _db.create_all()
         yield application
+        _db.session.remove()
         _db.drop_all()
 
 

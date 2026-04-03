@@ -1,8 +1,9 @@
 # ADR-0011: Background Worker Architecture
 
-- **Status**: proposed
+- **Status**: accepted
 - **Date proposed**: 2026-04-03
-- **Deciders**: TBD
+- **Date accepted**: 2026-04-04
+- **Deciders**: rd
 
 ## Context
 
@@ -95,7 +96,14 @@ Feed update task design:
 
 ## Decision
 
-**TBD**
+**Option A: Celery + Redis**
+
+Feed update pipeline uses a two-task fan-out architecture:
+- One Celery Beat schedule entry triggers `dispatch_feed_updates` every N minutes (configurable via `DAEMON_SLEEP_INTERVAL` equivalent)
+- `dispatch_feed_updates` queries for feeds due for update and fans out one `update_feed(feed_id)` task per feed
+- Each `update_feed` task is idempotent and independently retryable (max 3 retries, exponential backoff)
+- Redis broker is shared with the session store (ADR-0007) — no new infrastructure required
+- Celery Beat runs as exactly one instance (single-replica or leader election)
 
 ## Consequences
 

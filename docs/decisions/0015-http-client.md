@@ -1,8 +1,9 @@
 # ADR-0015: HTTP Client for Feed Fetching
 
-- **Status**: proposed
+- **Status**: accepted
 - **Date proposed**: 2026-04-03
-- **Deciders**: TBD
+- **Date accepted**: 2026-04-04
+- **Deciders**: rd
 
 ## Context
 
@@ -102,7 +103,15 @@ Conditional GET implementation:
 
 ## Decision
 
-**TBD**
+**Option B: httpx (async mode in Celery workers only)**
+
+- `httpx.AsyncClient` used inside Celery worker tasks via `asyncio.run()` — never in Flask request context
+- Timeout configuration: `httpx.Timeout(connect=10.0, read=45.0, write=10.0, pool=5.0)` replaces PHP's `CURLOPT_TIMEOUT=45`
+- `follow_redirects=True, max_redirects=20` matches PHP's `CURLOPT_FOLLOWLOCATION` / `CURLOPT_MAXREDIRS`
+- Conditional GET: `If-None-Match` (ETag) and `If-Modified-Since` headers sent on subsequent requests; `304 Not Modified` skips feedparser parsing
+- ETag and Last-Modified values stored in `ttrss_feeds.last_etag` and `ttrss_feeds.last_modified` (schema extension — no PHP equivalent)
+- HTTP Basic Auth for authenticated feeds via `httpx.BasicAuth`
+- Proxy support via `httpx.AsyncClient(proxies=...)`
 
 ## Consequences
 

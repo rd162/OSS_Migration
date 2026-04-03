@@ -1,8 +1,9 @@
 # ADR-0014: Feed Parsing Library
 
-- **Status**: proposed
+- **Status**: accepted
 - **Date proposed**: 2026-04-03
-- **Deciders**: TBD
+- **Date accepted**: 2026-04-04
+- **Deciders**: rd
 
 ## Context
 
@@ -83,7 +84,13 @@ Architecture:
 
 ## Decision
 
-**TBD**
+**Option A: feedparser (Universal Feed Parser) as primary, lxml for HTML sanitization**
+
+- `feedparser.parse(raw_content)` handles all feed format variants (RSS 0.91/0.92/1.0/2.0, Atom 1.0, RDF)
+- feedparser receives already-fetched content bytes from httpx (ADR-0015) — it does not perform HTTP requests
+- `bozo=True` feeds are logged but not treated as fatal (feedparser still returns entries)
+- `lxml.html.clean` (or `bleach` + `lxml`) sanitizes HTML content from feed items before storage/display
+- Custom post-processing layer handles TT-RSS-specific logic (score calculation, label matching, plugin hooks)
 
 ## Consequences
 

@@ -25,11 +25,11 @@ Each ADR follows the standard template:
 | [0008](0008-password-migration.md) | Password Hash Migration | **accepted** | P1 — Dual-hash gradual (argon2id) |
 | [0009](0009-feed-credential-encryption.md) | Feed Credential Encryption | **accepted** | P1 — Fernet (cryptography lib) |
 | [0010](0010-plugin-system.md) | Plugin System Implementation | proposed | P2 — blocks plugin migration |
-| [0011](0011-background-worker.md) | Background Worker Architecture | proposed | P1 Tier 2 — accept at Phase 1a exit |
+| [0011](0011-background-worker.md) | Background Worker Architecture | **accepted** | P1 — Celery + Redis (two-task fan-out) |
 | [0012](0012-logging-strategy.md) | Logging Strategy | proposed | P2 — informs observability |
 | [0013](0013-i18n-approach.md) | Internationalization Approach | proposed | P2 — blocks i18n migration |
-| [0014](0014-feed-parsing-library.md) | Feed Parsing Library | proposed | P1 Tier 2 — accept at Phase 1a exit |
-| [0015](0015-http-client.md) | HTTP Client for Feed Fetching | proposed | P1 Tier 2 — accept at Phase 1a exit |
+| [0014](0014-feed-parsing-library.md) | Feed Parsing Library | **accepted** | P1 — feedparser + lxml sanitization |
+| [0015](0015-http-client.md) | HTTP Client for Feed Fetching | **accepted** | P1 — httpx async in Celery workers only |
 
 ## Decision Dependencies
 

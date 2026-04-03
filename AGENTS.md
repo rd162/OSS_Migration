@@ -156,11 +156,11 @@ OSS_Migration/
 | 0008 | Password Hash Migration | **accepted** — P1, Dual-hash gradual (argon2id) |
 | 0009 | Feed Credential Encryption | **accepted** — P1, Fernet |
 | 0010 | Plugin System Implementation | proposed — P2 |
-| 0011 | Background Worker Architecture | proposed — P1, Tier 2 (Phase 1a exit) |
+| 0011 | Background Worker Architecture | **accepted** — P1, Celery + Redis (two-task fan-out) |
 | 0012 | Logging Strategy | proposed — P2 |
 | 0013 | i18n Approach | proposed — P2 |
-| 0014 | Feed Parsing Library | proposed — P1, Tier 2 (Phase 1a exit) |
-| 0015 | HTTP Client | proposed — P1, Tier 2 (Phase 1a exit) |
+| 0014 | Feed Parsing Library | **accepted** — P1, feedparser + lxml sanitization |
+| 0015 | HTTP Client | **accepted** — P1, httpx async in Celery workers only |
 
 See `docs/decisions/README.md` for decision dependencies. ADR format follows [MADR](https://adr.github.io/madr/) convention.
 

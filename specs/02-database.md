@@ -103,13 +103,21 @@ All paths relative to `source-repos/ttrss-php/`.
 |-------|---------|-------------|
 | `ttrss_error_log` | Application errors | id, owner_uid, errno, errstr, filename, lineno, context, created_at |
 
-### Deprecated
+### Deprecated / Removed (not in version 124 schema)
 
-| Table | Purpose |
-|-------|---------|
-| `ttrss_labels` | Legacy labels (replaced by ttrss_labels2) |
-| `ttrss_filters` | Legacy filters (replaced by ttrss_filters2) |
-| `ttrss_scheduled_updates` | Unused scheduled update table |
+These tables are referenced in `DROP TABLE IF EXISTS` at the top of `ttrss_schema_pgsql.sql`
+but have **no `CREATE TABLE`** in the version 124 base schema. They were removed in earlier
+schema migrations and do not exist in production databases at version 124.
+
+| Table | Status | Notes |
+|-------|--------|-------|
+| `ttrss_labels` | Removed (replaced by ttrss_labels2) | No CREATE TABLE in base schema |
+| `ttrss_filters` | Removed (replaced by ttrss_filters2) | No CREATE TABLE in base schema |
+| `ttrss_scheduled_updates` | Removed (unused) | No CREATE TABLE in base schema |
+| `ttrss_themes` | Removed (dropped in migration v83) | No CREATE TABLE in base schema |
+
+**Actual active table count at schema version 124: 31** (not 35 as originally estimated —
+the 4 deprecated/removed tables above do not need SQLAlchemy models or Alembic migrations).
 
 ## Entity Relationship Diagram (Key Relationships)
 
@@ -190,6 +198,18 @@ VALUES ('admin', 'SHA1:5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8', 10, '');
 - **Preference types** (3): bool, string, integer
 - **Preference sections** (4): General, Interface, Advanced, Digest
 - **40+ system preferences** with default values
+
+## Schema Extensions (Python-only columns, no PHP equivalent)
+
+Columns added to existing tables during migration that have no counterpart in the PHP schema.
+Each extension carries a `# New:` traceability comment in the model per AGENTS.md Rule 10.
+
+| Table | Column | Type | Purpose | ADR |
+|-------|--------|------|---------|-----|
+| `ttrss_feeds` | `last_etag` | `varchar(250)` nullable | ETag from last feed fetch; sent as `If-None-Match` on next request | ADR-0015 |
+| `ttrss_feeds` | `last_modified` | `varchar(250)` nullable | Last-Modified from last feed fetch; sent as `If-Modified-Since` on next request | ADR-0015 |
+
+---
 
 ## Database Access Patterns
 

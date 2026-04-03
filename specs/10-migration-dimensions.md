@@ -375,7 +375,7 @@ This can be automated by parsing the PHP source and building the graphs programm
 | Planning overhead | Low | Low | Medium | Medium | High |
 | Best for solo dev | Good | OK | Harder | **Best** | OK |
 | Best for team | OK | Harder | **Best** | Good | Good |
-| Async strategy | N/A | N/A | N/A | **Explicit (Celery+httpx)** | N/A |
+| Async strategy | N/A | N/A | N/A | **Explicit (Celery+httpx — ADR-0011/0015 accepted 2026-04-04)** | N/A |
 | Plugin hook timing | Late | Early (stubs) | Per-slice | **Specs early, invocations mid** | Late |
 | Stub/mock debt | High | High | Low | **Low (walking skeleton)** | Medium |
 

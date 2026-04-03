@@ -114,6 +114,14 @@ class TtRssFeed(Base):
     # ADR-0009: In Python all auth_pass values are Fernet-encrypted; this flag tracks
     # whether PHP-era mcrypt encryption was already applied (migration marker).
     auth_pass_encrypted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    # New: no PHP equivalent — added for httpx conditional GET support per ADR-0015.
+    # Stores the ETag response header value from the last successful feed fetch.
+    # Sent as If-None-Match on subsequent requests; 304 response skips parsing.
+    last_etag: Mapped[Optional[str]] = mapped_column(String(250))
+    # New: no PHP equivalent — added for httpx conditional GET support per ADR-0015.
+    # Stores the Last-Modified response header value from the last successful fetch.
+    # Sent as If-Modified-Since on subsequent requests; 304 response skips parsing.
+    last_modified: Mapped[Optional[str]] = mapped_column(String(250))
 
     @property
     def auth_pass(self) -> str:

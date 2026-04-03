@@ -1,5 +1,10 @@
 """
 TT-RSS Python — application factory (ADR-0001 Variant D-revised, ADR-0002 Flask).
+
+Inferred from: ttrss/index.php (bootstrap sequence) + ttrss/include/autoload.php
+               + ttrss/include/db.php (DB init) + ttrss/include/sessions.php (session init)
+               Adapted for Flask factory pattern — no direct PHP equivalent.
+New: create_app() factory with test_config override (no PHP equivalent)
 """
 import os
 
@@ -9,6 +14,7 @@ from flask import Flask
 import ttrss.models  # noqa: F401 — registers all 10 mappers with Base.metadata
 
 
+# Inferred from: ttrss/index.php (bootstrap) — adapted as Flask app factory (R01)
 def create_app(test_config: dict | None = None) -> Flask:
     """
     Application factory (R01).
@@ -22,6 +28,7 @@ def create_app(test_config: dict | None = None) -> Flask:
 
     # Fernet — instantiated ONCE here, stored in app.config (R11, ADR-0009, AR11).
     # MultiFernet supports key rotation per ADR-0009.
+    # Source: ttrss/include/crypt.php:encrypt_string/decrypt_string (mcrypt replaced by Fernet)
     raw_key: bytes = app.config.get("FEED_CRYPT_KEY", b"")
     if raw_key:
         app.config["FERNET"] = MultiFernet([Fernet(raw_key)])

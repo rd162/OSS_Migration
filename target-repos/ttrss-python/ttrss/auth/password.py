@@ -1,54 +1,91 @@
 """
-Dual-hash password verification (ADR-0008, R10, AR04).
+Password verification and hashing (ADR-0008, R10, AR04).
 
-Verification order:
-1. argon2id  — modern hash; new passwords and upgraded legacy passwords
-2. SHA1X:<salt>:<hex>  — legacy salted SHA1 (TT-RSS PHP format)
-3. SHA1:<hex>          — legacy unsalted SHA1 (older TT-RSS versions)
+Source: ttrss/plugins/auth_internal/init.php:Auth_Internal::authenticate
+        + Auth_Internal::check_password (lines 19-176)
+        + ttrss/include/functions2.php:encrypt_password (lines 1481-1489)
 
-CG-03: SHA1X salt is PREPENDED — sha1(salt + password), NOT sha1(password + salt).
-AR04: SHA1 is verify-only. All new/upgraded hashes use argon2id exclusively.
+PHP hash formats (from encrypt_password):
+  SHA1:<hex>        — sha1(password), no salt, legacy unsalted (old users, schema < 88)
+  SHA1X:<hex>       — sha1(login + ":" + password), LOGIN is the "salt", schema >= 88 without salt col
+  MODE2:<hex>       — sha256(ttrss_users.salt + password), salt from DB column, current default
+  $argon2id$...     — argon2id (Python migration: upgrade on first successful login, ADR-0008)
+
+Important: SHA1X embeds NO salt in the hash string itself. The "salt" for SHA1X is the
+user's login name, passed separately. The ttrss_users.salt column is only used for MODE2.
+
+Verification order (mirroring auth_internal authenticate() logic):
+1. argon2id  — upgraded/new passwords
+2. MODE2     — modern PHP salted SHA-256 (ttrss_users.salt column required)
+3. SHA1X     — legacy salted using login as salt with colon separator
+4. SHA1      — legacy unsalted (oldest TT-RSS installs)
 """
 import hashlib
 
 from argon2 import PasswordHasher
-from argon2.exceptions import InvalidHashError, VerifyMismatchError
+from argon2.exceptions import VerificationError
 
+# Source: ttrss/plugins/auth_internal/init.php (argon2id is the Python upgrade target)
 _ph = PasswordHasher()  # argon2id by default in argon2-cffi
 
 
+# Source: ttrss/plugins/auth_internal/init.php:Auth_Internal::change_password (new passwords)
+# AR04: SHA1/MODE2 are verify-only. All new/upgraded hashes use argon2id exclusively.
 def hash_password(password: str) -> str:
-    """Hash a new password with argon2id. Never SHA1 for new passwords (AR04)."""
+    """Hash a new password with argon2id. Never SHA1/MODE2 for new passwords (AR04)."""
     return _ph.hash(password)
 
 
-def verify_password(stored_hash: str, password: str) -> bool:
+# Source: ttrss/plugins/auth_internal/init.php:Auth_Internal::authenticate (lines 19-140)
+#         + Auth_Internal::check_password (lines 142-176)
+#         + ttrss/include/functions2.php:encrypt_password (lines 1481-1489)
+def verify_password(
+    stored_hash: str,
+    password: str,
+    salt: str = "",
+    login: str = "",
+) -> bool:
     """
     Verify password against stored hash.
     Returns True if valid, False otherwise.
-    Does not modify the stored hash — call upgrade_hash() after a successful SHA1 verify.
+    Does not modify the stored hash — caller must call hash_password() + save after
+    a successful legacy verify to complete the ADR-0008 upgrade.
 
-    SHA1X salt is extracted from the stored_hash string itself (not passed separately).
-    CG-03: sha1(SALT + password) — salt is PREPENDED.
+    Args:
+        stored_hash: value from ttrss_users.pwd_hash
+        password:    plaintext password to verify
+        salt:        value from ttrss_users.salt (only needed for MODE2)
+        login:       value from ttrss_users.login (only needed for SHA1X)
+
+    PHP source equivalents:
+        argon2id: Python migration upgrade (no PHP counterpart)
+        MODE2:    encrypt_password($pass, $salt, true) → "MODE2:" . hash('sha256', $salt . $pass)
+        SHA1X:    encrypt_password($pass, $login) → "SHA1X:" . sha1("$login:$pass")
+        SHA1:     encrypt_password($pass) → "SHA1:" . sha1($pass)
     """
     if stored_hash.startswith("$argon2"):
         try:
             return _ph.verify(stored_hash, password)
-        except (VerifyMismatchError, InvalidHashError):
+        except VerificationError:
             return False
 
+    if stored_hash.startswith("MODE2:"):
+        # Source: functions2.php:1484 — hash('sha256', $salt . $pass)
+        # salt is from ttrss_users.salt column, concatenated directly (no separator)
+        digest = stored_hash[6:]
+        expected = hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
+        return expected == digest
+
     if stored_hash.startswith("SHA1X:"):
-        # Format: SHA1X:<salt>:<hex_digest>
-        parts = stored_hash.split(":", 2)
-        if len(parts) != 3:
-            return False
-        _, salt, digest = parts
-        # CG-03: salt PREPENDED — sha1(salt + password)
-        expected = hashlib.sha1((salt + password).encode("utf-8")).hexdigest()
+        # Source: functions2.php:1485 — sha1("$login:$pass")
+        # The "salt" is the user's login name. Colon separator between login and password.
+        # The salt is NOT embedded in the stored_hash string — it comes from ttrss_users.login.
+        digest = stored_hash[6:]
+        expected = hashlib.sha1((login + ":" + password).encode("utf-8")).hexdigest()
         return expected == digest
 
     if stored_hash.startswith("SHA1:"):
-        # Unsalted SHA1 (older TT-RSS)
+        # Source: functions2.php:1487 — sha1($pass), no salt at all
         digest = stored_hash[5:]
         expected = hashlib.sha1(password.encode("utf-8")).hexdigest()
         return expected == digest
@@ -57,5 +94,11 @@ def verify_password(stored_hash: str, password: str) -> bool:
 
 
 def needs_upgrade(stored_hash: str) -> bool:
-    """Return True if the stored hash should be upgraded to argon2id (ADR-0008)."""
+    """
+    Return True if the stored hash should be upgraded to argon2id (ADR-0008).
+    All legacy formats (MODE2, SHA1X, SHA1) require upgrade.
+
+    Source: ttrss/plugins/auth_internal/init.php:Auth_Internal::authenticate
+            (lines 91-101 — upgrade to MODE2 on login; Python upgrades all the way to argon2id)
+    """
     return not stored_hash.startswith("$argon2")

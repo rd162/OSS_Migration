@@ -2,6 +2,11 @@
 Alembic migration environment.
 target_metadata = Base.metadata ensures autogenerate sees all 10 models (CG-06, R06).
 DATABASE_URL is read from environment — not from alembic.ini (R03, AR01).
+
+New: no PHP equivalent — Alembic replaces ttrss/classes/dbupdater.php:DbUpdater
+     (PHP ran raw SQL version upgrade files in ttrss/schema/versions/pgsql/*.sql;
+     Alembic generates and applies migrations from ORM metadata instead).
+Source schema baseline: ttrss/schema/ttrss_schema_pgsql.sql
 """
 import os
 from logging.config import fileConfig

@@ -1,2 +1,3 @@
-deb http://mirror.yandex.ru/ubuntu/ trusty main multiverse restricted universe
-deb http://mirror.yandex.ru/ubuntu/ trusty-security main multiverse restricted universe
+deb http://old-releases.ubuntu.com/ubuntu/ trusty main multiverse restricted universe
+deb http://old-releases.ubuntu.com/ubuntu/ trusty-updates main multiverse restricted universe
+deb http://old-releases.ubuntu.com/ubuntu/ trusty-security main multiverse restricted universe

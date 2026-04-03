@@ -1,0 +1,30 @@
+services:
+  ttrss-db:
+    image: mariadb:10.3
+    environment:
+      MYSQL_DATABASE: ttrss
+      MYSQL_ROOT_PASSWORD: ttrss
+    volumes:
+      - data:/var/lib/mysql
+      - ./ttrss/schema/ttrss_schema_mysql.sql:/docker-entrypoint-initdb.d/ttrss_schema_mysql.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pttrss"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  ttrss-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    depends_on:
+      ttrss-db:
+        condition: service_healthy
+    environment:
+      TT_DB_HOST: db
+      TT_DB_NAME: ttrss
+      TT_DB_USER: root
+      TT_DB_PASS: ttrss
+      TT_DOMAIN: localhost
+      TT_REFRESH: "5"

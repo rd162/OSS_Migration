@@ -98,18 +98,18 @@ OSS_Migration/
 | 0001 | Migration Flow Variant | **accepted** — P0, Variant D-revised |
 | 0002 | Python Web Framework | **accepted** — P0, Flask |
 | 0003 | Database Engine Choice | **accepted** — P0, PostgreSQL + psycopg2 |
-| 0004 | Frontend Migration Strategy | proposed — P1 |
-| 0005 | Automated Call Graph Analysis | proposed — P1 |
-| 0006 | ORM vs Raw SQL | proposed — P1 |
-| 0007 | Session Management | proposed — P1 |
-| 0008 | Password Hash Migration | proposed — P1 |
-| 0009 | Feed Credential Encryption | proposed — P1 |
+| 0004 | Frontend Migration Strategy | proposed — P1, Tier 3 (Phase 2 exit) |
+| 0005 | Automated Call Graph Analysis | **accepted** — P1, Option B (manual) |
+| 0006 | ORM vs Raw SQL | **accepted** — P1, SQLAlchemy ORM (hybrid Core) |
+| 0007 | Session Management | **accepted** — P1, Flask-Login + Redis |
+| 0008 | Password Hash Migration | **accepted** — P1, Dual-hash gradual (argon2id) |
+| 0009 | Feed Credential Encryption | **accepted** — P1, Fernet |
 | 0010 | Plugin System Implementation | proposed — P2 |
-| 0011 | Background Worker Architecture | proposed — P1 |
+| 0011 | Background Worker Architecture | proposed — P1, Tier 2 (Phase 1a exit) |
 | 0012 | Logging Strategy | proposed — P2 |
 | 0013 | i18n Approach | proposed — P2 |
-| 0014 | Feed Parsing Library | proposed — P1 |
-| 0015 | HTTP Client | proposed — P1 |
+| 0014 | Feed Parsing Library | proposed — P1, Tier 2 (Phase 1a exit) |
+| 0015 | HTTP Client | proposed — P1, Tier 2 (Phase 1a exit) |
 
 See `docs/decisions/README.md` for decision dependencies. ADR format follows [MADR](https://adr.github.io/madr/) convention.
 

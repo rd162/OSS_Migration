@@ -1,8 +1,9 @@
 # ADR-0007: Session Management Strategy
 
-- **Status**: proposed
+- **Status**: accepted
 - **Date proposed**: 2026-04-03
-- **Deciders**: TBD
+- **Date accepted**: 2026-04-03
+- **Deciders**: Project lead (adversarial review, unanimous convergence)
 
 ## Context
 
@@ -67,7 +68,7 @@ For API clients, issue separate API tokens (stored in DB, similar to current `tt
 
 ## Decision
 
-**TBD**
+**Option A: Flask-Login + Redis Session Store** — Flask-Login handles `@login_required`, `current_user`, remember-me. Flask-Session backed by Redis for server-side session storage. Redis TTL replaces manual garbage collection. IP/UA validation as a `before_request` hook. API clients use separate API tokens (stored in DB, similar to current `ttrss_api_sessions`). Redis is shared with Celery (ADR-0011), adding no new infrastructure.
 
 ## Consequences
 

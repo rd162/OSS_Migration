@@ -18,18 +18,18 @@ Each ADR follows the standard template:
 | — [response](compliance-review-response.md) | Compliance Review Response | reference | — |
 | [0002](0002-python-framework.md) | Python Web Framework | **accepted** | P0 — blocks project skeleton |
 | [0003](0003-database-engine.md) | Database Engine Choice | **accepted** | P0 — blocks model layer |
-| [0004](0004-frontend-strategy.md) | Frontend Migration Strategy | proposed | P1 — blocks UI work |
-| [0005](0005-call-graph-analysis.md) | Automated Call Graph Analysis | proposed | P1 — informs migration ordering |
-| [0006](0006-orm-strategy.md) | ORM vs Raw SQL | proposed | P1 — blocks model layer implementation |
-| [0007](0007-session-management.md) | Session Management Strategy | proposed | P1 — blocks auth implementation |
-| [0008](0008-password-migration.md) | Password Hash Migration | proposed | P1 — blocks user migration |
-| [0009](0009-feed-credential-encryption.md) | Feed Credential Encryption | proposed | P1 — blocks feed auth migration |
+| [0004](0004-frontend-strategy.md) | Frontend Migration Strategy | proposed | P1 Tier 3 — accept at Phase 2 exit |
+| [0005](0005-call-graph-analysis.md) | Automated Call Graph Analysis | **accepted** | P1 — Option B (manual analysis) |
+| [0006](0006-orm-strategy.md) | ORM vs Raw SQL | **accepted** | P1 — SQLAlchemy ORM (hybrid Core) |
+| [0007](0007-session-management.md) | Session Management Strategy | **accepted** | P1 — Flask-Login + Redis |
+| [0008](0008-password-migration.md) | Password Hash Migration | **accepted** | P1 — Dual-hash gradual (argon2id) |
+| [0009](0009-feed-credential-encryption.md) | Feed Credential Encryption | **accepted** | P1 — Fernet (cryptography lib) |
 | [0010](0010-plugin-system.md) | Plugin System Implementation | proposed | P2 — blocks plugin migration |
-| [0011](0011-background-worker.md) | Background Worker Architecture | proposed | P1 — blocks feed update daemon |
+| [0011](0011-background-worker.md) | Background Worker Architecture | proposed | P1 Tier 2 — accept at Phase 1a exit |
 | [0012](0012-logging-strategy.md) | Logging Strategy | proposed | P2 — informs observability |
 | [0013](0013-i18n-approach.md) | Internationalization Approach | proposed | P2 — blocks i18n migration |
-| [0014](0014-feed-parsing-library.md) | Feed Parsing Library | proposed | P1 — blocks feed parser migration |
-| [0015](0015-http-client.md) | HTTP Client for Feed Fetching | proposed | P1 — blocks feed fetcher migration |
+| [0014](0014-feed-parsing-library.md) | Feed Parsing Library | proposed | P1 Tier 2 — accept at Phase 1a exit |
+| [0015](0015-http-client.md) | HTTP Client for Feed Fetching | proposed | P1 Tier 2 — accept at Phase 1a exit |
 
 ## Decision Dependencies
 

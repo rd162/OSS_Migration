@@ -1,8 +1,9 @@
 # ADR-0005: Automated Call Graph Analysis
 
-- **Status**: proposed
+- **Status**: accepted
 - **Date proposed**: 2026-04-03
-- **Deciders**: TBD
+- **Date accepted**: 2026-04-03
+- **Deciders**: Project lead (adversarial review, unanimous convergence)
 
 ## Context
 
@@ -61,7 +62,7 @@ Use existing PHP static analysis tools:
 
 ## Decision
 
-**TBD**
+**Option B: Proceed with Manual Analysis** — the manual analysis in specs already identifies 8 call graph communities, 10 entity clusters, 6 frontend-backend coupling levels, and complexity hotspot ranking. Option A (NetworkX + Leiden, ~1-2 days) directly competes with the Phase 1a walking skeleton timeline (also 1-2 days). Option A may be revisited as a separate tooling initiative if the manual clusters prove insufficient during Phase 2+.
 
 ## Consequences
 

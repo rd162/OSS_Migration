@@ -1,8 +1,9 @@
 # ADR-0008: Password Hash Migration
 
-- **Status**: proposed
+- **Status**: accepted
 - **Date proposed**: 2026-04-03
-- **Deciders**: TBD
+- **Date accepted**: 2026-04-03
+- **Deciders**: Project lead (adversarial review, unanimous convergence)
 
 ## Context
 
@@ -63,7 +64,7 @@ Target hash algorithm: **argon2id** (via the `argon2-cffi` library) as the prima
 
 ## Decision
 
-**TBD**
+**Option A: Dual-Hash with Gradual Migration** — on login, detect hash format and verify with the appropriate algorithm; if legacy (SHA1/SHA1X/MODE2), re-hash with argon2id and update the DB row. Target hash: **argon2id** (via `argon2-cffi`). Active users migrate transparently on next login. Dormant accounts flagged after N months for optional forced reset. OWASP-recommended approach with a clear end state where all SHA1 code is removed. Wrap-hash (Option C) rejected: permanently embeds SHA1 in login path, password shucking risk, requires batch data migration.
 
 ## Consequences
 

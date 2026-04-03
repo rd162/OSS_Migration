@@ -1,8 +1,9 @@
 # ADR-0009: Feed Credential Encryption
 
-- **Status**: proposed
+- **Status**: accepted
 - **Date proposed**: 2026-04-03
-- **Deciders**: TBD
+- **Date accepted**: 2026-04-03
+- **Deciders**: Project lead (adversarial review, unanimous convergence)
 
 ## Context
 
@@ -69,7 +70,7 @@ Use a Python mcrypt-compatible library (e.g., `pycryptodome` in mcrypt compat mo
 
 ## Decision
 
-**TBD**
+**Option A: Fernet (cryptography library)** — misuse-resistant high-level API with built-in HMAC-SHA256 authentication. MultiFernet supports transparent key rotation. Migration: one-time script decrypts mcrypt-encrypted passwords via pycryptodome (AES-128-CBC), re-encrypts with Fernet using a new key. Fernet tokens stored with `fernet:` prefix for format detection. AES-GCM (Option B) rejected: nonce misuse is catastrophic, inappropriate for solo-dev context. mcrypt-compat (Option C) rejected: perpetuates unauthenticated encryption vulnerable to padding oracle attacks.
 
 ## Consequences
 

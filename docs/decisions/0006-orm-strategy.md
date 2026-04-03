@@ -1,8 +1,9 @@
 # ADR-0006: ORM vs Raw SQL
 
-- **Status**: proposed
+- **Status**: accepted
 - **Date proposed**: 2026-04-03
-- **Deciders**: TBD
+- **Date accepted**: 2026-04-03
+- **Deciders**: Project lead (adversarial review, unanimous convergence)
 
 ## Context
 
@@ -63,7 +64,7 @@ This hybrid approach gives the best of both worlds: clean model layer for 90% of
 
 ## Decision
 
-**TBD**
+**Option A: SQLAlchemy ORM (Declarative Models)** with selective use of **SQLAlchemy Core** for complex analytical queries (feed statistics, purge operations, label/score aggregations). Map all 35 tables as declarative classes with proper relationships. sqlacodegen auto-generates initial models from existing schema. Alembic provides automated migration generation. factory_boy enables test fixtures.
 
 ## Consequences
 

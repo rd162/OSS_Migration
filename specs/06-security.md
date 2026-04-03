@@ -1,4 +1,4 @@
-# 05 — Security Assessment Spec
+# 06 — Security Assessment Spec
 
 ## Summary
 

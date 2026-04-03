@@ -1,4 +1,4 @@
-# 00 — Architecture Spec
+# 01 — Architecture Spec
 
 ## Application Identity
 

@@ -1,4 +1,4 @@
-# 01 — Database Spec
+# 02 — Database Spec
 
 ## Overview
 

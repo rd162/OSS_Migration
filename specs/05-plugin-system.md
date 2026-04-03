@@ -1,4 +1,4 @@
-# 04 — Plugin System Spec
+# 05 — Plugin System Spec
 
 ## Overview
 

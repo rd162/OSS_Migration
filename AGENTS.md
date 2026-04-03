@@ -10,17 +10,25 @@ Migrate Tiny Tiny RSS (TT-RSS) from PHP to Python, fully preserving all specs, d
 OSS_Migration/
 ├── AGENTS.md              ← This file (project rules & conventions)
 ├── CLAUDE.md              ← Umbrella pointing here
-├── specs/                 ← Spec-kit: architecture, DB, API, etc.
-│   ├── 00-architecture.md
-│   ├── 01-database.md
-│   ├── 02-api-routing.md
-│   ├── 03-frontend.md
-│   ├── 04-plugin-system.md
-│   ├── 05-security.md
-│   ├── 06-caching-performance.md
-│   ├── 07-deployment.md
-│   ├── 08-source-index.md
-│   └── 09-migration-dimensions.md
+├── specs/                 ← Spec-kit: charter, architecture, DB, API, etc.
+│   ├── 00-project-charter.md  ← Mission, Goals, Premises, Constraints (governs all specs)
+│   ├── 01-architecture.md
+│   ├── 02-database.md
+│   ├── 03-api-routing.md
+│   ├── 04-frontend.md
+│   ├── 05-plugin-system.md
+│   ├── 06-security.md
+│   ├── 07-caching-performance.md
+│   ├── 08-deployment.md
+│   ├── 09-source-index.md
+│   └── 10-migration-dimensions.md
+├── docs/decisions/        ← Architecture Decision Records (MADR convention)
+│   ├── README.md          ← Decision index + dependency graph
+│   ├── 0001-migration-flow-variant.md
+│   ├── 0002-python-framework.md
+│   ├── 0003-database-engine.md
+│   ├── 0004-frontend-strategy.md
+│   └── 0005-call-graph-analysis.md
 ├── memory/                ← Project memory (cross-session context)
 ├── rules/                 ← Supplementary rules if needed
 ├── source-repos/          ← READ-ONLY: PHP source (ttrss-php/)
@@ -46,7 +54,7 @@ OSS_Migration/
 ### Analysis Rules
 10. Use deep web research for any complicated architectural topic (PHP patterns, 3-tier architecture, ORM vs transactional script, etc.)
 11. For source code analysis dimensions (call graph, entity graph, etc.), consider using NetworkX and Leiden community detection
-12. Migration flow is driven by dimensions documented in `specs/09-migration-dimensions.md` — discuss and choose flow before starting migration
+12. Migration flow is driven by dimensions documented in `specs/10-migration-dimensions.md` — discuss and choose flow before starting migration
 
 ### Quality Rules
 13. Preserve all functional behavior from the PHP source
@@ -57,16 +65,29 @@ OSS_Migration/
 
 | Spec | Contents |
 |------|----------|
-| `00-architecture.md` | Application layers, design patterns, request lifecycle, class hierarchy |
-| `01-database.md` | 35 tables, FK map, migration system, seed data, schema patterns |
-| `02-api-routing.md` | Entry points, handler dispatch, RPC endpoints, request/response contracts |
-| `03-frontend.md` | JS files, AJAX patterns, Dojo/Prototype widgets, server-rendered HTML |
-| `04-plugin-system.md` | 24 hooks, plugin lifecycle, storage, system vs user plugins |
-| `05-security.md` | 10 findings by severity, auth flow, session management, encryption |
-| `06-caching-performance.md` | Counter cache, file cache, HTTP caching, daemon architecture |
-| `07-deployment.md` | Docker, Nginx/PHP-FPM, CI/CD, environment config |
-| `08-source-index.md` | Complete file inventory with purpose annotations and cross-references |
-| `09-migration-dimensions.md` | Call graph, entity graph, frontend/backend dimensions, migration flow variants |
+| `00-project-charter.md` | **Project Charter**: Mission, Goals, Premises, Constraints, Solution Space, traceability matrix |
+| `01-architecture.md` | Application layers, design patterns, request lifecycle, class hierarchy |
+| `02-database.md` | 35 tables, FK map, migration system, seed data, schema patterns |
+| `03-api-routing.md` | Entry points, handler dispatch, RPC endpoints, request/response contracts |
+| `04-frontend.md` | JS files, AJAX patterns, Dojo/Prototype widgets, server-rendered HTML |
+| `05-plugin-system.md` | 24 hooks, plugin lifecycle, storage, system vs user plugins |
+| `06-security.md` | 10 findings by severity, auth flow, session management, encryption |
+| `07-caching-performance.md` | Counter cache, file cache, HTTP caching, daemon architecture |
+| `08-deployment.md` | Docker, Nginx/PHP-FPM, CI/CD, environment config |
+| `09-source-index.md` | Complete file inventory with purpose annotations and cross-references |
+| `10-migration-dimensions.md` | Call graph, entity graph, frontend/backend dimensions, migration flow variants |
+
+## Architecture Decisions (docs/decisions/)
+
+| ADR | Title | Status |
+|-----|-------|--------|
+| 0001 | Migration Flow Variant | proposed — **P0, blocks all migration** |
+| 0002 | Python Web Framework | proposed — **P0, blocks skeleton** |
+| 0003 | Database Engine Choice | proposed — **P0, blocks models** |
+| 0004 | Frontend Migration Strategy | proposed — P1 |
+| 0005 | Automated Call Graph Analysis | proposed — P1 |
+
+See `docs/decisions/README.md` for decision dependencies. ADR format follows [MADR](https://adr.github.io/madr/) convention.
 
 ## Recommended Skills
 

@@ -1,4 +1,4 @@
-# 06 — Caching & Performance Spec
+# 07 — Caching & Performance Spec
 
 ## Caching Layers Overview
 

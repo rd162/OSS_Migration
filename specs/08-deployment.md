@@ -1,4 +1,4 @@
-# 07 — Deployment & Infrastructure Spec
+# 08 — Deployment & Infrastructure Spec
 
 ## Deployment Architecture
 

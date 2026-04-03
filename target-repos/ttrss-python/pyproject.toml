@@ -1,0 +1,50 @@
+[project]
+name = "ttrss-python"
+version = "0.1.0"
+description = "TT-RSS PHP-to-Python migration — Phase 1a walking skeleton"
+requires-python = ">=3.11"
+dependencies = [
+    "Flask>=3.0",
+    "Flask-Login>=0.6",
+    "Flask-WTF>=1.2",
+    "Flask-Session>=0.8",
+    "flask-talisman>=1.1",
+    "Flask-SQLAlchemy>=3.1",
+    "SQLAlchemy>=2.0",
+    "alembic>=1.13",
+    "psycopg2-binary>=2.9",
+    "argon2-cffi>=23.1",
+    "cryptography>=42.0",
+    "redis>=5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-flask>=1.3",
+    "factory-boy>=3.3",
+    "coverage>=7.0",
+    # sqlacodegen is NOT listed here — install manually in dev venv (AR08)
+    # pip install 'sqlacodegen>=3.0'
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.coverage.run]
+source = ["ttrss"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 80
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ttrss*"]

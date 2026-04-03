@@ -1,0 +1,23 @@
+name: ttrss
+services:
+  ttrss-db:
+    image: mysql:5.5
+    hostname: db
+    container_name: ${COMPOSE_PROJECT_NAME}-db
+    environment:
+      MYSQL_DATABASE: ttrss
+      MYSQL_ROOT_PASSWORD: ttrss
+    volumes:
+      - data:/var/lib/MySQL
+      - ./ttrss/schema/ttrss_schema_mysql.sql:/docker-entrypoint-initdb.d/ttrss_schema_mysql.sql
+  ttrss-app:
+    image: myttrss
+    container_name: ${COMPOSE_PROJECT_NAME}-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+volumes:
+  data:
+

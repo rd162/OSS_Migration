@@ -1,0 +1,7 @@
+#!/bin/bash
+refresh=${TT_REFRESH:-5}
+while true; do
+  echo "updating feeds (each ${refresh} minutes)" > /dev/stdout
+  sudo -u www-data /usr/bin/php /ttrss/update.php --feeds --quiet
+  sleep $(( ${refresh}*60 ))
+done

@@ -1,0 +1,14 @@
+server {
+    listen 80;
+    root /ttrss;
+    index index.html index.htm index.php;
+    location / {
+        index index.php;
+    }
+    location ~ \.php$ {
+        try_files $uri = 404; #Prevents autofixing of path which could be used for exploit
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+        fastcgi_index index.php;
+        include /etc/nginx/fastcgi_params;
+    }
+}

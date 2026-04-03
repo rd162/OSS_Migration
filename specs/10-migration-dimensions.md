@@ -81,11 +81,13 @@ Level 1 (depends on L0): ttrss_users, ttrss_prefs, ttrss_linked_instances
 Level 2 (depends on L1): ttrss_feeds, ttrss_feed_categories, ttrss_sessions,
                           ttrss_settings_profiles, ttrss_access_keys, ttrss_labels2,
                           ttrss_filters2, ttrss_user_prefs, ttrss_plugin_storage,
-                          ttrss_error_log, ttrss_linked_feeds
+                          ttrss_error_log, ttrss_linked_feeds,
+                          ttrss_counters_cache, ttrss_cat_counters_cache
+                          (note: counters/cat_counters feed_id has NO FK constraint —
+                           only owner_uid → ttrss_users; verified ttrss_schema_pgsql.sql)
 
 Level 3 (depends on L2): ttrss_user_entries, ttrss_archived_feeds,
-                          ttrss_filters2_rules, ttrss_filters2_actions,
-                          ttrss_counters_cache, ttrss_cat_counters_cache
+                          ttrss_filters2_rules, ttrss_filters2_actions
 
 Level 4 (depends on L3): ttrss_tags, ttrss_user_labels2, ttrss_enclosures,
                           ttrss_entry_comments, ttrss_feedbrowser_cache

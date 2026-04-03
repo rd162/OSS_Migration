@@ -96,6 +96,9 @@ OSS_Migration/
     - **Inferred**: When Python code has no direct PHP equivalent but was inferred from PHP patterns (e.g., `# Inferred from: ttrss/include/sessions.php (session validation pattern, adapted for Flask-Login)`)
     - **New**: When code is genuinely new with no PHP source (e.g., `# New: no PHP equivalent (Alembic migration infrastructure)`)
 
+### Traceability Verification Rule (MANDATORY)
+10a. **After generating or modifying target code**, run the traceability & correctness verification workflow defined in `rules/traceability-verification.md`. This is also required **between major phases** (e.g., Phase 1a→1b, 1b→2). The workflow uses adversarial self-refine with isolated CRITIC/AUTHOR agents to catch schema mismatches, missing traceability comments, phantom columns/defaults, and logic divergence from PHP source.
+
 ### Analysis Rules
 10. Use deep web research for any complicated architectural topic (PHP patterns, 3-tier architecture, ORM vs transactional script, etc.)
 11. For source code analysis dimensions (call graph, entity graph, etc.), consider using NetworkX and Leiden community detection

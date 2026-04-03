@@ -158,7 +158,8 @@ ttrss_linked_instances (1)
 - `ttrss_linked_feeds` → `ttrss_linked_instances`
 - `ttrss_settings_profiles` → `ttrss_users`
 - `ttrss_user_prefs.profile` → `ttrss_settings_profiles`
-- `ttrss_counters_cache` → `ttrss_feeds`, `ttrss_users`
+- `ttrss_counters_cache` → `ttrss_users` (owner_uid only; `feed_id` is a bare integer with no FK constraint — verified against `ttrss_schema_pgsql.sql` lines 116–120)
+- `ttrss_cat_counters_cache` → `ttrss_users` (owner_uid only; `feed_id` is a bare integer with no FK constraint — verified against `ttrss_schema_pgsql.sql` lines 126–130)
 
 ### ON DELETE SET NULL
 - `ttrss_feeds.cat_id` → `ttrss_feed_categories` (feed becomes uncategorized)

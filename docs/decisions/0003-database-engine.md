@@ -1,6 +1,6 @@
 # ADR-0003: Database Engine Choice
 
-- **Status**: proposed
+- **Status**: accepted
 - **Date proposed**: 2026-04-03
 - **Deciders**: TBD
 
@@ -54,11 +54,17 @@ If team is MySQL-only: **Option A** is fine — SQLAlchemy makes the PHP adapter
 
 ## Decision
 
-**TBD**
+**Option B: PostgreSQL** — accepted. Unchanged by compliance review. The review confirmed PostgreSQL with **sync psycopg2** driver (not asyncpg) since Flask is synchronous (ADR-0002). See `compliance-review-response.md`.
+
+### Compliance Note
+
+The original Solution C proposed asyncpg for native async DB access. Since ADR-0002 now selects Flask (sync WSGI), the driver is psycopg2 (sync). This simplifies the stack: no async session management, no `run_in_executor()` for sync code, no async SQLAlchemy engine configuration. Celery workers use their own sync psycopg2 connections for feed updates.
 
 ## Consequences
 
-- If PostgreSQL: need data migration script (schema exists in source)
-- If MySQL: keep existing Docker setup, add SQLAlchemy MySQL dialect
-- If dual: double the migration testing, some queries need dialect handling
-- Choice affects full-text search strategy (Sphinx vs PostgreSQL tsvector vs ElasticSearch)
+- PostgreSQL with psycopg2 (sync driver) via Flask-SQLAlchemy
+- One-time data migration from MySQL via pgloader (automated)
+- Full-text search via PostgreSQL tsvector (eliminates Sphinx dependency)
+- JSONB columns for plugin storage (replaces PHP serialized arrays)
+- Alembic for schema migrations
+- Connection pooling via SQLAlchemy engine (sync pool)

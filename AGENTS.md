@@ -95,9 +95,9 @@ OSS_Migration/
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| 0001 | Migration Flow Variant | proposed — **P0, blocks all migration** |
-| 0002 | Python Web Framework | proposed — **P0, blocks skeleton** |
-| 0003 | Database Engine Choice | proposed — **P0, blocks models** |
+| 0001 | Migration Flow Variant | **accepted** — P0, Variant D-revised |
+| 0002 | Python Web Framework | **accepted** — P0, Flask |
+| 0003 | Database Engine Choice | **accepted** — P0, PostgreSQL + psycopg2 |
 | 0004 | Frontend Migration Strategy | proposed — P1 |
 | 0005 | Automated Call Graph Analysis | proposed — P1 |
 | 0006 | ORM vs Raw SQL | proposed — P1 |

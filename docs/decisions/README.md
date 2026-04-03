@@ -14,9 +14,10 @@ Each ADR follows the standard template:
 
 | ADR | Title | Status | Priority |
 |-----|-------|--------|----------|
-| [0001](0001-migration-flow-variant.md) | Migration Flow Variant | proposed | P0 — blocks all migration work |
-| [0002](0002-python-framework.md) | Python Web Framework | proposed | P0 — blocks project skeleton |
-| [0003](0003-database-engine.md) | Database Engine Choice | proposed | P0 — blocks model layer |
+| [0001](0001-migration-flow-variant.md) | Migration Flow Variant | **accepted** | P0 — blocks all migration work |
+| — [response](compliance-review-response.md) | Compliance Review Response | reference | — |
+| [0002](0002-python-framework.md) | Python Web Framework | **accepted** | P0 — blocks project skeleton |
+| [0003](0003-database-engine.md) | Database Engine Choice | **accepted** | P0 — blocks model layer |
 | [0004](0004-frontend-strategy.md) | Frontend Migration Strategy | proposed | P1 — blocks UI work |
 | [0005](0005-call-graph-analysis.md) | Automated Call Graph Analysis | proposed | P1 — informs migration ordering |
 | [0006](0006-orm-strategy.md) | ORM vs Raw SQL | proposed | P1 — blocks model layer implementation |

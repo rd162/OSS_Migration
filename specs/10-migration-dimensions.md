@@ -233,53 +233,76 @@ Slice 10: Deployment
 - Shared utilities need early extraction from functions.php
 - Slices have dependencies (Articles need Feeds need Users)
 
-### Variant D: Hybrid Entity-then-Graph
+### Variant D: Hybrid Entity-then-Graph (Revised after compliance review)
 
-**Strategy**: Entity models first (1 pass), then follow call graph for business logic.
+**Strategy**: Walking skeleton first, then entity models, then follow call graph for business logic.
 
 ```
-Phase 1 — Foundation:
-  1a. SQLAlchemy models for ALL tables (entity dimension)
-  1b. Config + environment setup
-  1c. Flask/FastAPI app skeleton with routing
+Phase 1a — Walking Skeleton (1-2 days):
+  - Flask app factory + Blueprints + config from env
+  - 10 core SQLAlchemy models (via sqlacodegen, then reviewed):
+    ttrss_users, ttrss_sessions, ttrss_feeds, ttrss_feed_categories,
+    ttrss_entries, ttrss_user_entries, ttrss_prefs, ttrss_user_prefs,
+    ttrss_access_keys, ttrss_version
+  - Flask-Login + session + POST /api/ op=login + GET /api/status
+  - Docker Compose: Flask + PostgreSQL + Redis
+  - Security: bcrypt, parameterized queries, CSRF, Jinja2 autoescape
+  - Exit: docker compose up → login works → tests green
+
+Phase 1b — Complete Foundation:
+  - Remaining 25 models (sqlacodegen + review)
+  - Alembic baseline migration
+  - Pluggy hook specifications (@hookspec) for all 24 hooks
+  - PluginManager singleton with specs registered
+  - functions.php/functions2.php decomposition map finalized
 
 Phase 2 — Core Logic (call graph order):
-  2a. Auth + Sessions (deepest dependency)
+  2a. Auth + Sessions (deepest dependency) + HOOK_AUTH_USER invocation
   2b. Preference system
-  2c. Database utility functions (replace db_query/db_fetch)
+  2c. Utility modules (decomposed from functions.php/functions2.php)
 
 Phase 3 — Business Logic (entity clusters):
   3a. Feed management (ttrss_feeds + ttrss_feed_categories)
   3b. Article management (ttrss_entries + ttrss_user_entries)
-  3c. Feed update engine (rssfuncs → parser → storage)
+  3c. Feed update engine — designed for Celery: pure functions, explicit
+      params (feed_id, config), no Flask request context; httpx for fetching
   3d. Labels + Tags + Filters
+  Hook invocations: HOOK_FEED_PARSED, HOOK_ARTICLE_FILTER, etc. (inert)
 
 Phase 4 — Handlers (frontend-backend contract):
   4a. RPC handler (state mutations)
-  4b. Feeds handler (headline rendering)
+  4b. Feeds handler (headline rendering via Jinja2)
   4c. Article handler
   4d. Preference handlers
+  Hook invocations: HOOK_RENDER_ARTICLE, HOOK_PREFS_TAB, etc.
+  Contract tests: JSON shapes match PHP originals for ~40 endpoints
 
 Phase 5 — Cross-Cutting:
-  5a. Plugin system
-  5b. API (external)
-  5c. Background worker (Celery)
-  5d. Logging + Error handling
+  5a. Plugin system (discovery, loading, per-user enable/disable, built-ins)
+  5b. External API (REST, rate limiting)
+  5c. Celery integration (@celery.task decorators on Phase 3c functions,
+      Beat schedule, Flower monitoring)
+  5d. Logging (structlog) + error handling
 
 Phase 6 — Deployment:
-  6a. Docker + CI/CD
-  6b. Frontend adaptation
+  6a. Production Docker (Gunicorn+gevent, Celery worker, Celery Beat)
+  6b. CI/CD pipeline
+  6c. MySQL-to-PostgreSQL data migration via pgloader
+  6d. Frontend asset serving
 ```
 
 **Pros**:
-- Models validated early against real schema
-- Call graph guides implementation order (no missing deps)
-- Entity clusters keep related code together
-- Each phase is testable
+- Walking skeleton gives runnable app in 1-2 days (addresses AR4)
+- sqlacodegen automates bulk model generation (addresses R1 solo-dev concern)
+- Hook specs early, invocation points in Phases 3-4 (addresses R7 plugin gap)
+- Feed engine designed for Celery from Phase 3c (addresses R13 refactoring concern)
+- Explicit async strategy: Gunicorn+gevent for web, Celery+httpx for feeds (addresses AR7)
+- Each phase has entry/exit criteria and test suite (addresses R10)
+- Security remediation aligned to phase boundaries
 
 **Cons**:
-- More planning overhead
-- Phase 1 is large (35 models)
+- More planning overhead (mitigated by this detailed phase plan)
+- Phase 1b still has 25 models (mitigated by sqlacodegen automation)
 
 ### Variant E: Granular Multi-Pass
 
@@ -340,27 +363,35 @@ This can be automated by parsing the PHP source and building the graphs programm
 
 ## Recommendation Matrix
 
-| Criterion | Variant A | Variant B | Variant C | Variant D | Variant E |
-|-----------|-----------|-----------|-----------|-----------|-----------|
-| Time to first runnable code | Slow | Fast | Medium | Medium | Slow |
+| Criterion | Variant A | Variant B | Variant C | Variant D-revised | Variant E |
+|-----------|-----------|-----------|-----------|-------------------|-----------|
+| Time to first runnable code | Slow | Fast | Medium | **Fast (1-2 days)** | Slow |
 | Refactoring risk | Low | High | Medium | Low | Low |
-| Testability per phase | Medium | Low | High | High | High |
+| Testability per phase | Medium | Low | High | **High (exit criteria)** | High |
 | Parallel development | Low | Low | High | Medium | Medium |
 | Dependency management | Easy | Hard | Medium | Easy | Easy |
 | Planning overhead | Low | Low | Medium | Medium | High |
 | Best for solo dev | Good | OK | Harder | **Best** | OK |
 | Best for team | OK | Harder | **Best** | Good | Good |
+| Async strategy | N/A | N/A | N/A | **Explicit (Celery+httpx)** | N/A |
+| Plugin hook timing | Late | Early (stubs) | Per-slice | **Specs early, invocations mid** | Late |
+| Stub/mock debt | High | High | Low | **Low (walking skeleton)** | Medium |
 
-### Initial Recommendation: **Variant D (Hybrid Entity-then-Graph)**
+### Recommendation: **Variant D-revised (Walking Skeleton + Hybrid Entity-then-Graph)**
 
 Rationale:
-1. Models-first gives a solid, validated foundation
-2. Call-graph ordering prevents "missing dependency" issues
-3. Entity clusters keep related business logic together
-4. Each phase is independently testable
-5. Matches the project's solo/small-team nature
+1. Walking skeleton (Phase 1a) delivers runnable app in 1-2 days — addresses AR4
+2. sqlacodegen automates bulk model generation — addresses R1 solo-dev concern
+3. Call-graph ordering prevents "missing dependency" issues
+4. Hook specifications defined early (Phase 1b), invocation points placed when code is written (Phases 3-4) — addresses R7
+5. Feed engine designed for Celery from Phase 3c — addresses R13 refactoring concern
+6. Explicit async strategy: Gunicorn+gevent for web, Celery+httpx for feeds — addresses AR7
+7. Each phase has entry/exit criteria and dedicated test suite — addresses R10
+8. functions.php/functions2.php decomposition map with phase assignments
+9. pgloader for MySQL-to-PostgreSQL data migration
+10. Phase-by-phase security remediation aligned to spec 06 findings
 
-**To be discussed and finalized before migration starts.**
+**Accepted after compliance review. See `docs/decisions/0001-compliance-review-response.md`.**
 
 ---
 

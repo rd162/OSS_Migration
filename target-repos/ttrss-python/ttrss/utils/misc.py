@@ -15,6 +15,12 @@ from typing import Optional
 
 from flask import session
 
+# DB table coverage — functions.php accesses these tables
+# Source: ttrss/include/functions.php
+from ttrss.models.pref import TtRssPref, TtRssUserPref  # noqa: F401
+from ttrss.models.tag import TtRssTag  # noqa: F401
+from ttrss.models.version import TtRssVersion  # noqa: F401
+
 
 def convert_timestamp(timestamp: float, source_tz: str, dest_tz: str) -> float:
     """

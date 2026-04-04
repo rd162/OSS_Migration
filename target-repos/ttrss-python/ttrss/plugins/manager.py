@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import pluggy
 
+from ttrss.models.plugin_storage import TtRssPluginStorage  # noqa: F401 — DB table coverage
 from ttrss.plugins.hookspecs import KIND_ALL, KIND_SYSTEM, KIND_USER, TtRssHookSpec  # noqa: F401 — re-export
 
 # Source: ttrss/classes/pluginhost.php:PluginHost (private $_instance static, lines 47-48)

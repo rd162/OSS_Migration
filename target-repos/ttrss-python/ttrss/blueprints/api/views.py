@@ -145,6 +145,9 @@ def dispatch():
         return _ok(seq, {"status": current_user.is_authenticated})
     if op_lower == "getversion":
         # Source: ttrss/classes/api.php:API.getVersion (lines 39-42)
+        # Source: ttrss/include/version.php:get_version (VERSION_STATIC='1.12', git-hash suffix)
+        # Adapted: PHP appends 7-char git hash from .git/refs/heads/master; Python uses
+        #          static "1.12.0-python" sentinel — no git runtime lookup in the API process.
         return _ok(seq, {"version": "1.12.0-python"})
     if op_lower == "getapilevel":
         # Source: ttrss/classes/api.php:API.getApiLevel (lines 44-47)

@@ -17,9 +17,13 @@ from ttrss.models.base import Base
 
 
 # Source: ttrss/schema/ttrss_schema_pgsql.sql (table ttrss_version, lines 262-264)
+# Source: ttrss/include/version.php:get_version
 # Deviation: schema_version used as primary_key=True because SQLAlchemy requires at least one PK.
 # PHP schema defines "schema_version int not null" with no PK — this is a single-row table.
 # Inferred from: PHP insert pattern (only one row ever exists) — PK is safe and idempotent.
+# Note: ttrss/include/version.php defines VERSION_STATIC='1.12' and get_version() appends git hash.
+#       Python equivalent: version string "1.12.0-python" is returned inline in the API dispatch
+#       (blueprints/api/views.py getVersion handler); TtRssVersion tracks schema version only.
 class TtRssVersion(Base):
     """
     Single-row table tracking the current schema version.

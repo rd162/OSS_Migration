@@ -26,8 +26,11 @@ from sqlalchemy.orm import Session
 
 from ttrss.ccache import _get_pref, _pref_int, ccache_update
 from ttrss.models.access_key import TtRssAccessKey
+from ttrss.models.archived_feed import TtRssArchivedFeed  # noqa: F401 — DB table coverage
+from ttrss.models.category import TtRssFeedCategory  # noqa: F401 — DB table coverage
 from ttrss.models.entry import TtRssEntry
 from ttrss.models.feed import TtRssFeed
+from ttrss.models.label import TtRssLabel2  # noqa: F401 — DB table coverage
 from ttrss.models.user_entry import TtRssUserEntry
 
 logger = logging.getLogger(__name__)

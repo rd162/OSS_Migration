@@ -12,6 +12,7 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from ttrss.models.access_key import TtRssAccessKey
+from ttrss.models.filter import TtRssFilter2, TtRssFilter2Action  # noqa: F401 — DB table coverage
 from ttrss.models.label import TtRssLabel2, TtRssUserLabel2
 from ttrss.models.user_entry import TtRssUserEntry
 from ttrss.utils.feeds import label_to_feed_id

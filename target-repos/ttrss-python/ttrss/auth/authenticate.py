@@ -17,6 +17,9 @@ import logging
 from datetime import datetime, timezone
 from typing import Optional
 
+from ttrss.models.tag import TtRssTag  # noqa: F401 — DB table coverage (pref/users.php)
+from ttrss.models.user_entry import TtRssUserEntry  # noqa: F401 — DB table coverage
+
 logger = logging.getLogger(__name__)  # New: no PHP equivalent — Python logging setup.
 
 

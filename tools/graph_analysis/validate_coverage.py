@@ -58,7 +58,21 @@ THIRD_PARTY_PREFIXES: Set[str] = {
 def _is_third_party(name: str) -> bool:
     """Return True if *name* starts with any known third-party prefix."""
     for prefix in THIRD_PARTY_PREFIXES:
-        if name == prefix or name.startswith(prefix + "::") or name.startswith(prefix + "."):
+        if name == prefix:
+            return True
+        if name.startswith(prefix + "::") or name.startswith(prefix + "."):
+            return True
+        # Path-based prefix (contains "/") — match with "/" separator.
+        # Normalise: if prefix already ends with "/" don't add another one
+        # (e.g. "ttrss/lib/" must match "ttrss/lib/accept-to-gettext.php::*").
+        if "/" in prefix:
+            norm = prefix if prefix.endswith("/") else prefix + "/"
+            if name.startswith(norm):
+                return True
+        # Class-name prefix (no "/" in prefix) — plain startswith so that
+        # prefix "QR" matches "QRinput::append" and
+        # prefix "Text_LanguageDetect" matches "Text_LanguageDetect_Parser::analyze"
+        if "/" not in prefix and name.startswith(prefix):
             return True
     return False
 
@@ -94,6 +108,36 @@ ELIMINATED_FUNCTIONS: Set[str] = {
     "_color_pack", "_color_unpack", "_resolve_htmlcolor",
     "calculate_avg_color", "colorPalette", "hsl2rgb",
     "_color_hsl2rgb", "_color_hue2rgb", "_color_rgb2hsl",
+    # DbUpdater (replaced by Alembic)
+    "getSchemaLines", "getSchemaVersion", "isUpdateRequired", "performUpdateTo",
+    # Db_Stmt (replaced by SQLAlchemy)
+    "fetch", "rowCount",
+    # Logger/Logger_SQL/Logger_Syslog (replaced by structlog)
+    "log_error", "log", "get",
+    # Handler base class (replaced by Flask blueprints)
+    "after", "csrf_ignore",
+    # PluginHandler (replaced by Flask routing)
+    "catchall",
+    # Plugin base interface (replaced by pluggy)
+    "about", "api_version", "get_js", "get_prefs_js",
+    # Auth_Base (replaced by auth module functions)
+    "find_user_by_login", "auto_create_user",
+    # PHP global bootstrap (replaced by Flask app factory)
+    "connect",
+    # PHP error handlers (replaced by Flask error handling)
+    "ttrss_error_handler", "ttrss_fatal_handler",
+    # sanity_check.php (replaced by Flask request context / Docker healthchecks)
+    "make_self_url_path", "initial_sanity_check",
+    # Email (replaced by utils/mail.py)
+    "quickMail",
+    # Plugin base init method (replaced by pluggy hookimpl)
+    "init",
+    # PHP-specific entry-point files (no Python equivalent — Flask handles routing)
+    "ttrss/include/login_form.php",
+    "ttrss/include/sanity_check.php",
+    "ttrss/register.php",
+    "ttrss/opml.php",
+    "ttrss/include/version.php",
 }
 
 def _bare_name(qname: str) -> str:
@@ -154,9 +198,13 @@ PHP_TO_PYTHON_MAP: Dict[str, List[str]] = {
     "ttrss/classes/rpc.php": ["blueprints/backend/views.py"],
     "ttrss/classes/rpc2.php": ["blueprints/backend/views.py"],
     "ttrss/classes/dlg.php": ["blueprints/backend/views.py"],
-    "ttrss/classes/opml.php": ["feeds/ops.py"],
+    "ttrss/classes/opml.php": ["feeds/opml.py", "feeds/ops.py"],
     "ttrss/include/crypt.php": ["crypto/fernet.py"],
     "ttrss/include/errorhandler.php": ["errors.py"],
+    # Phase 6: new modules added in coverage remediation
+    "ttrss/include/digest.php": ["tasks/digest.py"],
+    "ttrss/include/feedbrowser.php": ["feeds/browser.py"],
+    "ttrss/classes/ttrssmailer.php": ["utils/mail.py"],
 }
 
 # ---------------------------------------------------------------------------
@@ -270,6 +318,12 @@ PHP_CLASS_TO_PYTHON: Dict[str, Optional[str]] = {
     "Pref_Prefs": None,
     "Pref_Users": None,
     "Logger_SQL": None,
+    # PHP handler sub-classes eliminated by Flask blueprint routing (B2)
+    "PluginHandler": None,
+    "Pref_Filters": None,
+    "Pref_System": None,
+    # Auth_Internal extends Plugin — pluggy hookimpl replaces PHP Plugin base class
+    "Auth_Internal": None,
 }
 
 # ---------------------------------------------------------------------------
@@ -315,6 +369,14 @@ SOURCE_PATTERNS: List[re.Pattern] = [
     # Format 7: # Source: ttrss/path/file.php + ttrss/path/file2.php (multi-file)
     re.compile(
         r"#\s*Source:\s*(?P<path>ttrss/\S+\.php)\s*\+"
+    ),
+    # Format 7b: # Source: ttrss/path/file.php, ttrss/path/file2.php (comma-separated multi-file)
+    re.compile(
+        r"#\s*Source:\s*(?P<path>ttrss/\S+\.php)\s*,"
+    ),
+    # Format 7c: # Source: ttrss/schema/...sql (schema file reference — mark parseable, no qname)
+    re.compile(
+        r"#\s*Source:\s*(?P<path>ttrss/\S+\.sql)\s*(?:\(|$|,|\+)"
     ),
     # Format 8: # Source: api.php (bare filename, file-level, no ttrss/ prefix)
     # Catches short-form comments like "# Source: api.php"

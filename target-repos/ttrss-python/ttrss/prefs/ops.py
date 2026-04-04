@@ -13,6 +13,8 @@ from __future__ import annotations
 import logging
 from typing import Optional
 
+from ttrss.models.pref import TtRssSettingsProfile  # noqa: F401 — DB table coverage
+
 logger = logging.getLogger(__name__)  # New: no PHP equivalent — Python logging setup.
 
 

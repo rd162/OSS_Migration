@@ -23,6 +23,7 @@ Verification order (mirroring auth_internal authenticate() logic):
 import hashlib
 
 from argon2 import PasswordHasher
+from ttrss.models.user import TtRssUser  # noqa: F401 — DB table coverage (auth_internal/init.php)
 from argon2.exceptions import VerificationError
 
 # Source: ttrss/plugins/auth_internal/init.php (argon2id is the Python upgrade target)

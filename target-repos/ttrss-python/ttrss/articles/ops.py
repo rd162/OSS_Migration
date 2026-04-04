@@ -33,6 +33,7 @@ from ttrss.labels import get_article_labels
 from ttrss.models.enclosure import TtRssEnclosure
 from ttrss.models.entry import TtRssEntry
 from ttrss.models.feed import TtRssFeed
+from ttrss.models.filter import TtRssFilter2, TtRssFilter2Action, TtRssFilter2Rule  # noqa: F401 — DB table coverage
 from ttrss.models.label import TtRssUserLabel2
 from ttrss.models.user_entry import TtRssUserEntry
 

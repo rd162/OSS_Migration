@@ -9,5 +9,6 @@ from sqlalchemy.orm import DeclarativeBase
 
 
 # New: no PHP equivalent (SQLAlchemy 2.0 DeclarativeBase, ADR-0006)
+# Inferred from: ttrss/classes/db/stmt.php (Db_Stmt — query result iteration replaced by SQLAlchemy Result/Row)
 class Base(DeclarativeBase):
     pass

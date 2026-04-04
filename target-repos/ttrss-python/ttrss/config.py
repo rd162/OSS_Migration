@@ -7,6 +7,8 @@ evaluated at class definition / import time).
 Inferred from: ttrss/config.php-dist (TTRSS_SELF_URL_PATH, DB_HOST, DB_NAME, DB_PASS,
                SESSION_COOKIE_LIFETIME, SESSION_CHECK_ADDRESS, FEED_CRYPT_KEY, etc.)
                Adapted for 12-factor env var pattern — no static PHP constants.
+# Inferred from: ttrss/include/sanity_config.php (config validation constants — merged into Config class)
+# Eliminated: ttrss/classes/db/mysql.php, ttrss/classes/db/mysqli.php — MySQL DB_TYPE dropped (ADR-0003)
 New: Config class with os.environ.get() (no direct PHP equivalent)
 """
 import os

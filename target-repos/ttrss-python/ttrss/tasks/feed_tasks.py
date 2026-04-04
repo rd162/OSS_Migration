@@ -16,6 +16,11 @@ import structlog
 from typing import Any
 
 import feedparser
+# Inferred from: ttrss/classes/feedparser.php (FeedParser — XML format detection + parsing, replaced by feedparser lib, ADR-0014)
+# Inferred from: ttrss/classes/feeditem.php (FeedItem — base feed entry class, replaced by feedparser.FeedParserDict)
+# Inferred from: ttrss/classes/feeditem/common.php (FeedItem_Common — shared extraction logic, replaced by feedparser entry dict)
+# Inferred from: ttrss/classes/feeditem/atom.php (FeedItem_Atom — Atom entry extraction, handled by feedparser lib)
+# Inferred from: ttrss/classes/feeditem/rss.php (FeedItem_RSS — RSS item extraction, handled by feedparser lib)
 import httpx
 
 from ttrss.articles.sanitize import sanitize  # New: sanitize extracted to ttrss/articles/sanitize.py (Phase 2).

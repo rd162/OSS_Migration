@@ -7,6 +7,11 @@ Source: ttrss/classes/db.php:Db (singleton DB pattern)
         + ttrss/include/functions.php:authenticate_user / login_sequence (auth flow)
         Adapted for Flask extension pattern — init_app() replaces PHP global singletons.
 New: LoginManager, Session, CSRFProtect, Talisman (no direct PHP equivalents)
+# Inferred from: ttrss/classes/idb.php (IDb interface — replaced by SQLAlchemy session API, ADR-0006)
+# Inferred from: ttrss/classes/db/pgsql.php (Db_Pgsql adapter — replaced by SQLAlchemy + psycopg2, ADR-0003/0006)
+# Inferred from: ttrss/classes/db/pdo.php (Db_PDO adapter — replaced by SQLAlchemy engine, ADR-0006)
+# Inferred from: ttrss/classes/db/stmt.php (Db_Stmt result wrapper — replaced by SQLAlchemy Result, ADR-0006)
+# Eliminated: ttrss/classes/db/mysql.php, ttrss/classes/db/mysqli.php — MySQL dropped per ADR-0003 (PostgreSQL only)
 """
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address

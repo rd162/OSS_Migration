@@ -196,7 +196,7 @@ def get_favicon_url(url: str) -> Optional[str]:
             doc = lxml_html.fromstring(resp.content, base_url=url)
             doc.make_links_absolute(url)
 
-            for link in doc.cssselect('link[rel~="icon"], link[rel~="shortcut icon"]'):
+            for link in doc.xpath('.//link[contains(concat(" ",normalize-space(@rel)," ")," icon ") or contains(concat(" ",normalize-space(@rel)," ")," shortcut icon ")]'):
                 href = link.get("href")
                 if href:
                     return href

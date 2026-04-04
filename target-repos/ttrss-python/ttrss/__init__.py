@@ -5,6 +5,8 @@ Inferred from: ttrss/index.php (bootstrap sequence) + ttrss/include/autoload.php
                + ttrss/include/db.php (DB init) + ttrss/include/sessions.php (session init)
                Adapted for Flask factory pattern — no direct PHP equivalent.
 New: create_app() factory with test_config override (no PHP equivalent)
+# Inferred from: ttrss/include/errorhandler.php (PHP error handler registration — replaced by Python logging + structlog, ADR-0012)
+# Inferred from: ttrss/include/sanity_config.php (config validation definitions — inlined in ttrss/config.py)
 """
 import logging
 import logging.config

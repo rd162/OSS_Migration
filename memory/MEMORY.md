@@ -1,6 +1,7 @@
 # Memory Index
 
 ## Active Plans
+- [**Coverage Gap Plan**](coverage_gap_plan.md) — 6 workstreams closed all PHP→Python translation gaps (audit 2026-04-04); all complete
 - [**Master Plan**](master_plan.md) — Unified graph-driven migration plan (Phases 1-6), tree-sitter+NetworkX native at every gate
 - [Phase 2 Detail](phase2_plan_2026-04-04.md) — 4 batches, dependency-first (Condorcet winner)
 - [Phase 3 Detail](phase3_plan_2026-04-04.md) — 9 serial batches with graph-level annotations (Condorcet winner)

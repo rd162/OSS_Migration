@@ -35,6 +35,7 @@ hookspec = pluggy.HookspecMarker("ttrss")
 # hookimpl exported for use by plugin authors implementing hooks.
 # Source: ttrss/classes/pluginhost.php (plugin registration via add_hook)
 hookimpl = pluggy.HookimplMarker("ttrss")
+# Inferred from: ttrss/classes/iauthmodule.php (IAuthModule interface — replaced by hookspec hook_auth_user, ADR-0010)
 
 # Source: ttrss/classes/pluginhost.php (lines 43-45 — KIND constants)
 KIND_ALL = 1

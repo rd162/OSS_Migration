@@ -139,3 +139,26 @@ All workstreams are equal priority. Execution batches by natural dependency:
 | 6 | **DONE** | Merged into WS-1 (traceability comments added inline) |
 
 **Result:** 73/73 application PHP files now have traceability in target. 1,266 total traceability comments across 85 Python files. 4,275 lines added, 16 files changed. All files pass syntax check.
+
+---
+
+## Phase 5b — Exact Function Audit (2026-04-05)
+
+File-level traceability was insufficient. A tree-sitter-based exact function audit (`tools/graph_analysis/exact_function_audit.py`) was written and run, verifying each of the 458 in-scope PHP functions individually.
+
+**Audit results (final — commit c42c599):**
+
+| Metric | Count |
+|--------|-------|
+| In-scope PHP functions (L0-L10) | 458 |
+| Exactly traced (name or line-range ref) | 288 |
+| Eliminated by spec/ADR | 170 |
+| File-level only | **0** |
+| Missing | **0** |
+| **Coverage** | **100.0%** |
+
+**Workstreams closed:**
+- **Category C (13 new implementations):** `labels_contains_caption`, `assign_article_to_label_filters`, `get_plugin_names/get_plugins/get_plugin`, `remove_feed_icon`, `reset_pubsub`, `regen_opml_key`, `regen_feed_key`, `clear_access_keys`, `set_plugins`, `_article_complete_tags`, `_article_assign_to_label`, `_article_remove_from_label`
+- **Category A (25 Source comment fixes):** exact function-name Source comments added across 13 Python files
+- **Category B (20 Eliminated comments):** `editfeeds`, `batch_edit_cbox`, `newrule`, `newaction`, `customizeCSS`, `toggleAdvanced`, `getHelp`, `get_dbh`, `run_hooks`, `load_all`, session handlers, PHP URL helpers, etc.
+- 598 tests pass.

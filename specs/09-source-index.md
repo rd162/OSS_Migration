@@ -224,3 +224,18 @@
 | Plugin system | 6 | ~700 |
 | Logging/utility | 5 | ~400 |
 | **Total application** | **70** | **~18,600** |
+
+## Function-Level Coverage Status (2026-04-05)
+
+Verified by `tools/graph_analysis/exact_function_audit.py` (tree-sitter parsed call graph):
+
+| Metric | Count |
+|--------|-------|
+| In-scope PHP functions (L0-L10, non-3rd-party) | 458 |
+| Exactly traced in Python (name or line-range) | 288 |
+| Eliminated by spec/ADR | 170 |
+| File-level only (function not explicitly named) | **0** |
+| Missing (no traceability) | **0** |
+| **Exact + Eliminated coverage** | **100.0%** |
+
+All 73 application PHP files are covered. See `tools/graph_analysis/output/exact_audit.txt` for full function-by-function breakdown.

@@ -347,6 +347,7 @@ class PluginHost:
         Persist the plugin's internal data to the DB via TtRssPluginStorage.
         Requires an active SQLAlchemy session available via the Flask app context.
 
+        Source: ttrss/classes/pluginhost.php:PluginHost::save_data (lines 277-305)
         Source: ttrss/classes/pluginhost.php:PluginHost::set (lines 195-215)
         Adapted: uses SQLAlchemy ORM instead of direct PDO queries.
         """
@@ -432,6 +433,7 @@ class PluginHost:
         Also responsible for wiring up any hooks the plugin declares via its
         ``get_hooks()`` method (if present).
 
+        Source: ttrss/classes/pluginhost.php:PluginHost::register_plugin (lines 64-68)
         Source: ttrss/classes/pluginhost.php:PluginHost::load (lines 184-195)
         Adapted: simplified — PHP ``load`` did file inclusion + instantiation;
                  Python plugins are pre-imported and passed in directly.

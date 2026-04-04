@@ -67,6 +67,7 @@ def _date_cutoff(mode: str) -> Optional[datetime]:
 def get_article_enclosures(session: Session, article_id: int) -> list[dict[str, Any]]:
     """Return enclosure dicts for an article (non-empty content_url only).
 
+    Source: ttrss/include/functions2.php:format_article_enclosures (lines 1847-1941)
     Source: ttrss/include/functions2.php:get_article_enclosures (lines 1734-1750)
     """
     rows = session.execute(

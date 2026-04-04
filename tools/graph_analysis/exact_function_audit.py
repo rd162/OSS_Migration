@@ -173,6 +173,11 @@ ELIMINATED_BARE: Set[str] = {
     "add_feed_url",
     # Entry-point pseudo-functions (Flask routing replaces)
     "housekeepingTask",
+    # PHP HTML helpers eliminated per R13
+    "printRuleName", "printActionName",
+    # Top-level script bodies (PHP includes, not real functions)
+    "ttrss/include/functions.php",
+    "ttrss/include/rssfuncs.php",
 }
 
 # PHP files where every function is intentionally eliminated/replaced
@@ -211,6 +216,9 @@ ELIMINATED_FILES: Set[str] = {
     "ttrss/install/index.php",
     "ttrss/errors.php",
     "ttrss/opml.php",          # entry-point dispatcher, Flask routing replaces
+    "ttrss/api/index.php",     # entry-point dispatcher, Flask blueprint routing replaces
+    "ttrss/public.php",        # entry-point, Flask public blueprint replaces
+    "ttrss/register.php",      # entry-point, Flask register route replaces
 }
 
 

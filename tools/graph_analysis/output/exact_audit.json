@@ -1,0 +1,12 @@
+{
+  "summary": {
+    "total_in_scope": 458,
+    "exact": 288,
+    "eliminated": 170,
+    "file_eliminated": 166,
+    "file_level_only": 0,
+    "missing": 0
+  },
+  "file_level_only": [],
+  "missing": []
+}

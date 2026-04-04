@@ -2,18 +2,18 @@
   "tool": "validate_coverage.py",
   "python_dir": "target-repos/ttrss-python/ttrss",
   "graph_dir": "tools/graph_analysis/output",
-  "module_count": 83,
-  "source_comment_count": 862,
+  "module_count": 91,
+  "source_comment_count": 1047,
   "dimensions": [
     {
       "dimension": "call_coverage",
-      "matched_exact": 53,
-      "matched_by_file": 354,
+      "matched_exact": 87,
+      "matched_by_file": 320,
       "eliminated": 147,
       "unmatched": 0,
       "skipped_third_party": 629,
       "skipped_high_level": 23,
-      "unparseable_comments": 215,
+      "unparseable_comments": 217,
       "coverage_pct": 100.0,
       "unmatched_details": [],
       "matched_by_file_details": [
@@ -75,11 +75,6 @@
         {
           "qname": "API::getPref",
           "level": 2,
-          "match": "file_level"
-        },
-        {
-          "qname": "API::getUnread",
-          "level": 4,
           "match": "file_level"
         },
         {
@@ -303,31 +298,6 @@
           "match": "file_level"
         },
         {
-          "qname": "Handler_Public::dbupdate",
-          "level": 4,
-          "match": "file_level"
-        },
-        {
-          "qname": "Handler_Public::forgotpass",
-          "level": 8,
-          "match": "file_level"
-        },
-        {
-          "qname": "Handler_Public::generate_syndicated_feed",
-          "level": 8,
-          "match": "file_level"
-        },
-        {
-          "qname": "Handler_Public::getProfiles",
-          "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Handler_Public::getUnread",
-          "level": 4,
-          "match": "file_level"
-        },
-        {
           "qname": "Handler_Public::globalUpdateFeeds",
           "level": 0,
           "match": "file_level"
@@ -335,16 +305,6 @@
         {
           "qname": "Handler_Public::housekeepingTask",
           "level": 0,
-          "match": "file_level"
-        },
-        {
-          "qname": "Handler_Public::pubsub",
-          "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Handler_Public::share",
-          "level": 6,
           "match": "file_level"
         },
         {
@@ -588,16 +548,6 @@
           "match": "file_level"
         },
         {
-          "qname": "Pref_Feeds::batchAddFeeds",
-          "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::batchEditSave",
-          "level": 3,
-          "match": "file_level"
-        },
-        {
           "qname": "Pref_Feeds::batchSubscribe",
           "level": 3,
           "match": "file_level"
@@ -605,26 +555,6 @@
         {
           "qname": "Pref_Feeds::batch_edit_cbox",
           "level": 0,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::calculate_children_count",
-          "level": 0,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::categorize",
-          "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::catsortreset",
-          "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::clear",
-          "level": 6,
           "match": "file_level"
         },
         {
@@ -638,16 +568,6 @@
           "match": "file_level"
         },
         {
-          "qname": "Pref_Feeds::editSave",
-          "level": 3,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::editfeed",
-          "level": 3,
-          "match": "file_level"
-        },
-        {
           "qname": "Pref_Feeds::editfeeds",
           "level": 3,
           "match": "file_level"
@@ -658,38 +578,8 @@
           "match": "file_level"
         },
         {
-          "qname": "Pref_Feeds::feedlist_init_feed",
-          "level": 4,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::feedsWithErrors",
-          "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::feedsortreset",
-          "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::getfeedtree",
-          "level": 7,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::inactiveFeeds",
-          "level": 4,
-          "match": "file_level"
-        },
-        {
           "qname": "Pref_Feeds::makefeedtree",
           "level": 6,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::process_category_order",
-          "level": 1,
           "match": "file_level"
         },
         {
@@ -703,27 +593,12 @@
           "match": "file_level"
         },
         {
-          "qname": "Pref_Feeds::remove",
-          "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::removeCat",
-          "level": 3,
-          "match": "file_level"
-        },
-        {
           "qname": "Pref_Feeds::remove_feed_category",
           "level": 2,
           "match": "file_level"
         },
         {
           "qname": "Pref_Feeds::removeicon",
-          "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::renamecat",
           "level": 1,
           "match": "file_level"
         },
@@ -743,21 +618,6 @@
           "match": "file_level"
         },
         {
-          "qname": "Pref_Feeds::savefeedorder",
-          "level": 2,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::update_feed_access_key",
-          "level": 3,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Feeds::uploadicon",
-          "level": 1,
-          "match": "file_level"
-        },
-        {
           "qname": "Pref_Filters::add",
           "level": 7,
           "match": "file_level"
@@ -768,11 +628,6 @@
           "match": "file_level"
         },
         {
-          "qname": "Pref_Filters::editSave",
-          "level": 7,
-          "match": "file_level"
-        },
-        {
           "qname": "Pref_Filters::filtersortreset",
           "level": 1,
           "match": "file_level"
@@ -780,11 +635,6 @@
         {
           "qname": "Pref_Filters::getActionName",
           "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Filters::getFilterName",
-          "level": 2,
           "match": "file_level"
         },
         {
@@ -833,11 +683,6 @@
           "match": "file_level"
         },
         {
-          "qname": "Pref_Filters::remove",
-          "level": 1,
-          "match": "file_level"
-        },
-        {
           "qname": "Pref_Filters::saveRulesAndActions",
           "level": 1,
           "match": "file_level"
@@ -875,11 +720,6 @@
         {
           "qname": "Pref_Labels::getlabeltree",
           "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Labels::remove",
-          "level": 3,
           "match": "file_level"
         },
         {
@@ -969,16 +809,6 @@
         },
         {
           "qname": "Pref_Users::edit",
-          "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Users::editSave",
-          "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Users::remove",
           "level": 1,
           "match": "file_level"
         },
@@ -3600,14 +3430,96 @@
           "file": "plugins/loader.py",
           "line": 24,
           "raw": "_DEFAULT_PLUGINS = os.environ.get(\"TTRSS_PLUGINS\", \"auth_internal\")  # Source: ttrss/config.php-dist line 200. Adapted: env var replaces PHP define; only 'auth_internal' by default."
+        },
+        {
+          "file": "prefs/feeds_crud.py",
+          "line": 11,
+          "raw": "- carries a ``# Source:`` traceability comment"
+        },
+        {
+          "file": "prefs/user_prefs_crud.py",
+          "line": 43,
+          "raw": "user.otp_enabled = False  # Source: changing password disables OTP"
         }
       ]
     },
     {
       "dimension": "import_coverage",
-      "edges_checked": 14,
-      "missing_imports": 9,
+      "edges_checked": 32,
+      "missing_imports": 21,
       "missing_import_details": [
+        {
+          "from_php": "API::login",
+          "to_php": "ttrss/include/db-prefs.php::get_pref",
+          "from_py": "blueprints/public/views.py",
+          "to_py": "blueprints/api/views.py"
+        },
+        {
+          "from_php": "API::getUnread",
+          "to_php": "ttrss/include/functions.php::getFeedUnread",
+          "from_py": "blueprints/public/views.py",
+          "to_py": "blueprints/api/views.py"
+        },
+        {
+          "from_php": "API::getUnread",
+          "to_php": "ttrss/include/functions.php::getGlobalUnread",
+          "from_py": "blueprints/public/views.py",
+          "to_py": "blueprints/api/views.py"
+        },
+        {
+          "from_php": "Handler_Public::generate_syndicated_feed",
+          "to_php": "ttrss/include/functions2.php::get_feed_access_key",
+          "from_py": "blueprints/public/views.py",
+          "to_py": "feeds/opml.py"
+        },
+        {
+          "from_php": "Handler_Public::generate_syndicated_feed",
+          "to_php": "ttrss/include/functions2.php::sanitize",
+          "from_py": "blueprints/public/views.py",
+          "to_py": "articles/sanitize.py"
+        },
+        {
+          "from_php": "Handler_Public::getUnread",
+          "to_php": "ttrss/include/functions.php::getGlobalUnread",
+          "from_py": "blueprints/public/views.py",
+          "to_py": "blueprints/api/views.py"
+        },
+        {
+          "from_php": "Handler_Public::login",
+          "to_php": "ttrss/include/db-prefs.php::get_pref",
+          "from_py": "blueprints/public/views.py",
+          "to_py": "blueprints/api/views.py"
+        },
+        {
+          "from_php": "Handler_Public::subscribe",
+          "to_php": "ttrss/include/functions.php::subscribe_to_feed",
+          "from_py": "blueprints/public/views.py",
+          "to_py": "blueprints/api/views.py"
+        },
+        {
+          "from_php": "Pref_Feeds::get_category_items",
+          "to_php": "Pref_Feeds::calculate_children_count",
+          "from_py": "blueprints/api/views.py",
+          "to_py": "prefs/feeds_crud.py"
+        },
+        {
+          "from_php": "Pref_Feeds::editfeed",
+          "to_php": "ttrss/include/db-prefs.php::get_pref",
+          "from_py": "prefs/feeds_crud.py",
+          "to_py": "blueprints/api/views.py"
+        },
+        {
+          "from_php": "Pref_Feeds::feedlist_init_feed",
+          "to_php": "ttrss/include/functions.php::getFeedUnread",
+          "from_py": "prefs/feeds_crud.py",
+          "to_py": "blueprints/api/views.py"
+        },
+        {
+          "from_php": "Pref_Feeds::update_feed_access_key",
+          "to_php": "ttrss/include/functions2.php::get_feed_access_key",
+          "from_py": "prefs/feeds_crud.py",
+          "to_py": "feeds/opml.py"
+        },
         {
           "from_php": "ttrss/include/digest.php::send_headlines_digests",
           "to_php": "ttrss/include/db-prefs.php::get_pref",

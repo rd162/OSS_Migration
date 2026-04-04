@@ -1,0 +1,16 @@
+========================================================================
+  EXACT FUNCTION-LEVEL PHP→PYTHON COVERAGE AUDIT  (v2)
+========================================================================
+
+SUMMARY
+  Total in-scope PHP functions (L0-L10, non-3rd-party): 458
+  Exact / line-range match:                             288
+  Eliminated (spec 13 / ADR):                           170
+  File-eliminated (whole file dropped by ADR):          166
+  File-level only (file mentioned, fn not named):       0
+  Missing (NO traceability at all):                     0
+  Skipped (level > 10):                                 13
+  Skipped (third-party / lib):                          569
+
+  Exact+Eliminated coverage:    458/458 = 100.0%
+  Including file-level matches: 458/458 = 100.0%

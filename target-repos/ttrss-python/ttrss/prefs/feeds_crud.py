@@ -523,8 +523,9 @@ def categorize_feeds(
 def remove_category(session: Session, cat_id: int, owner_uid: int) -> None:
     """Remove a feed category.
 
-    # Source: ttrss/classes/pref/feeds.php:removeCat (line 1226) / remove_feed_category (line 1699)
-    #         ttrss/classes/pref/feeds.php:1701-1702 — DELETE FROM ttrss_feed_categories
+    Source: ttrss/classes/pref/feeds.php:remove_feed_category (lines 1699-1705)
+    Source: ttrss/classes/pref/feeds.php:removeCat (line 1226)
+    PHP: DELETE FROM ttrss_feed_categories WHERE id AND owner_uid.
     """
     session.execute(
         sa_delete(TtRssFeedCategory)
@@ -664,8 +665,9 @@ def batch_subscribe_feeds(
 ) -> list[dict]:
     """Subscribe to multiple feeds at once (one URL per line).
 
-    # Source: ttrss/classes/pref/feeds.php:batchAddFeeds (line 1815)
-    #         ttrss/classes/pref/feeds.php:1834-1856 — check existing, then INSERT
+    Source: ttrss/classes/pref/feeds.php:batchSubscribe (lines 1767-1860)
+    Source: ttrss/classes/pref/feeds.php:batchAddFeeds (line 1815)
+    PHP: subscribe each URL in a newline-separated list.
     """
     results = []
     for line in feeds_text.split("\n"):

@@ -1,0 +1,61 @@
+-- New: no PHP equivalent — pgloader configuration for MySQL → PostgreSQL migration.
+-- Phase 6 B5: R12–R17, AR02, AR08, AR09.
+--
+-- Prerequisites:
+--   export MYSQL_USER MYSQL_PASS MYSQL_HOST MYSQL_DB
+--   export PG_USER PG_PASS PG_HOST PG_DB
+--
+-- Dry run:  pgloader --dry-run scripts/migrate/pgloader.load
+-- Full run: pgloader scripts/migrate/pgloader.load
+
+LOAD DATABASE
+  FROM      mysql://${MYSQL_USER}:${MYSQL_PASS}@${MYSQL_HOST}/${MYSQL_DB}
+  INTO      postgresql://${PG_USER}:${PG_PASS}@${PG_HOST}/${PG_DB}
+
+WITH
+  include drop,
+  create tables,
+  create indexes,
+  foreign keys,
+  ZERO DATES TO NULL,    -- R13/AR09: preprocessor covers ALL date+datetime columns
+                          -- (including bare DATE cols like ttrss_entries.date_entered)
+                          -- Do NOT add a zero-date CAST rule — that is redundant and AR09-violating
+  workers = 4,
+  rows per range = 50000
+  -- NOTE: 'reset sequences' intentionally OMITTED — pgloader bug #1598:
+  -- silently fails when a CAST block is present. Use AFTER LOAD DO instead (R15/AR08).
+
+SET MySQL PARAMETERS
+  net_read_timeout = '120',
+  net_write_timeout = '120'
+
+CAST
+  -- R17: tinyint(1) → boolean
+  type tinyint when (= precision 1) to boolean drop typemod using tinyint-to-boolean,
+  -- R12: datetime → timestamp without time zone (timezone-naive; source DB is UTC per audit)
+  type datetime to timestamp without time zone drop typemod
+  -- NOTE: No CAST rule for zero dates here (handled by WITH block ZERO DATES TO NULL above — AR09)
+
+INCLUDING ONLY TABLE NAMES MATCHING /^ttrss_/
+
+AFTER LOAD DO
+  -- R15/AR08: ALL auto-increment tables — explicit setval for every sequence.
+  -- 'reset sequences' is omitted from WITH; these are the authoritative sequence resets.
+  $$ SELECT setval('ttrss_feeds_id_seq',             (SELECT COALESCE(MAX(id),1) FROM ttrss_feeds)); $$,
+  $$ SELECT setval('ttrss_entries_id_seq',           (SELECT COALESCE(MAX(id),1) FROM ttrss_entries)); $$,
+  $$ SELECT setval('ttrss_user_entries_int_id_seq',  (SELECT COALESCE(MAX(int_id),1) FROM ttrss_user_entries)); $$,
+  $$ SELECT setval('ttrss_users_id_seq',             (SELECT COALESCE(MAX(id),1) FROM ttrss_users)); $$,
+  $$ SELECT setval('ttrss_feed_categories_id_seq',   (SELECT COALESCE(MAX(id),1) FROM ttrss_feed_categories)); $$,
+  $$ SELECT setval('ttrss_archived_feeds_id_seq',    (SELECT COALESCE(MAX(id),1) FROM ttrss_archived_feeds)); $$,
+  $$ SELECT setval('ttrss_enclosures_id_seq',        (SELECT COALESCE(MAX(id),1) FROM ttrss_enclosures)); $$,
+  $$ SELECT setval('ttrss_tags_id_seq',              (SELECT COALESCE(MAX(id),1) FROM ttrss_tags)); $$,
+  $$ SELECT setval('ttrss_labels2_id_seq',           (SELECT COALESCE(MAX(id),1) FROM ttrss_labels2)); $$,
+  $$ SELECT setval('ttrss_user_labels2_id_seq',      (SELECT COALESCE(MAX(id),1) FROM ttrss_user_labels2)); $$,
+  $$ SELECT setval('ttrss_filters2_id_seq',          (SELECT COALESCE(MAX(id),1) FROM ttrss_filters2)); $$,
+  $$ SELECT setval('ttrss_filter_actions_id_seq',    (SELECT COALESCE(MAX(id),1) FROM ttrss_filter_actions)); $$,
+  $$ SELECT setval('ttrss_filter_rules_id_seq',      (SELECT COALESCE(MAX(id),1) FROM ttrss_filter_rules)); $$,
+  $$ SELECT setval('ttrss_plugin_storage_id_seq',    (SELECT COALESCE(MAX(id),1) FROM ttrss_plugin_storage)); $$,
+  $$ SELECT setval('ttrss_sessions_id_seq',          (SELECT COALESCE(MAX(id),1) FROM ttrss_sessions)); $$,
+  $$ SELECT setval('ttrss_access_keys_id_seq',       (SELECT COALESCE(MAX(id),1) FROM ttrss_access_keys)); $$,
+  $$ SELECT setval('ttrss_entry_comments_id_seq',    (SELECT COALESCE(MAX(id),1) FROM ttrss_entry_comments)); $$,
+  $$ SELECT setval('ttrss_error_log_id_seq',         (SELECT COALESCE(MAX(id),1) FROM ttrss_error_log)); $$;

@@ -1,0 +1,44 @@
+# New: no PHP equivalent — production deployment workflow.
+# Phase 6 B6: triggered on version tag push; runs pgloader + PHP blob conversion.
+name: Deploy
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run pgloader migration
+        run: |
+          docker run --rm \
+            -e MYSQL_USER=${{ secrets.MYSQL_USER }} \
+            -e MYSQL_PASS=${{ secrets.MYSQL_PASS }} \
+            -e MYSQL_HOST=${{ secrets.MYSQL_HOST }} \
+            -e MYSQL_DB=${{ secrets.MYSQL_DB }} \
+            -e PG_USER=${{ secrets.PG_USER }} \
+            -e PG_PASS=${{ secrets.PG_PASS }} \
+            -e PG_HOST=${{ secrets.PG_HOST }} \
+            -e PG_DB=${{ secrets.PG_DB }} \
+            -v "${{ github.workspace }}/scripts:/scripts:ro" \
+            dimitri/pgloader:latest \
+            pgloader /scripts/migrate/pgloader.load
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Post-migration PHP blob conversion
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python scripts/migrate/convert_php_serialized.py

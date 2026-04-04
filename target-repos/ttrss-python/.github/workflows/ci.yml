@@ -1,0 +1,150 @@
+# New: no PHP equivalent — CI/CD pipeline for Python migration.
+# Phase 6 B1: CI Foundation (advisory coverage gate until B6).
+name: CI
+
+on:
+  push:
+    branches: ["master", "main"]
+  pull_request:
+    branches: ["master", "main"]
+
+jobs:
+  lint:
+    name: Lint + Migration Drift
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: ttrss
+          POSTGRES_USER: ttrss
+          POSTGRES_PASSWORD: ttrss
+        options: >-
+          --health-cmd "pg_isready -U ttrss"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    env:
+      DATABASE_URL: postgresql://ttrss:ttrss@localhost:5432/ttrss
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -e ".[dev]" ruff mypy
+      - name: Ruff lint
+        run: ruff check ttrss/
+      - name: Mypy type check
+        run: mypy ttrss/ --ignore-missing-imports
+      # R10: alembic upgrade required before alembic check (needs live schema)
+      - name: Alembic upgrade
+        run: alembic upgrade head
+      # R10/AR05: detect migration drift (fails if model and migration diverge)
+      - name: Alembic check
+        run: alembic check
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: ttrss
+          POSTGRES_USER: ttrss
+          POSTGRES_PASSWORD: ttrss
+        options: >-
+          --health-cmd "pg_isready -U ttrss"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    env:
+      DATABASE_URL: postgresql://ttrss:ttrss@localhost:5432/ttrss
+      REDIS_URL: redis://localhost:6379/0
+      SECRET_KEY: ci-only-not-for-production
+      FEED_CRYPT_KEY: ""
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+      - name: Alembic upgrade
+        run: alembic upgrade head
+      - name: Run tests
+        run: pytest tests/ -v --tb=short --junit-xml=test-results.xml
+      # R19: upper bound — fail CI if failures+errors exceed 9
+      - name: Check failure threshold
+        run: |
+          python - <<'EOF'
+          import xml.etree.ElementTree as ET, sys
+          tree = ET.parse("test-results.xml")
+          suite = tree.getroot()
+          failures = int(suite.get("failures", 0))
+          errors = int(suite.get("errors", 0))
+          total = failures + errors
+          print(f"failures={failures} errors={errors} total={total}")
+          if total > 9:
+              print(f"FAIL: {total} failures+errors exceeds threshold of 9")
+              sys.exit(1)
+          EOF
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: test-results.xml
+
+  build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  coverage-gate:
+    name: Coverage Gate (advisory until B6)
+    runs-on: ubuntu-latest
+    # R18: coverage gate is now HARD at ≥95% (B6 complete — continue-on-error removed)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+      - name: Build PHP call graphs
+        run: python tools/graph_analysis/build_php_graphs.py
+        working-directory: ${{ github.workspace }}/..
+      - name: Validate migration coverage
+        run: |
+          python tools/graph_analysis/validate_coverage.py \
+            --graph-dir tools/graph_analysis/output \
+            --python-dir target-repos/ttrss-python/ttrss \
+            --min-coverage 0.95
+        working-directory: ${{ github.workspace }}/..

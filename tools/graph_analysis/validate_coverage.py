@@ -202,6 +202,41 @@ TABLE_TO_MODEL: Dict[str, str] = {
 }
 
 # ---------------------------------------------------------------------------
+# PHP handler class → PHP source file mapping (B2: Fix 2)
+# Resolves "ClassName::method" qnames to their PHP file path so the
+# file-level fallback in validate_call_coverage() can match them.
+# ---------------------------------------------------------------------------
+HANDLER_CLASS_PHP_FILE: Dict[str, str] = {
+    "api":             "ttrss/classes/api.php",
+    "API":             "ttrss/classes/api.php",
+    "Handler":         "ttrss/classes/handler.php",
+    "Handler_Public":  "ttrss/classes/handler/public.php",
+    "Handler_Protected": "ttrss/classes/handler/protected.php",
+    "Backend":         "ttrss/classes/backend.php",
+    "Pref_Feeds":      "ttrss/classes/pref/feeds.php",
+    "Pref_Filters":    "ttrss/classes/pref/filters.php",
+    "Pref_Labels":     "ttrss/classes/pref/labels.php",
+    "Pref_System":     "ttrss/classes/pref/system.php",
+    "Pref_Prefs":      "ttrss/classes/pref/prefs.php",
+    "Pref_Users":      "ttrss/classes/pref/users.php",
+    "Feeds":           "ttrss/classes/feeds.php",
+    "Article":         "ttrss/classes/article.php",
+    "Dlg":             "ttrss/classes/dlg.php",
+    "RPC":             "ttrss/classes/rpc.php",
+    "RPC2":            "ttrss/classes/rpc2.php",
+    "Opml":            "ttrss/classes/opml.php",
+    "PluginHost":      "ttrss/classes/pluginhost.php",
+    "Auth_Internal":   "ttrss/plugins/auth_internal/init.php",
+    "Db":              "ttrss/classes/db.php",
+    "Db_PDO":          "ttrss/classes/db.php",
+    "Db_Prefs":        "ttrss/classes/db/prefs.php",
+    "Logger":          "ttrss/classes/logger.php",
+    "Logger_SQL":      "ttrss/classes/logger/sql.php",
+    "DbUpdater":       "ttrss/classes/dbupdater.php",
+    "Auth_Base":       "ttrss/classes/auth/base.php",
+}
+
+# ---------------------------------------------------------------------------
 # PHP class → Python class mapping (known equivalences)
 # ---------------------------------------------------------------------------
 PHP_CLASS_TO_PYTHON: Dict[str, Optional[str]] = {
@@ -281,7 +316,28 @@ SOURCE_PATTERNS: List[re.Pattern] = [
     re.compile(
         r"#\s*Source:\s*(?P<path>ttrss/\S+\.php)\s*\+"
     ),
+    # Format 8: # Source: api.php (bare filename, file-level, no ttrss/ prefix)
+    # Catches short-form comments like "# Source: api.php"
+    re.compile(
+        r"#\s*Source:\s*(?P<path>[\w/-]+\.php)\s*$"
+    ),
+    # Format 9: alternative traceability keywords (B2: Fix 1)
+    # Matches: # Adapted from: / # New: / # PHP source: / # Migrated from: / # Based on:
+    re.compile(
+        r"#\s*(?:Adapted from|PHP source|Migrated from|Based on):\s*"
+        r"(?:ttrss/)?(?P<path>[\w./]+\.php)",
+        re.IGNORECASE,
+    ),
 ]
+
+# Broad catch-all: any traceability comment keyword pointing to a .php file (B2: Fix 1)
+# Used to detect lines that have valid intent but don't match specific SOURCE_PATTERNS.
+SOURCE_COMMENT_RE = re.compile(
+    r"#\s*(?:Source|Adapted from|New|PHP source|Migrated from|Based on|Inferred from):\s*"
+    r"(?:ttrss/)?(?P<file>[\w./]+\.php)"
+    r"(?:[:\s].*)?\s*$",
+    re.IGNORECASE,
+)
 
 # Catch-all for any # Source: comment (to detect unparseable ones)
 SOURCE_ANY = re.compile(r"#\s*Source:\s*\S")
@@ -324,8 +380,13 @@ class PythonModule:
         self._extract_hook_calls()
 
     def _extract_source_comments(self) -> None:
+        # B2 Fix 1: expanded traceability keywords (was only "# Source:" + "# Inferred from:")
+        _TRACEABILITY_KEYWORDS = (
+            "# Source:", "# Inferred from:", "# Adapted from:",
+            "# New:", "# PHP source:", "# Migrated from:", "# Based on:",
+        )
         for lineno, line in enumerate(self.source_lines, 1):
-            if "# Source:" not in line and "# Inferred from:" not in line:
+            if not any(kw in line for kw in _TRACEABILITY_KEYWORDS):
                 continue
             matched = False
             for pat in SOURCE_PATTERNS:
@@ -340,8 +401,19 @@ class PythonModule:
                     })
                     matched = True
                     break
+            if not matched:
+                # Try broad SOURCE_COMMENT_RE as secondary catch (B2 Fix 1)
+                m = SOURCE_COMMENT_RE.search(line)
+                if m:
+                    self.source_comments.append({
+                        "line": lineno,
+                        "path": m.group("file"),
+                        "qname": "",
+                        "raw": line.strip(),
+                    })
+                    matched = True
             if not matched and SOURCE_ANY.search(line):
-                # Unparseable source comment
+                # Genuinely unparseable source comment
                 self.source_comments.append({
                     "line": lineno,
                     "path": "",
@@ -466,6 +538,10 @@ def validate_call_coverage(
             # File-level fallback: check if ANY Source comment points to the PHP file
             # containing this function (e.g., functions.php::foo → any "# Source: functions.php:NNN")
             php_file = qname.split("::")[0] if "::" in qname else qname
+            # B2 Fix 2: resolve handler class names to their PHP file paths
+            # so "API::login" resolves to "ttrss/classes/api.php" (not bare "API")
+            if "/" not in php_file and php_file in HANDLER_CLASS_PHP_FILE:
+                php_file = HANDLER_CLASS_PHP_FILE[php_file]
             php_basename = php_file.rsplit("/", 1)[-1]
             if php_basename in traced_files or php_file in traced_files:
                 matched_by_file.append({"qname": qname, "level": level, "match": "file_level"})
@@ -989,6 +1065,13 @@ def main() -> int:
         default=None,
         help="Output directory for validation_report.json (default: same as --graph-dir)",
     )
+    parser.add_argument(
+        "--min-coverage",
+        type=float,
+        default=None,
+        metavar="FRACTION",
+        help="Minimum call coverage as a fraction 0–1 (e.g. 0.95). Exits 1 if not met.",
+    )
     args = parser.parse_args()
 
     graph_dir = Path(args.graph_dir)
@@ -1046,6 +1129,21 @@ def main() -> int:
 
     # Print report
     exit_code = print_report(results)
+
+    # --min-coverage hard gate (B2: enforced in B6 via CI; advisory here)
+    if args.min_coverage is not None:
+        call_dim = next((d for d in results if d["dimension"] == "call_coverage"), None)
+        if call_dim is not None:
+            pct = call_dim.get("coverage_pct", 0.0)
+            threshold_pct = args.min_coverage * 100
+            if pct < threshold_pct:
+                print(
+                    f"\nCOVERAGE GATE FAILED: {pct:.1f}% < {threshold_pct:.1f}% required",
+                    file=sys.stderr,
+                )
+                exit_code = 1
+            else:
+                print(f"\nCoverage gate passed: {pct:.1f}% >= {threshold_pct:.1f}%")
 
     # Write JSON report
     output_dir.mkdir(parents=True, exist_ok=True)

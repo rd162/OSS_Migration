@@ -56,6 +56,35 @@ celery_app.conf.update(
 )
 
 
+# ---------------------------------------------------------------------------
+# R03: Celery prefork worker DB pool safety (Phase 6 B3)
+# ---------------------------------------------------------------------------
+from celery.signals import worker_process_init, worker_process_shutdown  # noqa: E402
+
+
+@worker_process_init.connect
+def dispose_db_pool_on_fork(**kwargs):
+    """
+    R03: Celery prefork workers inherit the parent process's DB connection FD.
+    dispose() before the first query ensures each worker opens its own fresh
+    connections — prevents shared-FD silent data corruption.
+
+    New: no PHP equivalent — PHP used pcntl_fork() with explicit resource cleanup.
+    """
+    from ttrss.extensions import db
+    db.engine.dispose()
+
+
+@worker_process_shutdown.connect
+def close_db_pool_on_shutdown(**kwargs):
+    """Close DB pool cleanly on Celery worker shutdown.
+
+    New: no PHP equivalent — PHP daemon relied on OS cleanup on process exit.
+    """
+    from ttrss.extensions import db
+    db.engine.dispose()
+
+
 def init_app(app) -> None:
     """
     Bind Celery to a Flask app so tasks can use app context (DB, config).

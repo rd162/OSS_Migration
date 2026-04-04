@@ -1,0 +1,16 @@
+# New: no PHP equivalent — Docker build context exclusions.
+# Phase 6 B3.
+.git
+.env*
+tests/
+*.pyc
+__pycache__/
+*.egg-info/
+.pytest_cache/
+uv.lock
+docker-compose*.yml
+.github/
+tools/
+memory/
+specs/
+source-repos/

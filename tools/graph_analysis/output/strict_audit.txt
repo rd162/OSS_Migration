@@ -1,0 +1,122 @@
+========================================================================
+  STRICT PHP→PYTHON COVERAGE AUDIT  (tree-sitter, file-specific only)
+========================================================================
+
+METHODOLOGY
+  - PHP functions: parsed DIRECTLY by tree-sitter (exact start+end lines)
+  - Python refs:   enhanced regex covering all real-world Source formats
+  - Matching:      file-specific ONLY (no global bare-name fallback)
+
+SUMMARY
+  PHP files scanned (non-lib):                          72
+  PHP functions found (raw, all):                       641
+  ─────────────────────────────────────────────────────
+  In-scope (non-3rd-party, non-eliminated, level ≤ 10): 288
+  Exact match (file-specific name or line-range):       288
+  Eliminated (ELIMINATED_BARE list):                    168
+  File-eliminated (whole file dropped):                 87
+  File-level only (file mentioned, fn not named):       0
+  Missing (NO traceability):                            0
+  Skipped (level > 10):                               10
+  Skipped (third-party / lib):                          88
+
+  Exact+Eliminated coverage:     456/466 = 97.9%  (of in-scope+eliminated)
+  Strict exact-only coverage:    288/288 = 100.0%  (no elimination credit)
+
+========================================================================
+  CITED LINE RANGE EXTENDS BEYOND FUNCTION END (48)
+  (Comment may be citing more lines than the PHP function body contains)
+========================================================================
+  API::getConfig
+    PHP fn:   lines 370-385
+    Cited:    lines 369-407  (cited end 407 > fn end 385 by 22 lines)
+  API::updateFeed
+    PHP fn:   lines 387-395
+    Cited:    lines 369-407  (cited end 407 > fn end 395 by 12 lines)
+  API::api_get_feeds
+    PHP fn:   lines 504-629
+    Cited:    lines 629-638  (cited end 638 > fn end 629 by 9 lines)
+  PluginHost::register_plugin
+    PHP fn:   lines 64-67
+    Cited:    lines 63-90  (cited end 90 > fn end 67 by 23 lines)
+  PluginHost::get_link
+    PHP fn:   lines 70-72
+    Cited:    lines 63-90  (cited end 90 > fn end 72 by 18 lines)
+  PluginHost::load
+    PHP fn:   lines 131-180
+    Cited:    lines 170-195  (cited end 195 > fn end 180 by 15 lines)
+  PluginHost::is_system
+    PHP fn:   lines 182-186
+    Cited:    lines 170-195  (cited end 195 > fn end 186 by 9 lines)
+  PluginHost::is_system
+    PHP fn:   lines 182-186
+    Cited:    lines 184-195  (cited end 195 > fn end 186 by 9 lines)
+  PluginHost::add_handler
+    PHP fn:   lines 189-200
+    Cited:    lines 195-230  (cited end 230 > fn end 200 by 30 lines)
+  PluginHost::add_handler
+    PHP fn:   lines 189-200
+    Cited:    lines 195-215  (cited end 215 > fn end 200 by 15 lines)
+  PluginHost::add_handler
+    PHP fn:   lines 189-200
+    Cited:    lines 200-240  (cited end 240 > fn end 200 by 40 lines)
+  PluginHost::add_handler
+    PHP fn:   lines 189-200
+    Cited:    lines 200-240  (cited end 240 > fn end 200 by 40 lines)
+  PluginHost::del_handler
+    PHP fn:   lines 202-209
+    Cited:    lines 195-230  (cited end 230 > fn end 209 by 21 lines)
+  PluginHost::del_handler
+    PHP fn:   lines 202-209
+    Cited:    lines 195-215  (cited end 215 > fn end 209 by 6 lines)
+  PluginHost::del_handler
+    PHP fn:   lines 202-209
+    Cited:    lines 200-240  (cited end 240 > fn end 209 by 31 lines)
+  PluginHost::del_handler
+    PHP fn:   lines 202-209
+    Cited:    lines 202-215  (cited end 215 > fn end 209 by 6 lines)
+  PluginHost::del_handler
+    PHP fn:   lines 202-209
+    Cited:    lines 200-240  (cited end 240 > fn end 209 by 31 lines)
+  PluginHost::lookup_handler
+    PHP fn:   lines 211-224
+    Cited:    lines 195-230  (cited end 230 > fn end 224 by 6 lines)
+  PluginHost::lookup_handler
+    PHP fn:   lines 211-224
+    Cited:    lines 216-230  (cited end 230 > fn end 224 by 6 lines)
+  PluginHost::lookup_handler
+    PHP fn:   lines 211-224
+    Cited:    lines 200-240  (cited end 240 > fn end 224 by 16 lines)
+  PluginHost::lookup_handler
+    PHP fn:   lines 211-224
+    Cited:    lines 217-235  (cited end 235 > fn end 224 by 11 lines)
+  PluginHost::lookup_handler
+    PHP fn:   lines 211-224
+    Cited:    lines 200-240  (cited end 240 > fn end 224 by 16 lines)
+  PluginHost::add_command
+    PHP fn:   lines 226-233
+    Cited:    lines 200-240  (cited end 240 > fn end 233 by 7 lines)
+  PluginHost::add_command
+    PHP fn:   lines 226-233
+    Cited:    lines 200-240  (cited end 240 > fn end 233 by 7 lines)
+  PluginHost::lookup_command
+    PHP fn:   lines 241-251
+    Cited:    lines 248-270  (cited end 270 > fn end 251 by 19 lines)
+  PluginHost::lookup_command
+    PHP fn:   lines 241-251
+    Cited:    lines 248-260  (cited end 260 > fn end 251 by 9 lines)
+  PluginHost::get_commands
+    PHP fn:   lines 253-255
+    Cited:    lines 248-270  (cited end 270 > fn end 255 by 15 lines)
+  PluginHost::run_commands
+    PHP fn:   lines 257-264
+    Cited:    lines 248-270  (cited end 270 > fn end 264 by 6 lines)
+  PluginHost::run_commands
+    PHP fn:   lines 257-264
+    Cited:    lines 261-270  (cited end 270 > fn end 264 by 6 lines)
+  PluginHost::load_data
+    PHP fn:   lines 266-275
+    Cited:    lines 270-310  (cited end 310 > fn end 275 by 35 lines)
+  ... and 18 more
+
+  All in-scope functions are exactly covered or eliminated.

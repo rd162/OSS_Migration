@@ -1,0 +1,450 @@
+{
+  "summary": {
+    "php_files_scanned": 72,
+    "php_functions_raw": 641,
+    "in_scope": 288,
+    "exact": 288,
+    "eliminated_bare": 168,
+    "file_eliminated": 87,
+    "file_level_only": 0,
+    "missing": 0,
+    "skipped_level": 10,
+    "third_party": 88
+  },
+  "boundary_mismatches": [
+    {
+      "php_file": "ttrss/classes/api.php",
+      "qname": "API::getConfig",
+      "fn_start": 370,
+      "fn_end": 385,
+      "cited_start": 369,
+      "cited_end": 407,
+      "issue": "cited end 407 > fn end 385 by 22 lines"
+    },
+    {
+      "php_file": "ttrss/classes/api.php",
+      "qname": "API::updateFeed",
+      "fn_start": 387,
+      "fn_end": 395,
+      "cited_start": 369,
+      "cited_end": 407,
+      "issue": "cited end 407 > fn end 395 by 12 lines"
+    },
+    {
+      "php_file": "ttrss/classes/api.php",
+      "qname": "API::api_get_feeds",
+      "fn_start": 504,
+      "fn_end": 629,
+      "cited_start": 629,
+      "cited_end": 638,
+      "issue": "cited end 638 > fn end 629 by 9 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::register_plugin",
+      "fn_start": 64,
+      "fn_end": 67,
+      "cited_start": 63,
+      "cited_end": 90,
+      "issue": "cited end 90 > fn end 67 by 23 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::get_link",
+      "fn_start": 70,
+      "fn_end": 72,
+      "cited_start": 63,
+      "cited_end": 90,
+      "issue": "cited end 90 > fn end 72 by 18 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::load",
+      "fn_start": 131,
+      "fn_end": 180,
+      "cited_start": 170,
+      "cited_end": 195,
+      "issue": "cited end 195 > fn end 180 by 15 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::is_system",
+      "fn_start": 182,
+      "fn_end": 186,
+      "cited_start": 170,
+      "cited_end": 195,
+      "issue": "cited end 195 > fn end 186 by 9 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::is_system",
+      "fn_start": 182,
+      "fn_end": 186,
+      "cited_start": 184,
+      "cited_end": 195,
+      "issue": "cited end 195 > fn end 186 by 9 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::add_handler",
+      "fn_start": 189,
+      "fn_end": 200,
+      "cited_start": 195,
+      "cited_end": 230,
+      "issue": "cited end 230 > fn end 200 by 30 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::add_handler",
+      "fn_start": 189,
+      "fn_end": 200,
+      "cited_start": 195,
+      "cited_end": 215,
+      "issue": "cited end 215 > fn end 200 by 15 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::add_handler",
+      "fn_start": 189,
+      "fn_end": 200,
+      "cited_start": 200,
+      "cited_end": 240,
+      "issue": "cited end 240 > fn end 200 by 40 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::add_handler",
+      "fn_start": 189,
+      "fn_end": 200,
+      "cited_start": 200,
+      "cited_end": 240,
+      "issue": "cited end 240 > fn end 200 by 40 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::del_handler",
+      "fn_start": 202,
+      "fn_end": 209,
+      "cited_start": 195,
+      "cited_end": 230,
+      "issue": "cited end 230 > fn end 209 by 21 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::del_handler",
+      "fn_start": 202,
+      "fn_end": 209,
+      "cited_start": 195,
+      "cited_end": 215,
+      "issue": "cited end 215 > fn end 209 by 6 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::del_handler",
+      "fn_start": 202,
+      "fn_end": 209,
+      "cited_start": 200,
+      "cited_end": 240,
+      "issue": "cited end 240 > fn end 209 by 31 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::del_handler",
+      "fn_start": 202,
+      "fn_end": 209,
+      "cited_start": 202,
+      "cited_end": 215,
+      "issue": "cited end 215 > fn end 209 by 6 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::del_handler",
+      "fn_start": 202,
+      "fn_end": 209,
+      "cited_start": 200,
+      "cited_end": 240,
+      "issue": "cited end 240 > fn end 209 by 31 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::lookup_handler",
+      "fn_start": 211,
+      "fn_end": 224,
+      "cited_start": 195,
+      "cited_end": 230,
+      "issue": "cited end 230 > fn end 224 by 6 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::lookup_handler",
+      "fn_start": 211,
+      "fn_end": 224,
+      "cited_start": 216,
+      "cited_end": 230,
+      "issue": "cited end 230 > fn end 224 by 6 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::lookup_handler",
+      "fn_start": 211,
+      "fn_end": 224,
+      "cited_start": 200,
+      "cited_end": 240,
+      "issue": "cited end 240 > fn end 224 by 16 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::lookup_handler",
+      "fn_start": 211,
+      "fn_end": 224,
+      "cited_start": 217,
+      "cited_end": 235,
+      "issue": "cited end 235 > fn end 224 by 11 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::lookup_handler",
+      "fn_start": 211,
+      "fn_end": 224,
+      "cited_start": 200,
+      "cited_end": 240,
+      "issue": "cited end 240 > fn end 224 by 16 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::add_command",
+      "fn_start": 226,
+      "fn_end": 233,
+      "cited_start": 200,
+      "cited_end": 240,
+      "issue": "cited end 240 > fn end 233 by 7 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::add_command",
+      "fn_start": 226,
+      "fn_end": 233,
+      "cited_start": 200,
+      "cited_end": 240,
+      "issue": "cited end 240 > fn end 233 by 7 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::lookup_command",
+      "fn_start": 241,
+      "fn_end": 251,
+      "cited_start": 248,
+      "cited_end": 270,
+      "issue": "cited end 270 > fn end 251 by 19 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::lookup_command",
+      "fn_start": 241,
+      "fn_end": 251,
+      "cited_start": 248,
+      "cited_end": 260,
+      "issue": "cited end 260 > fn end 251 by 9 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::get_commands",
+      "fn_start": 253,
+      "fn_end": 255,
+      "cited_start": 248,
+      "cited_end": 270,
+      "issue": "cited end 270 > fn end 255 by 15 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::run_commands",
+      "fn_start": 257,
+      "fn_end": 264,
+      "cited_start": 248,
+      "cited_end": 270,
+      "issue": "cited end 270 > fn end 264 by 6 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::run_commands",
+      "fn_start": 257,
+      "fn_end": 264,
+      "cited_start": 261,
+      "cited_end": 270,
+      "issue": "cited end 270 > fn end 264 by 6 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::load_data",
+      "fn_start": 266,
+      "fn_end": 275,
+      "cited_start": 270,
+      "cited_end": 310,
+      "issue": "cited end 310 > fn end 275 by 35 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::load_data",
+      "fn_start": 266,
+      "fn_end": 275,
+      "cited_start": 270,
+      "cited_end": 285,
+      "issue": "cited end 285 > fn end 275 by 10 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::save_data",
+      "fn_start": 277,
+      "fn_end": 304,
+      "cited_start": 270,
+      "cited_end": 310,
+      "issue": "cited end 310 > fn end 304 by 6 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::set",
+      "fn_start": 306,
+      "fn_end": 315,
+      "cited_start": 310,
+      "cited_end": 340,
+      "issue": "cited end 340 > fn end 315 by 25 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::set",
+      "fn_start": 306,
+      "fn_end": 315,
+      "cited_start": 310,
+      "cited_end": 325,
+      "issue": "cited end 325 > fn end 315 by 10 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::get_all",
+      "fn_start": 327,
+      "fn_end": 331,
+      "cited_start": 310,
+      "cited_end": 340,
+      "issue": "cited end 340 > fn end 331 by 9 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::clear_data",
+      "fn_start": 333,
+      "fn_end": 342,
+      "cited_start": 340,
+      "cited_end": 370,
+      "issue": "cited end 370 > fn end 342 by 28 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::clear_data",
+      "fn_start": 333,
+      "fn_end": 342,
+      "cited_start": 340,
+      "cited_end": 352,
+      "issue": "cited end 352 > fn end 342 by 10 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::set_debug",
+      "fn_start": 344,
+      "fn_end": 346,
+      "cited_start": 340,
+      "cited_end": 370,
+      "issue": "cited end 370 > fn end 346 by 24 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::set_debug",
+      "fn_start": 344,
+      "fn_end": 346,
+      "cited_start": 340,
+      "cited_end": 352,
+      "issue": "cited end 352 > fn end 346 by 6 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::get_debug",
+      "fn_start": 348,
+      "fn_end": 350,
+      "cited_start": 340,
+      "cited_end": 370,
+      "issue": "cited end 370 > fn end 350 by 20 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pluginhost.php",
+      "qname": "PluginHost::add_feed",
+      "fn_start": 355,
+      "fn_end": 364,
+      "cited_start": 340,
+      "cited_end": 370,
+      "issue": "cited end 370 > fn end 364 by 6 lines"
+    },
+    {
+      "php_file": "ttrss/classes/pref/feeds.php",
+      "qname": "Pref_Feeds::batchSubscribe",
+      "fn_start": 1767,
+      "fn_end": 1813,
+      "cited_start": 1767,
+      "cited_end": 1860,
+      "issue": "cited end 1860 > fn end 1813 by 47 lines"
+    },
+    {
+      "php_file": "ttrss/include/functions.php",
+      "qname": "ttrss/include/functions.php::initialize_user_prefs",
+      "fn_start": 639,
+      "fn_end": 688,
+      "cited_start": 639,
+      "cited_end": 723,
+      "issue": "cited end 723 > fn end 688 by 35 lines"
+    },
+    {
+      "php_file": "ttrss/include/rssfuncs.php",
+      "qname": "ttrss/include/rssfuncs.php::get_article_filters",
+      "fn_start": 1272,
+      "fn_end": 1348,
+      "cited_start": 1330,
+      "cited_end": 1370,
+      "issue": "cited end 1370 > fn end 1348 by 22 lines"
+    },
+    {
+      "php_file": "ttrss/include/rssfuncs.php",
+      "qname": "ttrss/include/rssfuncs.php::find_article_filter",
+      "fn_start": 1350,
+      "fn_end": 1357,
+      "cited_start": 1330,
+      "cited_end": 1370,
+      "issue": "cited end 1370 > fn end 1357 by 13 lines"
+    },
+    {
+      "php_file": "ttrss/include/rssfuncs.php",
+      "qname": "ttrss/include/rssfuncs.php::assign_article_to_label_filters",
+      "fn_start": 1391,
+      "fn_end": 1399,
+      "cited_start": 1395,
+      "cited_end": 1414,
+      "issue": "cited end 1414 > fn end 1399 by 15 lines"
+    },
+    {
+      "php_file": "ttrss/include/rssfuncs.php",
+      "qname": "ttrss/include/rssfuncs.php::make_guid_from_title",
+      "fn_start": 1401,
+      "fn_end": 1404,
+      "cited_start": 1395,
+      "cited_end": 1414,
+      "issue": "cited end 1414 > fn end 1404 by 10 lines"
+    },
+    {
+      "php_file": "ttrss/plugins/auth_internal/init.php",
+      "qname": "Auth_Internal::check_password",
+      "fn_start": 142,
+      "fn_end": 169,
+      "cited_start": 142,
+      "cited_end": 176,
+      "issue": "cited end 176 > fn end 169 by 7 lines"
+    }
+  ],
+  "file_level_only": [],
+  "missing": []
+}

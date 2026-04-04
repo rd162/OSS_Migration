@@ -167,7 +167,7 @@ def cleanup_tags(
 ) -> int:
     """Delete orphaned/old tags to keep ttrss_tags table bounded.
 
-    Source: ttrss/include/rssfuncs.php:cleanup_tags (lines ~1370-1380)
+    Source: ttrss/include/functions2.php:cleanup_tags (lines 2030-2069)
     Adapted: PHP single-query DELETE … LIMIT becomes subquery-based DELETE (PostgreSQL
     does not support DELETE … LIMIT directly).
     Returns number of rows deleted.

@@ -4,6 +4,9 @@ Source: ttrss/classes/pref/labels.php (Pref_Labels handler, 331 lines)
 Adapted: PHP handler class replaced by Flask Blueprint routes.
          Delegation to labels_crud per AR-2 (no direct SQL here).
          HTML output eliminated — endpoints return JSON (R13).
+Eliminated: ttrss/classes/pref/labels.php:Pref_Labels::edit (lines 10-85)
+  — Pure HTML dialog generator (color picker + caption TextBox), replaced by
+    frontend Vue component per ADR-0004; no business logic to migrate.
 """
 from __future__ import annotations
 

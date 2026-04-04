@@ -1,7 +1,8 @@
 # Memory Index
 
 ## Active Plans
-- [**Coverage Gap Plan**](coverage_gap_plan.md) — Phase 5b (2026-04-05): exact function audit 100%; 13 new implementations; all complete
+- [**Semantic Verification Plan**](semantic_verification_plan.md) — Phase 5d (2026-04-05): SME confirmed all generated code incorrect; 15 workstreams (WS-A auth through WS-O ccache); fix every function to 100% PHP semantic equivalence
+- [**Coverage Gap Plan**](coverage_gap_plan.md) — Phase 5b/5c (2026-04-05): strict tree-sitter audit 100%; 2 Source errors fixed; all complete
 - [**Master Plan**](master_plan.md) — Unified graph-driven migration plan (Phases 1-6), tree-sitter+NetworkX native at every gate
 - [Phase 2 Detail](phase2_plan_2026-04-04.md) — 4 batches, dependency-first (Condorcet winner)
 - [Phase 3 Detail](phase3_plan_2026-04-04.md) — 9 serial batches with graph-level annotations (Condorcet winner)
@@ -12,7 +13,7 @@
 ## Session History
 - [Session 2026-04-03](session_2026-04-03.md) — Spec-kit built, P0+P1 ADRs accepted, Phase 1a complete
 - [Session 2026-04-04](session_2026-04-04.md) — Phases 1b-4 complete, graph analysis built + enhanced, specs updated
-- [Session 2026-04-05](session_2026-04-05.md) — Exact function audit: 100% function-level coverage; 13 new implementations; 598 tests pass
+- [Session 2026-04-05](session_2026-04-05.md) — Strict tree-sitter audit; 2 Source errors fixed; semantic verification plan written (SME found all code incorrect)
 
 ## Rules
 - [Consistency Rule](feedback_consistency_rule.md) — MANDATORY: update ALL referencing locations when any status/decision changes

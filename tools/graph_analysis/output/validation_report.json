@@ -7,12 +7,14 @@
   "dimensions": [
     {
       "dimension": "call_coverage",
-      "matched": 19,
-      "eliminated": 39,
-      "unmatched": 663,
-      "skipped_third_party": 462,
+      "matched_exact": 46,
+      "matched_by_file": 130,
+      "eliminated": 95,
+      "unmatched": 386,
+      "skipped_third_party": 526,
       "skipped_high_level": 23,
-      "unparseable_comments": 398,
+      "unparseable_comments": 267,
+      "coverage_pct": 41.2,
       "unmatched_details": [
         {
           "qname": "API::api_get_feeds",
@@ -23,16 +25,8 @@
           "level": 6
         },
         {
-          "qname": "API::before",
-          "level": 2
-        },
-        {
           "qname": "API::catchupFeed",
           "level": 6
-        },
-        {
-          "qname": "API::getApiLevel",
-          "level": 1
         },
         {
           "qname": "API::getArticle",
@@ -75,23 +69,7 @@
           "level": 4
         },
         {
-          "qname": "API::getVersion",
-          "level": 1
-        },
-        {
-          "qname": "API::index",
-          "level": 1
-        },
-        {
           "qname": "API::isCategoryEmpty",
-          "level": 1
-        },
-        {
-          "qname": "API::isLoggedIn",
-          "level": 1
-        },
-        {
-          "qname": "API::logout",
           "level": 1
         },
         {
@@ -117,10 +95,6 @@
         {
           "qname": "API::updateFeed",
           "level": 7
-        },
-        {
-          "qname": "API::wrap",
-          "level": 0
         },
         {
           "qname": "Article::assigntolabel",
@@ -171,10 +145,6 @@
           "level": 6
         },
         {
-          "qname": "Auth_Base::__construct",
-          "level": 0
-        },
-        {
           "qname": "Auth_Base::auto_create_user",
           "level": 2
         },
@@ -223,63 +193,15 @@
           "level": 0
         },
         {
-          "qname": "Db::__clone",
-          "level": 0
-        },
-        {
-          "qname": "Db::__construct",
-          "level": 1
-        },
-        {
-          "qname": "Db::affected_rows",
-          "level": 1
-        },
-        {
-          "qname": "Db::close",
-          "level": 1
-        },
-        {
           "qname": "Db::connect",
           "level": 0
-        },
-        {
-          "qname": "Db::escape_string",
-          "level": 1
-        },
-        {
-          "qname": "Db::fetch_assoc",
-          "level": 1
-        },
-        {
-          "qname": "Db::fetch_result",
-          "level": 1
         },
         {
           "qname": "Db::get",
           "level": 0
         },
         {
-          "qname": "Db::last_error",
-          "level": 1
-        },
-        {
-          "qname": "Db::num_rows",
-          "level": 1
-        },
-        {
-          "qname": "Db::query",
-          "level": 1
-        },
-        {
           "qname": "Db::quote",
-          "level": 0
-        },
-        {
-          "qname": "Db::reconnect",
-          "level": 1
-        },
-        {
-          "qname": "DbUpdater::__construct",
           "level": 0
         },
         {
@@ -299,52 +221,12 @@
           "level": 3
         },
         {
-          "qname": "Db_PDO::affected_rows",
-          "level": 1
-        },
-        {
-          "qname": "Db_PDO::close",
-          "level": 0
-        },
-        {
           "qname": "Db_PDO::connect",
-          "level": 1
-        },
-        {
-          "qname": "Db_PDO::escape_string",
-          "level": 1
-        },
-        {
-          "qname": "Db_PDO::fetch_assoc",
-          "level": 1
-        },
-        {
-          "qname": "Db_PDO::fetch_result",
           "level": 1
         },
         {
           "qname": "Db_PDO::init",
           "level": 1
-        },
-        {
-          "qname": "Db_PDO::last_error",
-          "level": 2
-        },
-        {
-          "qname": "Db_PDO::num_rows",
-          "level": 1
-        },
-        {
-          "qname": "Db_PDO::query",
-          "level": 1
-        },
-        {
-          "qname": "Db_Prefs::__clone",
-          "level": 0
-        },
-        {
-          "qname": "Db_Prefs::__construct",
-          "level": 4
         },
         {
           "qname": "Db_Prefs::cache",
@@ -367,24 +249,12 @@
           "level": 3
         },
         {
-          "qname": "Db_Stmt::__construct",
-          "level": 0
-        },
-        {
           "qname": "Db_Stmt::fetch",
-          "level": 0
-        },
-        {
-          "qname": "Db_Stmt::fetch_result",
           "level": 0
         },
         {
           "qname": "Db_Stmt::rowCount",
           "level": 0
-        },
-        {
-          "qname": "Dlg::before",
-          "level": 1
         },
         {
           "qname": "Dlg::explainError",
@@ -412,166 +282,6 @@
         },
         {
           "qname": "Dlg::pubOPMLUrl",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem::get_author",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem::get_categories",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem::get_comments_count",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem::get_comments_url",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem::get_content",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem::get_date",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem::get_description",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem::get_enclosures",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem::get_id",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem::get_link",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem::get_title",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem_Atom::get_categories",
-          "level": 1
-        },
-        {
-          "qname": "FeedItem_Atom::get_content",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem_Atom::get_date",
-          "level": 1
-        },
-        {
-          "qname": "FeedItem_Atom::get_description",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem_Atom::get_enclosures",
-          "level": 1
-        },
-        {
-          "qname": "FeedItem_Atom::get_id",
-          "level": 1
-        },
-        {
-          "qname": "FeedItem_Atom::get_link",
-          "level": 2
-        },
-        {
-          "qname": "FeedItem_Atom::get_title",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem_Common::__construct",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem_Common::get_author",
-          "level": 1
-        },
-        {
-          "qname": "FeedItem_Common::get_comments_count",
-          "level": 1
-        },
-        {
-          "qname": "FeedItem_Common::get_comments_url",
-          "level": 1
-        },
-        {
-          "qname": "FeedItem_RSS::get_categories",
-          "level": 1
-        },
-        {
-          "qname": "FeedItem_RSS::get_content",
-          "level": 1
-        },
-        {
-          "qname": "FeedItem_RSS::get_date",
-          "level": 1
-        },
-        {
-          "qname": "FeedItem_RSS::get_description",
-          "level": 0
-        },
-        {
-          "qname": "FeedItem_RSS::get_enclosures",
-          "level": 1
-        },
-        {
-          "qname": "FeedItem_RSS::get_id",
-          "level": 1
-        },
-        {
-          "qname": "FeedItem_RSS::get_link",
-          "level": 1
-        },
-        {
-          "qname": "FeedItem_RSS::get_title",
-          "level": 0
-        },
-        {
-          "qname": "FeedParser::__construct",
-          "level": 1
-        },
-        {
-          "qname": "FeedParser::error",
-          "level": 0
-        },
-        {
-          "qname": "FeedParser::errors",
-          "level": 0
-        },
-        {
-          "qname": "FeedParser::get_items",
-          "level": 0
-        },
-        {
-          "qname": "FeedParser::get_link",
-          "level": 0
-        },
-        {
-          "qname": "FeedParser::get_links",
-          "level": 1
-        },
-        {
-          "qname": "FeedParser::get_title",
-          "level": 0
-        },
-        {
-          "qname": "FeedParser::init",
-          "level": 1
-        },
-        {
-          "qname": "FeedParser::normalize_encoding",
           "level": 0
         },
         {
@@ -615,23 +325,11 @@
           "level": 8
         },
         {
-          "qname": "Handler::__construct",
-          "level": 0
-        },
-        {
           "qname": "Handler::after",
           "level": 0
         },
         {
-          "qname": "Handler::before",
-          "level": 0
-        },
-        {
           "qname": "Handler::csrf_ignore",
-          "level": 0
-        },
-        {
-          "qname": "Handler_Protected::before",
           "level": 0
         },
         {
@@ -663,14 +361,6 @@
           "level": 0
         },
         {
-          "qname": "Handler_Public::index",
-          "level": 0
-        },
-        {
-          "qname": "Handler_Public::logout",
-          "level": 1
-        },
-        {
           "qname": "Handler_Public::pubsub",
           "level": 1
         },
@@ -680,14 +370,6 @@
         },
         {
           "qname": "Handler_Public::updateTask",
-          "level": 0
-        },
-        {
-          "qname": "Logger::__clone",
-          "level": 0
-        },
-        {
-          "qname": "Logger::__construct",
           "level": 0
         },
         {
@@ -791,14 +473,6 @@
           "level": 0
         },
         {
-          "qname": "PluginHost::__clone",
-          "level": 0
-        },
-        {
-          "qname": "PluginHost::__construct",
-          "level": 0
-        },
-        {
           "qname": "PluginHost::add_api_method",
           "level": 2
         },
@@ -813,10 +487,6 @@
         {
           "qname": "PluginHost::add_handler",
           "level": 2
-        },
-        {
-          "qname": "PluginHost::add_hook",
-          "level": 0
         },
         {
           "qname": "PluginHost::clear_data",
@@ -1011,10 +681,6 @@
           "level": 2
         },
         {
-          "qname": "Pref_Feeds::feedlist_init_cat",
-          "level": 5
-        },
-        {
           "qname": "Pref_Feeds::feedlist_init_feed",
           "level": 4
         },
@@ -1027,20 +693,12 @@
           "level": 1
         },
         {
-          "qname": "Pref_Feeds::get_category_items",
-          "level": 4
-        },
-        {
           "qname": "Pref_Feeds::getfeedtree",
           "level": 7
         },
         {
           "qname": "Pref_Feeds::inactiveFeeds",
           "level": 4
-        },
-        {
-          "qname": "Pref_Feeds::index",
-          "level": 2
         },
         {
           "qname": "Pref_Feeds::makefeedtree",
@@ -1064,10 +722,6 @@
         },
         {
           "qname": "Pref_Feeds::removeCat",
-          "level": 3
-        },
-        {
-          "qname": "Pref_Feeds::remove_feed",
           "level": 3
         },
         {
@@ -1143,10 +797,6 @@
           "level": 3
         },
         {
-          "qname": "Pref_Filters::index",
-          "level": 1
-        },
-        {
           "qname": "Pref_Filters::join",
           "level": 1
         },
@@ -1215,20 +865,12 @@
           "level": 1
         },
         {
-          "qname": "Pref_Labels::index",
-          "level": 1
-        },
-        {
           "qname": "Pref_Labels::remove",
           "level": 3
         },
         {
           "qname": "Pref_Labels::save",
           "level": 1
-        },
-        {
-          "qname": "Pref_Prefs::__construct",
-          "level": 0
         },
         {
           "qname": "Pref_Prefs::changeemail",
@@ -1271,10 +913,6 @@
           "level": 0
         },
         {
-          "qname": "Pref_Prefs::index",
-          "level": 4
-        },
-        {
           "qname": "Pref_Prefs::otpdisable",
           "level": 3
         },
@@ -1295,10 +933,6 @@
           "level": 0
         },
         {
-          "qname": "Pref_System::before",
-          "level": 0
-        },
-        {
           "qname": "Pref_System::clearLog",
           "level": 1
         },
@@ -1307,16 +941,8 @@
           "level": 0
         },
         {
-          "qname": "Pref_System::index",
-          "level": 4
-        },
-        {
           "qname": "Pref_Users::add",
           "level": 2
-        },
-        {
-          "qname": "Pref_Users::before",
-          "level": 0
         },
         {
           "qname": "Pref_Users::csrf_ignore",
@@ -1329,10 +955,6 @@
         {
           "qname": "Pref_Users::editSave",
           "level": 1
-        },
-        {
-          "qname": "Pref_Users::index",
-          "level": 4
         },
         {
           "qname": "Pref_Users::remove",
@@ -1381,10 +1003,6 @@
         {
           "qname": "QRbitstream::toByte",
           "level": 1
-        },
-        {
-          "qname": "QRinput::__construct",
-          "level": 0
         },
         {
           "qname": "QRinput::append",
@@ -1463,10 +1081,6 @@
           "level": 0
         },
         {
-          "qname": "QRinput::getVersion",
-          "level": 0
-        },
-        {
           "qname": "QRinput::insertStructuredAppendHeader",
           "level": 0
         },
@@ -1489,10 +1103,6 @@
         {
           "qname": "QRinput::setVersion",
           "level": 0
-        },
-        {
-          "qname": "QRinputItem::__construct",
-          "level": 2
         },
         {
           "qname": "QRinputItem::encodeBitStream",
@@ -1533,10 +1143,6 @@
         {
           "qname": "QRrsItem::modnn",
           "level": 0
-        },
-        {
-          "qname": "QRrsblock::__construct",
-          "level": 2
         },
         {
           "qname": "QRtools::binarize",
@@ -1755,23 +1361,7 @@
           "level": 0
         },
         {
-          "qname": "__global__::__construct",
-          "level": 0
-        },
-        {
-          "qname": "__global__::affected_rows",
-          "level": 0
-        },
-        {
           "qname": "__global__::after",
-          "level": 0
-        },
-        {
-          "qname": "__global__::before",
-          "level": 0
-        },
-        {
-          "qname": "__global__::close",
           "level": 0
         },
         {
@@ -1783,128 +1373,8 @@
           "level": 0
         },
         {
-          "qname": "__global__::escape_string",
-          "level": 0
-        },
-        {
-          "qname": "__global__::fetch_assoc",
-          "level": 0
-        },
-        {
-          "qname": "__global__::fetch_result",
-          "level": 0
-        },
-        {
-          "qname": "__global__::last_error",
-          "level": 0
-        },
-        {
-          "qname": "__global__::num_rows",
-          "level": 0
-        },
-        {
-          "qname": "__global__::query",
-          "level": 0
-        },
-        {
           "qname": "floIconIcon::getImageResource",
           "level": 0
-        },
-        {
-          "qname": "ttrss/api/index.php",
-          "level": 5
-        },
-        {
-          "qname": "ttrss/include/autoload.php::__autoload",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/ccache.php::ccache_find",
-          "level": 4
-        },
-        {
-          "qname": "ttrss/include/ccache.php::ccache_remove",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/ccache.php::ccache_update",
-          "level": 4
-        },
-        {
-          "qname": "ttrss/include/ccache.php::ccache_update_all",
-          "level": 4
-        },
-        {
-          "qname": "ttrss/include/ccache.php::ccache_zero_all",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/colors.php::_color_hsl2rgb",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/colors.php::_color_hue2rgb",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/colors.php::_color_pack",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/colors.php::_color_rgb2hsl",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/colors.php::_color_unpack",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/colors.php::_resolve_htmlcolor",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/colors.php::calculate_avg_color",
-          "level": 4
-        },
-        {
-          "qname": "ttrss/include/colors.php::colorPalette",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/colors.php::hsl2rgb",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/colors.php::rgb2hsl",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/db.php::db_affected_rows",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/db.php::db_fetch_assoc",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/db.php::db_fetch_result",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/db.php::db_last_error",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/db.php::db_num_rows",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/db.php::db_query",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/db.php::db_quote",
-          "level": 1
         },
         {
           "qname": "ttrss/include/digest.php::prepare_headlines_digest",
@@ -1927,456 +1397,8 @@
           "level": 2
         },
         {
-          "qname": "ttrss/include/functions.php",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/functions.php::_debug",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions.php::_debug_suppress",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions.php::bool_to_sql_bool",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions.php::check_feed_favicon",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/functions.php::checkbox_to_sql_bool",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions.php::convert_timestamp",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions.php::define_default",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions.php::feed_purge_interval",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions.php::getCategoryChildrenUnread",
-          "level": 4
-        },
-        {
-          "qname": "ttrss/include/functions.php::getCategoryCounters",
-          "level": 5
-        },
-        {
-          "qname": "ttrss/include/functions.php::getCategoryTitle",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions.php::getFeedArticles",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/functions.php::getFeedCatTitle",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions.php::getFeedCounters",
-          "level": 4
-        },
-        {
-          "qname": "ttrss/include/functions.php::getFeedIcon",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions.php::getFeedTitle",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/functions.php::getGlobalCounters",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/functions.php::getLabelCounters",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions.php::getLabelUnread",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions.php::getVirtCounters",
-          "level": 4
-        },
-        {
-          "qname": "ttrss/include/functions.php::get_favicon_url",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions.php::get_feed_update_interval",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions.php::get_schema_version",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions.php::get_ssl_certificate_id",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions.php::get_translations",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions.php::load_user_plugins",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/functions.php::logout_user",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions.php::make_local_datetime",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/functions.php::make_password",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions.php::purge_feed",
-          "level": 5
-        },
-        {
-          "qname": "ttrss/include/functions.php::purge_orphans",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions.php::sanity_check",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/functions.php::smart_date_time",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions.php::sql_bool_to_bool",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions.php::truncate_string",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions.php::validate_csrf",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::add_feed_category",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::add_feed_url",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/functions2.php::build_url",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::catchupArticlesById",
-          "level": 5
-        },
-        {
-          "qname": "ttrss/include/functions2.php::cleanup_tags",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::encrypt_password",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::feed_has_icon",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::feed_to_label_id",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::filter_to_sql",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/functions2.php::fix_url",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::format_article",
-          "level": 5
-        },
-        {
-          "qname": "ttrss/include/functions2.php::format_article_enclosures",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/functions2.php::format_article_labels",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::format_article_note",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::format_inline_player",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::format_libxml_error",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/functions2.php::format_tags_string",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::getArticleFeed",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::getChildCategories",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::getFeedCategory",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::getLastArticleId",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::getParentCategories",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::get_article_enclosures",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::get_article_tags",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::get_feed_access_key",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::get_feed_category",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::get_feeds_from_html",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::get_hotkeys_info",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::get_hotkeys_map",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::get_random_bytes",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::get_self_url_prefix",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::geturl",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::init_plugins",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/functions2.php::is_html",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::label_to_feed_id",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::load_filters",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/functions2.php::make_init_params",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/functions2.php::make_runtime_info",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/functions2.php::read_stdin",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::rewrite_relative_url",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/functions2.php::sanitize",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::sanitize_tag",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::save_email_address",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::search_to_sql",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::sphinx_search",
-          "level": 4
-        },
-        {
-          "qname": "ttrss/include/functions2.php::strip_harmful_tags",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/functions2.php::tag_is_valid",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::tmpdirname",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/functions2.php::url_is_html",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/functions2.php::validate_feed_url",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/labels.php::get_all_labels",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/labels.php::get_article_labels",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/labels.php::label_add_article",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/labels.php::label_clear_cache",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/labels.php::label_create",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/labels.php::label_find_caption",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/labels.php::label_find_id",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/labels.php::label_remove",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/labels.php::label_remove_article",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/labels.php::label_update_cache",
-          "level": 2
-        },
-        {
           "qname": "ttrss/include/login_form.php",
           "level": 4
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::assign_article_to_label_filters",
-          "level": 4
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::cache_images",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::calculate_article_score",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::convertUrlQuery",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::expire_cached_files",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::expire_error_log",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::expire_lock_files",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::find_article_filter",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::find_article_filters",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::get_article_filters",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::housekeeping_common",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::labels_contains_caption",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::make_guid_from_title",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::update_feedbrowser_cache",
-          "level": 2
         },
         {
           "qname": "ttrss/include/sanity_check.php",
@@ -2391,75 +1413,11 @@
           "level": 0
         },
         {
-          "qname": "ttrss/include/sessions.php::session_get_schema_version",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/sessions.php::ttrss_close",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/sessions.php::ttrss_destroy",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/sessions.php::ttrss_gc",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/sessions.php::ttrss_open",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/include/sessions.php::ttrss_read",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/sessions.php::ttrss_write",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/include/sessions.php::validate_session",
-          "level": 2
-        },
-        {
           "qname": "ttrss/include/version.php",
           "level": 1
         },
         {
           "qname": "ttrss/include/version.php::get_version",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/install/index.php",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/install/index.php::db_connect",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/install/index.php::db_query",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/install/index.php::define_default",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/install/index.php::make_config",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/install/index.php::make_password",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/install/index.php::make_self_url_path",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/install/index.php::sanity_check",
           "level": 0
         },
         {
@@ -2469,10 +1427,6 @@
         {
           "qname": "ttrss/lib/accept-to-gettext.php::find_match",
           "level": 0
-        },
-        {
-          "qname": "ttrss/lib/languagedetect/LanguageDetect.php::__construct",
-          "level": 1
         },
         {
           "qname": "ttrss/lib/languagedetect/LanguageDetect.php::_arr_rank",
@@ -2595,31 +1549,7 @@
           "level": 0
         },
         {
-          "qname": "ttrss/lib/sphinxapi.php::sphFixUint",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/lib/sphinxapi.php::sphPackI64",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/lib/sphinxapi.php::sphPackU64",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/lib/sphinxapi.php::sphUnpackI64",
-          "level": 0
-        },
-        {
-          "qname": "ttrss/lib/sphinxapi.php::sphUnpackU64",
-          "level": 0
-        },
-        {
           "qname": "ttrss/opml.php",
-          "level": 5
-        },
-        {
-          "qname": "ttrss/public.php",
           "level": 5
         },
         {
@@ -2627,49 +1557,875 @@
           "level": 4
         },
         {
-          "qname": "ttrss/update_daemon2.php",
-          "level": 3
-        },
-        {
-          "qname": "ttrss/update_daemon2.php::check_ctimes",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/update_daemon2.php::reap_children",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/update_daemon2.php::shutdown",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/update_daemon2.php::sigchld_handler",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/update_daemon2.php::sigint_handler",
-          "level": 2
-        },
-        {
-          "qname": "ttrss/update_daemon2.php::task_shutdown",
-          "level": 1
-        },
-        {
-          "qname": "ttrss/update_daemon2.php::task_sigint_handler",
-          "level": 2
-        },
-        {
-          "qname": "ttrssMailer::__construct",
-          "level": 1
-        },
-        {
           "qname": "ttrssMailer::quickMail",
           "level": 1
         }
       ],
+      "matched_by_file_details": [
+        {
+          "qname": "ttrss/api/index.php",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/ccache.php::ccache_find",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/ccache.php::ccache_remove",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/ccache.php::ccache_update",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/ccache.php::ccache_update_all",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/ccache.php::ccache_zero_all",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_affected_rows",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_fetch_assoc",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_fetch_result",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_last_error",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_num_rows",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_query",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_quote",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::check_feed_favicon",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::convert_timestamp",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::feed_purge_interval",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getCategoryChildrenUnread",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getCategoryCounters",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getCategoryTitle",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getFeedArticles",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getFeedCatTitle",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getFeedCounters",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getFeedIcon",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getFeedTitle",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getGlobalCounters",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getLabelCounters",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getLabelUnread",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getVirtCounters",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::get_favicon_url",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::get_feed_update_interval",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::get_schema_version",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::get_ssl_certificate_id",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::get_translations",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::load_user_plugins",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::logout_user",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::make_local_datetime",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::make_password",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::purge_feed",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::purge_orphans",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::sanity_check",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::smart_date_time",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::validate_csrf",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::add_feed_category",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::add_feed_url",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::build_url",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::catchupArticlesById",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::cleanup_tags",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::encrypt_password",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::feed_has_icon",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::feed_to_label_id",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::filter_to_sql",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::fix_url",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_article",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_article_enclosures",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_article_labels",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_article_note",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_inline_player",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_libxml_error",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_tags_string",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::getArticleFeed",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::getChildCategories",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::getFeedCategory",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::getLastArticleId",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::getParentCategories",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_article_enclosures",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_article_tags",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_feed_access_key",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_feed_category",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_feeds_from_html",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_hotkeys_info",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_hotkeys_map",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_self_url_prefix",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::geturl",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::init_plugins",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::is_html",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::label_to_feed_id",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::load_filters",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::make_init_params",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::make_runtime_info",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::read_stdin",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::rewrite_relative_url",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::sanitize_tag",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::save_email_address",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::search_to_sql",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::sphinx_search",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::strip_harmful_tags",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::tag_is_valid",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::tmpdirname",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::url_is_html",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::validate_feed_url",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::get_all_labels",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::get_article_labels",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_add_article",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_clear_cache",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_create",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_find_caption",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_find_id",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_remove",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_remove_article",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_update_cache",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::assign_article_to_label_filters",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::cache_images",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::calculate_article_score",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::convertUrlQuery",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::expire_cached_files",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::expire_error_log",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::expire_lock_files",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::find_article_filter",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::find_article_filters",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::get_article_filters",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::housekeeping_common",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::labels_contains_caption",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::make_guid_from_title",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::update_feedbrowser_cache",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::session_get_schema_version",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_destroy",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_gc",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_read",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_write",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::validate_session",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/install/index.php",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/install/index.php::db_connect",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/install/index.php::db_query",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/install/index.php::make_config",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/install/index.php::make_password",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/install/index.php::make_self_url_path",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/install/index.php::sanity_check",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/public.php",
+          "level": 5,
+          "match": "file_level"
+        }
+      ],
       "eliminated_details": [
         {
-          "qname": "FeedParser::format_error",
+          "qname": "Auth_Base::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::__clone",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::__construct",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::affected_rows",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::close",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::escape_string",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::fetch_assoc",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::fetch_result",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::last_error",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::num_rows",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::query",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::reconnect",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "DbUpdater::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::affected_rows",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::close",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::escape_string",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::fetch_assoc",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::fetch_result",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::last_error",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::num_rows",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::query",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_Prefs::__clone",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_Prefs::__construct",
+          "level": 4,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_Stmt::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_Stmt::fetch_result",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Handler::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Logger::__clone",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Logger::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "PluginHost::__clone",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "PluginHost::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Pref_Prefs::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "QRinput::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "QRinputItem::__construct",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "QRrsblock::__construct",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::affected_rows",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::close",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::escape_string",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::fetch_assoc",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::fetch_result",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::last_error",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::num_rows",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::query",
           "level": 0,
           "reason": "eliminated_per_spec13"
         },
@@ -2679,8 +2435,38 @@
           "reason": "eliminated_per_spec13"
         },
         {
+          "qname": "ttrss/include/autoload.php::__autoload",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
           "qname": "ttrss/include/db.php::db_escape_string",
           "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::_debug",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::_debug_suppress",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::bool_to_sql_bool",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::checkbox_to_sql_bool",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::define_default",
+          "level": 0,
           "reason": "eliminated_per_spec13"
         },
         {
@@ -2729,6 +2515,11 @@
           "reason": "eliminated_per_spec13"
         },
         {
+          "qname": "ttrss/include/functions.php::sql_bool_to_bool",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
           "qname": "ttrss/include/functions.php::sql_random_function",
           "level": 0,
           "reason": "eliminated_per_spec13"
@@ -2736,6 +2527,11 @@
         {
           "qname": "ttrss/include/functions.php::startup_gettext",
           "level": 3,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::truncate_string",
+          "level": 0,
           "reason": "eliminated_per_spec13"
         },
         {
@@ -2775,6 +2571,11 @@
         },
         {
           "qname": "ttrss/include/functions2.php::get_minified_js",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_random_bytes",
           "level": 0,
           "reason": "eliminated_per_spec13"
         },
@@ -2849,6 +2650,21 @@
           "reason": "eliminated_per_spec13"
         },
         {
+          "qname": "ttrss/include/sessions.php::ttrss_close",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_open",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/install/index.php::define_default",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
           "qname": "ttrss/install/index.php::print_error",
           "level": 0,
           "reason": "eliminated_per_spec13"
@@ -2859,136 +2675,26 @@
           "reason": "eliminated_per_spec13"
         },
         {
+          "qname": "ttrss/lib/languagedetect/LanguageDetect.php::__construct",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
           "qname": "ttrss/public.php::stripslashes_deep",
           "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrssMailer::__construct",
+          "level": 1,
           "reason": "eliminated_per_spec13"
         }
       ],
       "unparseable_details": [
         {
-          "file": "__init__.py",
-          "line": 31,
-          "raw": "# Source: ttrss/include/crypt.php:encrypt_string/decrypt_string (mcrypt replaced by Fernet)"
-        },
-        {
           "file": "articles/__init__.py",
           "line": 1,
           "raw": "# Source: ttrss/include/functions.php, functions2.php, classes/article.php"
-        },
-        {
-          "file": "articles/filters.py",
-          "line": 86,
-          "raw": "# Source: functions2.php:1516"
-        },
-        {
-          "file": "articles/persist.py",
-          "line": 158,
-          "raw": "# Source: rssfuncs.php line 815 — if ($type == \"catchup\") unread = false"
-        },
-        {
-          "file": "articles/persist.py",
-          "line": 162,
-          "raw": "# Source: rssfuncs.php line 818 — if ($type == \"mark\") marked = true"
-        },
-        {
-          "file": "articles/persist.py",
-          "line": 166,
-          "raw": "# Source: rssfuncs.php line 821 — if ($type == \"publish\") published = true"
-        },
-        {
-          "file": "articles/persist.py",
-          "line": 170,
-          "raw": "# Source: rssfuncs.php line 824 — score += (int) param"
-        },
-        {
-          "file": "articles/persist.py",
-          "line": 177,
-          "raw": "# Source: rssfuncs.php line 845 — add tag to tag list"
-        },
-        {
-          "file": "articles/persist.py",
-          "line": 182,
-          "raw": "# Source: rssfuncs.php line 851 — assign article to label by caption"
-        },
-        {
-          "file": "articles/persist.py",
-          "line": 187,
-          "raw": "# Source: rssfuncs.php line 828 — break out of filter loop"
-        },
-        {
-          "file": "articles/persist.py",
-          "line": 396,
-          "raw": "# Source: rssfuncs.php lines 636-648 — extract tags from <category> elements"
-        },
-        {
-          "file": "articles/persist.py",
-          "line": 404,
-          "raw": "# Source: rssfuncs.php line 650 — parse updated timestamp"
-        },
-        {
-          "file": "articles/sanitize.py",
-          "line": 19,
-          "raw": "# Source: ttrss/include/functions2.php:sanitize lines 903-913 — $allowed_elements array."
-        },
-        {
-          "file": "articles/sanitize.py",
-          "line": 41,
-          "raw": "# Source: ttrss/include/functions2.php:sanitize line 917 — $disallowed_attributes = array('id', 'style', 'class')"
-        },
-        {
-          "file": "articles/sanitize.py",
-          "line": 47,
-          "raw": "# Source: ttrss/include/functions2.php:sanitize line 831 — $force_remove_images parameter"
-        },
-        {
-          "file": "articles/sanitize.py",
-          "line": 49,
-          "raw": "# Source: ttrss/include/functions2.php:sanitize line 831 — $owner_uid parameter"
-        },
-        {
-          "file": "articles/sanitize.py",
-          "line": 51,
-          "raw": "# Source: ttrss/include/functions2.php:sanitize line 831 — $site_url parameter"
-        },
-        {
-          "file": "articles/sanitize.py",
-          "line": 53,
-          "raw": "# Source: ttrss/include/functions2.php:sanitize line 831 — $highlight_words parameter"
-        },
-        {
-          "file": "articles/sanitize.py",
-          "line": 55,
-          "raw": "# Source: ttrss/include/functions2.php:sanitize line 831 — $article_id parameter (passed to HOOK_SANITIZE at line 920)"
-        },
-        {
-          "file": "articles/sanitize.py",
-          "line": 57,
-          "raw": "# Source: ttrss/include/functions2.php:sanitize line 915 — $_SESSION['hasSandbox'] check"
-        },
-        {
-          "file": "auth/password.py",
-          "line": 32,
-          "raw": "# Source: ttrss/plugins/auth_internal/init.php:Auth_Internal::change_password (new passwords)"
-        },
-        {
-          "file": "auth/password.py",
-          "line": 73,
-          "raw": "# Source: functions2.php:1484 — hash('sha256', $salt . $pass)"
-        },
-        {
-          "file": "auth/password.py",
-          "line": 80,
-          "raw": "# Source: functions2.php:1485 — sha1(\"$login:$pass\")"
-        },
-        {
-          "file": "auth/password.py",
-          "line": 88,
-          "raw": "# Source: functions2.php:1487 — sha1($pass), no salt at all"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 63,
-          "raw": "# Source: ttrss/api/index.php:1 (entry point), ttrss/classes/api.php:API (handler class)"
         },
         {
           "file": "blueprints/api/views.py",
@@ -3002,228 +2708,8 @@
         },
         {
           "file": "blueprints/api/views.py",
-          "line": 134,
-          "raw": "# Source: ttrss/classes/api.php:API.logout (lines 89-92)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 139,
-          "raw": "# Source: ttrss/classes/api.php:API.isLoggedIn (lines 94-95)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 143,
-          "raw": "# Source: ttrss/classes/api.php:API.getVersion (lines 39-42)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 146,
-          "raw": "# Source: ttrss/classes/api.php:API.getApiLevel (lines 44-47)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 208,
-          "raw": "# Source: ttrss/classes/api.php:API.index (line 488 — UNKNOWN_METHOD error with method echo)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 233,
-          "raw": "# Source: ttrss/classes/api.php:API.login (line 55)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 245,
-          "raw": "# Source: ttrss/classes/api.php:API.login (lines 60-70 — uid lookup, return LOGIN_ERROR if not found)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 249,
-          "raw": "# Source: ttrss/classes/api.php:API.login (lines 72-85)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 254,
-          "raw": "# Source: ttrss/classes/api.php:API.login (line 84 — \"API_DISABLED\")"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 257,
-          "raw": "# Source: ttrss/classes/api.php:API.login (lines 73-82)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 266,
-          "raw": "# Source: ttrss/classes/api.php:API.login (lines 76-78 — base64 fallback)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 275,
-          "raw": "# Source: ttrss/classes/api.php:API.login (lines 79-82 — \"LOGIN_ERROR\")"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 381,
-          "raw": "# Source: ttrss/classes/api.php:375 — file_is_locked(\"update_daemon.lock\")"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 394,
-          "raw": "# Source: ttrss/classes/api.php:377-382 — SELECT COUNT(*) FROM ttrss_feeds WHERE owner_uid"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 446,
-          "raw": "# Source: api.php:439 — \"id\" => (int)label_to_feed_id($line['id'])"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 509,
-          "raw": "# Source: api.php:152 — if ($include_empty || num_feeds > 0 || num_cats > 0)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 511,
-          "raw": "# Source: api.php:153 — getFeedUnread($line[\"id\"], true) [is_cat=true → ccache path]"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 530,
-          "raw": "# Source: api.php:170 — getFeedUnread($cat_id, true) [is_cat=true → virtual cat path]"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 571,
-          "raw": "# Source: api.php:786 — default return false"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 671,
-          "raw": "# Source: api.php:607 — getFeedUnread($line[\"id\"]) [N+1: accepted PHP-parity trade-off, AR5]"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 704,
-          "raw": "# Source: api.php:312 — array_filter(..., is_numeric) — keep only integer IDs"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 749,
-          "raw": "# Source: api.php:319 — feed_title from correlated subquery; now from outerjoin above"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 811,
-          "raw": "# Source: api.php:236 — array_filter(..., is_numeric)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 836,
-          "raw": "# Source: api.php:237 — note content comes from request param \"data\" (not \"note\")"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 837,
-          "raw": "# Source: api.php:237 — strip_tags applied to prevent HTML storage"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 849,
-          "raw": "# Source: api.php:265 — mode==0 → false"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 860,
-          "raw": "# Source: api.php:263 — mode==1 → true"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 942,
-          "raw": "# Source: api.php:461 — label_to_feed_id($label_id) converts virtual feed ID → DB label id"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 946,
-          "raw": "# Source: api.php:462 — SELECT caption FROM ttrss_labels2 WHERE id = real_label_id AND owner_uid"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 974,
-          "raw": "# Source: api.php:389 — ownership check before scheduling"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 980,
-          "raw": "# Source: api.php:392 — update_rss_feed($feed_id) → Celery .delay() (ADR-0011)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1009,
-          "raw": "# Source: api.php:548 — limit=0 means \"use max\" (200); cap at 200 to match PHP behaviour"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1050,
-          "raw": "# Source: api.php:582 — is_updated = last_read empty AND not currently unread"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1055,
-          "raw": "# Source: api.php:591 — excerpt = first 100 chars of stripped content"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1075,
-          "raw": "# Source: api.php:567 — feed_title: available only when include_feed_title=True in QFH"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1083,
-          "raw": "# Source: api.php:576 — same truncation as getArticle (SUBSTRING_FOR_DATE to minute)"
-        },
-        {
-          "file": "blueprints/api/views.py",
           "line": 1099,
           "raw": "# Source: api.php — PHP key is always_display_attachments"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1134,
-          "raw": "# Source: api.php:629 — feed_url is required"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1149,
-          "raw": "# Source: api.php:637 — return {\"status\": result}"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1166,
-          "raw": "# Source: api.php:642 — ownership check"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1174,
-          "raw": "# Source: functions.php:remove_feed — archive starred articles before deletion"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1183,
-          "raw": "# Source: functions.php:archive_feed — TtRssArchivedFeed PK = original feed_id"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1204,
-          "raw": "# Source: functions.php:remove_feed — delete orphaned entries first"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1228,
-          "raw": "# Source: functions.php:remove_feed — delete non-starred user entries for this feed"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1235,
-          "raw": "# Source: functions.php:remove_feed — delete the feed record itself"
         },
         {
           "file": "blueprints/api/views.py",
@@ -3237,33 +2723,8 @@
         },
         {
           "file": "blueprints/api/views.py",
-          "line": 1275,
-          "raw": "# Source: article.php:131 — guid = \"SHA1:\" . sha1(\"ttshared:\" . $url . $owner_uid)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1395,
-          "raw": "# Source: pref/feeds.php:get_category_items line ~85 — $feed['unread'] = 0 (hardcoded)"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1424,
-          "raw": "# Source: pref/feeds.php:MAX_CATEGORY_DEPTH guard"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1459,
-          "raw": "# Source: pref/feeds.php:get_category_items — real cat unread hardcoded to 0"
-        },
-        {
-          "file": "blueprints/api/views.py",
           "line": 1468,
           "raw": "# Source: pref/feeds.php — Special category (CAT:-1) contains virtual feeds"
-        },
-        {
-          "file": "blueprints/api/views.py",
-          "line": 1474,
-          "raw": "# Source: pref/feeds.php:feedlist_init_cat(-1) — unread uninitialized → 0 in PHP"
         },
         {
           "file": "blueprints/api/views.py",
@@ -3281,59 +2742,14 @@
           "raw": "# Source: pref/feeds.php — Uncategorized (CAT:0): feeds with cat_id IS NULL"
         },
         {
-          "file": "blueprints/api/views.py",
-          "line": 1525,
-          "raw": "# Source: api.php:728 — return {\"categories\": makefeedtree()}"
-        },
-        {
           "file": "blueprints/backend/views.py",
           "line": 33,
           "raw": "# Source: ttrss/backend.php — PHP $_REQUEST merges GET, POST, COOKIE."
         },
         {
-          "file": "ccache.py",
-          "line": 94,
-          "raw": "# Source: functions.php:1417 — feed_id == -6 (Recently Read) always returns 0."
-        },
-        {
-          "file": "ccache.py",
-          "line": 357,
-          "raw": "# Source: ccache.php:105"
-        },
-        {
-          "file": "ccache.py",
-          "line": 396,
-          "raw": "# Source: ccache.php:147"
-        },
-        {
-          "file": "errors.py",
-          "line": 22,
-          "raw": "# Source: ttrss/classes/api.php:API.wrap — STATUS_ERR=1 for all error responses"
-        },
-        {
-          "file": "errors.py",
-          "line": 32,
-          "raw": "# Source: ttrss/classes/api.php:API.before (line 17 — NOT_LOGGED_IN check)"
-        },
-        {
-          "file": "extensions.py",
-          "line": 19,
-          "raw": "# Source: ttrss/classes/db.php:Db (singleton pattern)"
-        },
-        {
           "file": "feeds/__init__.py",
           "line": 1,
           "raw": "# Source: ttrss/include/functions.php, ttrss/include/functions2.php"
-        },
-        {
-          "file": "feeds/counters.py",
-          "line": 120,
-          "raw": "# Source: functions.php:1368"
-        },
-        {
-          "file": "feeds/ops.py",
-          "line": 137,
-          "raw": "# Source: functions.php:284 — ccache_update call site #2"
         },
         {
           "file": "http/__init__.py",
@@ -4586,131 +4002,6 @@
           "raw": "# Source: schema line 262 — schema_version int not null"
         },
         {
-          "file": "plugins/hookspecs.py",
-          "line": 32,
-          "raw": "# Source: ttrss/classes/pluginhost.php:add_hook (hook registration method)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 52,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_ARTICLE_BUTTON (const 1)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 59,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_ARTICLE_FILTER (const 2)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 66,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_PREFS_TAB (const 3)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 73,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_PREFS_TAB_SECTION (const 4)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 80,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_PREFS_TABS (const 5)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 87,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_FEED_PARSED (const 6)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 94,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_UPDATE_TASK (const 7)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 101,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_AUTH_USER (const 8)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 116,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_HOTKEY_MAP (const 9)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 123,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_RENDER_ARTICLE (const 10)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 130,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_RENDER_ARTICLE_CDM (const 11)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 137,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_FEED_FETCHED (const 12)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 144,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_SANITIZE (const 13)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 151,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_RENDER_ARTICLE_API (const 14)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 158,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_TOOLBAR_BUTTON (const 15)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 165,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_ACTION_ITEM (const 16)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 172,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_HEADLINE_TOOLBAR_BUTTON (const 17)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 179,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_HOTKEY_INFO (const 18)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 186,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_ARTICLE_LEFT_BUTTON (const 19)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 193,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_PREFS_EDIT_FEED (const 20)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 200,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_PREFS_SAVE_FEED (const 21)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 207,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_FETCH_FEED (const 22)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 221,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_QUERY_HEADLINES (const 23)"
-        },
-        {
-          "file": "plugins/hookspecs.py",
-          "line": 243,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_HOUSE_KEEPING (const 24)"
-        },
-        {
           "file": "plugins/loader.py",
           "line": 21,
           "raw": "# Source: ttrss/config.php-dist line 200 — define('PLUGINS', 'auth_internal, note, updater')"
@@ -4721,114 +4012,9 @@
           "raw": "_DEFAULT_PLUGINS = os.environ.get(\"TTRSS_PLUGINS\", \"auth_internal\")  # Source: ttrss/config.php-dist line 200. Adapted: env var replaces PHP define; only 'auth_internal' by default."
         },
         {
-          "file": "plugins/manager.py",
-          "line": 20,
-          "raw": "# Source: ttrss/classes/pluginhost.php:PluginHost (private $_instance static, lines 47-48)"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 72,
-          "raw": "# Source: rssfuncs.php lines 120-131 — SQL for due feeds"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 118,
-          "raw": "# Source: rssfuncs.php lines 154-156 — mark feeds as in-progress"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 129,
-          "raw": "# Source: rssfuncs.php lines 160-191 — fan-out one task per feed"
-        },
-        {
           "file": "tasks/feed_tasks.py",
           "line": 179,
           "raw": "max_redirects=20,  # Source: ttrss/include/functions.php — CURLOPT_MAXREDIRS default 20"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 244,
-          "raw": "# Source: rssfuncs.php lines 238-244 — auth credentials"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 298,
-          "raw": "# Source: rssfuncs.php lines 352-364 — 304 Not Modified handling"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 299,
-          "raw": "if status_code == 304:  # Source: rssfuncs.php line 352 — if ($res_code == 304) — skip update, stamp last_updated."
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 306,
-          "raw": "if status_code >= 400:  # Source: rssfuncs.php lines 357-364 — if ($res_code == 0 || $res_code >= 400) — record HTTP error, stamp last_updated."
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 331,
-          "raw": "# Source: rssfuncs.php lines 375-378 — parse feed content (ADR-0014)"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 335,
-          "raw": "# Source: rssfuncs.php lines 385-390 — bozo error handling"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 349,
-          "raw": "# Source: rssfuncs.php lines 440-500 — per-entry processing loop"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 368,
-          "raw": "\"owner_uid\": feed.owner_uid,  # Source: rssfuncs.php line 673 — \"owner_uid\" => $owner_uid"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 369,
-          "raw": "\"guid\": entry.get(\"id\", \"\"),  # Source: rssfuncs.php line 674 — \"guid\" => $entry_guid"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 370,
-          "raw": "\"title\": entry.get(\"title\", \"\"),  # Source: rssfuncs.php line 675 — \"title\" => $entry_title"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 371,
-          "raw": "\"content\": content,  # Source: rssfuncs.php line 676 — \"content\" => $entry_content"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 372,
-          "raw": "\"link\": entry.get(\"link\", \"\"),  # Source: rssfuncs.php line 677 — \"link\" => $entry_link"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 373,
-          "raw": "\"tags\": [],  # Source: rssfuncs.php line 678 — \"tags\" => $entry_tags"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 374,
-          "raw": "\"plugin_data\": \"\",  # Source: rssfuncs.php line 679 — \"plugin_data\" => $entry_plugin_data"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 375,
-          "raw": "\"author\": entry.get(\"author\", \"\"),  # Source: rssfuncs.php line 680 — \"author\" => $entry_author"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 383,
-          "raw": "content = article.get(\"content\", content)  # Source: rssfuncs.php line 697 — $entry_content = $article[\"content\"]"
-        },
-        {
-          "file": "tasks/feed_tasks.py",
-          "line": 413,
-          "raw": "# Source: rssfuncs.php lines 488-490 — update feed last_updated and clear last_error after successful parse"
         },
         {
           "file": "tasks/housekeeping.py",
@@ -4836,37 +4022,28 @@
           "raw": "# Source: rssfuncs.php — SELECT site_url, title, feed_url, count(*) as subscribers"
         },
         {
-          "file": "tasks/housekeeping.py",
-          "line": 220,
-          "raw": "# Source: ttrss/classes/pluginhost.php:HOOK_HOUSE_KEEPING (const 24)"
-        },
-        {
           "file": "utils/__init__.py",
           "line": 2,
           "raw": "# Source: ttrss/include/functions.php, ttrss/include/functions2.php (shared helpers)"
-        },
-        {
-          "file": "utils/feeds.py",
-          "line": 9,
-          "raw": "# Source: ttrss/include/functions.php:5"
-        },
-        {
-          "file": "utils/feeds.py",
-          "line": 12,
-          "raw": "# Source: ttrss/include/functions.php:6"
         }
       ]
     },
     {
       "dimension": "import_coverage",
-      "edges_checked": 7,
-      "missing_imports": 2,
+      "edges_checked": 8,
+      "missing_imports": 3,
       "missing_import_details": [
         {
           "from_php": "ttrss/include/functions.php::authenticate_user",
           "to_php": "Auth_Internal::authenticate",
           "from_py": "auth/authenticate.py",
-          "to_py": "auth/password.py"
+          "to_py": "blueprints/api/views.py"
+        },
+        {
+          "from_php": "ttrss/include/functions2.php::sanitize",
+          "to_php": "ttrss/include/db-prefs.php::get_pref",
+          "from_py": "articles/sanitize.py",
+          "to_py": "blueprints/api/views.py"
         },
         {
           "from_php": "ttrss/include/rssfuncs.php::update_rss_feed",
@@ -5501,9 +4678,9 @@
     },
     {
       "dimension": "class_hierarchy_coverage",
-      "edges_checked": 21,
-      "skipped_third_party": 6,
-      "eliminated_architectural": 16,
+      "edges_checked": 18,
+      "skipped_third_party": 9,
+      "eliminated_architectural": 13,
       "missing_class_hierarchy": 5,
       "missing_class_hierarchy_details": [
         {

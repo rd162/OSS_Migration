@@ -237,66 +237,96 @@ Slice 10: Deployment
 - Shared utilities need early extraction from functions.php
 - Slices have dependencies (Articles need Feeds need Users)
 
-### Variant D: Hybrid Entity-then-Graph (Revised after compliance review)
+### Variant D: Graph-Driven Migration (tree-sitter + NetworkX native)
 
-**Strategy**: Walking skeleton first, then entity models, then follow call graph for business logic.
+**Strategy**: Walking skeleton first, then entity models, then follow the **tree-sitter-
+parsed call graph** for business logic ordering. Every phase uses five dependency dimensions
+(call, class, db_table, hook, include) for ordering decisions and gate validation.
+
+**Graph tools** (run before Phase 1b, re-run when PHP source changes):
+- `tools/graph_analysis/build_php_graphs.py` — 5-dimension PHP graph (tree-sitter + NetworkX + Leiden)
+- `tools/graph_analysis/validate_coverage.py` — 5-dimension Python↔PHP coverage validator
+- Output: `tools/graph_analysis/output/` (call_graph.json, function_levels.json, hook_graph.json, db_table_graph.json, class_graph.json, communities_summary.json, report.txt)
+
+**Phase gate workflow** (every phase):
+```
+1. build_php_graphs.py → fresh graph data
+2. validate_coverage.py → coverage report (call, import, db_table, hook, class)
+3. Fix gaps: missing imports, missing hook invocations, missing Source comments
+4. Re-validate → 0 unmatched for in-scope modules
+5. Tests green → commit
+```
 
 ```
-Phase 1a — Walking Skeleton (1-2 days):
+Phase 1a — Walking Skeleton:
   - Flask app factory + Blueprints + config from env
-  - 10 core SQLAlchemy models (via sqlacodegen, then reviewed):
-    ttrss_users, ttrss_sessions, ttrss_feeds, ttrss_feed_categories,
-    ttrss_entries, ttrss_user_entries, ttrss_prefs, ttrss_user_prefs,
-    ttrss_access_keys, ttrss_version
+  - 10 core SQLAlchemy models (sqlacodegen + review)
   - Flask-Login + session + POST /api/ op=login + GET /api/status
   - Docker Compose: Flask + PostgreSQL + Redis
   - Security: bcrypt, parameterized queries, CSRF, Jinja2 autoescape
-  - Exit: docker compose up → login works → tests green
+  - Gate: docker compose up → login works → tests green
+  - Graph gate: models map to DB_TABLE graph communities [0]-[6]
 
 Phase 1b — Complete Foundation:
-  - Remaining 25 models (sqlacodegen + review)
-  - Alembic baseline migration
-  - Pluggy hook specifications (@hookspec) for all 24 hooks
+  - Remaining 21 models (31 total active tables)
+  - Alembic baseline migration (31 tables, 75 seed rows, schema_version=124)
+  - Pluggy hookspecs for all 24 hooks (matches 24 HOOK_* in hook graph)
   - PluginManager singleton with specs registered
-  - functions.php/functions2.php decomposition map finalized
+  - Decomposition map (specs/13) with graph levels + DB_TABLE communities
+  - Gate: 31 tables, alembic clean, 24 hookspecs, tests green
+  - Graph gate: all models vs DB_TABLE graph, all hookspecs vs hook graph
 
-Phase 2 — Core Logic (call graph order):
-  2a. Auth + Sessions (deepest dependency) + HOOK_AUTH_USER invocation
-  2b. Preference system
-  2c. Utility modules (decomposed from functions.php/functions2.php)
+Phase 2 — Core Logic (call graph levels L0-L15):
+  2a. utils/misc.py + plugins/loader.py (L0-L3)
+  2b. http/client.py + articles/sanitize.py + feed_tasks.py hooks (L1-L2)
+  2c. prefs/ops.py (L1 — get_pref is most-depended function, 30+ callers)
+  2d. auth/authenticate.py (L14-L15 — depends on all of 2a-2c)
+  Gate: Rule 10a traceability, tests green
+  Graph gate: call dimension + hook dimension (HOOK_SANITIZE, HOOK_AUTH_USER,
+    HOOK_FETCH_FEED, HOOK_FEED_FETCHED, HOOK_FEED_PARSED, HOOK_ARTICLE_FILTER)
 
-Phase 3 — Business Logic (dependency DAG order):
-  3a. ccache.py + labels.py (no inter-dependencies between these two;
-      ccache.py must precede feeds/counters.py; labels.py must precede
-      articles/ops.py and feeds/counters.py getLabelCounters)
-  3b. feeds/categories.py (must precede feeds/ops.py — subscribe_to_feed
-      creates categories)
-  3c. feeds/ops.py + feeds/counters.py (counters depends on ccache + labels)
-  3d. articles/ops.py (depends on labels.py for format_article_labels)
-  3e. articles/search.py
-  3f. tasks/housekeeping.py + utils/digest.py
-  Hook invocations: HOOK_FEED_PARSED, HOOK_ARTICLE_FILTER, etc. (inert)
+Phase 3 — Business Logic (9 batches, graph dependency DAG, L0-L10):
+  3.0 utils/feeds.py + ccache.py + labels.py (L0-L4, DB communities [0],[3])
+  3.1 feeds/categories.py (L2-L3, DB community [0])
+  3.2 feeds/ops.py (L1-L7, DB community [5])
+  3.3 feeds/counters.py (L2-L6, DB community [3])
+  3.4 articles/ops.py + articles/tags.py (L0-L5, DB community [4])
+  3.5 articles/filters.py (L0-L3, DB community [2])
+  3.6 articles/search.py (L2-L5, DB community [4])
+  3.7 tasks/housekeeping.py (L1-L3, DB community [1])
+  3.8 tasks/feed_tasks.py article persistence (L0-L10, DB community [4])
+  Gate: Rule 10a, 80% coverage per module, no circular imports, tests green
+  Graph gate: all 5 dimensions — call + import + db_table + hook + class
 
-Phase 4 — Handlers (frontend-backend contract):
-  4a. RPC handler (state mutations)
-  4b. Feeds handler (headline rendering via Jinja2)
-  4c. Article handler
-  4d. Preference handlers
-  Hook invocations: HOOK_RENDER_ARTICLE, HOOK_PREFS_TAB, etc.
-  Contract tests: JSON shapes match PHP originals for ~40 endpoints
+Phase 4 — API Handlers (5 batches, 17 ops):
+  4.1 Auth guards + getUnread/getCounters/getPref/getConfig/getLabels (L2-L5)
+  4.2 getCategories/getFeeds/getArticle (L2-L3)
+  4.3 updateArticle/catchupFeed/setArticleLabel/updateFeed (L5-L6)
+  4.4 getHeadlines/subscribeToFeed/unsubscribeFeed/shareToPublished (L5-L7)
+  4.5 getFeedTree (BFS, custom)
+  Gate: Rule 10a, JSON contract tests, tests green
+  Graph gate: call dimension (api.php edges), hook dimension
+    (HOOK_QUERY_HEADLINES, HOOK_RENDER_ARTICLE_API)
 
 Phase 5 — Cross-Cutting:
   5a. Plugin system (discovery, loading, per-user enable/disable, built-ins)
+      Graph: class community [8] (Auth_Internal+Plugin), call levels L2-L3
   5b. External API (REST, rate limiting)
-  5c. Celery integration (@celery.task decorators on Phase 3c functions,
-      Beat schedule, Flower monitoring)
+  5c. Celery refinement (Beat schedule, Flower, retry policies)
   5d. Logging (structlog) + error handling
+  5e. UI support: init_params.py (L2-L3, hooks: HOOK_HOTKEY_MAP, HOOK_HOTKEY_INFO,
+      HOOK_TOOLBAR_BUTTON, HOOK_ACTION_ITEM, HOOK_PREFS_TAB/SECTION/TABS,
+      HOOK_PREFS_EDIT_FEED, HOOK_PREFS_SAVE_FEED, HOOK_UPDATE_TASK)
+  Gate: all remaining hook invocations wired, tests green
+  Graph gate: full 5-dimension validation → ≥95% coverage metric
 
 Phase 6 — Deployment:
   6a. Production Docker (Gunicorn+gevent, Celery worker, Celery Beat)
-  6b. CI/CD pipeline
+  6b. CI/CD pipeline (includes validate_coverage.py in CI)
   6c. MySQL-to-PostgreSQL data migration via pgloader
   6d. Frontend asset serving
+  Gate: docker compose up → full stack operational
+  Graph gate: final coverage metric confirmed ≥95%
 ```
 
 **Pros**:
@@ -456,7 +486,7 @@ Key evidence from class hierarchy:
 
 ## Recommendation Matrix
 
-| Criterion | Variant A | Variant B | Variant C | Variant D-revised | Variant E |
+| Criterion | Variant A | Variant B | Variant C | Variant D (Graph-Driven) | Variant E |
 |-----------|-----------|-----------|-----------|-------------------|-----------|
 | Time to first runnable code | Slow | Fast | Medium | **Fast (1-2 days)** | Slow |
 | Refactoring risk | Low | High | Medium | Low | Low |
@@ -470,15 +500,17 @@ Key evidence from class hierarchy:
 | Plugin hook timing | Late | Early (stubs) | Per-slice | **Specs early, invocations mid** | Late |
 | Stub/mock debt | High | High | Low | **Low (walking skeleton)** | Medium |
 
-### Recommendation: **Variant D-revised (Walking Skeleton + Hybrid Entity-then-Graph)**
+### Recommendation: **Variant D (Graph-Driven Migration)**
 
 Rationale:
 1. Walking skeleton (Phase 1a) delivers runnable app in 1-2 days — addresses AR4
 2. sqlacodegen automates bulk model generation — addresses R1 solo-dev concern
-3. Call-graph ordering prevents "missing dependency" issues
-4. Hook specifications defined early (Phase 1b), invocation points placed when code is written (Phases 3-4) — addresses R7
-5. Feed engine designed for Celery from Phase 3c — addresses R13 refactoring concern
-6. Explicit async strategy: Gunicorn+gevent for web, Celery+httpx for feeds — addresses AR7
+3. **tree-sitter + NetworkX graph analysis** drives batch ordering via topological levels (L0-L16)
+4. **5-dimension graph validation** at every phase gate (call, class, db_table, hook, include)
+5. Hook specifications defined early (Phase 1b), validated against hook graph (24/24 hooks)
+6. Feed engine designed for Celery from Phase 3 — addresses R13 refactoring concern
+7. Explicit async strategy: Gunicorn+gevent for web, Celery+httpx for feeds — addresses AR7
+8. **Automated coverage metric**: validate_coverage.py confirms ≥95% at Phase 6 gate
 7. Each phase has entry/exit criteria and dedicated test suite — addresses R10
 8. functions.php/functions2.php decomposition map with phase assignments
 9. pgloader for MySQL-to-PostgreSQL data migration

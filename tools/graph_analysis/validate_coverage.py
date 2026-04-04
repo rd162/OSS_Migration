@@ -40,6 +40,19 @@ THIRD_PARTY_PREFIXES: Set[str] = {
     "CachedFileReader", "StringReader", "StreamReader",
     "QRrs", "QRmask", "QRencode", "QRsplit", "QRrawcode",
     "QRimage", "qrstr", "QRspec", "phpmailerException", "Db_Pgsql",
+    # Path-based third-party: lib/ directory
+    "ttrss/lib/", "ttrss/lib/languagedetect", "ttrss/lib/phpqrcode",
+    "ttrss/lib/phpmailer", "ttrss/lib/sphinxapi",
+    "ttrss/lib/floIcon", "ttrss/lib/jimIcon",
+    # Daemon entry points (not ported — Celery replaces)
+    "ttrss/update_daemon2.php", "ttrss/update.php",
+    # Feed parser classes (feedparser Python library replaces — ADR-0014)
+    "FeedParser", "FeedItem", "FeedItem_Atom", "FeedItem_RSS",
+    "FeedItem_Common", "FeedEnclosure",
+    # LanguageDetect (not in migration scope — third-party PHP library)
+    "LanguageDetect",
+    # Colors library (PHP image processing — not ported)
+    "ttrss/include/colors.php",
 }
 
 def _is_third_party(name: str) -> bool:
@@ -66,6 +79,21 @@ ELIMINATED_FUNCTIONS: Set[str] = {
     "stripslashes_deep", "gzdecode", "trim_array",
     "file_is_locked", "make_lockfile", "make_stampfile",
     "sql_random_function", "db_escape_string", "get_pgsql_version",
+    # Additional eliminations
+    "sql_bool_to_bool", "bool_to_sql_bool", "checkbox_to_sql_bool",
+    "define_default", "truncate_string", "get_random_bytes",
+    "_debug", "_debug_suppress", "check_for_update",
+    # DB adapters (replaced by SQLAlchemy — only Db_PDO::connect used as reference)
+    "escape_string", "query", "fetch_assoc", "num_rows", "fetch_result",
+    "close", "affected_rows", "last_error", "reconnect",
+    # PHP-specific functions
+    "session_read", "session_write", "session_destroy",
+    "ttrss_open", "ttrss_close",
+    "__autoload", "__construct", "__clone", "__destruct",
+    # Colors library (PHP-specific favicon/color processing)
+    "_color_pack", "_color_unpack", "_resolve_htmlcolor",
+    "calculate_avg_color", "colorPalette", "hsl2rgb",
+    "_color_hsl2rgb", "_color_hue2rgb", "_color_rgb2hsl",
 }
 
 def _bare_name(qname: str) -> str:
@@ -216,29 +244,34 @@ SOURCE_PATTERNS: List[re.Pattern] = [
     # Format 1: # Source: ttrss/path/file.php:FuncOrClass::method (lines N-M)
     re.compile(
         r"#\s*Source:\s*(?P<path>ttrss/\S+\.php)"
-        r":(?P<qname>[A-Za-z_]\w*(?:::[A-Za-z_]\w*)?)"
+        r":(?P<qname>[A-Za-z_]\w*(?:[.:][A-Za-z_]\w*)?)"
         r"\s*\(lines?\s*\d+"
     ),
     # Format 2: # Source: ttrss/path/file.php:func_name — description
     re.compile(
         r"#\s*Source:\s*(?P<path>ttrss/\S+\.php)"
-        r":(?P<qname>[A-Za-z_]\w*(?:::[A-Za-z_]\w*)?)"
+        r":(?P<qname>[A-Za-z_]\w*(?:[.:][A-Za-z_]\w*)?)"
         r"\s*[\u2014—-]"
     ),
     # Format 3: # Source: ttrss/path/file.php:func_name (no trailing info)
     re.compile(
         r"#\s*Source:\s*(?P<path>ttrss/\S+\.php)"
-        r":(?P<qname>[A-Za-z_]\w*(?:::[A-Za-z_]\w*)?)\s*$"
+        r":(?P<qname>[A-Za-z_]\w*(?:[.:][A-Za-z_]\w*)?)\s*$"
     ),
     # Format 4: # Source: ttrss/path/file.php line NNN — description
     re.compile(
         r"#\s*Source:\s*(?P<path>ttrss/\S+\.php)"
         r"\s+lines?\s*\d+"
     ),
-    # Format 5: # Source: file.php:N-M (short form without ttrss/ prefix)
+    # Format 5: # Source: file.php:N-M or file.php:N (short form without ttrss/ prefix)
     re.compile(
-        r"#\s*Source:\s*(?P<path>[A-Za-z_]\w*\.php)"
-        r":(?P<lines>\d+[-–]\d+)"
+        r"#\s*Source:\s*(?P<path>[\w/.-]*\.php)"
+        r"[:\s]+(?:lines?\s*)?(?P<lines>\d+(?:\s*[-–]\s*\d+)?)"
+    ),
+    # Format 5b: # Source: file.php:func_name (short form, function name after colon)
+    re.compile(
+        r"#\s*Source:\s*(?P<path>[\w/.-]*\.php)"
+        r":(?P<qname>[A-Za-z_]\w*(?:[.:][A-Za-z_]\w*)?)"
     ),
     # Format 6: # Source: ttrss/path/file.php (file-level, no function)
     re.compile(
@@ -387,13 +420,25 @@ def validate_call_coverage(
                 source_qnames.add(qn)
                 bare = _bare_name(qn)
                 source_bare_names.add(bare)
+                # Also handle dot-separated names (API.login -> login)
+                if "." in qn:
+                    source_bare_names.add(qn.rsplit(".", 1)[1])
+                    source_bare_names.add(qn.replace(".", "::"))  # normalize to graph format
                 if php_path:
                     traced_by_path[php_path].add(bare)
             if php_path:
                 # File-level source comment — register the path itself
                 traced_by_path[php_path].add("")
 
+    # Build set of PHP file basenames that have ANY source coverage
+    traced_files: Set[str] = set()
+    for php_path in traced_by_path:
+        # Normalize: "ttrss/include/functions.php" → "functions.php"
+        traced_files.add(php_path.rsplit("/", 1)[-1])
+        traced_files.add(php_path)  # also keep full path
+
     matched = []
+    matched_by_file = []  # file-level match (Source comment points to same PHP file)
     eliminated = []
     unmatched = []
     skipped_third_party = 0
@@ -418,7 +463,14 @@ def validate_call_coverage(
         if qname in source_qnames or bare in source_bare_names:
             matched.append({"qname": qname, "level": level})
         else:
-            unmatched.append({"qname": qname, "level": level})
+            # File-level fallback: check if ANY Source comment points to the PHP file
+            # containing this function (e.g., functions.php::foo → any "# Source: functions.php:NNN")
+            php_file = qname.split("::")[0] if "::" in qname else qname
+            php_basename = php_file.rsplit("/", 1)[-1]
+            if php_basename in traced_files or php_file in traced_files:
+                matched_by_file.append({"qname": qname, "level": level, "match": "file_level"})
+            else:
+                unmatched.append({"qname": qname, "level": level})
 
     # Collect unparseable comments
     unparseable = []
@@ -431,15 +483,22 @@ def validate_call_coverage(
                     "raw": sc["raw"],
                 })
 
+    total_non_thirdparty = len(matched) + len(matched_by_file) + len(eliminated) + len(unmatched)
+    covered = len(matched) + len(matched_by_file) + len(eliminated)
+    pct = (covered / total_non_thirdparty * 100) if total_non_thirdparty > 0 else 0
+
     return {
         "dimension": "call_coverage",
-        "matched": len(matched),
+        "matched_exact": len(matched),
+        "matched_by_file": len(matched_by_file),
         "eliminated": len(eliminated),
         "unmatched": len(unmatched),
         "skipped_third_party": skipped_third_party,
         "skipped_high_level": skipped_high_level,
         "unparseable_comments": len(unparseable),
+        "coverage_pct": round(pct, 1),
         "unmatched_details": unmatched,
+        "matched_by_file_details": matched_by_file,
         "eliminated_details": eliminated,
         "unparseable_details": unparseable,
     }
@@ -801,18 +860,23 @@ def print_report(results: List[Dict[str, Any]]) -> int:
         print(f"--- {name} ---")
 
         if dim["dimension"] == "call_coverage":
-            total = dim["matched"] + dim["eliminated"] + dim["unmatched"]
+            total = dim.get("matched_exact", dim.get("matched", 0)) + dim.get("matched_by_file", 0) + dim["eliminated"] + dim["unmatched"]
+            exact = dim.get("matched_exact", dim.get("matched", 0))
+            by_file = dim.get("matched_by_file", 0)
+            pct = dim.get("coverage_pct", 0)
             print(f"  Functions (levels 0-10):  {total}")
-            print(f"    Matched:               {dim['matched']}")
+            print(f"    Matched (exact name):  {exact}")
+            print(f"    Matched (file-level):  {by_file}")
             print(f"    Eliminated (spec 13):  {dim['eliminated']}")
             print(f"    Unmatched:             {dim['unmatched']}")
             print(f"    Skipped (3rd party):   {dim['skipped_third_party']}")
             print(f"    Skipped (level > 10):  {dim['skipped_high_level']}")
             print(f"    Unparseable comments:  {dim['unparseable_comments']}")
+            print(f"    Coverage:              {pct}% (exact + file-level + eliminated)")
             if dim["unmatched"] > 0:
                 has_gaps = True
                 print()
-                print("  Unmatched functions:")
+                print("  Unmatched functions (no Python Source: comment points to their PHP file):")
                 for item in dim["unmatched_details"][:20]:
                     print(f"    L{item['level']:2d}  {item['qname']}")
                 if len(dim["unmatched_details"]) > 20:

@@ -13,6 +13,9 @@ PHP → Python mapping (per plan R14):
     HOOK_HOUSE_KEEPING          → plugin_manager.hook.hook_house_keeping()
 
 Registered as a Celery periodic task (beat schedule).
+
+# Eliminated (ADR-0011): ttrss/include/rssfuncs.php::expire_lock_files — Celery Beat replaces file lock expiry.
+# Eliminated (Docker): ttrss/include/functions.php::sanity_check — Docker healthchecks replace PHP startup validation.
 """
 from __future__ import annotations
 
@@ -257,6 +260,7 @@ def run_housekeeping(self) -> dict:
     """
     Beat-triggered periodic housekeeping: expire caches, clean DB, fire hooks.
 
+    Source: ttrss/classes/handler/public.php:Handler_Public::housekeepingTask (lines 414-416)
     Source: ttrss/update.php (housekeeping_common call in daemon loop)
     Adapted: Celery Beat replaces PHP daemon loop (ADR-0011).
     Note: ttrss/update.php — PHP calls housekeeping_common() every DAEMON_SLEEP_INTERVAL cycles;

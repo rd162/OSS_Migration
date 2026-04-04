@@ -126,6 +126,7 @@ def edit_filter(filter_id: int):
 def add_filter():
     """Create a new filter with rules and actions.
 
+    Source: ttrss/classes/pref/filters.php:Pref_Filters::newfilter (lines 702-793)
     Source: ttrss/classes/pref/filters.php:581 — add
     """
     owner_uid = _owner_uid()

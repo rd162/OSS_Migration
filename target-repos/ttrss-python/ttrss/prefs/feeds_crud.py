@@ -1030,3 +1030,71 @@ def _checkbox_bool(value: Any) -> bool:
     if value is None:
         return False
     return str(value).lower() in ("1", "true", "on", "yes")
+
+
+# ---------------------------------------------------------------------------
+# Icon / PubSub / Access key helpers
+# ---------------------------------------------------------------------------
+
+
+def remove_feed_icon(session: Session, feed_id: int, owner_uid: int) -> bool:
+    """Clear favicon colour data for a feed.
+
+    Source: ttrss/classes/pref/feeds.php:Pref_Feeds::removeicon (lines 459-470)
+    PHP: UPDATE ttrss_feeds SET favicon_avg_color = NULL WHERE id = feed_id AND owner_uid = uid.
+    Returns False if feed not owned by user.
+    """
+    result = session.execute(
+        update(TtRssFeed)
+        .where(TtRssFeed.id == feed_id, TtRssFeed.owner_uid == owner_uid)
+        .values(favicon_avg_color=None)
+    )
+    session.commit()
+    return result.rowcount > 0
+
+
+def reset_pubsub(session: Session, feed_ids: list, owner_uid: int) -> int:
+    """Reset PubSubHubbub subscription state to 0 for a set of feeds.
+
+    Source: ttrss/classes/pref/feeds.php:Pref_Feeds::resetPubSub (lines 1068-1077)
+    PHP: UPDATE ttrss_feeds SET pubsub_state = 0 WHERE id IN (ids) AND owner_uid = uid.
+    """
+    if not feed_ids:
+        return 0
+    result = session.execute(
+        update(TtRssFeed)
+        .where(TtRssFeed.id.in_(feed_ids), TtRssFeed.owner_uid == owner_uid)
+        .values(pubsub_state=0)
+    )
+    session.commit()
+    return result.rowcount
+
+
+def regen_opml_key(session: Session, owner_uid: int) -> str:
+    """Regenerate the OPML publish access key for a user.
+
+    Source: ttrss/classes/pref/feeds.php:Pref_Feeds::regenOPMLKey (lines 1861-1867)
+    PHP: calls update_feed_access_key('OPML:Publish', false, uid), returns new link.
+    """
+    return update_feed_access_key(session, "OPML:Publish", False, owner_uid)
+
+
+def regen_feed_key(session: Session, feed_id: int, is_cat: bool, owner_uid: int) -> str:
+    """Regenerate the per-feed access key.
+
+    Source: ttrss/classes/pref/feeds.php:Pref_Feeds::regenFeedKey (lines 1870-1878)
+    PHP: regenerates key via update_feed_access_key for the given feed_id/is_cat.
+    """
+    return update_feed_access_key(session, str(feed_id), is_cat, owner_uid)
+
+
+def clear_access_keys(session: Session, owner_uid: int) -> None:
+    """Delete all access keys for a user.
+
+    Source: ttrss/classes/pref/feeds.php:Pref_Feeds::clearKeys (lines 1904-1906)
+    PHP: DELETE FROM ttrss_access_keys WHERE owner_uid = uid.
+    """
+    session.execute(
+        sa_delete(TtRssAccessKey).where(TtRssAccessKey.owner_uid == owner_uid)
+    )
+    session.commit()

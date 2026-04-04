@@ -55,6 +55,8 @@ def get_rule_reg_exps_for_filter(filter_id: int) -> list[str]:
 def get_filter_name(filter_id: int) -> tuple[str, str]:
     """Return (title_with_rule_count, actions_summary) for display.
 
+    Source: ttrss/classes/pref/filters.php:Pref_Filters::getRuleName (lines 398-421)
+    Source: ttrss/classes/pref/filters.php:Pref_Filters::getActionName (lines 427-437)
     Source: ttrss/classes/pref/filters.php:getFilterName (line 944)
     """
     row = db.session.execute(

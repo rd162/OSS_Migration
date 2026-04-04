@@ -99,6 +99,7 @@ def setArticleTags(
 ) -> None:
     """Replace all tags for an article and update the tag_cache.
 
+    Source: ttrss/classes/article.php:Article::setArticleTags (lines 222-284)
     Source: ttrss/classes/article.php:Article::editArticleTags (tag write path)
     Validates each tag via tag_is_valid before inserting.
     """

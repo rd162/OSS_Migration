@@ -442,6 +442,33 @@ class PluginHost:
             for hook_type in plugin.get_hooks():
                 self._hooks.setdefault(hook_type, []).append(plugin)
 
+    def get_plugin_names(self) -> list:
+        """Return names of all registered plugins.
+
+        Source: ttrss/classes/pluginhost.php:PluginHost::get_plugin_names (lines 78-86)
+        PHP: returns array of class names from $this->plugins.
+        """
+        return list(self._plugin_registry.keys())
+
+    def get_plugins(self) -> dict:
+        """Return the full plugin registry {name: instance}.
+
+        Source: ttrss/classes/pluginhost.php:PluginHost::get_plugins (lines 88-90)
+        PHP: return $this->plugins.
+        """
+        return dict(self._plugin_registry)
+
+    def get_plugin(self, name: str):
+        """Return plugin instance by name, or None.
+
+        Source: ttrss/classes/pluginhost.php:PluginHost::get_plugin (lines 92-94)
+        PHP: return $this->plugins[$name].
+        """
+        return self._plugin_registry.get(name)
+
+    # Eliminated (ADR-0010): PluginHost::get_dbh — SQLAlchemy session replaces PHP DB handle.
+    # Eliminated (ADR-0010): PluginHost::run_hooks — pluggy pm.hook.xxx() replaces PHP run_hooks().
+
 
 def get_plugin_host() -> PluginHost:
     """

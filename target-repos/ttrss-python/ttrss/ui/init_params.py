@@ -151,7 +151,7 @@ def make_runtime_info(owner_uid: int) -> dict[str, Any]:
     max_feed_id: int = row.mid or 0
     num_feeds: int = row.nf or 0
 
-    # Source: functions2.php:214 — getLastArticleId()
+    # Source: ttrss/include/functions2.php:getLastArticleId (lines 1943-1951)
     last_article_id: int = db.session.execute(
         select(func.max(TtRssEntry.id))
         .join(TtRssUserEntry, TtRssUserEntry.ref_id == TtRssEntry.id)

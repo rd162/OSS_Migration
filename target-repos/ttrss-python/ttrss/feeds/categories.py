@@ -120,6 +120,7 @@ def get_feed_category(
 ) -> Optional[int]:
     """Return the category ID for a given title and parent, or None if not found.
 
+    Source: ttrss/include/functions2.php:getFeedCategory (lines 2212-2226)
     Source: ttrss/include/functions2.php:get_feed_category (lines 1634-1651)
     """
     q = (

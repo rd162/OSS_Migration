@@ -1254,6 +1254,7 @@ def _handle_shareToPublished(data: dict, seq: int):
     """
     Create a manually shared article in the Published virtual feed.
 
+    Source: ttrss/classes/api.php:API::shareToPublished (lines 492-502)
     Source: ttrss/classes/article.php:share_to_published (lines 129-134, 155-159)
     guid = "SHA1:" + url (literal prefix, not computed hash — matches PHP convention).
     TtRssUserEntry.feed_id = None (NOT -2) — shared articles have no feed row (R16).

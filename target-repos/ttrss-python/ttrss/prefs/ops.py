@@ -23,12 +23,11 @@ def get_schema_version() -> int:
     Return the current schema version from ttrss_version.
 
     Source: ttrss/include/functions.php:get_schema_version (line 988)
+    Source: ttrss/include/sessions.php:session_get_schema_version (lines 26-31)
     Adapted: PHP uses a global PDO connection and returns an int via fetch(PDO::FETCH_COLUMN).
              Python queries via SQLAlchemy session (Flask-SQLAlchemy extension).
-    Note: ttrss/include/sessions.php:session_get_schema_version (line 26) — PHP caches the
-          schema version in $_SESSION to avoid repeated queries.  Python does not use a
-          session cache; every call queries the DB.  Callers that need session caching
-          must wrap this function.
+    Note: PHP caches the schema version in $_SESSION to avoid repeated queries.
+          Python does not use a session cache; every call queries the DB.
     """
     # Source: ttrss/include/functions.php line 988 — SELECT schema_version FROM ttrss_version
     from ttrss.extensions import db  # New: no PHP equivalent — lazy import keeps module importable outside Flask context.
@@ -137,6 +136,7 @@ def initialize_user_prefs(
     Copy all system default preferences from ttrss_prefs into ttrss_user_prefs
     for a newly created user, skipping rows that already exist.
 
+    Source: ttrss/include/functions.php:initialize_user_prefs (lines 639-723)
     Source: ttrss/include/db-prefs.php:initialize_user_prefs (full function)
     Adapted: PHP uses INSERT … SELECT with ON CONFLICT DO NOTHING (or equivalent).
              Python iterates system prefs and calls session.merge per row — semantically

@@ -4,6 +4,9 @@ Source: ttrss/classes/pref/feeds.php (Pref_Feeds handler, 1925 lines)
 Adapted: PHP handler class replaced by Flask Blueprint routes (R13, ADR-0001).
          Delegation to feeds_crud per AR-2 (no direct SQL here).
          HTML output eliminated — endpoints return JSON (R13).
+
+# Eliminated (R13): Pref_Feeds::editfeeds — PHP HTML batch-edit dialog; JSON route /feeds/batch_edit handles instead.
+# Eliminated (R13): Pref_Feeds::batch_edit_cbox — PHP HTML checkbox helper; no Python equivalent needed.
 """
 from __future__ import annotations
 
@@ -375,3 +378,94 @@ def get_feed_tree():
     force_show_empty = request.args.get("force_show_empty", "false").lower() in ("1", "true")
     tree = feeds_crud.get_feed_tree(_s(), owner_uid, mode=mode, search=search, force_show_empty=force_show_empty)
     return jsonify(tree)
+
+
+# ---------------------------------------------------------------------------
+# Additional category / icon / pubsub / access key routes
+# ---------------------------------------------------------------------------
+
+
+@prefs_bp.route("/feeds/categories/add", methods=["POST"])
+@login_required
+def add_category():
+    """Create a new feed category.
+
+    Source: ttrss/classes/pref/feeds.php:Pref_Feeds::addCat (lines 1233-1236)
+    PHP: calls add_feed_category(trim(request["cat"])).
+    """
+    from ttrss.feeds.categories import add_feed_category
+
+    owner_uid = _owner_uid()
+    cat_title = request.form.get("cat", "").strip()
+    if not cat_title:
+        return jsonify({"error": "title_required"}), 400
+    add_feed_category(_s(), cat_title, owner_uid)
+    _s().commit()
+    return jsonify({"status": "ok"})
+
+
+@prefs_bp.route("/feeds/icon/remove", methods=["POST"])
+@login_required
+def remove_feed_icon():
+    """Clear the feed icon / favicon colour data.
+
+    Source: ttrss/classes/pref/feeds.php:Pref_Feeds::removeicon (lines 459-470)
+    """
+    owner_uid = _owner_uid()
+    feed_id = int(request.form.get("feed_id", 0))
+    ok = feeds_crud.remove_feed_icon(_s(), feed_id, owner_uid)
+    if not ok:
+        return jsonify({"error": "feed_not_found"}), 404
+    return jsonify({"status": "ok"})
+
+
+@prefs_bp.route("/feeds/pubsub/reset", methods=["POST"])
+@login_required
+def reset_pubsub():
+    """Reset PubSubHubbub subscription state for selected feeds.
+
+    Source: ttrss/classes/pref/feeds.php:Pref_Feeds::resetPubSub (lines 1068-1077)
+    """
+    owner_uid = _owner_uid()
+    ids_raw = request.form.getlist("feed_ids[]") or request.form.getlist("feed_ids")
+    feed_ids = [int(x) for x in ids_raw if str(x).lstrip("-").isdigit()]
+    count = feeds_crud.reset_pubsub(_s(), feed_ids, owner_uid)
+    return jsonify({"status": "ok", "reset": count})
+
+
+@prefs_bp.route("/feeds/keys/opml/regen", methods=["POST"])
+@login_required
+def regen_opml_key():
+    """Regenerate the OPML publish access key.
+
+    Source: ttrss/classes/pref/feeds.php:Pref_Feeds::regenOPMLKey (lines 1861-1867)
+    """
+    owner_uid = _owner_uid()
+    new_key = feeds_crud.regen_opml_key(_s(), owner_uid)
+    return jsonify({"status": "ok", "access_key": new_key})
+
+
+@prefs_bp.route("/feeds/key/regen", methods=["POST"])
+@login_required
+def regen_feed_key():
+    """Regenerate the per-feed access key.
+
+    Source: ttrss/classes/pref/feeds.php:Pref_Feeds::regenFeedKey (lines 1870-1878)
+    """
+    owner_uid = _owner_uid()
+    feed_id = int(request.form.get("id", 0))
+    is_cat = request.form.get("is_cat", "false").lower() in ("1", "true", "yes")
+    new_key = feeds_crud.regen_feed_key(_s(), feed_id, is_cat, owner_uid)
+    return jsonify({"status": "ok", "access_key": new_key})
+
+
+@prefs_bp.route("/feeds/keys/clear", methods=["POST"])
+@login_required
+def clear_access_keys():
+    """Delete all access keys for the current user.
+
+    Source: ttrss/classes/pref/feeds.php:Pref_Feeds::clearKeys (lines 1904-1906)
+    """
+    owner_uid = _owner_uid()
+    feeds_crud.clear_access_keys(_s(), owner_uid)
+    return jsonify({"status": "ok"})

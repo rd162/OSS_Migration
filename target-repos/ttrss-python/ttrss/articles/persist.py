@@ -14,6 +14,7 @@ Source: ttrss/include/rssfuncs.php:update_rss_feed (lines 545-1117)
 
 Eliminated (R13): $debug parameter — Python logging used.
 Eliminated (R11): MySQL-specific MATCH() AGAINST() — PostgreSQL similarity() used.
+Eliminated (inline): ttrss/include/rssfuncs.php::cache_images — image URL rewriting handled inline in sanitize pipeline.
 Adapted: SQLAlchemy ORM; pg_insert().on_conflict_do_nothing() for GUID uniqueness.
 """
 from __future__ import annotations
@@ -57,6 +58,7 @@ _ACTION_PLUGIN = "plugin"
 def _make_guid_from_title(title: str) -> str:
     """Fallback GUID from article title hash.
 
+    Source: ttrss/include/rssfuncs.php:make_guid_from_title (lines 1401-1404)
     Source: ttrss/include/rssfuncs.php (lines 550-560)
     """
     return "SHA1:" + hashlib.sha1(title.encode("utf-8", errors="replace")).hexdigest()
@@ -494,3 +496,39 @@ def persist_article(
         persist_enclosures(session, entry_id, enclosures)
 
     return True
+
+
+# ---------------------------------------------------------------------------
+# Label filter helpers
+# ---------------------------------------------------------------------------
+
+
+def labels_contains_caption(labels: list, caption: str) -> bool:
+    """Return True if any label in *labels* has the given caption.
+
+    Source: ttrss/include/rssfuncs.php:labels_contains_caption (lines 1381-1386)
+    PHP: foreach ($labels as $label) { if ($label[1] == $caption) return true; }
+    """
+    return any(lbl[1] == caption for lbl in labels if len(lbl) > 1)
+
+
+def assign_article_to_label_filters(
+    session: "Session",
+    article_id: int,
+    filters: list,
+    owner_uid: int,
+    article_labels: list,
+) -> None:
+    """Assign an article to labels matched by label-type filter actions.
+
+    Source: ttrss/include/rssfuncs.php:assign_article_to_label_filters (lines 1391-1400)
+    PHP: foreach filters: if type=="label" and not labels_contains_caption: label_add_article.
+    Only assigns if the label is not already present in article_labels.
+    """
+    from ttrss.labels import label_add_article
+
+    for action in filters:
+        if action.get("type") == "label":
+            cap = action.get("param", "")
+            if cap and not labels_contains_caption(article_labels, cap):
+                label_add_article(session, article_id, cap, owner_uid)

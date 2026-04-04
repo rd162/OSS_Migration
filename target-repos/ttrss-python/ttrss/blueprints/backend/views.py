@@ -1288,6 +1288,76 @@ def _backend_help():
 
 
 # ===========================================================================
+# Article class handlers — Source: ttrss/classes/article.php:Article
+# ===========================================================================
+
+
+def _article_complete_tags():
+    """Tag autocomplete — return up to 10 tags matching a search prefix.
+
+    Source: ttrss/classes/article.php:Article::completeTags (lines 287-299)
+    PHP: SELECT DISTINCT tag_name FROM ttrss_tags WHERE owner_uid = uid AND tag_name LIKE :search% LIMIT 10.
+    Adapted: R13 — JSON output instead of HTML <ul>.
+    """
+    from ttrss.models.tag import TtRssTag
+
+    search = _param("search", "")
+    q = (
+        select(TtRssTag.tag_name)
+        .distinct()
+        .where(TtRssTag.owner_uid == current_user.id)
+        .order_by(TtRssTag.tag_name)
+        .limit(10)
+    )
+    if search:
+        q = q.where(TtRssTag.tag_name.ilike(f"{search}%"))
+    tags = db.session.execute(q).scalars().all()
+    return jsonify({"tags": list(tags)})
+
+
+def _article_assign_to_label():
+    """Assign articles to a label.
+
+    Source: ttrss/classes/article.php:Article::assigntolabel (lines 302-303)
+    Source: ttrss/classes/article.php:Article::labelops (lines 310-340)
+    PHP: calls labelops(true) → label_add_article for each article id.
+    """
+    from ttrss.labels import label_add_article, label_find_caption
+
+    ids_str = _param("ids", "")
+    label_id = int(_param("lid", 0))
+    owner_uid = current_user.id
+    ids = [int(x) for x in ids_str.split(",") if x.strip().lstrip("-").isdigit()]
+    caption = label_find_caption(db.session, label_id, owner_uid)
+    if caption and ids:
+        for art_id in ids:
+            label_add_article(db.session, art_id, caption, owner_uid)
+        db.session.commit()
+    return jsonify({"status": "OK"})
+
+
+def _article_remove_from_label():
+    """Remove articles from a label.
+
+    Source: ttrss/classes/article.php:Article::removefromlabel (lines 306-307)
+    Source: ttrss/classes/article.php:Article::labelops (lines 310-340)
+    PHP: calls labelops(false) → label_remove_article for each article id.
+    """
+    from ttrss.labels import label_remove_article, label_find_caption
+
+    ids_str = _param("ids", "")
+    label_id = int(_param("lid", 0))
+    owner_uid = current_user.id
+    ids = [int(x) for x in ids_str.split(",") if x.strip().lstrip("-").isdigit()]
+    caption = label_find_caption(db.session, label_id, owner_uid)
+    if caption and ids:
+        for art_id in ids:
+            label_remove_article(db.session, art_id, caption, owner_uid)
+        db.session.commit()
+    return jsonify({"status": "OK"})
+
+
+# ===========================================================================
 # Dispatch table: (op, method) → handler
 # Source: ttrss/backend.php dispatch pattern
 # ===========================================================================
@@ -1335,4 +1405,8 @@ _DISPATCH: dict[tuple[str, str], Any] = {
     # Backend class operations — Source: ttrss/classes/backend.php:Backend
     ("backend", "loading"):         _backend_loading,
     ("backend", "help"):            _backend_help,
+    # Article class operations — Source: ttrss/classes/article.php:Article
+    ("article", "completetags"):    _article_complete_tags,
+    ("article", "assigntolabel"):   _article_assign_to_label,
+    ("article", "removefromlabel"): _article_remove_from_label,
 }

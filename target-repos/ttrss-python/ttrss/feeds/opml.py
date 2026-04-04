@@ -763,6 +763,7 @@ def import_opml(
 ) -> dict:
     """Import feeds from an OPML XML string for *user_id*.
 
+    Source: ttrss/classes/opml.php:Opml::import (lines 20-506)
     Source: ttrss/classes/opml.php:Opml::opml_import (lines 461-506)
     PHP: reads file upload from $_FILES, calls opml_import_category(doc, false, ...).
     Adapted: accepts pre-read XML string (caller handles file/upload I/O);

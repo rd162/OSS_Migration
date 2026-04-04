@@ -91,6 +91,7 @@ def init_plugins(app=None) -> None:
     Load all plugins listed in TTRSS_PLUGINS env var (KIND_ALL — system + user).
     Called once at application startup.
 
+    Source: ttrss/classes/pluginhost.php:PluginHost::load_all (lines 126-129)
     Source: ttrss/include/functions2.php:init_plugins (lines 1583-1587)
             → PluginHost::getInstance()->load(PLUGINS, KIND_ALL)
     Adapted: PHP PLUGINS constant replaced by TTRSS_PLUGINS env var; importlib replaces

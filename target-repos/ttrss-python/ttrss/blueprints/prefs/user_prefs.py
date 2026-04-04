@@ -4,6 +4,10 @@ Source: ttrss/classes/pref/prefs.php (Pref_Prefs handler, 1129 lines)
 Adapted: PHP handler class replaced by Flask Blueprint routes.
          Delegation to user_prefs_crud per AR-2 (no direct SQL here).
          HTML output eliminated — endpoints return JSON (R13).
+
+# Eliminated (R13): Pref_Prefs::customizeCSS — PHP HTML dialog; setpref endpoint handles CSS pref.
+# Eliminated (R13): Pref_Prefs::toggleAdvanced — PHP session toggle; no JSON API equivalent.
+# Eliminated (R13): Pref_Prefs::getHelp — PHP HTML help text; client-side handles.
 """
 from __future__ import annotations
 
@@ -217,4 +221,26 @@ def clear_plugin_data():
 
     # Source: ttrss/classes/pref/prefs.php:962 — DELETE FROM ttrss_plugin_storage
     user_prefs_crud.clear_plugin_data(owner_uid, plugin_name)
+    return jsonify({"status": "ok"})
+
+
+# ---------------------------------------------------------------------------
+# Plugin list
+# ---------------------------------------------------------------------------
+
+
+@prefs_bp.route("/user/plugins", methods=["POST"])
+@login_required
+def set_plugins():
+    """Save the list of enabled plugins as a comma-separated preference.
+
+    Source: ttrss/classes/pref/prefs.php:Pref_Prefs::setplugins (lines 950-954)
+    PHP: joins plugins[] array to comma string, calls set_pref("_ENABLED_PLUGINS", plugins).
+    """
+    from ttrss.prefs.ops import set_user_pref
+
+    owner_uid = _owner_uid()
+    plugins_raw = request.form.getlist("plugins[]") or request.form.getlist("plugins")
+    plugins_value = ",".join(p.strip() for p in plugins_raw if p.strip())
+    set_user_pref(owner_uid, "_ENABLED_PLUGINS", plugins_value)
     return jsonify({"status": "ok"})

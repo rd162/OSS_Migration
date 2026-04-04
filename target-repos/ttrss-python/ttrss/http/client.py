@@ -10,6 +10,11 @@ Source: ttrss/include/functions.php:fetch_file_contents (lines 343-495)
         ttrss/include/functions2.php:rewrite_relative_url (lines 1965-1993)
 Adapted: PHP cURL replaced by httpx async (ADR-0015); global error variables replaced by
          return value of None and logged errors.  SSL verification hardened (G4 requirement).
+
+# Eliminated (stdlib): ttrss/include/functions2.php::geturl — httpx handles HTTP; no direct equivalent.
+# Eliminated (stdlib): ttrss/include/functions2.php::convertUrlQuery — urllib.parse replaces.
+# Eliminated (client-side): ttrss/include/functions.php::getFeedIcon — favicon fetched client-side.
+# Eliminated (browser-specific): ttrss/include/functions2.php::add_feed_url — Firefox-specific URL builder.
 """
 from __future__ import annotations
 

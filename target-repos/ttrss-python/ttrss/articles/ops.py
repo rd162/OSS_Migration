@@ -251,6 +251,7 @@ def catchupArticlesById(
     """Mark a list of articles as read/unread/toggled, then update ccache.
 
     Source: ttrss/include/functions2.php:catchupArticlesById (lines 1018-1053)
+    Source: ttrss/classes/article.php:Article::catchupArticleById (lines 67-85)
     cmode 0 = mark read, 1 = mark unread, 2 = toggle.
     ccache_update call sites #5+: one call per distinct feed_id (functions2.php:1050-1052).
     """

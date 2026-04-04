@@ -347,7 +347,13 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
         pm.hook.hook_feed_parsed(rss=parsed)
 
         # Source: rssfuncs.php lines 440-500 — per-entry processing loop
+        # Phase 3: load filters once per feed update (rssfuncs.php lines 806-812)
+        from ttrss.articles.filters import load_filters
+        from ttrss.articles.persist import persist_article
+
+        feed_filters = load_filters(db.session, feed_id=feed_id, owner_uid=feed.owner_uid)
         sanitized_count = 0
+        persisted_count = 0
         for entry in parsed.entries:
             # Source: ttrss/include/rssfuncs.php lines 580-600 — extract entry content/summary
             # Adapted: PHP extracts content from SimplePie entry object; feedparser uses dict-like API.
@@ -378,7 +384,31 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
 
             sanitize(content, owner_uid=feed.owner_uid)  # Source: ttrss/include/rssfuncs.php lines 694-697 — sanitize($entry_content, ...) call per entry.
             sanitized_count += 1  # New: no PHP equivalent — Python tracks sanitized count for task return value; PHP has no equivalent counter.
-            # TODO Phase 3: upsert entry into ttrss_entries + ttrss_user_entries
+
+            # Phase 3: persist entry (rssfuncs.php lines 720-1117)
+            # Propagate plugin_data from HOOK_ARTICLE_FILTER back into feedparser entry dict.
+            entry_copy = dict(entry)
+            entry_copy["plugin_data"] = article.get("plugin_data", "")
+            # Extract enclosures from feedparser entry (rssfuncs.php lines 982-1020)
+            enc_list = [
+                {
+                    "content_url": e.get("href", ""),
+                    "content_type": e.get("type", ""),
+                    "title": e.get("title", ""),
+                    "duration": e.get("length", "") or "",
+                }
+                for e in (entry.get("enclosures") or [])
+            ]
+            is_new = persist_article(
+                db.session,
+                entry=entry_copy,
+                feed_id=feed_id,
+                owner_uid=feed.owner_uid,
+                filters=feed_filters,
+                enclosures=enc_list,
+            )
+            if is_new:
+                persisted_count += 1
 
         # Source: rssfuncs.php lines 488-490 — update feed last_updated and clear last_error after successful parse
         feed.last_error = ""
@@ -387,14 +417,16 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
         db.session.commit()
 
         logger.info(
-            "update_feed: feed %d ok — %d entries, %d sanitized",
+            "update_feed: feed %d ok — %d entries, %d sanitized, %d new",
             feed_id,
             len(parsed.entries),
             sanitized_count,
+            persisted_count,
         )
         return {
             "feed_id": feed_id,
             "status": "ok",
             "entries": len(parsed.entries),
             "sanitized": sanitized_count,
+            "new": persisted_count,
         }

@@ -56,3 +56,8 @@ class Config:
     WTF_CSRF_ENABLED: bool = True
     # New: X-CSRFToken header enables CSRF for AJAX RPC calls (backend.php equivalent)
     WTF_CSRF_HEADERS: list = ["X-CSRFToken", "X-CSRF-Token"]
+
+    # Inferred from: ttrss/config.php-dist (ICONS_DIR / ICONS_URL PHP constants)
+    # PHP: define("ICONS_DIR", "feed-icons"); define("ICONS_URL", "feed-icons");
+    ICONS_DIR: str = os.environ.get("TTRSS_ICONS_DIR", "feed-icons")
+    ICONS_URL: str = os.environ.get("TTRSS_ICONS_URL", "feed-icons")

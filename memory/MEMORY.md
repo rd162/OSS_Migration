@@ -5,3 +5,4 @@
 - [Consistency Rule](feedback_consistency_rule.md) — MANDATORY: update ALL referencing locations when any status/decision changes (AGENTS.md Rule 16)
 - [Spec Consultation](feedback_spec_consultation.md) — MANDATORY: read relevant specs/ before planning any phase; flag + update specs when discrepancies found vs actual source
 - [Phase 2 Plan](phase2_plan_2026-04-04.md) — Adversarial-thinking selected plan: Candidate A (Dependency-First, 4 batches, 15-criterion exit gate, all hook ordering + session/auth decisions)
+- [Phase 3 Plan](phase3_plan_2026-04-04.md) — Adversarial-thinking winner (Condorcet 2-0): 9 serial batches, filters extracted, ccache inlines getFeedArticles, 18-criterion exit gate

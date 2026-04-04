@@ -32,7 +32,7 @@ Phase 1b — Complete Foundation         [DONE, graph gate PASSED]
 Phase 2  — Core Logic                  [DONE, graph gate PASSED]
 Phase 3  — Business Logic              [DONE, graph gate PASSED — hooks wired 2026-04-04]
 Phase 4  — API Handlers                [DONE, graph gate PASSED — hooks already wired]
-Phase 5  — Cross-Cutting               [NOT STARTED — 14 deferred hooks to wire]
+Phase 5  — Cross-Cutting               [DONE, graph gate PASSED — 0 missing hooks, 548 tests pass]
 Phase 6  — Deployment                  [NOT STARTED]
 ```
 

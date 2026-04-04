@@ -52,11 +52,11 @@ def test_update_feed_max_retries():
 
 
 def test_beat_schedule_dispatch_feed_updates():
-    """R1: Beat schedule entry for dispatch_feed_updates at 120s (DAEMON_SLEEP_INTERVAL)."""
+    """R1: Beat schedule entry for dispatch_feed_updates at 300s (Phase 5a: increased from 120s DAEMON_SLEEP_INTERVAL)."""
     from ttrss.celery_app import celery_app
 
     schedule = celery_app.conf.beat_schedule
     assert "dispatch-feed-updates" in schedule
     entry = schedule["dispatch-feed-updates"]
     assert entry["task"] == "ttrss.tasks.feed_tasks.dispatch_feed_updates"
-    assert float(entry["schedule"]) == 120.0
+    assert float(entry["schedule"]) == 300.0

@@ -8,6 +8,8 @@ Source: ttrss/classes/db.php:Db (singleton DB pattern)
         Adapted for Flask extension pattern — init_app() replaces PHP global singletons.
 New: LoginManager, Session, CSRFProtect, Talisman (no direct PHP equivalents)
 """
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from flask_login import LoginManager
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
@@ -34,6 +36,11 @@ csrf = CSRFProtect()
 # New: security headers — no PHP equivalent (spec/06-security.md F7: missing security headers)
 # Adds HSTS, X-Content-Type-Options, X-Frame-Options per ADR-0002 security requirements.
 talisman = Talisman()
+
+# New: API rate limiting — no PHP equivalent (spec/06-security.md: API abuse prevention).
+# key_func=get_remote_address: limits per client IP.
+# Disabled in tests via RATELIMIT_ENABLED=False config key (prevents 537 existing tests breaking).
+limiter = Limiter(key_func=get_remote_address)
 
 # New: Flask-Login login_view — redirects unauthenticated users to public index.
 # PHP equivalent: login_sequence() in functions.php redirects to public.php.

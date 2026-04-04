@@ -37,5 +37,46 @@ services:
       timeout: 5s
       retries: 5
 
+  worker:
+    build: .
+    command: celery -A ttrss.celery_app worker --pool=prefork --concurrency=2 --loglevel=info
+    environment:
+      DATABASE_URL: postgresql://ttrss:ttrss@db:5432/ttrss
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: dev-secret-key-change-in-production
+      FEED_CRYPT_KEY: ""
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  beat:
+    build: .
+    command: celery -A ttrss.celery_app beat --loglevel=info
+    environment:
+      DATABASE_URL: postgresql://ttrss:ttrss@db:5432/ttrss
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: dev-secret-key-change-in-production
+      FEED_CRYPT_KEY: ""
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # New: Flower — Celery task monitoring UI (Phase 5a, ADR-0011).
+  # Access at http://localhost:5555
+  flower:
+    build: .
+    command: celery -A ttrss.celery_app flower --port=5555
+    ports:
+      - "5555:5555"
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+
 volumes:
   postgres_data:

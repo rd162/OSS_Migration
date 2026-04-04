@@ -126,9 +126,24 @@ def dispatch_feed_updates(self) -> dict[str, Any]:
             )
             db.session.commit()
 
+        from ttrss.plugins.manager import get_plugin_manager
+        pm = get_plugin_manager()
+
+        # Source: ttrss/update.php:161 — run_hooks(HOOK_UPDATE_TASK) before update cycle
+        try:
+            pm.hook.hook_update_task()
+        except Exception:
+            logger.debug("dispatch_feed_updates: hook_update_task (pre) failed — continuing", exc_info=True)
+
         # Source: rssfuncs.php lines 160-191 — fan-out one task per feed
         for fid in feed_ids:
             update_feed.delay(fid)
+
+        # Source: ttrss/update.php:190 — run_hooks(HOOK_UPDATE_TASK) after update cycle
+        try:
+            pm.hook.hook_update_task()
+        except Exception:
+            logger.debug("dispatch_feed_updates: hook_update_task (post) failed — continuing", exc_info=True)
 
         logger.info("dispatch_feed_updates: dispatched %d feeds", len(feed_ids))
         return {"dispatched": len(feed_ids), "feed_ids": feed_ids}
@@ -198,8 +213,9 @@ async def _fetch_feed_async(
     bind=True,
     max_retries=3,  # R20
     autoretry_for=(httpx.HTTPError, ConnectionError),
-    retry_backoff=True,   # R20: exponential — base 60s, doubles per retry, cap 600s
+    retry_backoff=True,    # R20: exponential — base 60s, doubles per retry, cap 600s
     retry_backoff_max=600,
+    retry_jitter=True,     # Phase 5a: add jitter to spread retries across workers (ADR-0011)
     default_retry_delay=60,
 )
 def update_feed(self, feed_id: int) -> dict[str, Any]:

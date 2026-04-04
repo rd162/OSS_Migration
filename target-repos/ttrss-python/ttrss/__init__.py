@@ -92,19 +92,22 @@ def create_app(test_config: dict | None = None) -> Flask:
         app.config["FERNET"] = None  # will fail at encrypt/decrypt; acceptable for skeleton
 
     # Extensions — init_app pattern avoids circular imports (AR02)
-    from ttrss.extensions import db, login_manager, sess, csrf, talisman
+    from ttrss.extensions import db, login_manager, sess, csrf, talisman, limiter
     db.init_app(app)
     login_manager.init_app(app)
     sess.init_app(app)
     csrf.init_app(app)
     talisman.init_app(app, content_security_policy=False, force_https=not app.testing)
+    limiter.init_app(app)  # New: rate limiting; disabled in tests via RATELIMIT_ENABLED=False.
 
     # Blueprints — imported inside factory to prevent circular imports (AR02)
     from ttrss.blueprints.api import api_bp
     from ttrss.blueprints.backend import backend_bp
+    from ttrss.blueprints.prefs import prefs_bp
     from ttrss.blueprints.public import public_bp
     app.register_blueprint(api_bp)
     app.register_blueprint(backend_bp)
+    app.register_blueprint(prefs_bp)
     app.register_blueprint(public_bp)
 
     from ttrss.errors import register_error_handlers

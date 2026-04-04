@@ -105,6 +105,7 @@ def app():
             "SESSION_REDIS": _test_redis,
             "FEED_CRYPT_KEY": _TEST_FERNET_KEY.encode(),
             "WTF_CSRF_ENABLED": False,  # disabled in test client; CSRF tested separately
+            "RATELIMIT_ENABLED": False,  # New: disable Flask-Limiter in tests to prevent rate-limit failures on repeated requests.
         }
     )
 

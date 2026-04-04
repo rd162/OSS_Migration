@@ -57,6 +57,7 @@ from ttrss.models.label import TtRssLabel2
 from ttrss.models.user import TtRssUser
 from ttrss.models.user_entry import TtRssUserEntry
 from ttrss.plugins.manager import get_plugin_manager
+from ttrss.extensions import limiter
 from ttrss.prefs.ops import get_user_pref
 from ttrss.utils.feeds import feed_to_label_id, label_to_feed_id
 
@@ -102,7 +103,10 @@ def _pref_is_true(val: Optional[str]) -> bool:
 
 # Source: ttrss/api/index.php (method dispatch via $handler->$method())
 #         + ttrss/classes/api.php:API (method routing)
+# New: 60 requests per minute per IP — no PHP equivalent (spec/06-security.md: API abuse prevention).
+# Disabled in tests via RATELIMIT_ENABLED=False (conftest.py).
 @api_bp.route("/", methods=["GET", "POST"])
+@limiter.limit("60 per minute")
 def dispatch():
     """Single dispatch endpoint for all API operations (spec/03-api-routing.md)."""
     data = request.get_json(silent=True) or {}

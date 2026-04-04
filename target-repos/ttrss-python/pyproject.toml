@@ -23,6 +23,7 @@ dependencies = [
     "lxml-html-clean>=0.4",
     "pluggy>=1.4",
     "structlog>=24.0",
+    "flask-limiter>=3.5",
 ]
 
 [project.optional-dependencies]

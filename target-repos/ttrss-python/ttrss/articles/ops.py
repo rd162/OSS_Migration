@@ -102,6 +102,7 @@ def format_article(
     article_id: int,
     owner_uid: int,
     mark_as_read: bool = True,
+    cdm: bool = False,
 ) -> Optional[dict[str, Any]]:
     """Fetch article data and return as a dict (no HTML rendering).
 
@@ -192,15 +193,46 @@ def format_article(
         "always_display_enclosures": bool(row.always_display_enclosures),
     }
 
-    # Source: ttrss/include/functions2.php:1250 — HOOK_RENDER_ARTICLE fires after article assembly
-    # Source: ttrss/include/functions2.php:1360 — HOOK_ARTICLE_BUTTON fires for article footer (right)
-    # Source: ttrss/include/functions2.php:1371 — HOOK_ARTICLE_LEFT_BUTTON fires for article footer (left)
     from ttrss.plugins.manager import get_plugin_manager  # New: lazy import avoids circular dependency.
     pm = get_plugin_manager()
-    pm.hook.hook_render_article(article=article)
+
+    if cdm:
+        # Source: ttrss/classes/feeds.php:517 — HOOK_RENDER_ARTICLE_CDM pipeline (combined display mode)
+        # Adapted: PHP iterates get_hooks() and passes article through each plugin;
+        #          pluggy collecting call returns list of plugin return values (pipeline).
+        for _r in pm.hook.hook_render_article_cdm(article=article):
+            article = _r or article
+    else:
+        # Source: ttrss/include/functions2.php:1250 — HOOK_RENDER_ARTICLE fires after article assembly
+        pm.hook.hook_render_article(article=article)
+
+    # Source: ttrss/include/functions2.php:1360 — HOOK_ARTICLE_BUTTON fires for article footer (right)
     article["article_buttons"] = pm.hook.hook_article_button(line=article)
+    # Source: ttrss/include/functions2.php:1371 — HOOK_ARTICLE_LEFT_BUTTON fires for article footer (left)
     article["article_left_buttons"] = pm.hook.hook_article_left_button(line=article)
 
+    return article
+
+
+# ---------------------------------------------------------------------------
+# format_headline_row
+# ---------------------------------------------------------------------------
+
+
+def format_headline_row(article: dict[str, Any]) -> dict[str, Any]:
+    """Augment a headline dict with plugin-provided toolbar buttons.
+
+    Source: ttrss/classes/feeds.php:138 — HOOK_HEADLINE_TOOLBAR_BUTTON fires during
+            format_headlines_list, collecting HTML fragments from plugins.
+    Adapted: R13 — returns list of button strings instead of HTML concatenation.
+    Callers (e.g. getHeadlines API handler) pass each headline row through this
+    function before serialising to JSON.
+    """
+    from ttrss.plugins.manager import get_plugin_manager  # New: lazy import avoids circular dependency.
+
+    pm = get_plugin_manager()
+    # Source: ttrss/classes/feeds.php:138 — HOOK_HEADLINE_TOOLBAR_BUTTON collecting call
+    article["toolbar_buttons"] = pm.hook.hook_headline_toolbar_button()
     return article
 
 

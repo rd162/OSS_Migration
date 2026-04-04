@@ -20,7 +20,7 @@ celery_app = Celery(
     "ttrss",
     broker=os.environ.get("CELERY_BROKER_URL", os.environ.get("REDIS_URL", "redis://localhost:6379/0")),
     backend=os.environ.get("CELERY_RESULT_BACKEND", os.environ.get("REDIS_URL", "redis://localhost:6379/0")),
-    include=["ttrss.tasks.feed_tasks"],
+    include=["ttrss.tasks.feed_tasks", "ttrss.tasks.housekeeping"],
 )
 
 celery_app.conf.update(
@@ -37,10 +37,17 @@ celery_app.conf.update(
     timezone="UTC",
     enable_utc=True,
     # Source: ttrss/include/rssfuncs.php line 4 — define_default('DAEMON_SLEEP_INTERVAL', 120)
+    # Phase 5a: increased dispatch interval to 300s (5 min); housekeeping added at 3600s (1 hr).
     beat_schedule={
         "dispatch-feed-updates": {
             "task": "ttrss.tasks.feed_tasks.dispatch_feed_updates",
-            "schedule": float(os.environ.get("FEED_UPDATE_INTERVAL", "120")),  # R1
+            "schedule": float(os.environ.get("FEED_UPDATE_INTERVAL", "300")),  # R1 — 5 min default
+        },
+        "run-housekeeping": {
+            # Source: ttrss/update.php — PHP calls housekeeping_common() periodically in daemon loop.
+            # Adapted: Celery Beat replaces daemon loop cycle (ADR-0011).
+            "task": "ttrss.tasks.housekeeping.run_housekeeping",
+            "schedule": float(os.environ.get("HOUSEKEEPING_INTERVAL", "3600")),  # 1 hr default
         },
     },
     task_routes={

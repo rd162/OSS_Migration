@@ -1,4 +1,4 @@
-"""Periodic housekeeping — expire caches, clean up DB tables, fire hook.
+"""Periodic housekeeping — Celery task + sub-functions, fire hooks.
 
 Source: ttrss/include/rssfuncs.php:housekeeping_common (lines 1415-1430)
     and individual sub-functions called therein.
@@ -210,6 +210,13 @@ def housekeeping_common(
     """
     from ttrss.feeds.ops import purge_orphans
 
+    # Source: ttrss/classes/handler/public.php:411 — run_hooks(HOOK_UPDATE_TASK) before housekeeping
+    try:
+        from ttrss.plugins.manager import get_plugin_manager
+        get_plugin_manager().hook.hook_update_task()
+    except Exception:
+        logger.debug("housekeeping_common: hook_update_task (pre) failed — continuing", exc_info=True)
+
     expire_cached_files(cache_dir=cache_dir)
     expire_error_log(session)
     update_feedbrowser_cache(session)
@@ -220,7 +227,53 @@ def housekeeping_common(
     # Source: ttrss/classes/pluginhost.php:HOOK_HOUSE_KEEPING (const 24)
     try:
         from ttrss.plugins.manager import get_plugin_manager
-        pm = get_plugin_manager()
-        pm.hook.hook_house_keeping(args={})
+        get_plugin_manager().hook.hook_house_keeping(args={})
     except Exception:
-        logger.debug("housekeeping_common: no plugins or hook failed — continuing")
+        logger.debug("housekeeping_common: hook_house_keeping failed — continuing", exc_info=True)
+
+    # Source: ttrss/classes/handler/public.php:421 — run_hooks(HOOK_UPDATE_TASK) after housekeeping
+    try:
+        from ttrss.plugins.manager import get_plugin_manager
+        get_plugin_manager().hook.hook_update_task()
+    except Exception:
+        logger.debug("housekeeping_common: hook_update_task (post) failed — continuing", exc_info=True)
+
+
+# ---------------------------------------------------------------------------
+# run_housekeeping — Celery Beat task
+# ---------------------------------------------------------------------------
+
+from ttrss.celery_app import celery_app  # noqa: E402 — module-level import after housekeeping_common
+
+
+@celery_app.task(
+    name="ttrss.tasks.housekeeping.run_housekeeping",
+    bind=True,
+    # New: no PHP equivalent — Celery retry policy for transient failures (ADR-0011).
+    max_retries=2,
+    default_retry_delay=300,
+)
+def run_housekeeping(self) -> dict:
+    """
+    Beat-triggered periodic housekeeping: expire caches, clean DB, fire hooks.
+
+    Source: ttrss/update.php (housekeeping_common call in daemon loop)
+    Adapted: Celery Beat replaces PHP daemon loop (ADR-0011).
+    Note: ttrss/update.php — PHP calls housekeeping_common() every DAEMON_SLEEP_INTERVAL cycles;
+          Python uses a dedicated Beat schedule (celery_app.py beat_schedule).
+    """
+    from ttrss import create_app
+    from ttrss.extensions import db
+
+    app = create_app()
+    with app.app_context():
+        try:
+            housekeeping_common(db.session)
+            db.session.commit()
+        except Exception as exc:
+            db.session.rollback()
+            logger.error("run_housekeeping: failed: %s", exc, exc_info=True)
+            raise self.retry(exc=exc)
+
+    logger.info("run_housekeeping: complete")
+    return {"status": "ok"}

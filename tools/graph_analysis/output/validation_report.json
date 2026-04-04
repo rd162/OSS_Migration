@@ -2,19 +2,19 @@
   "tool": "validate_coverage.py",
   "python_dir": "target-repos/ttrss-python/ttrss",
   "graph_dir": "tools/graph_analysis/output",
-  "module_count": 67,
-  "source_comment_count": 655,
+  "module_count": 73,
+  "source_comment_count": 704,
   "dimensions": [
     {
       "dimension": "call_coverage",
-      "matched_exact": 46,
+      "matched_exact": 49,
       "matched_by_file": 130,
       "eliminated": 95,
-      "unmatched": 386,
+      "unmatched": 383,
       "skipped_third_party": 526,
       "skipped_high_level": 23,
-      "unparseable_comments": 267,
-      "coverage_pct": 41.2,
+      "unparseable_comments": 272,
+      "coverage_pct": 41.7,
       "unmatched_details": [
         {
           "qname": "API::api_get_feeds",
@@ -149,10 +149,6 @@
           "level": 2
         },
         {
-          "qname": "Auth_Base::check_password",
-          "level": 0
-        },
-        {
           "qname": "Auth_Base::find_user_by_login",
           "level": 1
         },
@@ -167,10 +163,6 @@
         {
           "qname": "Auth_Internal::change_password",
           "level": 3
-        },
-        {
-          "qname": "Auth_Internal::check_password",
-          "level": 2
         },
         {
           "qname": "Auth_Internal::init",
@@ -563,10 +555,6 @@
         {
           "qname": "PluginHost::get_plugins",
           "level": 0
-        },
-        {
-          "qname": "PluginHost::is_system",
-          "level": 1
         },
         {
           "qname": "PluginHost::load",
@@ -2698,53 +2686,68 @@
         },
         {
           "file": "blueprints/api/views.py",
-          "line": 66,
+          "line": 67,
           "raw": "# Source: ttrss/api/index.php — PHP API has no CSRF protection (uses session_id tokens instead)."
         },
         {
           "file": "blueprints/api/views.py",
-          "line": 113,
+          "line": 117,
           "raw": "# Source: ttrss/classes/api.php — index() calls strtolower($method) before before() and dispatch."
         },
         {
           "file": "blueprints/api/views.py",
-          "line": 1099,
+          "line": 1103,
           "raw": "# Source: api.php — PHP key is always_display_attachments"
         },
         {
           "file": "blueprints/api/views.py",
-          "line": 1265,
+          "line": 1269,
           "raw": "# Source: api.php — url is required"
         },
         {
           "file": "blueprints/api/views.py",
-          "line": 1269,
+          "line": 1273,
           "raw": "# Source: article.php — title fallback to url when empty"
         },
         {
           "file": "blueprints/api/views.py",
-          "line": 1468,
+          "line": 1472,
           "raw": "# Source: pref/feeds.php — Special category (CAT:-1) contains virtual feeds"
         },
         {
           "file": "blueprints/api/views.py",
-          "line": 1479,
+          "line": 1483,
           "raw": "# Source: pref/feeds.php — Labels category (CAT:-2) contains label feeds"
         },
         {
           "file": "blueprints/api/views.py",
-          "line": 1494,
+          "line": 1498,
           "raw": "# Source: pref/feeds.php — real categories (root: parent_cat IS NULL)"
         },
         {
           "file": "blueprints/api/views.py",
-          "line": 1511,
+          "line": 1515,
           "raw": "# Source: pref/feeds.php — Uncategorized (CAT:0): feeds with cat_id IS NULL"
         },
         {
           "file": "blueprints/backend/views.py",
           "line": 33,
           "raw": "# Source: ttrss/backend.php — PHP $_REQUEST merges GET, POST, COOKIE."
+        },
+        {
+          "file": "blueprints/prefs/__init__.py",
+          "line": 7,
+          "raw": "# Source: ttrss/prefs.php — entry point for preferences UI"
+        },
+        {
+          "file": "blueprints/prefs/views.py",
+          "line": 82,
+          "raw": "# Source: ttrss/classes/pref/feeds.php — HOOK_PREFS_TAB_SECTION (×2), HOOK_PREFS_TAB"
+        },
+        {
+          "file": "celery_app.py",
+          "line": 47,
+          "raw": "# Source: ttrss/update.php — PHP calls housekeeping_common() periodically in daemon loop."
         },
         {
           "file": "feeds/__init__.py",
@@ -4012,14 +4015,24 @@
           "raw": "_DEFAULT_PLUGINS = os.environ.get(\"TTRSS_PLUGINS\", \"auth_internal\")  # Source: ttrss/config.php-dist line 200. Adapted: env var replaces PHP define; only 'auth_internal' by default."
         },
         {
+          "file": "plugins/storage.py",
+          "line": 104,
+          "raw": "# Source: pluginhost.php load_data — queries ttrss_plugin_storage by plugin name + owner_uid"
+        },
+        {
           "file": "tasks/feed_tasks.py",
-          "line": 179,
+          "line": 194,
           "raw": "max_redirects=20,  # Source: ttrss/include/functions.php — CURLOPT_MAXREDIRS default 20"
         },
         {
           "file": "tasks/housekeeping.py",
           "line": 123,
           "raw": "# Source: rssfuncs.php — SELECT site_url, title, feed_url, count(*) as subscribers"
+        },
+        {
+          "file": "ui/init_params.py",
+          "line": 25,
+          "raw": "# Source: ttrss/index.php — LABEL_BASE_INDEX constant (feed IDs below this are label feeds)"
         },
         {
           "file": "utils/__init__.py",
@@ -4468,137 +4481,8 @@
       "dimension": "hook_invocation_coverage",
       "edges_checked": 31,
       "skipped_no_mapping": 7,
-      "missing_hook_calls": 14,
-      "missing_hook_call_details": [
-        {
-          "php_file": "ttrss/classes/feeds.php",
-          "hook": "HOOK_HEADLINE_TOOLBAR_BUTTON",
-          "expected_call": "hook_headline_toolbar_button",
-          "python_modules": [
-            "blueprints/backend/views.py",
-            "feeds/ops.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/feeds.php",
-          "hook": "HOOK_RENDER_ARTICLE_CDM",
-          "expected_call": "hook_render_article_cdm",
-          "python_modules": [
-            "blueprints/backend/views.py",
-            "feeds/ops.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/handler/public.php",
-          "hook": "HOOK_UPDATE_TASK",
-          "expected_call": "hook_update_task",
-          "python_modules": [
-            "blueprints/public/views.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/pref/feeds.php",
-          "hook": "HOOK_PREFS_EDIT_FEED",
-          "expected_call": "hook_prefs_edit_feed",
-          "python_modules": [
-            "feeds/ops.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/pref/feeds.php",
-          "hook": "HOOK_PREFS_SAVE_FEED",
-          "expected_call": "hook_prefs_save_feed",
-          "python_modules": [
-            "feeds/ops.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/pref/feeds.php",
-          "hook": "HOOK_PREFS_TAB_SECTION",
-          "expected_call": "hook_prefs_tab_section",
-          "python_modules": [
-            "feeds/ops.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/pref/feeds.php",
-          "hook": "HOOK_PREFS_TAB",
-          "expected_call": "hook_prefs_tab",
-          "python_modules": [
-            "feeds/ops.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/pref/labels.php",
-          "hook": "HOOK_PREFS_TAB",
-          "expected_call": "hook_prefs_tab",
-          "python_modules": [
-            "labels.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/pref/prefs.php",
-          "hook": "HOOK_PREFS_TAB_SECTION",
-          "expected_call": "hook_prefs_tab_section",
-          "python_modules": [
-            "prefs/ops.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/pref/prefs.php",
-          "hook": "HOOK_PREFS_TAB",
-          "expected_call": "hook_prefs_tab",
-          "python_modules": [
-            "prefs/ops.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/pref/users.php",
-          "hook": "HOOK_PREFS_TAB_SECTION",
-          "expected_call": "hook_prefs_tab_section",
-          "python_modules": [
-            "auth/authenticate.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/pref/users.php",
-          "hook": "HOOK_PREFS_TAB",
-          "expected_call": "hook_prefs_tab",
-          "python_modules": [
-            "auth/authenticate.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/include/functions2.php",
-          "hook": "HOOK_HOTKEY_INFO",
-          "expected_call": "hook_hotkey_info",
-          "python_modules": [
-            "articles/ops.py",
-            "articles/search.py",
-            "articles/sanitize.py",
-            "articles/tags.py",
-            "feeds/categories.py",
-            "http/client.py",
-            "feeds/ops.py",
-            "utils/misc.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/include/functions2.php",
-          "hook": "HOOK_HOTKEY_MAP",
-          "expected_call": "hook_hotkey_map",
-          "python_modules": [
-            "articles/ops.py",
-            "articles/search.py",
-            "articles/sanitize.py",
-            "articles/tags.py",
-            "feeds/categories.py",
-            "http/client.py",
-            "feeds/ops.py",
-            "utils/misc.py"
-          ]
-        }
-      ]
+      "missing_hook_calls": 0,
+      "missing_hook_call_details": []
     },
     {
       "dimension": "class_hierarchy_coverage",

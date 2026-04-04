@@ -1,0 +1,552 @@
+TT-RSS PHP Dependency Graph Analysis Report
+============================================================
+
+DIMENSION: CALL
+  Nodes: 1206  Edges: 2100  Communities: 303
+
+  Communities:
+    [0] (165 members): API::getConfig, API::isCategoryEmpty, API::login, API::unsubscribeFeed, Article::completeTags, Article::redirect, Article::setScore, Auth_Base::find_user_by_login, Db::affected_rows, Db::escape_string ...
+    [1] (109 members): API::api_get_feeds, API::getLabels, API::getUnread, API::setArticleLabel, Article::assigntolabel, Article::catchupArticleById, Article::create_published_article, Article::labelops, Article::removefromlabel, Auth_Internal::authenticate ...
+    [2] (94 members): Auth_Base::auto_create_user, Auth_Internal::about, Auth_Internal::api_version, Auth_Internal::change_password, Auth_Internal::check_password, DbUpdater::getSchemaLines, DbUpdater::getSchemaVersion, DbUpdater::isUpdateRequired, DbUpdater::performUpdateTo, Dlg::importOpml ...
+    [3] (78 members): API::updateArticle, Article::editArticleTags, Article::setArticleTags, Db_PDO::last_error, Dlg::generatedFeed, Dlg::newVersion, FeedItem::get_author, FeedItem::get_categories, FeedItem::get_comments_count, FeedItem::get_comments_url ...
+    [4] (77 members): QRbitstream::allocate, QRbitstream::append, QRbitstream::appendBytes, QRbitstream::appendNum, QRbitstream::newFromBytes, QRbitstream::newFromNum, QRbitstream::size, QRcode::appendBitstream, QRcode::appendBytes, QRcode::appendNewInputItem ...
+    [5] (77 members): PHPMailer::AddAddress, PHPMailer::AddAnAddress, PHPMailer::AddAttachment, PHPMailer::AddBCC, PHPMailer::AddCC, PHPMailer::AddEmbeddedImage, PHPMailer::AddReplyTo, PHPMailer::AddrAppend, PHPMailer::AddrFormat, PHPMailer::AlternativeExists ...
+    [6] (59 members): Auth_Internal::init, Db_Mysql::connect, Db_Mysqli::connect, Db_PDO::connect, Db_Pgsql::connect, FrameFiller::setFrameAt, QRbitstream::toByte, QRcode::__construct, QRcode::encodeInput, QRcode::encodeMask ...
+    [7] (47 members): Backend::digestTest, Handler_Public::generate_syndicated_feed, MiniTemplator::addBlock, MiniTemplator::addBlockByNo, MiniTemplator::associateVariablesWithBlocks, MiniTemplator::beginMainBlock, MiniTemplator::blockExists, MiniTemplator::checkBlockDefinitionsComplete, MiniTemplator::combineFileSystemPath, MiniTemplator::endMainBlock ...
+    [8] (45 members): API::api_get_headlines, API::before, API::catchupFeed, API::getApiLevel, API::getArticle, API::getCategories, API::getCounters, API::getFeedTree, API::getFeeds, API::getHeadlines ...
+    [9] (33 members): FrameFiller::next, Text_LanguageDetect_Parser::analyze, Text_LanguageDetect_Parser::getTrigramFreqs, Text_LanguageDetect_Parser::getTrigramRanks, Text_LanguageDetect_Parser::getUnicodeBlocks, Text_LanguageDetect_Parser::prepareTrigram, Text_LanguageDetect_Parser::prepareUnicode, Text_LanguageDetect_Parser::setPadStart, Text_LanguageDetect_Parser::setUnicodeSkipSymbols, ttrss/lib/languagedetect/LanguageDetect.php::__construct ...
+    [10] (30 members): SphinxClient::AddQuery, SphinxClient::BuildExcerpts, SphinxClient::BuildKeywords, SphinxClient::FlushAttributes, SphinxClient::Open, SphinxClient::Query, SphinxClient::RunQueries, SphinxClient::SetArrayResult, SphinxClient::SetConnectTimeout, SphinxClient::SetFieldWeights ...
+    [11] (23 members): RPC::updaterandomfeed_real, ttrss/include/db.php::db_affected_rows, ttrss/include/functions.php, ttrss/include/functions.php::_debug, ttrss/include/functions.php::file_is_locked, ttrss/include/functions.php::make_lockfile, ttrss/include/functions.php::purge_orphans, ttrss/include/functions.php::sql_random_function, ttrss/include/functions2.php::cleanup_tags, ttrss/include/rssfuncs.php ...
+    [12] (18 members): FileReader::read, FileReader::seekto, gettext_reader::extract_plural_forms_header_from_po_header, gettext_reader::find_string, gettext_reader::get_original_string, gettext_reader::get_plural_forms, gettext_reader::get_translation_string, gettext_reader::gettext_reader, gettext_reader::load_tables, gettext_reader::ngettext ...
+    [13] (11 members): floIcon::readICO, floIconIcon::getImageResource, jimIcon::fromiconstring, jimIcon::get_color, ttrss/include/colors.php::_color_pack, ttrss/include/colors.php::_color_unpack, ttrss/include/colors.php::_resolve_htmlcolor, ttrss/include/colors.php::calculate_avg_color, ttrss/include/colors.php::colorPalette, ttrss/include/colors.php::hsl2rgb ...
+    [14] (9 members): HOTP::at, HOTP::verify, OTP::byteSecret, OTP::generateOTP, OTP::intToBytestring, TOTP::at, TOTP::now, TOTP::timecode, TOTP::verify
+    [15] (8 members): Minifier::breakdownScript, Minifier::clean, Minifier::getChar, Minifier::getNext, Minifier::getReal, Minifier::minify, Minifier::saveRegex, Minifier::saveString
+    [16] (7 members): FeedParser::__construct, FeedParser::normalize_encoding, ttrss/include/functions2.php::format_error, ttrss/include/functions2.php::print_error, ttrss/include/sanity_check.php, ttrss/include/sanity_check.php::initial_sanity_check, ttrss/install/index.php::make_self_url_path
+    [17] (7 members): QRcode::createFrame, QRcode::putAlignmentMarker, QRcode::putFinderPattern, QRcode::qrstrset, QRspec::getVersionPattern, QRspec::putAlignmentPattern, QRspec::putFinderPattern
+    [18] (6 members): Db::__construct, Db::last_error, Db::reconnect, __global__::connect, __global__::last_error, ttrss/include/db.php::db_last_error
+    [19] (4 members): QRcode::check, QRinput::checkModeAn, QRinput::checkModeKanji, QRinput::checkModeNum
+    [20] (4 members): Logger::log_error, RPC::log, ttrss/include/errorhandler.php::ttrss_error_handler, ttrss/include/errorhandler.php::ttrss_fatal_handler
+    [21] (3 members): Db_PDO::affected_rows, Db_PDO::num_rows, Db_Stmt::rowCount
+    [22] (3 members): Mobile_Detect::__call, Mobile_Detect::__construct, Mobile_Detect::_detect
+    [23] (2 members): Db_PDO::fetch_assoc, Db_Stmt::fetch
+    [24] (2 members): Db::close, FileReader::close
+    [25] (2 members): Logger::log, QRtools::log
+    [26] (2 members): Plugin::init, PluginHost::get_dbh
+    [27] (2 members): ttrss/include/colors.php::_color_hsl2rgb, ttrss/include/colors.php::_color_hue2rgb
+    [28] (2 members): ttrss/include/version.php, ttrss/include/version.php::get_version
+    [29] (2 members): QRcode::writeFormatInformation, QRspec::getFormatInfo
+    [30] (2 members): QRcode::putAlignmentPattern, QRspec::putAlignmentMarker
+    [31] (2 members): QRcode::newFrame, QRspec::createFrame
+    [32] (1 members): ttrss/backend.php::stripslashes_deep
+    [33] (1 members): Article::csrf_ignore
+    [34] (1 members): Auth_Base::__construct
+    [35] (1 members): Auth_Base::check_password
+    [36] (1 members): Auth_Base::authenticate
+    [37] (1 members): Backend::loading
+    [38] (1 members): Db_Mysql::escape_string
+    [39] (1 members): Db_Mysql::query
+    [40] (1 members): Db_Mysql::fetch_assoc
+    [41] (1 members): Db_Mysql::num_rows
+    [42] (1 members): Db_Mysql::fetch_result
+    [43] (1 members): Db_Mysql::close
+    [44] (1 members): Db_Mysql::affected_rows
+    [45] (1 members): Db_Mysql::last_error
+    [46] (1 members): Db_Mysqli::escape_string
+    [47] (1 members): Db_Mysqli::query
+    [48] (1 members): Db_Mysqli::fetch_assoc
+    [49] (1 members): Db_Mysqli::num_rows
+    [50] (1 members): Db_Mysqli::fetch_result
+    [51] (1 members): Db_Mysqli::close
+    [52] (1 members): Db_Mysqli::affected_rows
+    [53] (1 members): Db_Mysqli::last_error
+    [54] (1 members): Db_PDO::close
+    [55] (1 members): Db_Pgsql::escape_string
+    [56] (1 members): Db_Pgsql::query
+    [57] (1 members): Db_Pgsql::fetch_assoc
+    [58] (1 members): Db_Pgsql::num_rows
+    [59] (1 members): Db_Pgsql::fetch_result
+    [60] (1 members): Db_Pgsql::close
+    [61] (1 members): Db_Pgsql::affected_rows
+    [62] (1 members): Db_Pgsql::last_error
+    [63] (1 members): Db_Prefs::__clone
+    [64] (1 members): Db_Prefs::get
+    [65] (1 members): Db_Stmt::__construct
+    [66] (1 members): Db_Stmt::fetch_result
+    [67] (1 members): Db::__clone
+    [68] (1 members): Db::get
+    [69] (1 members): Db::connect
+    [70] (1 members): DbUpdater::__construct
+    [71] (1 members): Dlg::pubOPMLUrl
+    [72] (1 members): Dlg::explainError
+    [73] (1 members): FeedItem_Atom::get_title
+    [74] (1 members): FeedItem_Atom::get_content
+    [75] (1 members): FeedItem_Atom::get_description
+    [76] (1 members): FeedItem_Common::__construct
+    [77] (1 members): FeedItem_RSS::get_title
+    [78] (1 members): FeedItem_RSS::get_description
+    [79] (1 members): FeedItem::get_link
+    [80] (1 members): FeedItem::get_title
+    [81] (1 members): FeedParser::format_error
+    [82] (1 members): FeedParser::get_link
+    [83] (1 members): Feeds::csrf_ignore
+    [84] (1 members): Handler_Protected::before
+    [85] (1 members): Handler_Public::updateTask
+    [86] (1 members): Handler_Public::housekeepingTask
+    [87] (1 members): Handler_Public::globalUpdateFeeds
+    [88] (1 members): Handler_Public::index
+    [89] (1 members): Handler::__construct
+    [90] (1 members): Handler::csrf_ignore
+    [91] (1 members): Handler::before
+    [92] (1 members): Handler::after
+    [93] (1 members): __global__::authenticate
+    [94] (1 members): __global__::close
+    [95] (1 members): __global__::csrf_ignore
+    [96] (1 members): __global__::before
+    [97] (1 members): Logger_Syslog::log_error
+    [98] (1 members): Logger::__clone
+    [99] (1 members): Logger::__construct
+    [100] (1 members): Logger::get
+    [101] (1 members): Opml::csrf_ignore
+    [102] (1 members): Plugin::about
+    [103] (1 members): Plugin::api_version
+    [104] (1 members): PluginHandler::csrf_ignore
+    [105] (1 members): PluginHost::__construct
+    [106] (1 members): PluginHost::__clone
+    [107] (1 members): PluginHost::getInstance
+    [108] (1 members): PluginHost::add_hook
+    [109] (1 members): PluginHost::del_hook
+    [110] (1 members): PluginHost::add_command
+    [111] (1 members): PluginHost::del_command
+    [112] (1 members): PluginHost::lookup_command
+    [113] (1 members): PluginHost::get
+    [114] (1 members): PluginHost::get_debug
+    [115] (1 members): PluginHost::add_feed
+    [116] (1 members): PluginHost::pfeed_to_feed_id
+    [117] (1 members): PluginHost::feed_to_pfeed_id
+    [118] (1 members): Pref_Feeds::csrf_ignore
+    [119] (1 members): Pref_Filters::csrf_ignore
+    [120] (1 members): Pref_Filters::newfilter
+    [121] (1 members): Pref_Labels::csrf_ignore
+    [122] (1 members): Pref_Prefs::csrf_ignore
+    [123] (1 members): Pref_Prefs::__construct
+    [124] (1 members): Pref_Prefs::toggleAdvanced
+    [125] (1 members): Pref_System::before
+    [126] (1 members): Pref_System::csrf_ignore
+    [127] (1 members): Pref_Users::csrf_ignore
+    [128] (1 members): RPC::setpanelmode
+    [129] (1 members): RPC::updaterandomfeed
+    [130] (1 members): ttrss/include/autoload.php::__autoload
+    [131] (1 members): ttrss/include/colors.php::_color_rgb2hsl
+    [132] (1 members): ttrss/include/functions.php::define_default
+    [133] (1 members): ttrss/include/functions.php::print_radio
+    [134] (1 members): ttrss/include/functions.php::make_password
+    [135] (1 members): ttrss/include/functions2.php::save_email_address
+    [136] (1 members): ttrss/include/functions2.php::tmpdirname
+    [137] (1 members): ttrss/include/rssfuncs.php::convertUrlQuery
+    [138] (1 members): ttrss/include/rssfuncs.php::find_article_filters
+    [139] (1 members): ttrss/include/sanity_check.php::make_self_url_path
+    [140] (1 members): ttrss/include/sessions.php::ttrss_open
+    [141] (1 members): ttrss/include/sessions.php::ttrss_close
+    [142] (1 members): MiniTemplator::MiniTemplator
+    [143] (1 members): Mobile_Detect::getRules
+    [144] (1 members): StreamReader::read
+    [145] (1 members): StreamReader::seekto
+    [146] (1 members): StreamReader::currentpos
+    [147] (1 members): StreamReader::length
+    [148] (1 members): StringReader::StringReader
+    [149] (1 members): StringReader::read
+    [150] (1 members): StringReader::seekto
+    [151] (1 members): StringReader::currentpos
+    [152] (1 members): StringReader::length
+    [153] (1 members): FileReader::FileReader
+    [154] (1 members): FileReader::currentpos
+    [155] (1 members): FileReader::length
+    [156] (1 members): CachedFileReader::CachedFileReader
+    [157] (1 members): Minifier::isAlphaNumeric
+    [158] (1 members): ttrss/lib/languagedetect/LanguageDetect.php::getLanguageCount
+    [159] (1 members): ttrss/lib/languagedetect/LanguageDetect.php::setPerlCompatible
+    [160] (1 members): ttrss/lib/languagedetect/LanguageDetect.php::useUnicodeBlocks
+    [161] (1 members): ttrss/lib/languagedetect/LanguageDetect.php::_sort_func
+    [162] (1 members): ttrss/lib/languagedetect/LanguageDetect.php::utf8strlen
+    [163] (1 members): __global__::__construct
+    [164] (1 members): Text_LanguageDetect_ISO639::nameToCode2
+    [165] (1 members): Text_LanguageDetect_ISO639::nameToCode3
+    [166] (1 members): Text_LanguageDetect_ISO639::code2ToName
+    [167] (1 members): Text_LanguageDetect_ISO639::code3ToName
+    [168] (1 members): Text_LanguageDetect_Parser::Text_LanguageDetect_Parser
+    [169] (1 members): Text_LanguageDetect_Parser::validateString
+    [170] (1 members): HOTP::provisioning_uri
+    [171] (1 members): OTP::__construct
+    [172] (1 members): TOTP::__construct
+    [173] (1 members): TOTP::provisioning_uri
+    [174] (1 members): Base32::encode
+    [175] (1 members): Base32::decode
+    [176] (1 members): PHPMailer::edebug
+    [177] (1 members): PHPMailer::__construct
+    [178] (1 members): PHPMailer::IsSMTP
+    [179] (1 members): PHPMailer::IsMail
+    [180] (1 members): PHPMailer::IsSendmail
+    [181] (1 members): PHPMailer::IsQmail
+    [182] (1 members): PHPMailer::GetTranslations
+    [183] (1 members): PHPMailer::GetSentMIMEMessage
+    [184] (1 members): PHPMailer::GetAttachments
+    [185] (1 members): PHPMailer::AddStringAttachment
+    [186] (1 members): PHPMailer::AddStringEmbeddedImage
+    [187] (1 members): PHPMailer::ClearAddresses
+    [188] (1 members): PHPMailer::ClearCCs
+    [189] (1 members): PHPMailer::ClearBCCs
+    [190] (1 members): PHPMailer::ClearReplyTos
+    [191] (1 members): PHPMailer::ClearAllRecipients
+    [192] (1 members): PHPMailer::ClearAttachments
+    [193] (1 members): PHPMailer::ClearCustomHeaders
+    [194] (1 members): PHPMailer::RFCDate
+    [195] (1 members): PHPMailer::AddCustomHeader
+    [196] (1 members): PHPMailer::_mime_types
+    [197] (1 members): PHPMailer::Sign
+    [198] (1 members): phpmailerException::errorMessage
+    [199] (1 members): SMTP::__construct
+    [200] (1 members): SMTP::Close
+    [201] (1 members): ttrss/lib/phpqrcode/bindings/tcpdf/qrcode.php::str_split
+    [202] (1 members): QRcode::getBarcodeArray
+    [203] (1 members): QRcode::binarize
+    [204] (1 members): QRcode::setFrameAt
+    [205] (1 members): QRcode::getFrameAt
+    [206] (1 members): QRcode::getCode
+    [207] (1 members): QRcode::mask0
+    [208] (1 members): QRcode::mask1
+    [209] (1 members): QRcode::mask2
+    [210] (1 members): QRcode::mask3
+    [211] (1 members): QRcode::mask4
+    [212] (1 members): QRcode::mask5
+    [213] (1 members): QRcode::mask6
+    [214] (1 members): QRcode::mask7
+    [215] (1 members): QRcode::generateMaskNo
+    [216] (1 members): QRcode::calcN1N3
+    [217] (1 members): QRcode::isdigitat
+    [218] (1 members): QRcode::calcParity
+    [219] (1 members): QRcode::checkModeNum
+    [220] (1 members): QRcode::estimateBitsModeNum
+    [221] (1 members): QRcode::lookAnTable
+    [222] (1 members): QRcode::estimateBitsModeAn
+    [223] (1 members): QRcode::estimateBitsMode8
+    [224] (1 members): QRcode::estimateBitsModeKanji
+    [225] (1 members): QRcode::checkModeKanji
+    [226] (1 members): QRcode::allocate
+    [227] (1 members): QRcode::getDataLength
+    [228] (1 members): QRcode::getECCLength
+    [229] (1 members): QRcode::getWidth
+    [230] (1 members): QRcode::getRemainder
+    [231] (1 members): QRcode::getMinimumVersion
+    [232] (1 members): QRcode::lengthIndicator
+    [233] (1 members): QRcode::maximumWords
+    [234] (1 members): QRcode::getVersionPattern
+    [235] (1 members): QRcode::getFormatInfo
+    [236] (1 members): QRcode::rsBlockNum
+    [237] (1 members): QRcode::rsBlockNum1
+    [238] (1 members): QRcode::rsDataCodes1
+    [239] (1 members): QRcode::rsEccCodes1
+    [240] (1 members): QRcode::rsBlockNum2
+    [241] (1 members): QRcode::rsDataCodes2
+    [242] (1 members): QRcode::rsEccCodes2
+    [243] (1 members): QRcode::rsDataLength
+    [244] (1 members): QRcode::rsEccLength
+    [245] (1 members): QRcode::modnn
+    [246] (1 members): qrstr::set
+    [247] (1 members): QRtools::tcpdfBarcodeArray
+    [248] (1 members): QRtools::clearCache
+    [249] (1 members): QRtools::dumpMask
+    [250] (1 members): QRtools::markTime
+    [251] (1 members): QRtools::timeBenchmark
+    [252] (1 members): QRspec::unserial
+    [253] (1 members): QRimage::png
+    [254] (1 members): QRimage::jpg
+    [255] (1 members): QRimage::image
+    [256] (1 members): QRinput::__construct
+    [257] (1 members): QRinput::setErrorCorrectionLevel
+    [258] (1 members): QRinput::appendEntry
+    [259] (1 members): QRinput::insertStructuredAppendHeader
+    [260] (1 members): QRinput::calcParity
+    [261] (1 members): QRinput::lengthOfCode
+    [262] (1 members): QRsplit::__construct
+    [263] (1 members): QRmask::__construct
+    [264] (1 members): QRmask::mask0
+    [265] (1 members): QRmask::mask1
+    [266] (1 members): QRmask::mask2
+    [267] (1 members): QRmask::mask3
+    [268] (1 members): QRmask::mask4
+    [269] (1 members): QRmask::mask5
+    [270] (1 members): QRmask::mask6
+    [271] (1 members): QRmask::mask7
+    [272] (1 members): QRmask::unserial
+    [273] (1 members): QRrawcode::init
+    [274] (1 members): FrameFiller::__construct
+    [275] (1 members): FrameFiller::getFrameAt
+    [276] (1 members): QRencode::factory
+    [277] (1 members): Publisher::__construct
+    [278] (1 members): Publisher::last_response
+    [279] (1 members): Subscriber::__construct
+    [280] (1 members): SphinxClient::SphinxClient
+    [281] (1 members): SphinxClient::__destruct
+    [282] (1 members): SphinxClient::GetLastError
+    [283] (1 members): SphinxClient::GetLastWarning
+    [284] (1 members): SphinxClient::IsConnectError
+    [285] (1 members): SphinxClient::SetMaxQueryTime
+    [286] (1 members): SphinxClient::SetSortMode
+    [287] (1 members): SphinxClient::SetWeights
+    [288] (1 members): SphinxClient::SetIndexWeights
+    [289] (1 members): SphinxClient::SetIDRange
+    [290] (1 members): SphinxClient::SetFilterRange
+    [291] (1 members): SphinxClient::SetFilterFloatRange
+    [292] (1 members): SphinxClient::SetGeoAnchor
+    [293] (1 members): SphinxClient::SetGroupBy
+    [294] (1 members): SphinxClient::SetGroupDistinct
+    [295] (1 members): SphinxClient::SetRetries
+    [296] (1 members): SphinxClient::SetOverride
+    [297] (1 members): SphinxClient::SetSelect
+    [298] (1 members): SphinxClient::ResetFilters
+    [299] (1 members): SphinxClient::ResetGroupBy
+    [300] (1 members): SphinxClient::ResetOverrides
+    [301] (1 members): SphinxClient::EscapeString
+    [302] (1 members): ttrss/public.php::stripslashes_deep
+
+  Dependency Levels (0=leaf, higher=depends on lower):
+    Level 0 (552 nodes): API::wrap, Article::csrf_ignore, Auth_Base::__construct, Auth_Base::authenticate, Auth_Base::check_password, Auth_Internal::about, Auth_Internal::api_version, Auth_Internal::init ...
+    Level 1 (237 nodes): API::getApiLevel, API::getConfig, API::getVersion, API::index, API::isCategoryEmpty, API::isLoggedIn, API::logout, API::shareToPublished ...
+    Level 2 (147 nodes): API::before, API::getPref, Auth_Base::auto_create_user, Auth_Internal::check_password, DbUpdater::getSchemaVersion, Db_PDO::last_error, FeedItem_Atom::get_link, Feeds::catchupAll ...
+    Level 3 (94 nodes): API::getArticle, API::getLabels, Article::editArticleTags, Article::setArticleTags, Auth_Internal::change_password, Backend::display_main_help, DbUpdater::isUpdateRequired, DbUpdater::performUpdateTo ...
+    Level 4 (64 nodes): API::getUnread, API::setArticleLabel, Article::create_published_article, Article::labelops, Backend::help, Db_Prefs::__construct, Feeds::generate_dashboard_feed, Feeds::search ...
+    Level 5 (35 nodes): API::api_get_feeds, API::getCategories, API::updateArticle, Article::assigntolabel, Article::catchupArticleById, Article::removefromlabel, HOTP::verify, MiniTemplator::parseTemplate ...
+    Level 6 (20 nodes): API::api_get_headlines, API::catchupFeed, API::getFeeds, Article::view, Handler_Public::share, MiniTemplator::setTemplateString, Opml::opml_import_category, PHPMailer::CreateBody ...
+    Level 7 (16 nodes): API::getCounters, API::getFeedTree, API::getHeadlines, API::updateFeed, Feeds::format_headlines_list, MiniTemplator::readTemplateFromFile, Opml::opml_import, PHPMailer::PreSend ...
+    Level 8 (12 nodes): API::subscribeToFeed, Dlg::importOpml, Feeds::view, Handler_Public::forgotpass, Handler_Public::generate_syndicated_feed, Opml::import, PHPMailer::Send, Pref_Users::resetUserPassword ...
+    Level 9 (4 nodes): Backend::digestTest, QRcode::encodeMask, QRrawcode::__construct, ttrss/include/digest.php::send_headlines_digests
+    Level 10 (2 nodes): QRcode::encodeInput, ttrss/include/rssfuncs.php::update_daemon_common
+    Level 11 (3 nodes): QRcode::encodeString, QRcode::encodeString8bit, ttrss/update.php
+    Level 12 (3 nodes): QRcode::__construct, QRencode::encode, QRencode::encodeRAW
+    Level 13 (6 nodes): Auth_Internal::authenticate, Pref_Prefs::otpenable, Pref_Prefs::otpqrcode, QRcode::raw, QRcode::text, QRencode::encodePNG
+    Level 14 (2 nodes): QRcode::png, ttrss/include/functions.php::authenticate_user
+    Level 15 (5 nodes): API::login, Handler_Public::login, Handler_Public::rss, ttrss/backend.php, ttrss/include/functions.php::login_sequence
+    Level 16 (4 nodes): Handler_Public::sharepopup, Handler_Public::subscribe, ttrss/index.php, ttrss/prefs.php
+
+------------------------------------------------------------
+
+DIMENSION: CLASS
+  Nodes: 81  Edges: 27  Communities: 55
+
+  Communities:
+    [0] (13 members): Article, Dlg, Feeds, Handler_Protected, Opml, PluginHandler, Pref_Feeds, Pref_Filters, Pref_Labels, Pref_Prefs ...
+    [1] (4 members): API, Backend, Handler, Handler_Public
+    [2] (4 members): FeedItem, FeedItem_Atom, FeedItem_Common, FeedItem_RSS
+    [3] (3 members): Exception, Text_LanguageDetect_Exception, phpmailerException
+    [4] (3 members): HOTP, OTP, TOTP
+    [5] (2 members): PHPMailer, ttrssMailer
+    [6] (2 members): CachedFileReader, StringReader
+    [7] (2 members): Text_LanguageDetect, Text_LanguageDetect_Parser
+    [8] (2 members): Auth_Internal, Plugin
+    [9] (1 members): Auth_Base
+    [10] (1 members): Db_Mysql
+    [11] (1 members): Db_Mysqli
+    [12] (1 members): Db_PDO
+    [13] (1 members): Db_Pgsql
+    [14] (1 members): Db_Prefs
+    [15] (1 members): Db_Stmt
+    [16] (1 members): Db
+    [17] (1 members): DbUpdater
+    [18] (1 members): FeedEnclosure
+    [19] (1 members): FeedParser
+    [20] (1 members): Logger_SQL
+    [21] (1 members): Logger_Syslog
+    [22] (1 members): Logger
+    [23] (1 members): PluginHost
+    [24] (1 members): MiniTemplator
+    [25] (1 members): Mobile_Detect
+    [26] (1 members): floIconIcon
+    [27] (1 members): floIcon
+    [28] (1 members): gettext_reader
+    [29] (1 members): StreamReader
+    [30] (1 members): FileReader
+    [31] (1 members): jimIcon
+    [32] (1 members): Minifier
+    [33] (1 members): Text_LanguageDetect_ISO639
+    [34] (1 members): Base32
+    [35] (1 members): SMTP
+    [36] (1 members): QRcode
+    [37] (1 members): qrstr
+    [38] (1 members): QRtools
+    [39] (1 members): QRspec
+    [40] (1 members): QRimage
+    [41] (1 members): QRinputItem
+    [42] (1 members): QRinput
+    [43] (1 members): QRbitstream
+    [44] (1 members): QRsplit
+    [45] (1 members): QRrsItem
+    [46] (1 members): QRrs
+    [47] (1 members): QRmask
+    [48] (1 members): QRrsblock
+    [49] (1 members): QRrawcode
+    [50] (1 members): FrameFiller
+    [51] (1 members): QRencode
+    [52] (1 members): Publisher
+    [53] (1 members): Subscriber
+    [54] (1 members): SphinxClient
+
+  Dependency Levels (0=leaf, higher=depends on lower):
+    Level 0 (54 nodes): Auth_Base, Base32, Db, DbUpdater, Db_Mysql, Db_Mysqli, Db_PDO, Db_Pgsql ...
+    Level 1 (13 nodes): API, Auth_Internal, Backend, CachedFileReader, FeedItem_Common, HOTP, Handler_Protected, Handler_Public ...
+    Level 2 (14 nodes): Article, Dlg, FeedItem_Atom, FeedItem_RSS, Feeds, Opml, PluginHandler, Pref_Feeds ...
+
+------------------------------------------------------------
+
+DIMENSION: DB_TABLE
+  Nodes: 60  Edges: 126  Communities: 7
+
+  Communities:
+    [0] (14 members): ttrss/classes/api.php, ttrss/classes/feeds.php, ttrss/classes/handler/public.php, ttrss/classes/pref/feeds.php, ttrss/classes/rpc.php, ttrss/include/digest.php, ttrss/include/labels.php, ttrss/opml.php, ttrss_access_keys, ttrss_archived_feeds ...
+    [1] (12 members): ttrss/classes/auth/base.php, ttrss/classes/dbupdater.php, ttrss/classes/logger/sql.php, ttrss/classes/pref/system.php, ttrss/include/sanity_check.php, ttrss/include/sessions.php, ttrss/plugins/auth_internal/init.php, ttrss/register.php, ttrss_error_log, ttrss_sessions ...
+    [2] (10 members): ttrss/classes/opml.php, ttrss/classes/pref/filters.php, ttrss/classes/pref/labels.php, ttrss/update.php, ttrss_filter_actions, ttrss_filter_types, ttrss_filters, ttrss_filters2, ttrss_filters2_actions, ttrss_filters2_rules
+    [3] (9 members): ttrss/classes/db/prefs.php, ttrss/classes/pref/prefs.php, ttrss/include/ccache.php, ttrss/include/functions.php, ttrss_cat_counters_cache, ttrss_counters_cache, ttrss_prefs, ttrss_user_labels2, ttrss_user_prefs
+    [4] (7 members): ttrss/classes/article.php, ttrss/classes/dlg.php, ttrss/include/functions2.php, ttrss/include/rssfuncs.php, ttrss_enclosures, ttrss_entries, ttrss_tags
+    [5] (6 members): ttrss/classes/pref/users.php, ttrss/include/feedbrowser.php, ttrss/install/index.php, ttrss_feedbrowser_cache, ttrss_feeds, ttrss_linked_feeds
+    [6] (2 members): ttrss/classes/pluginhost.php, ttrss_plugin_storage
+
+  Dependency Levels (0=leaf, higher=depends on lower):
+    Level 0 (28 nodes): ttrss_access_keys, ttrss_archived_feeds, ttrss_cat_counters_cache, ttrss_counters_cache, ttrss_enclosures, ttrss_entries, ttrss_error_log, ttrss_feed_categories ...
+    Level 1 (32 nodes): ttrss/classes/api.php, ttrss/classes/article.php, ttrss/classes/auth/base.php, ttrss/classes/db/prefs.php, ttrss/classes/dbupdater.php, ttrss/classes/dlg.php, ttrss/classes/feeds.php, ttrss/classes/handler/public.php ...
+
+------------------------------------------------------------
+
+DIMENSION: HOOK
+  Nodes: 20  Edges: 18  Communities: 5
+
+  Communities:
+    [0] (7 members): HOOK_PREFS_TAB, HOOK_PREFS_TAB_SECTION, ttrss/classes/pref/filters.php, ttrss/classes/pref/labels.php, ttrss/classes/pref/prefs.php, ttrss/classes/pref/system.php, ttrss/classes/pref/users.php
+    [1] (6 members): HOOK_FEED_PARSED, HOOK_HOUSE_KEEPING, HOOK_UPDATE_TASK, ttrss/classes/handler/public.php, ttrss/include/rssfuncs.php, ttrss/update.php
+    [2] (3 members): HOOK_PREFS_EDIT_FEED, HOOK_PREFS_SAVE_FEED, ttrss/classes/pref/feeds.php
+    [3] (2 members): HOOK_AUTH_USER, ttrss/plugins/auth_internal/init.php
+    [4] (2 members): HOOK_PREFS_TABS, ttrss/prefs.php
+
+  Dependency Levels (0=leaf, higher=depends on lower):
+    Level 0 (9 nodes): HOOK_AUTH_USER, HOOK_FEED_PARSED, HOOK_HOUSE_KEEPING, HOOK_PREFS_EDIT_FEED, HOOK_PREFS_SAVE_FEED, HOOK_PREFS_TAB, HOOK_PREFS_TABS, HOOK_PREFS_TAB_SECTION ...
+    Level 1 (11 nodes): ttrss/classes/handler/public.php, ttrss/classes/pref/feeds.php, ttrss/classes/pref/filters.php, ttrss/classes/pref/labels.php, ttrss/classes/pref/prefs.php, ttrss/classes/pref/system.php, ttrss/classes/pref/users.php, ttrss/include/rssfuncs.php ...
+
+------------------------------------------------------------
+
+DIMENSION: INCLUDE
+  Nodes: 138  Edges: 34  Communities: 106
+
+  Communities:
+    [0] (13 members): ttrss/lib/phpqrcode/index.php, ttrss/lib/phpqrcode/qrbitstream.php, ttrss/lib/phpqrcode/qrconfig.php, ttrss/lib/phpqrcode/qrconst.php, ttrss/lib/phpqrcode/qrencode.php, ttrss/lib/phpqrcode/qrimage.php, ttrss/lib/phpqrcode/qrinput.php, ttrss/lib/phpqrcode/qrlib.php, ttrss/lib/phpqrcode/qrmask.php, ttrss/lib/phpqrcode/qrrscode.php ...
+    [1] (11 members): ttrss/include/autoload.php, ttrss/include/ccache.php, ttrss/include/db-prefs.php, ttrss/include/db.php, ttrss/include/errorhandler.php, ttrss/include/functions.php, ttrss/include/functions2.php, ttrss/include/labels.php, ttrss/include/login_form.php, ttrss/include/sessions.php ...
+    [2] (4 members): ttrss/index.php, ttrss/lib/Mobile_Detect.php, ttrss/lib/jshrink/Minifier.php, ttrss/prefs.php
+    [3] (4 members): ttrss/include/colors.php, ttrss/include/crypt.php, ttrss/include/digest.php, ttrss/include/rssfuncs.php
+    [4] (2 members): ttrss/include/sanity_check.php, ttrss/include/sanity_config.php
+    [5] (2 members): ttrss/lib/floIcon.php, ttrss/lib/jimIcon.php
+    [6] (2 members): ttrss/lib/phpmailer/class.phpmailer.php, ttrss/lib/phpmailer/class.smtp.php
+    [7] (2 members): ttrss/classes/ttrssmailer.php, ttrss/register.php
+    [8] (1 members): ttrss/api/index.php
+    [9] (1 members): ttrss/backend.php
+    [10] (1 members): ttrss/classes/api.php
+    [11] (1 members): ttrss/classes/article.php
+    [12] (1 members): ttrss/classes/auth/base.php
+    [13] (1 members): ttrss/classes/backend.php
+    [14] (1 members): ttrss/classes/db/mysql.php
+    [15] (1 members): ttrss/classes/db/mysqli.php
+    [16] (1 members): ttrss/classes/db/pdo.php
+    [17] (1 members): ttrss/classes/db/pgsql.php
+    [18] (1 members): ttrss/classes/db/prefs.php
+    [19] (1 members): ttrss/classes/db/stmt.php
+    [20] (1 members): ttrss/classes/db.php
+    [21] (1 members): ttrss/classes/dbupdater.php
+    [22] (1 members): ttrss/classes/dlg.php
+    [23] (1 members): ttrss/classes/feedenclosure.php
+    [24] (1 members): ttrss/classes/feeditem/atom.php
+    [25] (1 members): ttrss/classes/feeditem/common.php
+    [26] (1 members): ttrss/classes/feeditem/rss.php
+    [27] (1 members): ttrss/classes/feeditem.php
+    [28] (1 members): ttrss/classes/feedparser.php
+    [29] (1 members): ttrss/classes/feeds.php
+    [30] (1 members): ttrss/classes/handler/protected.php
+    [31] (1 members): ttrss/classes/handler/public.php
+    [32] (1 members): ttrss/classes/handler.php
+    [33] (1 members): ttrss/classes/iauthmodule.php
+    [34] (1 members): ttrss/classes/idb.php
+    [35] (1 members): ttrss/classes/ihandler.php
+    [36] (1 members): ttrss/classes/logger/sql.php
+    [37] (1 members): ttrss/classes/logger/syslog.php
+    [38] (1 members): ttrss/classes/logger.php
+    [39] (1 members): ttrss/classes/opml.php
+    [40] (1 members): ttrss/classes/plugin.php
+    [41] (1 members): ttrss/classes/pluginhandler.php
+    [42] (1 members): ttrss/classes/pluginhost.php
+    [43] (1 members): ttrss/classes/pref/feeds.php
+    [44] (1 members): ttrss/classes/pref/filters.php
+    [45] (1 members): ttrss/classes/pref/labels.php
+    [46] (1 members): ttrss/classes/pref/prefs.php
+    [47] (1 members): ttrss/classes/pref/system.php
+    [48] (1 members): ttrss/classes/pref/users.php
+    [49] (1 members): ttrss/classes/rpc.php
+    [50] (1 members): ttrss/errors.php
+    [51] (1 members): ttrss/image.php
+    [52] (1 members): ttrss/include/feedbrowser.php
+    [53] (1 members): ttrss/install/index.php
+    [54] (1 members): ttrss/lib/MiniTemplator.class.php
+    [55] (1 members): ttrss/lib/accept-to-gettext.php
+    [56] (1 members): ttrss/lib/gettext/gettext.php
+    [57] (1 members): ttrss/lib/gettext/streams.php
+    [58] (1 members): ttrss/lib/languagedetect/LanguageDetect.php
+    [59] (1 members): ttrss/lib/languagedetect/Text/LanguageDetect/Exception.php
+    [60] (1 members): ttrss/lib/languagedetect/Text/LanguageDetect/ISO639.php
+    [61] (1 members): ttrss/lib/languagedetect/Text/LanguageDetect/Parser.php
+    [62] (1 members): ttrss/lib/otphp/lib/hotp.php
+    [63] (1 members): ttrss/lib/otphp/lib/otp.php
+    [64] (1 members): ttrss/lib/otphp/lib/otphp.php
+    [65] (1 members): ttrss/lib/otphp/lib/totp.php
+    [66] (1 members): ttrss/lib/otphp/vendor/base32.php
+    [67] (1 members): ttrss/lib/otphp/vendor/libs.php
+    [68] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-ar.php
+    [69] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-br.php
+    [70] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-ca.php
+    [71] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-ch.php
+    [72] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-cz.php
+    [73] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-de.php
+    [74] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-dk.php
+    [75] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-es.php
+    [76] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-et.php
+    [77] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-fi.php
+    [78] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-fo.php
+    [79] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-fr.php
+    [80] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-hu.php
+    [81] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-it.php
+    [82] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-ja.php
+    [83] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-nl.php
+    [84] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-no.php
+    [85] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-pl.php
+    [86] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-ro.php
+    [87] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-ru.php
+    [88] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-se.php
+    [89] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-sk.php
+    [90] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-tr.php
+    [91] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-zh.php
+    [92] (1 members): ttrss/lib/phpmailer/language/phpmailer.lang-zh_cn.php
+    [93] (1 members): ttrss/lib/phpqrcode/bindings/tcpdf/qrcode.php
+    [94] (1 members): ttrss/lib/phpqrcode/phpqrcode.php
+    [95] (1 members): ttrss/lib/phpqrcode/tools/merge.php
+    [96] (1 members): ttrss/lib/phpqrcode/tools/merged_config.php
+    [97] (1 members): ttrss/lib/phpqrcode/tools/merged_header.php
+    [98] (1 members): ttrss/lib/pubsubhubbub/publisher.php
+    [99] (1 members): ttrss/lib/pubsubhubbub/subscriber.php
+    [100] (1 members): ttrss/lib/sphinxapi.php
+    [101] (1 members): ttrss/opml.php
+    [102] (1 members): ttrss/plugins/auth_internal/init.php
+    [103] (1 members): ttrss/public.php
+    [104] (1 members): ttrss/update.php
+    [105] (1 members): ttrss/update_daemon2.php
+
+  Dependency Levels (0=leaf, higher=depends on lower):
+    Level 0 (124 nodes): ttrss/api/index.php, ttrss/backend.php, ttrss/classes/api.php, ttrss/classes/article.php, ttrss/classes/auth/base.php, ttrss/classes/backend.php, ttrss/classes/db.php, ttrss/classes/db/mysql.php ...
+    Level 1 (10 nodes): ttrss/include/db-prefs.php, ttrss/include/functions2.php, ttrss/include/rssfuncs.php, ttrss/include/sanity_check.php, ttrss/index.php, ttrss/lib/floIcon.php, ttrss/lib/phpmailer/class.phpmailer.php, ttrss/lib/phpqrcode/qrlib.php ...
+    Level 2 (2 nodes): ttrss/include/functions.php, ttrss/lib/phpqrcode/index.php
+    Level 3 (1 nodes): ttrss/include/autoload.php
+    Level 4 (1 nodes): ttrss/include/sessions.php
+
+------------------------------------------------------------

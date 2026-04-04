@@ -1,0 +1,289 @@
+{
+  "graph_type": "hook",
+  "node_count": 20,
+  "edge_count": 18,
+  "community_count": 5,
+  "nodes": {
+    "HOOK_PREFS_TABS": {
+      "label": "PREFS_TABS",
+      "kind": "hook"
+    },
+    "HOOK_PREFS_SAVE_FEED": {
+      "label": "PREFS_SAVE_FEED",
+      "kind": "hook"
+    },
+    "HOOK_PREFS_TAB_SECTION": {
+      "label": "PREFS_TAB_SECTION",
+      "kind": "hook"
+    },
+    "HOOK_HOUSE_KEEPING": {
+      "label": "HOUSE_KEEPING",
+      "kind": "hook"
+    },
+    "HOOK_AUTH_USER": {
+      "label": "AUTH_USER",
+      "kind": "hook"
+    },
+    "HOOK_UPDATE_TASK": {
+      "label": "UPDATE_TASK",
+      "kind": "hook"
+    },
+    "HOOK_PREFS_EDIT_FEED": {
+      "label": "PREFS_EDIT_FEED",
+      "kind": "hook"
+    },
+    "HOOK_FEED_PARSED": {
+      "label": "FEED_PARSED",
+      "kind": "hook"
+    },
+    "HOOK_PREFS_TAB": {
+      "label": "PREFS_TAB",
+      "kind": "hook"
+    },
+    "ttrss/classes/handler/public.php": {
+      "loc": 1007,
+      "label": "handler/public",
+      "kind": "file"
+    },
+    "ttrss/classes/pref/feeds.php": {
+      "loc": 1925,
+      "label": "pref/feeds",
+      "kind": "file"
+    },
+    "ttrss/classes/pref/filters.php": {
+      "loc": 1054,
+      "label": "pref/filters",
+      "kind": "file"
+    },
+    "ttrss/classes/pref/labels.php": {
+      "loc": 331,
+      "label": "pref/labels",
+      "kind": "file"
+    },
+    "ttrss/classes/pref/prefs.php": {
+      "loc": 1129,
+      "label": "pref/prefs",
+      "kind": "file"
+    },
+    "ttrss/classes/pref/system.php": {
+      "loc": 91,
+      "label": "pref/system",
+      "kind": "file"
+    },
+    "ttrss/classes/pref/users.php": {
+      "loc": 458,
+      "label": "pref/users",
+      "kind": "file"
+    },
+    "ttrss/include/rssfuncs.php": {
+      "loc": 1432,
+      "label": "include/rssfuncs",
+      "kind": "file"
+    },
+    "ttrss/plugins/auth_internal/init.php": {
+      "loc": 197,
+      "label": "auth_internal/init",
+      "kind": "file"
+    },
+    "ttrss/prefs.php": {
+      "loc": 159,
+      "label": "prefs",
+      "kind": "file"
+    },
+    "ttrss/update.php": {
+      "loc": 360,
+      "label": "update",
+      "kind": "file"
+    }
+  },
+  "edges": [
+    {
+      "from": "ttrss/classes/handler/public.php",
+      "to": "HOOK_UPDATE_TASK",
+      "kind": "INVOKES",
+      "line": 421
+    },
+    {
+      "from": "ttrss/classes/handler/public.php",
+      "to": "HOOK_HOUSE_KEEPING",
+      "kind": "INVOKES",
+      "line": 415
+    },
+    {
+      "from": "ttrss/classes/pref/feeds.php",
+      "to": "HOOK_PREFS_EDIT_FEED",
+      "kind": "INVOKES",
+      "line": 748
+    },
+    {
+      "from": "ttrss/classes/pref/feeds.php",
+      "to": "HOOK_PREFS_SAVE_FEED",
+      "kind": "INVOKES",
+      "line": 981
+    },
+    {
+      "from": "ttrss/classes/pref/feeds.php",
+      "to": "HOOK_PREFS_TAB_SECTION",
+      "kind": "INVOKES",
+      "line": 1475
+    },
+    {
+      "from": "ttrss/classes/pref/feeds.php",
+      "to": "HOOK_PREFS_TAB",
+      "kind": "INVOKES",
+      "line": 1480
+    },
+    {
+      "from": "ttrss/classes/pref/filters.php",
+      "to": "HOOK_PREFS_TAB",
+      "kind": "INVOKES",
+      "line": 695
+    },
+    {
+      "from": "ttrss/classes/pref/labels.php",
+      "to": "HOOK_PREFS_TAB",
+      "kind": "INVOKES",
+      "line": 322
+    },
+    {
+      "from": "ttrss/classes/pref/prefs.php",
+      "to": "HOOK_PREFS_TAB_SECTION",
+      "kind": "INVOKES",
+      "line": 697
+    },
+    {
+      "from": "ttrss/classes/pref/prefs.php",
+      "to": "HOOK_PREFS_TAB",
+      "kind": "INVOKES",
+      "line": 863
+    },
+    {
+      "from": "ttrss/classes/pref/system.php",
+      "to": "HOOK_PREFS_TAB",
+      "kind": "INVOKES",
+      "line": 83
+    },
+    {
+      "from": "ttrss/classes/pref/users.php",
+      "to": "HOOK_PREFS_TAB_SECTION",
+      "kind": "INVOKES",
+      "line": 354
+    },
+    {
+      "from": "ttrss/classes/pref/users.php",
+      "to": "HOOK_PREFS_TAB",
+      "kind": "INVOKES",
+      "line": 449
+    },
+    {
+      "from": "ttrss/include/rssfuncs.php",
+      "to": "HOOK_FEED_PARSED",
+      "kind": "INVOKES",
+      "line": 394
+    },
+    {
+      "from": "ttrss/include/rssfuncs.php",
+      "to": "HOOK_HOUSE_KEEPING",
+      "kind": "INVOKES",
+      "line": 1428
+    },
+    {
+      "from": "ttrss/plugins/auth_internal/init.php",
+      "to": "HOOK_AUTH_USER",
+      "kind": "REGISTERS",
+      "line": 15
+    },
+    {
+      "from": "ttrss/prefs.php",
+      "to": "HOOK_PREFS_TABS",
+      "kind": "INVOKES",
+      "line": 139
+    },
+    {
+      "from": "ttrss/update.php",
+      "to": "HOOK_UPDATE_TASK",
+      "kind": "INVOKES",
+      "line": 190
+    }
+  ],
+  "communities": {
+    "HOOK_PREFS_TAB_SECTION": 0,
+    "HOOK_PREFS_TAB": 0,
+    "ttrss/classes/pref/filters.php": 0,
+    "ttrss/classes/pref/labels.php": 0,
+    "ttrss/classes/pref/prefs.php": 0,
+    "ttrss/classes/pref/system.php": 0,
+    "ttrss/classes/pref/users.php": 0,
+    "HOOK_HOUSE_KEEPING": 1,
+    "HOOK_UPDATE_TASK": 1,
+    "HOOK_FEED_PARSED": 1,
+    "ttrss/classes/handler/public.php": 1,
+    "ttrss/include/rssfuncs.php": 1,
+    "ttrss/update.php": 1,
+    "HOOK_PREFS_SAVE_FEED": 2,
+    "HOOK_PREFS_EDIT_FEED": 2,
+    "ttrss/classes/pref/feeds.php": 2,
+    "HOOK_AUTH_USER": 3,
+    "ttrss/plugins/auth_internal/init.php": 3,
+    "HOOK_PREFS_TABS": 4,
+    "ttrss/prefs.php": 4
+  },
+  "levels": {
+    "0": [
+      "HOOK_PREFS_TABS",
+      "HOOK_PREFS_SAVE_FEED",
+      "HOOK_PREFS_TAB_SECTION",
+      "HOOK_HOUSE_KEEPING",
+      "HOOK_AUTH_USER",
+      "HOOK_UPDATE_TASK",
+      "HOOK_PREFS_EDIT_FEED",
+      "HOOK_FEED_PARSED",
+      "HOOK_PREFS_TAB"
+    ],
+    "1": [
+      "ttrss/classes/handler/public.php",
+      "ttrss/classes/pref/feeds.php",
+      "ttrss/classes/pref/filters.php",
+      "ttrss/classes/pref/labels.php",
+      "ttrss/classes/pref/prefs.php",
+      "ttrss/classes/pref/system.php",
+      "ttrss/classes/pref/users.php",
+      "ttrss/include/rssfuncs.php",
+      "ttrss/plugins/auth_internal/init.php",
+      "ttrss/prefs.php",
+      "ttrss/update.php"
+    ]
+  },
+  "community_members": {
+    "0": [
+      "HOOK_PREFS_TAB_SECTION",
+      "HOOK_PREFS_TAB",
+      "ttrss/classes/pref/filters.php",
+      "ttrss/classes/pref/labels.php",
+      "ttrss/classes/pref/prefs.php",
+      "ttrss/classes/pref/system.php",
+      "ttrss/classes/pref/users.php"
+    ],
+    "1": [
+      "HOOK_HOUSE_KEEPING",
+      "HOOK_UPDATE_TASK",
+      "HOOK_FEED_PARSED",
+      "ttrss/classes/handler/public.php",
+      "ttrss/include/rssfuncs.php",
+      "ttrss/update.php"
+    ],
+    "2": [
+      "HOOK_PREFS_SAVE_FEED",
+      "HOOK_PREFS_EDIT_FEED",
+      "ttrss/classes/pref/feeds.php"
+    ],
+    "3": [
+      "HOOK_AUTH_USER",
+      "ttrss/plugins/auth_internal/init.php"
+    ],
+    "4": [
+      "HOOK_PREFS_TABS",
+      "ttrss/prefs.php"
+    ]
+  }
+}

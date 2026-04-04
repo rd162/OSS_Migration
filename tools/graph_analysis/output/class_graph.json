@@ -1,0 +1,992 @@
+{
+  "graph_type": "class",
+  "node_count": 81,
+  "edge_count": 27,
+  "community_count": 55,
+  "nodes": {
+    "API": {
+      "file": "ttrss/classes/api.php",
+      "line": 3,
+      "label": "API",
+      "kind": "class"
+    },
+    "Handler": {
+      "label": "Handler",
+      "kind": "class",
+      "file": "ttrss/classes/handler.php",
+      "line": 2
+    },
+    "Article": {
+      "file": "ttrss/classes/article.php",
+      "line": 2,
+      "label": "Article",
+      "kind": "class"
+    },
+    "Handler_Protected": {
+      "label": "Handler_Protected",
+      "kind": "class",
+      "file": "ttrss/classes/handler/protected.php",
+      "line": 2
+    },
+    "Auth_Base": {
+      "file": "ttrss/classes/auth/base.php",
+      "line": 2,
+      "label": "Auth_Base",
+      "kind": "class"
+    },
+    "Backend": {
+      "file": "ttrss/classes/backend.php",
+      "line": 2,
+      "label": "Backend",
+      "kind": "class"
+    },
+    "Db_Mysql": {
+      "file": "ttrss/classes/db/mysql.php",
+      "line": 2,
+      "label": "Db_Mysql",
+      "kind": "class"
+    },
+    "Db_Mysqli": {
+      "file": "ttrss/classes/db/mysqli.php",
+      "line": 2,
+      "label": "Db_Mysqli",
+      "kind": "class"
+    },
+    "Db_PDO": {
+      "file": "ttrss/classes/db/pdo.php",
+      "line": 2,
+      "label": "Db_PDO",
+      "kind": "class"
+    },
+    "Db_Pgsql": {
+      "file": "ttrss/classes/db/pgsql.php",
+      "line": 2,
+      "label": "Db_Pgsql",
+      "kind": "class"
+    },
+    "Db_Prefs": {
+      "file": "ttrss/classes/db/prefs.php",
+      "line": 2,
+      "label": "Db_Prefs",
+      "kind": "class"
+    },
+    "Db_Stmt": {
+      "file": "ttrss/classes/db/stmt.php",
+      "line": 2,
+      "label": "Db_Stmt",
+      "kind": "class"
+    },
+    "Db": {
+      "file": "ttrss/classes/db.php",
+      "line": 2,
+      "label": "Db",
+      "kind": "class"
+    },
+    "DbUpdater": {
+      "file": "ttrss/classes/dbupdater.php",
+      "line": 2,
+      "label": "DbUpdater",
+      "kind": "class"
+    },
+    "Dlg": {
+      "file": "ttrss/classes/dlg.php",
+      "line": 2,
+      "label": "Dlg",
+      "kind": "class"
+    },
+    "FeedEnclosure": {
+      "file": "ttrss/classes/feedenclosure.php",
+      "line": 2,
+      "label": "FeedEnclosure",
+      "kind": "class"
+    },
+    "FeedItem_Atom": {
+      "file": "ttrss/classes/feeditem/atom.php",
+      "line": 2,
+      "label": "FeedItem_Atom",
+      "kind": "class"
+    },
+    "FeedItem_Common": {
+      "label": "FeedItem_Common",
+      "kind": "class",
+      "file": "ttrss/classes/feeditem/common.php",
+      "line": 2
+    },
+    "FeedItem": {
+      "label": "FeedItem",
+      "kind": "class",
+      "file": "ttrss/classes/feeditem.php",
+      "line": 2
+    },
+    "FeedItem_RSS": {
+      "file": "ttrss/classes/feeditem/rss.php",
+      "line": 2,
+      "label": "FeedItem_RSS",
+      "kind": "class"
+    },
+    "FeedParser": {
+      "file": "ttrss/classes/feedparser.php",
+      "line": 2,
+      "label": "FeedParser",
+      "kind": "class"
+    },
+    "Feeds": {
+      "file": "ttrss/classes/feeds.php",
+      "line": 4,
+      "label": "Feeds",
+      "kind": "class"
+    },
+    "Handler_Public": {
+      "file": "ttrss/classes/handler/public.php",
+      "line": 2,
+      "label": "Handler_Public",
+      "kind": "class"
+    },
+    "Logger_SQL": {
+      "file": "ttrss/classes/logger/sql.php",
+      "line": 2,
+      "label": "Logger_SQL",
+      "kind": "class"
+    },
+    "Logger_Syslog": {
+      "file": "ttrss/classes/logger/syslog.php",
+      "line": 2,
+      "label": "Logger_Syslog",
+      "kind": "class"
+    },
+    "Logger": {
+      "file": "ttrss/classes/logger.php",
+      "line": 2,
+      "label": "Logger",
+      "kind": "class"
+    },
+    "Opml": {
+      "file": "ttrss/classes/opml.php",
+      "line": 2,
+      "label": "Opml",
+      "kind": "class"
+    },
+    "Plugin": {
+      "file": "ttrss/classes/plugin.php",
+      "line": 2,
+      "label": "Plugin",
+      "kind": "class"
+    },
+    "PluginHandler": {
+      "file": "ttrss/classes/pluginhandler.php",
+      "line": 2,
+      "label": "PluginHandler",
+      "kind": "class"
+    },
+    "PluginHost": {
+      "file": "ttrss/classes/pluginhost.php",
+      "line": 2,
+      "label": "PluginHost",
+      "kind": "class"
+    },
+    "Pref_Feeds": {
+      "file": "ttrss/classes/pref/feeds.php",
+      "line": 2,
+      "label": "Pref_Feeds",
+      "kind": "class"
+    },
+    "Pref_Filters": {
+      "file": "ttrss/classes/pref/filters.php",
+      "line": 2,
+      "label": "Pref_Filters",
+      "kind": "class"
+    },
+    "Pref_Labels": {
+      "file": "ttrss/classes/pref/labels.php",
+      "line": 2,
+      "label": "Pref_Labels",
+      "kind": "class"
+    },
+    "Pref_Prefs": {
+      "file": "ttrss/classes/pref/prefs.php",
+      "line": 3,
+      "label": "Pref_Prefs",
+      "kind": "class"
+    },
+    "Pref_System": {
+      "file": "ttrss/classes/pref/system.php",
+      "line": 3,
+      "label": "Pref_System",
+      "kind": "class"
+    },
+    "Pref_Users": {
+      "file": "ttrss/classes/pref/users.php",
+      "line": 2,
+      "label": "Pref_Users",
+      "kind": "class"
+    },
+    "RPC": {
+      "file": "ttrss/classes/rpc.php",
+      "line": 2,
+      "label": "RPC",
+      "kind": "class"
+    },
+    "ttrssMailer": {
+      "file": "ttrss/classes/ttrssmailer.php",
+      "line": 12,
+      "label": "ttrssMailer",
+      "kind": "class"
+    },
+    "PHPMailer": {
+      "label": "PHPMailer",
+      "kind": "class",
+      "file": "ttrss/lib/phpmailer/class.phpmailer.php",
+      "line": 43
+    },
+    "MiniTemplator": {
+      "file": "ttrss/lib/MiniTemplator.class.php",
+      "line": 74,
+      "label": "MiniTemplator",
+      "kind": "class"
+    },
+    "Mobile_Detect": {
+      "file": "ttrss/lib/Mobile_Detect.php",
+      "line": 16,
+      "label": "Mobile_Detect",
+      "kind": "class"
+    },
+    "floIconIcon": {
+      "file": "ttrss/lib/floIcon.php",
+      "line": 6,
+      "label": "floIconIcon",
+      "kind": "class"
+    },
+    "floIcon": {
+      "file": "ttrss/lib/floIcon.php",
+      "line": 12,
+      "label": "floIcon",
+      "kind": "class"
+    },
+    "gettext_reader": {
+      "file": "ttrss/lib/gettext/gettext.php",
+      "line": 36,
+      "label": "gettext_reader",
+      "kind": "class"
+    },
+    "StreamReader": {
+      "file": "ttrss/lib/gettext/streams.php",
+      "line": 26,
+      "label": "StreamReader",
+      "kind": "class"
+    },
+    "StringReader": {
+      "file": "ttrss/lib/gettext/streams.php",
+      "line": 48,
+      "label": "StringReader",
+      "kind": "class"
+    },
+    "FileReader": {
+      "file": "ttrss/lib/gettext/streams.php",
+      "line": 84,
+      "label": "FileReader",
+      "kind": "class"
+    },
+    "CachedFileReader": {
+      "file": "ttrss/lib/gettext/streams.php",
+      "line": 145,
+      "label": "CachedFileReader",
+      "kind": "class"
+    },
+    "jimIcon": {
+      "file": "ttrss/lib/jimIcon.php",
+      "line": 19,
+      "label": "jimIcon",
+      "kind": "class"
+    },
+    "Minifier": {
+      "file": "ttrss/lib/jshrink/Minifier.php",
+      "line": 58,
+      "label": "Minifier",
+      "kind": "class"
+    },
+    "Text_LanguageDetect_Exception": {
+      "file": "ttrss/lib/languagedetect/Text/LanguageDetect/Exception.php",
+      "line": 2,
+      "label": "Text_LanguageDetect_Exception",
+      "kind": "class"
+    },
+    "Exception": {
+      "label": "Exception",
+      "kind": "class"
+    },
+    "Text_LanguageDetect_ISO639": {
+      "file": "ttrss/lib/languagedetect/Text/LanguageDetect/ISO639.php",
+      "line": 29,
+      "label": "Text_LanguageDetect_ISO639",
+      "kind": "class"
+    },
+    "Text_LanguageDetect_Parser": {
+      "file": "ttrss/lib/languagedetect/Text/LanguageDetect/Parser.php",
+      "line": 33,
+      "label": "Text_LanguageDetect_Parser",
+      "kind": "class"
+    },
+    "Text_LanguageDetect": {
+      "label": "Text_LanguageDetect",
+      "kind": "class"
+    },
+    "HOTP": {
+      "file": "ttrss/lib/otphp/lib/hotp.php",
+      "line": 37,
+      "label": "HOTP",
+      "kind": "class"
+    },
+    "OTP": {
+      "label": "OTP",
+      "kind": "class",
+      "file": "ttrss/lib/otphp/lib/otp.php",
+      "line": 36
+    },
+    "TOTP": {
+      "file": "ttrss/lib/otphp/lib/totp.php",
+      "line": 37,
+      "label": "TOTP",
+      "kind": "class"
+    },
+    "Base32": {
+      "file": "ttrss/lib/otphp/vendor/base32.php",
+      "line": 11,
+      "label": "Base32",
+      "kind": "class"
+    },
+    "phpmailerException": {
+      "file": "ttrss/lib/phpmailer/class.phpmailer.php",
+      "line": 2816,
+      "label": "phpmailerException",
+      "kind": "class"
+    },
+    "SMTP": {
+      "file": "ttrss/lib/phpmailer/class.smtp.php",
+      "line": 46,
+      "label": "SMTP",
+      "kind": "class"
+    },
+    "QRcode": {
+      "file": "ttrss/lib/phpqrcode/qrencode.php",
+      "line": 156,
+      "label": "QRcode",
+      "kind": "class"
+    },
+    "qrstr": {
+      "file": "ttrss/lib/phpqrcode/qrconst.php",
+      "line": 50,
+      "label": "qrstr",
+      "kind": "class"
+    },
+    "QRtools": {
+      "file": "ttrss/lib/phpqrcode/qrtools.php",
+      "line": 25,
+      "label": "QRtools",
+      "kind": "class"
+    },
+    "QRspec": {
+      "file": "ttrss/lib/phpqrcode/qrspec.php",
+      "line": 42,
+      "label": "QRspec",
+      "kind": "class"
+    },
+    "QRimage": {
+      "file": "ttrss/lib/phpqrcode/qrimage.php",
+      "line": 27,
+      "label": "QRimage",
+      "kind": "class"
+    },
+    "QRinputItem": {
+      "file": "ttrss/lib/phpqrcode/qrinput.php",
+      "line": 31,
+      "label": "QRinputItem",
+      "kind": "class"
+    },
+    "QRinput": {
+      "file": "ttrss/lib/phpqrcode/qrinput.php",
+      "line": 274,
+      "label": "QRinput",
+      "kind": "class"
+    },
+    "QRbitstream": {
+      "file": "ttrss/lib/phpqrcode/qrbitstream.php",
+      "line": 28,
+      "label": "QRbitstream",
+      "kind": "class"
+    },
+    "QRsplit": {
+      "file": "ttrss/lib/phpqrcode/qrsplit.php",
+      "line": 33,
+      "label": "QRsplit",
+      "kind": "class"
+    },
+    "QRrsItem": {
+      "file": "ttrss/lib/phpqrcode/qrrscode.php",
+      "line": 31,
+      "label": "QRrsItem",
+      "kind": "class"
+    },
+    "QRrs": {
+      "file": "ttrss/lib/phpqrcode/qrrscode.php",
+      "line": 187,
+      "label": "QRrs",
+      "kind": "class"
+    },
+    "QRmask": {
+      "file": "ttrss/lib/phpqrcode/qrmask.php",
+      "line": 33,
+      "label": "QRmask",
+      "kind": "class"
+    },
+    "QRrsblock": {
+      "file": "ttrss/lib/phpqrcode/qrencode.php",
+      "line": 28,
+      "label": "QRrsblock",
+      "kind": "class"
+    },
+    "QRrawcode": {
+      "file": "ttrss/lib/phpqrcode/qrencode.php",
+      "line": 47,
+      "label": "QRrawcode",
+      "kind": "class"
+    },
+    "FrameFiller": {
+      "file": "ttrss/lib/phpqrcode/qrencode.php",
+      "line": 306,
+      "label": "FrameFiller",
+      "kind": "class"
+    },
+    "QRencode": {
+      "file": "ttrss/lib/phpqrcode/qrencode.php",
+      "line": 396,
+      "label": "QRencode",
+      "kind": "class"
+    },
+    "Publisher": {
+      "file": "ttrss/lib/pubsubhubbub/publisher.php",
+      "line": 8,
+      "label": "Publisher",
+      "kind": "class"
+    },
+    "Subscriber": {
+      "file": "ttrss/lib/pubsubhubbub/subscriber.php",
+      "line": 8,
+      "label": "Subscriber",
+      "kind": "class"
+    },
+    "SphinxClient": {
+      "file": "ttrss/lib/sphinxapi.php",
+      "line": 384,
+      "label": "SphinxClient",
+      "kind": "class"
+    },
+    "Auth_Internal": {
+      "file": "ttrss/plugins/auth_internal/init.php",
+      "line": 2,
+      "label": "Auth_Internal",
+      "kind": "class"
+    }
+  },
+  "edges": [
+    {
+      "from": "API",
+      "to": "Handler",
+      "kind": "extends"
+    },
+    {
+      "from": "Article",
+      "to": "Handler_Protected",
+      "kind": "extends"
+    },
+    {
+      "from": "Handler_Protected",
+      "to": "Handler",
+      "kind": "extends"
+    },
+    {
+      "from": "Backend",
+      "to": "Handler",
+      "kind": "extends"
+    },
+    {
+      "from": "Dlg",
+      "to": "Handler_Protected",
+      "kind": "extends"
+    },
+    {
+      "from": "FeedItem_Atom",
+      "to": "FeedItem_Common",
+      "kind": "extends"
+    },
+    {
+      "from": "FeedItem_Common",
+      "to": "FeedItem",
+      "kind": "extends"
+    },
+    {
+      "from": "FeedItem_RSS",
+      "to": "FeedItem_Common",
+      "kind": "extends"
+    },
+    {
+      "from": "Feeds",
+      "to": "Handler_Protected",
+      "kind": "extends"
+    },
+    {
+      "from": "Handler_Public",
+      "to": "Handler",
+      "kind": "extends"
+    },
+    {
+      "from": "Opml",
+      "to": "Handler_Protected",
+      "kind": "extends"
+    },
+    {
+      "from": "PluginHandler",
+      "to": "Handler_Protected",
+      "kind": "extends"
+    },
+    {
+      "from": "Pref_Feeds",
+      "to": "Handler_Protected",
+      "kind": "extends"
+    },
+    {
+      "from": "Pref_Filters",
+      "to": "Handler_Protected",
+      "kind": "extends"
+    },
+    {
+      "from": "Pref_Labels",
+      "to": "Handler_Protected",
+      "kind": "extends"
+    },
+    {
+      "from": "Pref_Prefs",
+      "to": "Handler_Protected",
+      "kind": "extends"
+    },
+    {
+      "from": "Pref_System",
+      "to": "Handler_Protected",
+      "kind": "extends"
+    },
+    {
+      "from": "Pref_Users",
+      "to": "Handler_Protected",
+      "kind": "extends"
+    },
+    {
+      "from": "RPC",
+      "to": "Handler_Protected",
+      "kind": "extends"
+    },
+    {
+      "from": "ttrssMailer",
+      "to": "PHPMailer",
+      "kind": "extends"
+    },
+    {
+      "from": "CachedFileReader",
+      "to": "StringReader",
+      "kind": "extends"
+    },
+    {
+      "from": "Text_LanguageDetect_Exception",
+      "to": "Exception",
+      "kind": "extends"
+    },
+    {
+      "from": "Text_LanguageDetect_Parser",
+      "to": "Text_LanguageDetect",
+      "kind": "extends"
+    },
+    {
+      "from": "HOTP",
+      "to": "OTP",
+      "kind": "extends"
+    },
+    {
+      "from": "TOTP",
+      "to": "OTP",
+      "kind": "extends"
+    },
+    {
+      "from": "phpmailerException",
+      "to": "Exception",
+      "kind": "extends"
+    },
+    {
+      "from": "Auth_Internal",
+      "to": "Plugin",
+      "kind": "extends"
+    }
+  ],
+  "communities": {
+    "Article": 0,
+    "Handler_Protected": 0,
+    "Dlg": 0,
+    "Feeds": 0,
+    "Opml": 0,
+    "PluginHandler": 0,
+    "Pref_Feeds": 0,
+    "Pref_Filters": 0,
+    "Pref_Labels": 0,
+    "Pref_Prefs": 0,
+    "Pref_System": 0,
+    "Pref_Users": 0,
+    "RPC": 0,
+    "API": 1,
+    "Handler": 1,
+    "Backend": 1,
+    "Handler_Public": 1,
+    "FeedItem_Atom": 2,
+    "FeedItem_Common": 2,
+    "FeedItem": 2,
+    "FeedItem_RSS": 2,
+    "Text_LanguageDetect_Exception": 3,
+    "Exception": 3,
+    "phpmailerException": 3,
+    "HOTP": 4,
+    "OTP": 4,
+    "TOTP": 4,
+    "ttrssMailer": 5,
+    "PHPMailer": 5,
+    "StringReader": 6,
+    "CachedFileReader": 6,
+    "Text_LanguageDetect_Parser": 7,
+    "Text_LanguageDetect": 7,
+    "Plugin": 8,
+    "Auth_Internal": 8,
+    "Auth_Base": 9,
+    "Db_Mysql": 10,
+    "Db_Mysqli": 11,
+    "Db_PDO": 12,
+    "Db_Pgsql": 13,
+    "Db_Prefs": 14,
+    "Db_Stmt": 15,
+    "Db": 16,
+    "DbUpdater": 17,
+    "FeedEnclosure": 18,
+    "FeedParser": 19,
+    "Logger_SQL": 20,
+    "Logger_Syslog": 21,
+    "Logger": 22,
+    "PluginHost": 23,
+    "MiniTemplator": 24,
+    "Mobile_Detect": 25,
+    "floIconIcon": 26,
+    "floIcon": 27,
+    "gettext_reader": 28,
+    "StreamReader": 29,
+    "FileReader": 30,
+    "jimIcon": 31,
+    "Minifier": 32,
+    "Text_LanguageDetect_ISO639": 33,
+    "Base32": 34,
+    "SMTP": 35,
+    "QRcode": 36,
+    "qrstr": 37,
+    "QRtools": 38,
+    "QRspec": 39,
+    "QRimage": 40,
+    "QRinputItem": 41,
+    "QRinput": 42,
+    "QRbitstream": 43,
+    "QRsplit": 44,
+    "QRrsItem": 45,
+    "QRrs": 46,
+    "QRmask": 47,
+    "QRrsblock": 48,
+    "QRrawcode": 49,
+    "FrameFiller": 50,
+    "QRencode": 51,
+    "Publisher": 52,
+    "Subscriber": 53,
+    "SphinxClient": 54
+  },
+  "levels": {
+    "0": [
+      "Handler",
+      "Auth_Base",
+      "Db_Mysql",
+      "Db_Mysqli",
+      "Db_PDO",
+      "Db_Pgsql",
+      "Db_Prefs",
+      "Db_Stmt",
+      "Db",
+      "DbUpdater",
+      "FeedEnclosure",
+      "FeedItem",
+      "FeedParser",
+      "Logger_SQL",
+      "Logger_Syslog",
+      "Logger",
+      "Plugin",
+      "PluginHost",
+      "PHPMailer",
+      "MiniTemplator",
+      "Mobile_Detect",
+      "floIconIcon",
+      "floIcon",
+      "gettext_reader",
+      "StreamReader",
+      "StringReader",
+      "FileReader",
+      "jimIcon",
+      "Minifier",
+      "Exception",
+      "Text_LanguageDetect_ISO639",
+      "Text_LanguageDetect",
+      "OTP",
+      "Base32",
+      "SMTP",
+      "QRcode",
+      "qrstr",
+      "QRtools",
+      "QRspec",
+      "QRimage",
+      "QRinputItem",
+      "QRinput",
+      "QRbitstream",
+      "QRsplit",
+      "QRrsItem",
+      "QRrs",
+      "QRmask",
+      "QRrsblock",
+      "QRrawcode",
+      "FrameFiller",
+      "QRencode",
+      "Publisher",
+      "Subscriber",
+      "SphinxClient"
+    ],
+    "1": [
+      "API",
+      "Handler_Protected",
+      "Backend",
+      "FeedItem_Common",
+      "Handler_Public",
+      "ttrssMailer",
+      "CachedFileReader",
+      "Text_LanguageDetect_Exception",
+      "Text_LanguageDetect_Parser",
+      "HOTP",
+      "TOTP",
+      "phpmailerException",
+      "Auth_Internal"
+    ],
+    "2": [
+      "Article",
+      "Dlg",
+      "FeedItem_Atom",
+      "FeedItem_RSS",
+      "Feeds",
+      "Opml",
+      "PluginHandler",
+      "Pref_Feeds",
+      "Pref_Filters",
+      "Pref_Labels",
+      "Pref_Prefs",
+      "Pref_System",
+      "Pref_Users",
+      "RPC"
+    ]
+  },
+  "community_members": {
+    "0": [
+      "Article",
+      "Handler_Protected",
+      "Dlg",
+      "Feeds",
+      "Opml",
+      "PluginHandler",
+      "Pref_Feeds",
+      "Pref_Filters",
+      "Pref_Labels",
+      "Pref_Prefs",
+      "Pref_System",
+      "Pref_Users",
+      "RPC"
+    ],
+    "1": [
+      "API",
+      "Handler",
+      "Backend",
+      "Handler_Public"
+    ],
+    "2": [
+      "FeedItem_Atom",
+      "FeedItem_Common",
+      "FeedItem",
+      "FeedItem_RSS"
+    ],
+    "3": [
+      "Text_LanguageDetect_Exception",
+      "Exception",
+      "phpmailerException"
+    ],
+    "4": [
+      "HOTP",
+      "OTP",
+      "TOTP"
+    ],
+    "5": [
+      "ttrssMailer",
+      "PHPMailer"
+    ],
+    "6": [
+      "StringReader",
+      "CachedFileReader"
+    ],
+    "7": [
+      "Text_LanguageDetect_Parser",
+      "Text_LanguageDetect"
+    ],
+    "8": [
+      "Plugin",
+      "Auth_Internal"
+    ],
+    "9": [
+      "Auth_Base"
+    ],
+    "10": [
+      "Db_Mysql"
+    ],
+    "11": [
+      "Db_Mysqli"
+    ],
+    "12": [
+      "Db_PDO"
+    ],
+    "13": [
+      "Db_Pgsql"
+    ],
+    "14": [
+      "Db_Prefs"
+    ],
+    "15": [
+      "Db_Stmt"
+    ],
+    "16": [
+      "Db"
+    ],
+    "17": [
+      "DbUpdater"
+    ],
+    "18": [
+      "FeedEnclosure"
+    ],
+    "19": [
+      "FeedParser"
+    ],
+    "20": [
+      "Logger_SQL"
+    ],
+    "21": [
+      "Logger_Syslog"
+    ],
+    "22": [
+      "Logger"
+    ],
+    "23": [
+      "PluginHost"
+    ],
+    "24": [
+      "MiniTemplator"
+    ],
+    "25": [
+      "Mobile_Detect"
+    ],
+    "26": [
+      "floIconIcon"
+    ],
+    "27": [
+      "floIcon"
+    ],
+    "28": [
+      "gettext_reader"
+    ],
+    "29": [
+      "StreamReader"
+    ],
+    "30": [
+      "FileReader"
+    ],
+    "31": [
+      "jimIcon"
+    ],
+    "32": [
+      "Minifier"
+    ],
+    "33": [
+      "Text_LanguageDetect_ISO639"
+    ],
+    "34": [
+      "Base32"
+    ],
+    "35": [
+      "SMTP"
+    ],
+    "36": [
+      "QRcode"
+    ],
+    "37": [
+      "qrstr"
+    ],
+    "38": [
+      "QRtools"
+    ],
+    "39": [
+      "QRspec"
+    ],
+    "40": [
+      "QRimage"
+    ],
+    "41": [
+      "QRinputItem"
+    ],
+    "42": [
+      "QRinput"
+    ],
+    "43": [
+      "QRbitstream"
+    ],
+    "44": [
+      "QRsplit"
+    ],
+    "45": [
+      "QRrsItem"
+    ],
+    "46": [
+      "QRrs"
+    ],
+    "47": [
+      "QRmask"
+    ],
+    "48": [
+      "QRrsblock"
+    ],
+    "49": [
+      "QRrawcode"
+    ],
+    "50": [
+      "FrameFiller"
+    ],
+    "51": [
+      "QRencode"
+    ],
+    "52": [
+      "Publisher"
+    ],
+    "53": [
+      "Subscriber"
+    ],
+    "54": [
+      "SphinxClient"
+    ]
+  }
+}

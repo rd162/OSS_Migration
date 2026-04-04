@@ -1,0 +1,1374 @@
+{
+  "graph_type": "include",
+  "node_count": 138,
+  "edge_count": 34,
+  "community_count": 106,
+  "nodes": {
+    "ttrss/api/index.php": {
+      "loc": 75,
+      "label": "api/index"
+    },
+    "ttrss/backend.php": {
+      "loc": 155,
+      "label": "backend"
+    },
+    "ttrss/classes/api.php": {
+      "loc": 793,
+      "label": "classes/api"
+    },
+    "ttrss/classes/article.php": {
+      "loc": 346,
+      "label": "classes/article"
+    },
+    "ttrss/classes/auth/base.php": {
+      "loc": 62,
+      "label": "auth/base"
+    },
+    "ttrss/classes/backend.php": {
+      "loc": 120,
+      "label": "classes/backend"
+    },
+    "ttrss/classes/db/mysql.php": {
+      "loc": 77,
+      "label": "db/mysql"
+    },
+    "ttrss/classes/db/mysqli.php": {
+      "loc": 81,
+      "label": "db/mysqli"
+    },
+    "ttrss/classes/db/pdo.php": {
+      "loc": 101,
+      "label": "db/pdo"
+    },
+    "ttrss/classes/db/pgsql.php": {
+      "loc": 86,
+      "label": "db/pgsql"
+    },
+    "ttrss/classes/db/prefs.php": {
+      "loc": 191,
+      "label": "db/prefs"
+    },
+    "ttrss/classes/db/stmt.php": {
+      "loc": 33,
+      "label": "db/stmt"
+    },
+    "ttrss/classes/db.php": {
+      "loc": 99,
+      "label": "classes/db"
+    },
+    "ttrss/classes/dbupdater.php": {
+      "loc": 66,
+      "label": "classes/dbupdater"
+    },
+    "ttrss/classes/dlg.php": {
+      "loc": 272,
+      "label": "classes/dlg"
+    },
+    "ttrss/classes/feedenclosure.php": {
+      "loc": 9,
+      "label": "classes/feedenclosure"
+    },
+    "ttrss/classes/feeditem/atom.php": {
+      "loc": 196,
+      "label": "feeditem/atom"
+    },
+    "ttrss/classes/feeditem/common.php": {
+      "loc": 76,
+      "label": "feeditem/common"
+    },
+    "ttrss/classes/feeditem/rss.php": {
+      "loc": 176,
+      "label": "feeditem/rss"
+    },
+    "ttrss/classes/feeditem.php": {
+      "loc": 16,
+      "label": "classes/feeditem"
+    },
+    "ttrss/classes/feedparser.php": {
+      "loc": 277,
+      "label": "classes/feedparser"
+    },
+    "ttrss/classes/feeds.php": {
+      "loc": 1164,
+      "label": "classes/feeds"
+    },
+    "ttrss/classes/handler/protected.php": {
+      "loc": 9,
+      "label": "handler/protected"
+    },
+    "ttrss/classes/handler/public.php": {
+      "loc": 1007,
+      "label": "handler/public"
+    },
+    "ttrss/classes/handler.php": {
+      "loc": 25,
+      "label": "classes/handler"
+    },
+    "ttrss/classes/iauthmodule.php": {
+      "loc": 6,
+      "label": "classes/iauthmodule"
+    },
+    "ttrss/classes/idb.php": {
+      "loc": 14,
+      "label": "classes/idb"
+    },
+    "ttrss/classes/ihandler.php": {
+      "loc": 8,
+      "label": "classes/ihandler"
+    },
+    "ttrss/classes/logger/sql.php": {
+      "loc": 29,
+      "label": "logger/sql"
+    },
+    "ttrss/classes/logger/syslog.php": {
+      "loc": 32,
+      "label": "logger/syslog"
+    },
+    "ttrss/classes/logger.php": {
+      "loc": 66,
+      "label": "classes/logger"
+    },
+    "ttrss/classes/opml.php": {
+      "loc": 524,
+      "label": "classes/opml"
+    },
+    "ttrss/classes/plugin.php": {
+      "loc": 31,
+      "label": "classes/plugin"
+    },
+    "ttrss/classes/pluginhandler.php": {
+      "loc": 23,
+      "label": "classes/pluginhandler"
+    },
+    "ttrss/classes/pluginhost.php": {
+      "loc": 400,
+      "label": "classes/pluginhost"
+    },
+    "ttrss/classes/pref/feeds.php": {
+      "loc": 1925,
+      "label": "pref/feeds"
+    },
+    "ttrss/classes/pref/filters.php": {
+      "loc": 1054,
+      "label": "pref/filters"
+    },
+    "ttrss/classes/pref/labels.php": {
+      "loc": 331,
+      "label": "pref/labels"
+    },
+    "ttrss/classes/pref/prefs.php": {
+      "loc": 1129,
+      "label": "pref/prefs"
+    },
+    "ttrss/classes/pref/system.php": {
+      "loc": 91,
+      "label": "pref/system"
+    },
+    "ttrss/classes/pref/users.php": {
+      "loc": 458,
+      "label": "pref/users"
+    },
+    "ttrss/classes/rpc.php": {
+      "loc": 655,
+      "label": "classes/rpc"
+    },
+    "ttrss/classes/ttrssmailer.php": {
+      "loc": 65,
+      "label": "classes/ttrssmailer"
+    },
+    "ttrss/errors.php": {
+      "loc": 51,
+      "label": "errors"
+    },
+    "ttrss/image.php": {
+      "loc": 55,
+      "label": "image"
+    },
+    "ttrss/include/autoload.php": {
+      "loc": 15,
+      "label": "include/autoload"
+    },
+    "ttrss/include/functions.php": {
+      "loc": 2004,
+      "label": "include/functions"
+    },
+    "ttrss/include/ccache.php": {
+      "loc": 225,
+      "label": "include/ccache"
+    },
+    "ttrss/include/colors.php": {
+      "loc": 352,
+      "label": "include/colors"
+    },
+    "ttrss/include/crypt.php": {
+      "loc": 37,
+      "label": "include/crypt"
+    },
+    "ttrss/include/db-prefs.php": {
+      "loc": 12,
+      "label": "include/db-prefs"
+    },
+    "ttrss/include/db.php": {
+      "loc": 37,
+      "label": "include/db"
+    },
+    "ttrss/include/digest.php": {
+      "loc": 193,
+      "label": "include/digest"
+    },
+    "ttrss/include/errorhandler.php": {
+      "loc": 40,
+      "label": "include/errorhandler"
+    },
+    "ttrss/include/feedbrowser.php": {
+      "loc": 112,
+      "label": "include/feedbrowser"
+    },
+    "ttrss/include/version.php": {
+      "loc": 20,
+      "label": "include/version"
+    },
+    "ttrss/include/labels.php": {
+      "loc": 202,
+      "label": "include/labels"
+    },
+    "ttrss/include/functions2.php": {
+      "loc": 2414,
+      "label": "include/functions2"
+    },
+    "ttrss/include/login_form.php": {
+      "loc": 262,
+      "label": "include/login_form"
+    },
+    "ttrss/include/rssfuncs.php": {
+      "loc": 1432,
+      "label": "include/rssfuncs"
+    },
+    "ttrss/include/sanity_check.php": {
+      "loc": 205,
+      "label": "include/sanity_check"
+    },
+    "ttrss/include/sanity_config.php": {
+      "loc": 4,
+      "label": "include/sanity_config"
+    },
+    "ttrss/include/sessions.php": {
+      "loc": 166,
+      "label": "include/sessions"
+    },
+    "ttrss/index.php": {
+      "loc": 287,
+      "label": "index"
+    },
+    "ttrss/lib/Mobile_Detect.php": {
+      "loc": 220,
+      "label": "lib/Mobile_Detect"
+    },
+    "ttrss/lib/jshrink/Minifier.php": {
+      "loc": 470,
+      "label": "jshrink/Minifier"
+    },
+    "ttrss/install/index.php": {
+      "loc": 506,
+      "label": "install/index"
+    },
+    "ttrss/lib/MiniTemplator.class.php": {
+      "loc": 923,
+      "label": "lib/MiniTemplator.class"
+    },
+    "ttrss/lib/accept-to-gettext.php": {
+      "loc": 185,
+      "label": "lib/accept-to-gettext"
+    },
+    "ttrss/lib/floIcon.php": {
+      "loc": 21,
+      "label": "lib/floIcon"
+    },
+    "ttrss/lib/jimIcon.php": {
+      "loc": 270,
+      "label": "lib/jimIcon"
+    },
+    "ttrss/lib/gettext/gettext.php": {
+      "loc": 433,
+      "label": "gettext/gettext"
+    },
+    "ttrss/lib/gettext/streams.php": {
+      "loc": 168,
+      "label": "gettext/streams"
+    },
+    "ttrss/lib/languagedetect/LanguageDetect.php": {
+      "loc": 1709,
+      "label": "languagedetect/LanguageDetect"
+    },
+    "ttrss/lib/languagedetect/Text/LanguageDetect/Exception.php": {
+      "loc": 58,
+      "label": "LanguageDetect/Exception"
+    },
+    "ttrss/lib/languagedetect/Text/LanguageDetect/ISO639.php": {
+      "loc": 341,
+      "label": "LanguageDetect/ISO639"
+    },
+    "ttrss/lib/languagedetect/Text/LanguageDetect/Parser.php": {
+      "loc": 350,
+      "label": "LanguageDetect/Parser"
+    },
+    "ttrss/lib/otphp/lib/hotp.php": {
+      "loc": 75,
+      "label": "lib/hotp"
+    },
+    "ttrss/lib/otphp/lib/otp.php": {
+      "loc": 121,
+      "label": "lib/otp"
+    },
+    "ttrss/lib/otphp/lib/otphp.php": {
+      "loc": 28,
+      "label": "lib/otphp"
+    },
+    "ttrss/lib/otphp/lib/totp.php": {
+      "loc": 107,
+      "label": "lib/totp"
+    },
+    "ttrss/lib/otphp/vendor/base32.php": {
+      "loc": 84,
+      "label": "vendor/base32"
+    },
+    "ttrss/lib/otphp/vendor/libs.php": {
+      "loc": 27,
+      "label": "vendor/libs"
+    },
+    "ttrss/lib/phpmailer/class.phpmailer.php": {
+      "loc": 2827,
+      "label": "phpmailer/class.phpmailer"
+    },
+    "ttrss/lib/phpmailer/class.smtp.php": {
+      "loc": 1004,
+      "label": "phpmailer/class.smtp"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-ar.php": {
+      "loc": 28,
+      "label": "language/phpmailer.lang-ar"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-br.php": {
+      "loc": 27,
+      "label": "language/phpmailer.lang-br"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-ca.php": {
+      "loc": 27,
+      "label": "language/phpmailer.lang-ca"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-ch.php": {
+      "loc": 27,
+      "label": "language/phpmailer.lang-ch"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-cz.php": {
+      "loc": 26,
+      "label": "language/phpmailer.lang-cz"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-de.php": {
+      "loc": 26,
+      "label": "language/phpmailer.lang-de"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-dk.php": {
+      "loc": 27,
+      "label": "language/phpmailer.lang-dk"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-es.php": {
+      "loc": 27,
+      "label": "language/phpmailer.lang-es"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-et.php": {
+      "loc": 27,
+      "label": "language/phpmailer.lang-et"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-fi.php": {
+      "loc": 28,
+      "label": "language/phpmailer.lang-fi"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-fo.php": {
+      "loc": 28,
+      "label": "language/phpmailer.lang-fo"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-fr.php": {
+      "loc": 26,
+      "label": "language/phpmailer.lang-fr"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-hu.php": {
+      "loc": 26,
+      "label": "language/phpmailer.lang-hu"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-it.php": {
+      "loc": 28,
+      "label": "language/phpmailer.lang-it"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-ja.php": {
+      "loc": 27,
+      "label": "language/phpmailer.lang-ja"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-nl.php": {
+      "loc": 26,
+      "label": "language/phpmailer.lang-nl"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-no.php": {
+      "loc": 26,
+      "label": "language/phpmailer.lang-no"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-pl.php": {
+      "loc": 26,
+      "label": "language/phpmailer.lang-pl"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-ro.php": {
+      "loc": 28,
+      "label": "language/phpmailer.lang-ro"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-ru.php": {
+      "loc": 27,
+      "label": "language/phpmailer.lang-ru"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-se.php": {
+      "loc": 27,
+      "label": "language/phpmailer.lang-se"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-sk.php": {
+      "loc": 27,
+      "label": "language/phpmailer.lang-sk"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-tr.php": {
+      "loc": 28,
+      "label": "language/phpmailer.lang-tr"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-zh.php": {
+      "loc": 27,
+      "label": "language/phpmailer.lang-zh"
+    },
+    "ttrss/lib/phpmailer/language/phpmailer.lang-zh_cn.php": {
+      "loc": 27,
+      "label": "language/phpmailer.lang-zh_cn"
+    },
+    "ttrss/lib/phpqrcode/bindings/tcpdf/qrcode.php": {
+      "loc": 2876,
+      "label": "tcpdf/qrcode"
+    },
+    "ttrss/lib/phpqrcode/index.php": {
+      "loc": 94,
+      "label": "phpqrcode/index"
+    },
+    "ttrss/lib/phpqrcode/qrlib.php": {
+      "loc": 44,
+      "label": "phpqrcode/qrlib"
+    },
+    "ttrss/lib/phpqrcode/phpqrcode.php": {
+      "loc": 3313,
+      "label": "phpqrcode/phpqrcode"
+    },
+    "ttrss/lib/phpqrcode/qrbitstream.php": {
+      "loc": 181,
+      "label": "phpqrcode/qrbitstream"
+    },
+    "ttrss/lib/phpqrcode/qrconfig.php": {
+      "loc": 17,
+      "label": "phpqrcode/qrconfig"
+    },
+    "ttrss/lib/phpqrcode/qrconst.php": {
+      "loc": 54,
+      "label": "phpqrcode/qrconst"
+    },
+    "ttrss/lib/phpqrcode/qrencode.php": {
+      "loc": 503,
+      "label": "phpqrcode/qrencode"
+    },
+    "ttrss/lib/phpqrcode/qrimage.php": {
+      "loc": 95,
+      "label": "phpqrcode/qrimage"
+    },
+    "ttrss/lib/phpqrcode/qrinput.php": {
+      "loc": 729,
+      "label": "phpqrcode/qrinput"
+    },
+    "ttrss/lib/phpqrcode/qrtools.php": {
+      "loc": 172,
+      "label": "phpqrcode/qrtools"
+    },
+    "ttrss/lib/phpqrcode/qrspec.php": {
+      "loc": 592,
+      "label": "phpqrcode/qrspec"
+    },
+    "ttrss/lib/phpqrcode/qrsplit.php": {
+      "loc": 312,
+      "label": "phpqrcode/qrsplit"
+    },
+    "ttrss/lib/phpqrcode/qrrscode.php": {
+      "loc": 210,
+      "label": "phpqrcode/qrrscode"
+    },
+    "ttrss/lib/phpqrcode/qrmask.php": {
+      "loc": 329,
+      "label": "phpqrcode/qrmask"
+    },
+    "ttrss/lib/phpqrcode/tools/merge.php": {
+      "loc": 70,
+      "label": "tools/merge"
+    },
+    "ttrss/lib/phpqrcode/tools/merged_config.php": {
+      "loc": 17,
+      "label": "tools/merged_config"
+    },
+    "ttrss/lib/phpqrcode/tools/merged_header.php": {
+      "loc": 36,
+      "label": "tools/merged_header"
+    },
+    "ttrss/lib/pubsubhubbub/publisher.php": {
+      "loc": 86,
+      "label": "pubsubhubbub/publisher"
+    },
+    "ttrss/lib/pubsubhubbub/subscriber.php": {
+      "loc": 120,
+      "label": "pubsubhubbub/subscriber"
+    },
+    "ttrss/lib/sphinxapi.php": {
+      "loc": 1692,
+      "label": "lib/sphinxapi"
+    },
+    "ttrss/opml.php": {
+      "loc": 36,
+      "label": "opml"
+    },
+    "ttrss/plugins/auth_internal/init.php": {
+      "loc": 197,
+      "label": "auth_internal/init"
+    },
+    "ttrss/prefs.php": {
+      "loc": 159,
+      "label": "prefs"
+    },
+    "ttrss/public.php": {
+      "loc": 62,
+      "label": "public"
+    },
+    "ttrss/register.php": {
+      "loc": 369,
+      "label": "register"
+    },
+    "ttrss/update.php": {
+      "loc": 360,
+      "label": "update"
+    },
+    "ttrss/update_daemon2.php": {
+      "loc": 248,
+      "label": "update_daemon2"
+    }
+  },
+  "edges": [
+    {
+      "from": "ttrss/include/autoload.php",
+      "to": "ttrss/include/functions.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss/include/db-prefs.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss/include/version.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss/include/ccache.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss/include/labels.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss/include/crypt.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss/include/functions2.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/db-prefs.php",
+      "to": "ttrss/include/db.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/functions2.php",
+      "to": "ttrss/include/login_form.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/rssfuncs.php",
+      "to": "ttrss/include/digest.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/rssfuncs.php",
+      "to": "ttrss/include/crypt.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/rssfuncs.php",
+      "to": "ttrss/include/colors.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/sanity_check.php",
+      "to": "ttrss/include/sanity_config.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/sessions.php",
+      "to": "ttrss/include/autoload.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/sessions.php",
+      "to": "ttrss/include/errorhandler.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/include/sessions.php",
+      "to": "ttrss/include/version.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/index.php",
+      "to": "ttrss/lib/Mobile_Detect.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/index.php",
+      "to": "ttrss/lib/jshrink/Minifier.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/lib/floIcon.php",
+      "to": "ttrss/lib/jimIcon.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/lib/phpmailer/class.phpmailer.php",
+      "to": "ttrss/lib/phpmailer/class.smtp.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/lib/phpqrcode/index.php",
+      "to": "ttrss/lib/phpqrcode/qrlib.php",
+      "kind": "include"
+    },
+    {
+      "from": "ttrss/lib/phpqrcode/qrlib.php",
+      "to": "ttrss/lib/phpqrcode/qrconst.php",
+      "kind": "include"
+    },
+    {
+      "from": "ttrss/lib/phpqrcode/qrlib.php",
+      "to": "ttrss/lib/phpqrcode/qrconfig.php",
+      "kind": "include"
+    },
+    {
+      "from": "ttrss/lib/phpqrcode/qrlib.php",
+      "to": "ttrss/lib/phpqrcode/qrtools.php",
+      "kind": "include"
+    },
+    {
+      "from": "ttrss/lib/phpqrcode/qrlib.php",
+      "to": "ttrss/lib/phpqrcode/qrspec.php",
+      "kind": "include"
+    },
+    {
+      "from": "ttrss/lib/phpqrcode/qrlib.php",
+      "to": "ttrss/lib/phpqrcode/qrimage.php",
+      "kind": "include"
+    },
+    {
+      "from": "ttrss/lib/phpqrcode/qrlib.php",
+      "to": "ttrss/lib/phpqrcode/qrinput.php",
+      "kind": "include"
+    },
+    {
+      "from": "ttrss/lib/phpqrcode/qrlib.php",
+      "to": "ttrss/lib/phpqrcode/qrbitstream.php",
+      "kind": "include"
+    },
+    {
+      "from": "ttrss/lib/phpqrcode/qrlib.php",
+      "to": "ttrss/lib/phpqrcode/qrsplit.php",
+      "kind": "include"
+    },
+    {
+      "from": "ttrss/lib/phpqrcode/qrlib.php",
+      "to": "ttrss/lib/phpqrcode/qrrscode.php",
+      "kind": "include"
+    },
+    {
+      "from": "ttrss/lib/phpqrcode/qrlib.php",
+      "to": "ttrss/lib/phpqrcode/qrmask.php",
+      "kind": "include"
+    },
+    {
+      "from": "ttrss/lib/phpqrcode/qrlib.php",
+      "to": "ttrss/lib/phpqrcode/qrencode.php",
+      "kind": "include"
+    },
+    {
+      "from": "ttrss/prefs.php",
+      "to": "ttrss/lib/jshrink/Minifier.php",
+      "kind": "require_once"
+    },
+    {
+      "from": "ttrss/register.php",
+      "to": "ttrss/classes/ttrssmailer.php",
+      "kind": "require_once"
+    }
+  ],
+  "communities": {
+    "ttrss/lib/phpqrcode/index.php": 0,
+    "ttrss/lib/phpqrcode/qrlib.php": 0,
+    "ttrss/lib/phpqrcode/qrbitstream.php": 0,
+    "ttrss/lib/phpqrcode/qrconfig.php": 0,
+    "ttrss/lib/phpqrcode/qrconst.php": 0,
+    "ttrss/lib/phpqrcode/qrencode.php": 0,
+    "ttrss/lib/phpqrcode/qrimage.php": 0,
+    "ttrss/lib/phpqrcode/qrinput.php": 0,
+    "ttrss/lib/phpqrcode/qrtools.php": 0,
+    "ttrss/lib/phpqrcode/qrspec.php": 0,
+    "ttrss/lib/phpqrcode/qrsplit.php": 0,
+    "ttrss/lib/phpqrcode/qrrscode.php": 0,
+    "ttrss/lib/phpqrcode/qrmask.php": 0,
+    "ttrss/include/autoload.php": 1,
+    "ttrss/include/functions.php": 1,
+    "ttrss/include/ccache.php": 1,
+    "ttrss/include/db-prefs.php": 1,
+    "ttrss/include/db.php": 1,
+    "ttrss/include/errorhandler.php": 1,
+    "ttrss/include/version.php": 1,
+    "ttrss/include/labels.php": 1,
+    "ttrss/include/functions2.php": 1,
+    "ttrss/include/login_form.php": 1,
+    "ttrss/include/sessions.php": 1,
+    "ttrss/index.php": 2,
+    "ttrss/lib/Mobile_Detect.php": 2,
+    "ttrss/lib/jshrink/Minifier.php": 2,
+    "ttrss/prefs.php": 2,
+    "ttrss/include/colors.php": 3,
+    "ttrss/include/crypt.php": 3,
+    "ttrss/include/digest.php": 3,
+    "ttrss/include/rssfuncs.php": 3,
+    "ttrss/include/sanity_check.php": 4,
+    "ttrss/include/sanity_config.php": 4,
+    "ttrss/lib/floIcon.php": 5,
+    "ttrss/lib/jimIcon.php": 5,
+    "ttrss/lib/phpmailer/class.phpmailer.php": 6,
+    "ttrss/lib/phpmailer/class.smtp.php": 6,
+    "ttrss/classes/ttrssmailer.php": 7,
+    "ttrss/register.php": 7,
+    "ttrss/api/index.php": 8,
+    "ttrss/backend.php": 9,
+    "ttrss/classes/api.php": 10,
+    "ttrss/classes/article.php": 11,
+    "ttrss/classes/auth/base.php": 12,
+    "ttrss/classes/backend.php": 13,
+    "ttrss/classes/db/mysql.php": 14,
+    "ttrss/classes/db/mysqli.php": 15,
+    "ttrss/classes/db/pdo.php": 16,
+    "ttrss/classes/db/pgsql.php": 17,
+    "ttrss/classes/db/prefs.php": 18,
+    "ttrss/classes/db/stmt.php": 19,
+    "ttrss/classes/db.php": 20,
+    "ttrss/classes/dbupdater.php": 21,
+    "ttrss/classes/dlg.php": 22,
+    "ttrss/classes/feedenclosure.php": 23,
+    "ttrss/classes/feeditem/atom.php": 24,
+    "ttrss/classes/feeditem/common.php": 25,
+    "ttrss/classes/feeditem/rss.php": 26,
+    "ttrss/classes/feeditem.php": 27,
+    "ttrss/classes/feedparser.php": 28,
+    "ttrss/classes/feeds.php": 29,
+    "ttrss/classes/handler/protected.php": 30,
+    "ttrss/classes/handler/public.php": 31,
+    "ttrss/classes/handler.php": 32,
+    "ttrss/classes/iauthmodule.php": 33,
+    "ttrss/classes/idb.php": 34,
+    "ttrss/classes/ihandler.php": 35,
+    "ttrss/classes/logger/sql.php": 36,
+    "ttrss/classes/logger/syslog.php": 37,
+    "ttrss/classes/logger.php": 38,
+    "ttrss/classes/opml.php": 39,
+    "ttrss/classes/plugin.php": 40,
+    "ttrss/classes/pluginhandler.php": 41,
+    "ttrss/classes/pluginhost.php": 42,
+    "ttrss/classes/pref/feeds.php": 43,
+    "ttrss/classes/pref/filters.php": 44,
+    "ttrss/classes/pref/labels.php": 45,
+    "ttrss/classes/pref/prefs.php": 46,
+    "ttrss/classes/pref/system.php": 47,
+    "ttrss/classes/pref/users.php": 48,
+    "ttrss/classes/rpc.php": 49,
+    "ttrss/errors.php": 50,
+    "ttrss/image.php": 51,
+    "ttrss/include/feedbrowser.php": 52,
+    "ttrss/install/index.php": 53,
+    "ttrss/lib/MiniTemplator.class.php": 54,
+    "ttrss/lib/accept-to-gettext.php": 55,
+    "ttrss/lib/gettext/gettext.php": 56,
+    "ttrss/lib/gettext/streams.php": 57,
+    "ttrss/lib/languagedetect/LanguageDetect.php": 58,
+    "ttrss/lib/languagedetect/Text/LanguageDetect/Exception.php": 59,
+    "ttrss/lib/languagedetect/Text/LanguageDetect/ISO639.php": 60,
+    "ttrss/lib/languagedetect/Text/LanguageDetect/Parser.php": 61,
+    "ttrss/lib/otphp/lib/hotp.php": 62,
+    "ttrss/lib/otphp/lib/otp.php": 63,
+    "ttrss/lib/otphp/lib/otphp.php": 64,
+    "ttrss/lib/otphp/lib/totp.php": 65,
+    "ttrss/lib/otphp/vendor/base32.php": 66,
+    "ttrss/lib/otphp/vendor/libs.php": 67,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-ar.php": 68,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-br.php": 69,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-ca.php": 70,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-ch.php": 71,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-cz.php": 72,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-de.php": 73,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-dk.php": 74,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-es.php": 75,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-et.php": 76,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-fi.php": 77,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-fo.php": 78,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-fr.php": 79,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-hu.php": 80,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-it.php": 81,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-ja.php": 82,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-nl.php": 83,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-no.php": 84,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-pl.php": 85,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-ro.php": 86,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-ru.php": 87,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-se.php": 88,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-sk.php": 89,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-tr.php": 90,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-zh.php": 91,
+    "ttrss/lib/phpmailer/language/phpmailer.lang-zh_cn.php": 92,
+    "ttrss/lib/phpqrcode/bindings/tcpdf/qrcode.php": 93,
+    "ttrss/lib/phpqrcode/phpqrcode.php": 94,
+    "ttrss/lib/phpqrcode/tools/merge.php": 95,
+    "ttrss/lib/phpqrcode/tools/merged_config.php": 96,
+    "ttrss/lib/phpqrcode/tools/merged_header.php": 97,
+    "ttrss/lib/pubsubhubbub/publisher.php": 98,
+    "ttrss/lib/pubsubhubbub/subscriber.php": 99,
+    "ttrss/lib/sphinxapi.php": 100,
+    "ttrss/opml.php": 101,
+    "ttrss/plugins/auth_internal/init.php": 102,
+    "ttrss/public.php": 103,
+    "ttrss/update.php": 104,
+    "ttrss/update_daemon2.php": 105
+  },
+  "levels": {
+    "0": [
+      "ttrss/api/index.php",
+      "ttrss/backend.php",
+      "ttrss/classes/api.php",
+      "ttrss/classes/article.php",
+      "ttrss/classes/auth/base.php",
+      "ttrss/classes/backend.php",
+      "ttrss/classes/db/mysql.php",
+      "ttrss/classes/db/mysqli.php",
+      "ttrss/classes/db/pdo.php",
+      "ttrss/classes/db/pgsql.php",
+      "ttrss/classes/db/prefs.php",
+      "ttrss/classes/db/stmt.php",
+      "ttrss/classes/db.php",
+      "ttrss/classes/dbupdater.php",
+      "ttrss/classes/dlg.php",
+      "ttrss/classes/feedenclosure.php",
+      "ttrss/classes/feeditem/atom.php",
+      "ttrss/classes/feeditem/common.php",
+      "ttrss/classes/feeditem/rss.php",
+      "ttrss/classes/feeditem.php",
+      "ttrss/classes/feedparser.php",
+      "ttrss/classes/feeds.php",
+      "ttrss/classes/handler/protected.php",
+      "ttrss/classes/handler/public.php",
+      "ttrss/classes/handler.php",
+      "ttrss/classes/iauthmodule.php",
+      "ttrss/classes/idb.php",
+      "ttrss/classes/ihandler.php",
+      "ttrss/classes/logger/sql.php",
+      "ttrss/classes/logger/syslog.php",
+      "ttrss/classes/logger.php",
+      "ttrss/classes/opml.php",
+      "ttrss/classes/plugin.php",
+      "ttrss/classes/pluginhandler.php",
+      "ttrss/classes/pluginhost.php",
+      "ttrss/classes/pref/feeds.php",
+      "ttrss/classes/pref/filters.php",
+      "ttrss/classes/pref/labels.php",
+      "ttrss/classes/pref/prefs.php",
+      "ttrss/classes/pref/system.php",
+      "ttrss/classes/pref/users.php",
+      "ttrss/classes/rpc.php",
+      "ttrss/classes/ttrssmailer.php",
+      "ttrss/errors.php",
+      "ttrss/image.php",
+      "ttrss/include/db.php",
+      "ttrss/include/version.php",
+      "ttrss/include/ccache.php",
+      "ttrss/include/labels.php",
+      "ttrss/include/crypt.php",
+      "ttrss/include/login_form.php",
+      "ttrss/include/colors.php",
+      "ttrss/include/digest.php",
+      "ttrss/include/errorhandler.php",
+      "ttrss/include/feedbrowser.php",
+      "ttrss/include/sanity_config.php",
+      "ttrss/lib/Mobile_Detect.php",
+      "ttrss/lib/jshrink/Minifier.php",
+      "ttrss/install/index.php",
+      "ttrss/lib/MiniTemplator.class.php",
+      "ttrss/lib/accept-to-gettext.php",
+      "ttrss/lib/jimIcon.php",
+      "ttrss/lib/gettext/gettext.php",
+      "ttrss/lib/gettext/streams.php",
+      "ttrss/lib/languagedetect/LanguageDetect.php",
+      "ttrss/lib/languagedetect/Text/LanguageDetect/Exception.php",
+      "ttrss/lib/languagedetect/Text/LanguageDetect/ISO639.php",
+      "ttrss/lib/languagedetect/Text/LanguageDetect/Parser.php",
+      "ttrss/lib/otphp/lib/hotp.php",
+      "ttrss/lib/otphp/lib/otp.php",
+      "ttrss/lib/otphp/lib/otphp.php",
+      "ttrss/lib/otphp/lib/totp.php",
+      "ttrss/lib/otphp/vendor/base32.php",
+      "ttrss/lib/otphp/vendor/libs.php",
+      "ttrss/lib/phpmailer/class.smtp.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-ar.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-br.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-ca.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-ch.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-cz.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-de.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-dk.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-es.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-et.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-fi.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-fo.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-fr.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-hu.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-it.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-ja.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-nl.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-no.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-pl.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-ro.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-ru.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-se.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-sk.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-tr.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-zh.php",
+      "ttrss/lib/phpmailer/language/phpmailer.lang-zh_cn.php",
+      "ttrss/lib/phpqrcode/bindings/tcpdf/qrcode.php",
+      "ttrss/lib/phpqrcode/qrconst.php",
+      "ttrss/lib/phpqrcode/qrconfig.php",
+      "ttrss/lib/phpqrcode/qrtools.php",
+      "ttrss/lib/phpqrcode/qrspec.php",
+      "ttrss/lib/phpqrcode/qrimage.php",
+      "ttrss/lib/phpqrcode/qrinput.php",
+      "ttrss/lib/phpqrcode/qrbitstream.php",
+      "ttrss/lib/phpqrcode/qrsplit.php",
+      "ttrss/lib/phpqrcode/qrrscode.php",
+      "ttrss/lib/phpqrcode/qrmask.php",
+      "ttrss/lib/phpqrcode/qrencode.php",
+      "ttrss/lib/phpqrcode/phpqrcode.php",
+      "ttrss/lib/phpqrcode/tools/merge.php",
+      "ttrss/lib/phpqrcode/tools/merged_config.php",
+      "ttrss/lib/phpqrcode/tools/merged_header.php",
+      "ttrss/lib/pubsubhubbub/publisher.php",
+      "ttrss/lib/pubsubhubbub/subscriber.php",
+      "ttrss/lib/sphinxapi.php",
+      "ttrss/opml.php",
+      "ttrss/plugins/auth_internal/init.php",
+      "ttrss/public.php",
+      "ttrss/update.php",
+      "ttrss/update_daemon2.php"
+    ],
+    "1": [
+      "ttrss/include/db-prefs.php",
+      "ttrss/include/functions2.php",
+      "ttrss/include/rssfuncs.php",
+      "ttrss/include/sanity_check.php",
+      "ttrss/index.php",
+      "ttrss/lib/floIcon.php",
+      "ttrss/lib/phpmailer/class.phpmailer.php",
+      "ttrss/lib/phpqrcode/qrlib.php",
+      "ttrss/prefs.php",
+      "ttrss/register.php"
+    ],
+    "2": [
+      "ttrss/include/functions.php",
+      "ttrss/lib/phpqrcode/index.php"
+    ],
+    "3": [
+      "ttrss/include/autoload.php"
+    ],
+    "4": [
+      "ttrss/include/sessions.php"
+    ]
+  },
+  "community_members": {
+    "0": [
+      "ttrss/lib/phpqrcode/index.php",
+      "ttrss/lib/phpqrcode/qrlib.php",
+      "ttrss/lib/phpqrcode/qrbitstream.php",
+      "ttrss/lib/phpqrcode/qrconfig.php",
+      "ttrss/lib/phpqrcode/qrconst.php",
+      "ttrss/lib/phpqrcode/qrencode.php",
+      "ttrss/lib/phpqrcode/qrimage.php",
+      "ttrss/lib/phpqrcode/qrinput.php",
+      "ttrss/lib/phpqrcode/qrtools.php",
+      "ttrss/lib/phpqrcode/qrspec.php",
+      "ttrss/lib/phpqrcode/qrsplit.php",
+      "ttrss/lib/phpqrcode/qrrscode.php",
+      "ttrss/lib/phpqrcode/qrmask.php"
+    ],
+    "1": [
+      "ttrss/include/autoload.php",
+      "ttrss/include/functions.php",
+      "ttrss/include/ccache.php",
+      "ttrss/include/db-prefs.php",
+      "ttrss/include/db.php",
+      "ttrss/include/errorhandler.php",
+      "ttrss/include/version.php",
+      "ttrss/include/labels.php",
+      "ttrss/include/functions2.php",
+      "ttrss/include/login_form.php",
+      "ttrss/include/sessions.php"
+    ],
+    "2": [
+      "ttrss/index.php",
+      "ttrss/lib/Mobile_Detect.php",
+      "ttrss/lib/jshrink/Minifier.php",
+      "ttrss/prefs.php"
+    ],
+    "3": [
+      "ttrss/include/colors.php",
+      "ttrss/include/crypt.php",
+      "ttrss/include/digest.php",
+      "ttrss/include/rssfuncs.php"
+    ],
+    "4": [
+      "ttrss/include/sanity_check.php",
+      "ttrss/include/sanity_config.php"
+    ],
+    "5": [
+      "ttrss/lib/floIcon.php",
+      "ttrss/lib/jimIcon.php"
+    ],
+    "6": [
+      "ttrss/lib/phpmailer/class.phpmailer.php",
+      "ttrss/lib/phpmailer/class.smtp.php"
+    ],
+    "7": [
+      "ttrss/classes/ttrssmailer.php",
+      "ttrss/register.php"
+    ],
+    "8": [
+      "ttrss/api/index.php"
+    ],
+    "9": [
+      "ttrss/backend.php"
+    ],
+    "10": [
+      "ttrss/classes/api.php"
+    ],
+    "11": [
+      "ttrss/classes/article.php"
+    ],
+    "12": [
+      "ttrss/classes/auth/base.php"
+    ],
+    "13": [
+      "ttrss/classes/backend.php"
+    ],
+    "14": [
+      "ttrss/classes/db/mysql.php"
+    ],
+    "15": [
+      "ttrss/classes/db/mysqli.php"
+    ],
+    "16": [
+      "ttrss/classes/db/pdo.php"
+    ],
+    "17": [
+      "ttrss/classes/db/pgsql.php"
+    ],
+    "18": [
+      "ttrss/classes/db/prefs.php"
+    ],
+    "19": [
+      "ttrss/classes/db/stmt.php"
+    ],
+    "20": [
+      "ttrss/classes/db.php"
+    ],
+    "21": [
+      "ttrss/classes/dbupdater.php"
+    ],
+    "22": [
+      "ttrss/classes/dlg.php"
+    ],
+    "23": [
+      "ttrss/classes/feedenclosure.php"
+    ],
+    "24": [
+      "ttrss/classes/feeditem/atom.php"
+    ],
+    "25": [
+      "ttrss/classes/feeditem/common.php"
+    ],
+    "26": [
+      "ttrss/classes/feeditem/rss.php"
+    ],
+    "27": [
+      "ttrss/classes/feeditem.php"
+    ],
+    "28": [
+      "ttrss/classes/feedparser.php"
+    ],
+    "29": [
+      "ttrss/classes/feeds.php"
+    ],
+    "30": [
+      "ttrss/classes/handler/protected.php"
+    ],
+    "31": [
+      "ttrss/classes/handler/public.php"
+    ],
+    "32": [
+      "ttrss/classes/handler.php"
+    ],
+    "33": [
+      "ttrss/classes/iauthmodule.php"
+    ],
+    "34": [
+      "ttrss/classes/idb.php"
+    ],
+    "35": [
+      "ttrss/classes/ihandler.php"
+    ],
+    "36": [
+      "ttrss/classes/logger/sql.php"
+    ],
+    "37": [
+      "ttrss/classes/logger/syslog.php"
+    ],
+    "38": [
+      "ttrss/classes/logger.php"
+    ],
+    "39": [
+      "ttrss/classes/opml.php"
+    ],
+    "40": [
+      "ttrss/classes/plugin.php"
+    ],
+    "41": [
+      "ttrss/classes/pluginhandler.php"
+    ],
+    "42": [
+      "ttrss/classes/pluginhost.php"
+    ],
+    "43": [
+      "ttrss/classes/pref/feeds.php"
+    ],
+    "44": [
+      "ttrss/classes/pref/filters.php"
+    ],
+    "45": [
+      "ttrss/classes/pref/labels.php"
+    ],
+    "46": [
+      "ttrss/classes/pref/prefs.php"
+    ],
+    "47": [
+      "ttrss/classes/pref/system.php"
+    ],
+    "48": [
+      "ttrss/classes/pref/users.php"
+    ],
+    "49": [
+      "ttrss/classes/rpc.php"
+    ],
+    "50": [
+      "ttrss/errors.php"
+    ],
+    "51": [
+      "ttrss/image.php"
+    ],
+    "52": [
+      "ttrss/include/feedbrowser.php"
+    ],
+    "53": [
+      "ttrss/install/index.php"
+    ],
+    "54": [
+      "ttrss/lib/MiniTemplator.class.php"
+    ],
+    "55": [
+      "ttrss/lib/accept-to-gettext.php"
+    ],
+    "56": [
+      "ttrss/lib/gettext/gettext.php"
+    ],
+    "57": [
+      "ttrss/lib/gettext/streams.php"
+    ],
+    "58": [
+      "ttrss/lib/languagedetect/LanguageDetect.php"
+    ],
+    "59": [
+      "ttrss/lib/languagedetect/Text/LanguageDetect/Exception.php"
+    ],
+    "60": [
+      "ttrss/lib/languagedetect/Text/LanguageDetect/ISO639.php"
+    ],
+    "61": [
+      "ttrss/lib/languagedetect/Text/LanguageDetect/Parser.php"
+    ],
+    "62": [
+      "ttrss/lib/otphp/lib/hotp.php"
+    ],
+    "63": [
+      "ttrss/lib/otphp/lib/otp.php"
+    ],
+    "64": [
+      "ttrss/lib/otphp/lib/otphp.php"
+    ],
+    "65": [
+      "ttrss/lib/otphp/lib/totp.php"
+    ],
+    "66": [
+      "ttrss/lib/otphp/vendor/base32.php"
+    ],
+    "67": [
+      "ttrss/lib/otphp/vendor/libs.php"
+    ],
+    "68": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-ar.php"
+    ],
+    "69": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-br.php"
+    ],
+    "70": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-ca.php"
+    ],
+    "71": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-ch.php"
+    ],
+    "72": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-cz.php"
+    ],
+    "73": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-de.php"
+    ],
+    "74": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-dk.php"
+    ],
+    "75": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-es.php"
+    ],
+    "76": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-et.php"
+    ],
+    "77": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-fi.php"
+    ],
+    "78": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-fo.php"
+    ],
+    "79": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-fr.php"
+    ],
+    "80": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-hu.php"
+    ],
+    "81": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-it.php"
+    ],
+    "82": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-ja.php"
+    ],
+    "83": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-nl.php"
+    ],
+    "84": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-no.php"
+    ],
+    "85": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-pl.php"
+    ],
+    "86": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-ro.php"
+    ],
+    "87": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-ru.php"
+    ],
+    "88": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-se.php"
+    ],
+    "89": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-sk.php"
+    ],
+    "90": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-tr.php"
+    ],
+    "91": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-zh.php"
+    ],
+    "92": [
+      "ttrss/lib/phpmailer/language/phpmailer.lang-zh_cn.php"
+    ],
+    "93": [
+      "ttrss/lib/phpqrcode/bindings/tcpdf/qrcode.php"
+    ],
+    "94": [
+      "ttrss/lib/phpqrcode/phpqrcode.php"
+    ],
+    "95": [
+      "ttrss/lib/phpqrcode/tools/merge.php"
+    ],
+    "96": [
+      "ttrss/lib/phpqrcode/tools/merged_config.php"
+    ],
+    "97": [
+      "ttrss/lib/phpqrcode/tools/merged_header.php"
+    ],
+    "98": [
+      "ttrss/lib/pubsubhubbub/publisher.php"
+    ],
+    "99": [
+      "ttrss/lib/pubsubhubbub/subscriber.php"
+    ],
+    "100": [
+      "ttrss/lib/sphinxapi.php"
+    ],
+    "101": [
+      "ttrss/opml.php"
+    ],
+    "102": [
+      "ttrss/plugins/auth_internal/init.php"
+    ],
+    "103": [
+      "ttrss/public.php"
+    ],
+    "104": [
+      "ttrss/update.php"
+    ],
+    "105": [
+      "ttrss/update_daemon2.php"
+    ]
+  }
+}

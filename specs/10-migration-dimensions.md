@@ -335,37 +335,110 @@ Pass 11 — Deploy:    Docker + CI/CD + monitoring
 
 ---
 
-## Proposed Analysis Tools
+## Graph Analysis Findings (tree-sitter + NetworkX evidence)
 
-### NetworkX + Leiden Community Detection
+Script: `tools/graph_analysis/build_php_graphs.py` (run 2026-04-04 against source-repos/ttrss-php).
+Five dimensions analysed: **include**, **call**, **class**, **db_table**, **hook**.
+Raw output: `tools/graph_analysis/output/` (JSON + report.txt).
 
-Use Python graph analysis to validate and refine the dimension analysis:
+### Include Graph (138 nodes, 34 edges, Leiden → 106 communities)
 
-```python
-import networkx as nx
-from leidenalg import find_partition
-import igraph
+**Community [1]** is the authoritative "core include cluster" — 11 files that are
+always included together via the main entry points (backend.php, index.php, prefs.php):
 
-# Build call graph
-G = nx.DiGraph()
-# Add nodes: PHP files/functions
-# Add edges: require/include/function calls
-# Run Leiden community detection to find natural module boundaries
-
-# Build entity graph
-E = nx.Graph()
-# Add nodes: database tables
-# Add edges: foreign key relationships
-# Run Leiden to find entity clusters
-
-# Build coupling graph
-C = nx.Graph()
-# Add nodes: PHP classes
-# Add edges: weighted by shared function calls / imports
-# Run Leiden to find tightly coupled components
+```
+autoload.php, ccache.php, db-prefs.php, db.php, errorhandler.php,
+functions.php, functions2.php, labels.php, login_form.php, sessions.php
++ sanity_check.php
 ```
 
-This can be automated by parsing the PHP source and building the graphs programmatically.
+Evidence updates:
+- `ccache.php` and `labels.php` confirmed as core-level includes — they are loaded
+  alongside functions.php from every entry point, not only from rssfuncs.php.
+  This validates placing them at Phase 3a before feeds/counters (Phase 3c).
+- `sessions.php` is in the core include cluster (it is the PHP session handler,
+  registered via `session_set_save_handler`). This is consistent with its Auth
+  community membership; its auth-function citations (authenticate_user etc.)
+  remain in functions.php (Core community), as corrected in the community table above.
+
+### Call Graph (1206 nodes, 2100 edges, Leiden → 303 communities)
+
+303 communities because Leiden at default resolution partitions isolated third-party
+libraries (QRcode, PHPMailer, SphinxClient) into single-member communities. The 12
+large communities (>10 members) are the meaningful ones.
+
+**Dependency levels** (Level 0 = leaf with no callees; Level N = depends on Level N-1):
+
+| Level | Count | Key nodes |
+|-------|-------|-----------|
+| 0 | 552 | auth/base stubs, all leaf utility methods |
+| 1-8 | 649 | Application handler methods, build up progressively |
+| 9 | 4 | `send_headlines_digests`, `QRrawcode::__construct` |
+| 10 | 2 | `rssfuncs.php::update_daemon_common`, `QRcode::encodeInput` |
+| 13 | 6 | `Auth_Internal::authenticate`, `Pref_Prefs::otpenable` |
+| **14** | **2** | **`authenticate_user`** (functions.php), `QRcode::png` |
+| **15** | **5** | **`login_sequence`** (functions.php), `API::login`, `Handler_Public::login/rss`, `ttrss/backend.php` |
+| **16** | **4** | **Entry points**: `ttrss/index.php`, `ttrss/prefs.php`, `Handler_Public::sharepopup`, `Handler_Public::subscribe` |
+
+Evidence updates:
+- `authenticate_user` (Level 14) → `login_sequence` (Level 15) → entry points (Level 16)
+  confirms the migration order: authenticate_user must exist before login_sequence, which
+  must exist before any handler entry point. Validates Phase 2a ordering.
+- `update_daemon_common` at Level 10 is the deepest non-QR node, confirming feed engine
+  is the most dependency-heavy business logic chain. Validates Phase 3c ordering.
+
+### DB_Table Graph (60 nodes, 126 edges, Leiden → 7 communities)
+
+7 clean communities provide authoritative service-boundary evidence:
+
+| Community | Code files | Tables |
+|-----------|-----------|--------|
+| **[0] Feed/API access** | api.php, feeds.php, handler/public.php, pref/feeds.php, rpc.php, digest.php, labels.php, opml.php | ttrss_access_keys, ttrss_archived_feeds, ttrss_entry_comments, ttrss_feed_categories, ttrss_headlines_read, ttrss_user_feeds, ttrss_user_labels2, ttrss_user_read, ttrss_user_starred |
+| **[1] Auth/System** | auth/base.php, dbupdater.php, logger/sql.php, pref/system.php, sanity_check.php, sessions.php, plugins/auth_internal/init.php, register.php | ttrss_error_log, ttrss_sessions |
+| **[2] Filters** | opml.php, pref/filters.php, pref/labels.php, update.php | ttrss_filter_actions, ttrss_filter_types, ttrss_filters, ttrss_filters2, ttrss_filters2_actions, ttrss_filters2_rules |
+| **[3] Counters+Prefs** | db/prefs.php, pref/prefs.php, **ccache.php**, **functions.php** | ttrss_cat_counters_cache, ttrss_counters_cache, ttrss_prefs, ttrss_user_labels2, ttrss_user_prefs |
+| **[4] Articles/Tags** | article.php, dlg.php, functions2.php, rssfuncs.php | ttrss_enclosures, ttrss_entries, ttrss_tags |
+| **[5] Feeds/Users** | pref/users.php, feedbrowser.php, install/index.php | ttrss_feedbrowser_cache, ttrss_feeds, ttrss_linked_feeds |
+| **[6] Plugin** | pluginhost.php | ttrss_plugin_storage |
+
+Evidence updates:
+- **DB community [3]** places `ccache.php` and `functions.php` in the same community
+  alongside counter cache and prefs tables — confirms the bidirectional coupling noted in
+  the Call Graph Communities table above. `ccache.php` does NOT belong in the Feed Engine
+  community (it accesses the same tables as functions.php counter functions).
+- **DB community [4]** (`ttrss_entries, ttrss_enclosures, ttrss_tags`) groups rssfuncs.php,
+  functions2.php, article.php, dlg.php — confirms articles/ops.py scope (Phase 3d).
+- **DB community [6]** (pluginhost.php → ttrss_plugin_storage only) confirms plugin storage
+  is fully isolated; can be the last business-logic module before handlers.
+
+### Hook Graph (20 nodes, 18 edges, Leiden → 5 communities)
+
+| Community | Hooks | Invokers |
+|-----------|-------|----------|
+| **[0] Prefs/UI sections** | HOOK_PREFS_TAB, HOOK_PREFS_TAB_SECTION | pref/filters.php, pref/labels.php, pref/prefs.php, pref/system.php, pref/users.php |
+| **[1] Feed/update pipeline** | HOOK_FEED_PARSED, HOOK_HOUSE_KEEPING, HOOK_UPDATE_TASK | handler/public.php, rssfuncs.php, update.php |
+| **[2] Feed config** | HOOK_PREFS_EDIT_FEED, HOOK_PREFS_SAVE_FEED | pref/feeds.php |
+| **[3] Auth** | HOOK_AUTH_USER | plugins/auth_internal/init.php (sole implementer) |
+| **[4] Prefs root** | HOOK_PREFS_TABS | prefs.php |
+
+Evidence updates:
+- `HOOK_AUTH_USER` has exactly 1 implementer in the codebase (auth_internal); this matches
+  the pluggy `firstresult=True` hook spec in `ttrss/plugins/hookspecs.py`.
+- All update/housekeeping hooks in community [1] confirm Phase 3f (tasks/housekeeping.py)
+  scope — these three hooks fire in the same pipeline stage.
+- Hook graph is small (20 nodes, 18 edges) — the PHP codebase uses hooks sparingly.
+  Only 8 distinct HOOK_* constants are in active use.
+
+### Class Graph (81 nodes, 27 edges, Leiden → 55 communities)
+
+Key evidence from class hierarchy:
+- Community [0] (13 members: Article, Dlg, Feeds, Handler_Protected, Opml, PluginHandler,
+  Pref_Feeds, Pref_Filters, Pref_Labels, Pref_Prefs, Pref_System, Pref_Users, RPC) —
+  all extend Handler_Protected; confirms a single Handler base class chain.
+- Community [8]: `Auth_Internal` and `Plugin` in the same community — Auth_Internal
+  extends both Plugin and IAUthModule (it is a plugin that implements auth).
+- All DB adapters (Db_Mysql, Db_Mysqli, Db_PDO, Db_Pgsql) are isolated singletons —
+  confirm clean adapter pattern, no shared state between adapters.
 
 ---
 

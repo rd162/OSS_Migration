@@ -1,0 +1,1242 @@
+{
+  "graph_type": "db_table",
+  "node_count": 60,
+  "edge_count": 126,
+  "community_count": 7,
+  "nodes": {
+    "ttrss_counters_cache": {
+      "label": "counters_cache",
+      "kind": "table"
+    },
+    "ttrss_enclosures": {
+      "label": "enclosures",
+      "kind": "table"
+    },
+    "ttrss_feeds": {
+      "label": "feeds",
+      "kind": "table"
+    },
+    "ttrss_labels2": {
+      "label": "labels2",
+      "kind": "table"
+    },
+    "ttrss_user_entries": {
+      "label": "user_entries",
+      "kind": "table"
+    },
+    "ttrss_filters": {
+      "label": "filters",
+      "kind": "table"
+    },
+    "ttrss_filters2_rules": {
+      "label": "filters2_rules",
+      "kind": "table"
+    },
+    "ttrss_filters2": {
+      "label": "filters2",
+      "kind": "table"
+    },
+    "ttrss_feed_categories": {
+      "label": "feed_categories",
+      "kind": "table"
+    },
+    "ttrss_linked_feeds": {
+      "label": "linked_feeds",
+      "kind": "table"
+    },
+    "ttrss_prefs": {
+      "label": "prefs",
+      "kind": "table"
+    },
+    "ttrss_cat_counters_cache": {
+      "label": "cat_counters_cache",
+      "kind": "table"
+    },
+    "ttrss_version": {
+      "label": "version",
+      "kind": "table"
+    },
+    "ttrss_error_log": {
+      "label": "error_log",
+      "kind": "table"
+    },
+    "ttrss_sessions": {
+      "label": "sessions",
+      "kind": "table"
+    },
+    "ttrss_tags": {
+      "label": "tags",
+      "kind": "table"
+    },
+    "ttrss_access_keys": {
+      "label": "access_keys",
+      "kind": "table"
+    },
+    "ttrss_user_prefs": {
+      "label": "user_prefs",
+      "kind": "table"
+    },
+    "ttrss_settings_profiles": {
+      "label": "settings_profiles",
+      "kind": "table"
+    },
+    "ttrss_plugin_storage": {
+      "label": "plugin_storage",
+      "kind": "table"
+    },
+    "ttrss_user_labels2": {
+      "label": "user_labels2",
+      "kind": "table"
+    },
+    "ttrss_archived_feeds": {
+      "label": "archived_feeds",
+      "kind": "table"
+    },
+    "ttrss_users": {
+      "label": "users",
+      "kind": "table"
+    },
+    "ttrss_filters2_actions": {
+      "label": "filters2_actions",
+      "kind": "table"
+    },
+    "ttrss_filter_actions": {
+      "label": "filter_actions",
+      "kind": "table"
+    },
+    "ttrss_filter_types": {
+      "label": "filter_types",
+      "kind": "table"
+    },
+    "ttrss_entries": {
+      "label": "entries",
+      "kind": "table"
+    },
+    "ttrss_feedbrowser_cache": {
+      "label": "feedbrowser_cache",
+      "kind": "table"
+    },
+    "ttrss/classes/api.php": {
+      "loc": 793,
+      "label": "classes/api",
+      "kind": "file"
+    },
+    "ttrss/classes/article.php": {
+      "loc": 346,
+      "label": "classes/article",
+      "kind": "file"
+    },
+    "ttrss/classes/auth/base.php": {
+      "loc": 62,
+      "label": "auth/base",
+      "kind": "file"
+    },
+    "ttrss/classes/db/prefs.php": {
+      "loc": 191,
+      "label": "db/prefs",
+      "kind": "file"
+    },
+    "ttrss/classes/dbupdater.php": {
+      "loc": 66,
+      "label": "classes/dbupdater",
+      "kind": "file"
+    },
+    "ttrss/classes/dlg.php": {
+      "loc": 272,
+      "label": "classes/dlg",
+      "kind": "file"
+    },
+    "ttrss/classes/feeds.php": {
+      "loc": 1164,
+      "label": "classes/feeds",
+      "kind": "file"
+    },
+    "ttrss/classes/handler/public.php": {
+      "loc": 1007,
+      "label": "handler/public",
+      "kind": "file"
+    },
+    "ttrss/classes/logger/sql.php": {
+      "loc": 29,
+      "label": "logger/sql",
+      "kind": "file"
+    },
+    "ttrss/classes/opml.php": {
+      "loc": 524,
+      "label": "classes/opml",
+      "kind": "file"
+    },
+    "ttrss/classes/pluginhost.php": {
+      "loc": 400,
+      "label": "classes/pluginhost",
+      "kind": "file"
+    },
+    "ttrss/classes/pref/feeds.php": {
+      "loc": 1925,
+      "label": "pref/feeds",
+      "kind": "file"
+    },
+    "ttrss/classes/pref/filters.php": {
+      "loc": 1054,
+      "label": "pref/filters",
+      "kind": "file"
+    },
+    "ttrss/classes/pref/labels.php": {
+      "loc": 331,
+      "label": "pref/labels",
+      "kind": "file"
+    },
+    "ttrss/classes/pref/prefs.php": {
+      "loc": 1129,
+      "label": "pref/prefs",
+      "kind": "file"
+    },
+    "ttrss/classes/pref/system.php": {
+      "loc": 91,
+      "label": "pref/system",
+      "kind": "file"
+    },
+    "ttrss/classes/pref/users.php": {
+      "loc": 458,
+      "label": "pref/users",
+      "kind": "file"
+    },
+    "ttrss/classes/rpc.php": {
+      "loc": 655,
+      "label": "classes/rpc",
+      "kind": "file"
+    },
+    "ttrss/include/ccache.php": {
+      "loc": 225,
+      "label": "include/ccache",
+      "kind": "file"
+    },
+    "ttrss/include/digest.php": {
+      "loc": 193,
+      "label": "include/digest",
+      "kind": "file"
+    },
+    "ttrss/include/feedbrowser.php": {
+      "loc": 112,
+      "label": "include/feedbrowser",
+      "kind": "file"
+    },
+    "ttrss/include/functions.php": {
+      "loc": 2004,
+      "label": "include/functions",
+      "kind": "file"
+    },
+    "ttrss/include/functions2.php": {
+      "loc": 2414,
+      "label": "include/functions2",
+      "kind": "file"
+    },
+    "ttrss/include/labels.php": {
+      "loc": 202,
+      "label": "include/labels",
+      "kind": "file"
+    },
+    "ttrss/include/rssfuncs.php": {
+      "loc": 1432,
+      "label": "include/rssfuncs",
+      "kind": "file"
+    },
+    "ttrss/include/sanity_check.php": {
+      "loc": 205,
+      "label": "include/sanity_check",
+      "kind": "file"
+    },
+    "ttrss/include/sessions.php": {
+      "loc": 166,
+      "label": "include/sessions",
+      "kind": "file"
+    },
+    "ttrss/install/index.php": {
+      "loc": 506,
+      "label": "install/index",
+      "kind": "file"
+    },
+    "ttrss/opml.php": {
+      "loc": 36,
+      "label": "opml",
+      "kind": "file"
+    },
+    "ttrss/plugins/auth_internal/init.php": {
+      "loc": 197,
+      "label": "auth_internal/init",
+      "kind": "file"
+    },
+    "ttrss/register.php": {
+      "loc": 369,
+      "label": "register",
+      "kind": "file"
+    },
+    "ttrss/update.php": {
+      "loc": 360,
+      "label": "update",
+      "kind": "file"
+    }
+  },
+  "edges": [
+    {
+      "from": "ttrss/classes/api.php",
+      "to": "ttrss_users",
+      "kind": "SELECT",
+      "line": 59
+    },
+    {
+      "from": "ttrss/classes/api.php",
+      "to": "ttrss_feeds",
+      "kind": "SELECT",
+      "line": 138
+    },
+    {
+      "from": "ttrss/classes/api.php",
+      "to": "ttrss_feed_categories",
+      "kind": "SELECT",
+      "line": 138
+    },
+    {
+      "from": "ttrss/classes/api.php",
+      "to": "ttrss_user_entries",
+      "kind": "UPDATE,SELECT",
+      "line": 277
+    },
+    {
+      "from": "ttrss/classes/api.php",
+      "to": "ttrss_entries",
+      "kind": "SELECT",
+      "line": 318
+    },
+    {
+      "from": "ttrss/classes/api.php",
+      "to": "ttrss_labels2",
+      "kind": "SELECT",
+      "line": 419
+    },
+    {
+      "from": "ttrss/classes/article.php",
+      "to": "ttrss_entries",
+      "kind": "SELECT,UPDATE,INSERT",
+      "line": 13
+    },
+    {
+      "from": "ttrss/classes/article.php",
+      "to": "ttrss_user_entries",
+      "kind": "UPDATE,SELECT,INSERT",
+      "line": 70
+    },
+    {
+      "from": "ttrss/classes/article.php",
+      "to": "ttrss_tags",
+      "kind": "DELETE,INSERT,SELECT",
+      "line": 240
+    },
+    {
+      "from": "ttrss/classes/auth/base.php",
+      "to": "ttrss_users",
+      "kind": "INSERT,SELECT",
+      "line": 30
+    },
+    {
+      "from": "ttrss/classes/db/prefs.php",
+      "to": "ttrss_user_prefs",
+      "kind": "SELECT,UPDATE",
+      "line": 39
+    },
+    {
+      "from": "ttrss/classes/db/prefs.php",
+      "to": "ttrss_prefs",
+      "kind": "SELECT",
+      "line": 152
+    },
+    {
+      "from": "ttrss/classes/dbupdater.php",
+      "to": "ttrss_version",
+      "kind": "SELECT",
+      "line": 15
+    },
+    {
+      "from": "ttrss/classes/dlg.php",
+      "to": "ttrss_tags",
+      "kind": "SELECT",
+      "line": 104
+    },
+    {
+      "from": "ttrss/classes/feeds.php",
+      "to": "ttrss_feeds",
+      "kind": "SELECT,UPDATE",
+      "line": 173
+    },
+    {
+      "from": "ttrss/classes/feeds.php",
+      "to": "ttrss_archived_feeds",
+      "kind": "SELECT",
+      "line": 640
+    },
+    {
+      "from": "ttrss/classes/feeds.php",
+      "to": "ttrss_user_entries",
+      "kind": "UPDATE",
+      "line": 796
+    },
+    {
+      "from": "ttrss/classes/feeds.php",
+      "to": "ttrss_labels2",
+      "kind": "SELECT",
+      "line": 832
+    },
+    {
+      "from": "ttrss/classes/feeds.php",
+      "to": "ttrss_feed_categories",
+      "kind": "SELECT",
+      "line": 838
+    },
+    {
+      "from": "ttrss/classes/feeds.php",
+      "to": "ttrss_users",
+      "kind": "UPDATE",
+      "line": 859
+    },
+    {
+      "from": "ttrss/classes/handler/public.php",
+      "to": "ttrss_users",
+      "kind": "SELECT,UPDATE",
+      "line": 240
+    },
+    {
+      "from": "ttrss/classes/handler/public.php",
+      "to": "ttrss_settings_profiles",
+      "kind": "SELECT",
+      "line": 261
+    },
+    {
+      "from": "ttrss/classes/handler/public.php",
+      "to": "ttrss_feeds",
+      "kind": "SELECT,UPDATE",
+      "line": 297
+    },
+    {
+      "from": "ttrss/classes/handler/public.php",
+      "to": "ttrss_user_entries",
+      "kind": "SELECT",
+      "line": 351
+    },
+    {
+      "from": "ttrss/classes/handler/public.php",
+      "to": "ttrss_access_keys",
+      "kind": "SELECT",
+      "line": 395
+    },
+    {
+      "from": "ttrss/classes/logger/sql.php",
+      "to": "ttrss_error_log",
+      "kind": "INSERT",
+      "line": 17
+    },
+    {
+      "from": "ttrss/classes/opml.php",
+      "to": "ttrss_feed_categories",
+      "kind": "SELECT",
+      "line": 69
+    },
+    {
+      "from": "ttrss/classes/opml.php",
+      "to": "ttrss_feeds",
+      "kind": "SELECT,INSERT",
+      "line": 85
+    },
+    {
+      "from": "ttrss/classes/opml.php",
+      "to": "ttrss_user_prefs",
+      "kind": "SELECT",
+      "line": 134
+    },
+    {
+      "from": "ttrss/classes/opml.php",
+      "to": "ttrss_labels2",
+      "kind": "SELECT",
+      "line": 148
+    },
+    {
+      "from": "ttrss/classes/opml.php",
+      "to": "ttrss_filters2",
+      "kind": "SELECT,INSERT",
+      "line": 164
+    },
+    {
+      "from": "ttrss/classes/opml.php",
+      "to": "ttrss_filters2_rules",
+      "kind": "SELECT,INSERT",
+      "line": 175
+    },
+    {
+      "from": "ttrss/classes/opml.php",
+      "to": "ttrss_filters2_actions",
+      "kind": "SELECT,INSERT",
+      "line": 201
+    },
+    {
+      "from": "ttrss/classes/pluginhost.php",
+      "to": "ttrss_plugin_storage",
+      "kind": "SELECT,UPDATE,INSERT,DELETE",
+      "line": 268
+    },
+    {
+      "from": "ttrss/classes/pref/feeds.php",
+      "to": "ttrss_feed_categories",
+      "kind": "UPDATE,SELECT,DELETE",
+      "line": 22
+    },
+    {
+      "from": "ttrss/classes/pref/feeds.php",
+      "to": "ttrss_feeds",
+      "kind": "SELECT,UPDATE,INSERT,DELETE",
+      "line": 70
+    },
+    {
+      "from": "ttrss/classes/pref/feeds.php",
+      "to": "ttrss_labels2",
+      "kind": "SELECT",
+      "line": 158
+    },
+    {
+      "from": "ttrss/classes/pref/feeds.php",
+      "to": "ttrss_user_entries",
+      "kind": "SELECT,UPDATE,DELETE",
+      "line": 1105
+    },
+    {
+      "from": "ttrss/classes/pref/feeds.php",
+      "to": "ttrss_entries",
+      "kind": "SELECT,DELETE",
+      "line": 1262
+    },
+    {
+      "from": "ttrss/classes/pref/feeds.php",
+      "to": "ttrss_archived_feeds",
+      "kind": "SELECT,INSERT",
+      "line": 1722
+    },
+    {
+      "from": "ttrss/classes/pref/feeds.php",
+      "to": "ttrss_access_keys",
+      "kind": "DELETE,SELECT,UPDATE",
+      "line": 1745
+    },
+    {
+      "from": "ttrss/classes/pref/filters.php",
+      "to": "ttrss_filters2",
+      "kind": "UPDATE,SELECT,DELETE,INSERT",
+      "line": 12
+    },
+    {
+      "from": "ttrss/classes/pref/filters.php",
+      "to": "ttrss_filter_types",
+      "kind": "SELECT",
+      "line": 58
+    },
+    {
+      "from": "ttrss/classes/pref/filters.php",
+      "to": "ttrss_filters2_actions",
+      "kind": "SELECT,DELETE,INSERT,UPDATE",
+      "line": 159
+    },
+    {
+      "from": "ttrss/classes/pref/filters.php",
+      "to": "ttrss_filter_actions",
+      "kind": "SELECT",
+      "line": 159
+    },
+    {
+      "from": "ttrss/classes/pref/filters.php",
+      "to": "ttrss_filters2_rules",
+      "kind": "SELECT,DELETE,INSERT,UPDATE",
+      "line": 159
+    },
+    {
+      "from": "ttrss/classes/pref/filters.php",
+      "to": "ttrss_labels2",
+      "kind": "SELECT",
+      "line": 194
+    },
+    {
+      "from": "ttrss/classes/pref/labels.php",
+      "to": "ttrss_labels2",
+      "kind": "SELECT,UPDATE",
+      "line": 13
+    },
+    {
+      "from": "ttrss/classes/pref/labels.php",
+      "to": "ttrss_user_entries",
+      "kind": "UPDATE",
+      "line": 143
+    },
+    {
+      "from": "ttrss/classes/pref/labels.php",
+      "to": "ttrss_filters2_actions",
+      "kind": "UPDATE",
+      "line": 195
+    },
+    {
+      "from": "ttrss/classes/pref/labels.php",
+      "to": "ttrss_filters2",
+      "kind": "UPDATE",
+      "line": 195
+    },
+    {
+      "from": "ttrss/classes/pref/prefs.php",
+      "to": "ttrss_users",
+      "kind": "UPDATE,SELECT",
+      "line": 109
+    },
+    {
+      "from": "ttrss/classes/pref/prefs.php",
+      "to": "ttrss_prefs",
+      "kind": "SELECT",
+      "line": 135
+    },
+    {
+      "from": "ttrss/classes/pref/prefs.php",
+      "to": "ttrss_user_prefs",
+      "kind": "DELETE",
+      "line": 171
+    },
+    {
+      "from": "ttrss/classes/pref/prefs.php",
+      "to": "ttrss_settings_profiles",
+      "kind": "SELECT",
+      "line": 1014
+    },
+    {
+      "from": "ttrss/classes/pref/system.php",
+      "to": "ttrss_error_log",
+      "kind": "DELETE,SELECT",
+      "line": 23
+    },
+    {
+      "from": "ttrss/classes/pref/system.php",
+      "to": "ttrss_users",
+      "kind": "SELECT",
+      "line": 33
+    },
+    {
+      "from": "ttrss/classes/pref/users.php",
+      "to": "ttrss_user_entries",
+      "kind": "SELECT",
+      "line": 25
+    },
+    {
+      "from": "ttrss/classes/pref/users.php",
+      "to": "ttrss_users",
+      "kind": "SELECT,UPDATE,DELETE,INSERT",
+      "line": 29
+    },
+    {
+      "from": "ttrss/classes/pref/users.php",
+      "to": "ttrss_feeds",
+      "kind": "SELECT,DELETE",
+      "line": 56
+    },
+    {
+      "from": "ttrss/classes/pref/users.php",
+      "to": "ttrss_tags",
+      "kind": "DELETE",
+      "line": 201
+    },
+    {
+      "from": "ttrss/classes/rpc.php",
+      "to": "ttrss_settings_profiles",
+      "kind": "DELETE,SELECT,INSERT,UPDATE",
+      "line": 21
+    },
+    {
+      "from": "ttrss/classes/rpc.php",
+      "to": "ttrss_archived_feeds",
+      "kind": "DELETE,SELECT,INSERT",
+      "line": 93
+    },
+    {
+      "from": "ttrss/classes/rpc.php",
+      "to": "ttrss_user_entries",
+      "kind": "DELETE,UPDATE,SELECT",
+      "line": 93
+    },
+    {
+      "from": "ttrss/classes/rpc.php",
+      "to": "ttrss_feeds",
+      "kind": "SELECT,INSERT",
+      "line": 175
+    },
+    {
+      "from": "ttrss/classes/rpc.php",
+      "to": "ttrss_labels2",
+      "kind": "SELECT",
+      "line": 353
+    },
+    {
+      "from": "ttrss/classes/rpc.php",
+      "to": "ttrss_feed_categories",
+      "kind": "SELECT",
+      "line": 457
+    },
+    {
+      "from": "ttrss/classes/rpc.php",
+      "to": "ttrss_entries",
+      "kind": "SELECT",
+      "line": 629
+    },
+    {
+      "from": "ttrss/include/ccache.php",
+      "to": "ttrss_counters_cache",
+      "kind": "UPDATE,SELECT",
+      "line": 9
+    },
+    {
+      "from": "ttrss/include/ccache.php",
+      "to": "ttrss_cat_counters_cache",
+      "kind": "UPDATE,SELECT",
+      "line": 12
+    },
+    {
+      "from": "ttrss/include/ccache.php",
+      "to": "ttrss_feeds",
+      "kind": "SELECT",
+      "line": 131
+    },
+    {
+      "from": "ttrss/include/digest.php",
+      "to": "ttrss_users",
+      "kind": "SELECT,UPDATE",
+      "line": 24
+    },
+    {
+      "from": "ttrss/include/digest.php",
+      "to": "ttrss_user_entries",
+      "kind": "SELECT",
+      "line": 115
+    },
+    {
+      "from": "ttrss/include/digest.php",
+      "to": "ttrss_feed_categories",
+      "kind": "SELECT",
+      "line": 115
+    },
+    {
+      "from": "ttrss/include/feedbrowser.php",
+      "to": "ttrss_feedbrowser_cache",
+      "kind": "SELECT",
+      "line": 21
+    },
+    {
+      "from": "ttrss/include/feedbrowser.php",
+      "to": "ttrss_linked_feeds",
+      "kind": "SELECT",
+      "line": 21
+    },
+    {
+      "from": "ttrss/include/feedbrowser.php",
+      "to": "ttrss_feeds",
+      "kind": "SELECT",
+      "line": 21
+    },
+    {
+      "from": "ttrss/include/feedbrowser.php",
+      "to": "ttrss_user_entries",
+      "kind": "SELECT",
+      "line": 31
+    },
+    {
+      "from": "ttrss/include/feedbrowser.php",
+      "to": "ttrss_archived_feeds",
+      "kind": "SELECT",
+      "line": 31
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss_feeds",
+      "kind": "SELECT,INSERT,UPDATE",
+      "line": 216
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss_user_entries",
+      "kind": "DELETE,UPDATE,SELECT",
+      "line": 248
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss_entries",
+      "kind": "DELETE,UPDATE",
+      "line": 315
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss_prefs",
+      "kind": "SELECT",
+      "line": 654
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss_user_prefs",
+      "kind": "SELECT,INSERT",
+      "line": 656
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss_users",
+      "kind": "SELECT,UPDATE",
+      "line": 727
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss_counters_cache",
+      "kind": "DELETE,SELECT",
+      "line": 868
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss_cat_counters_cache",
+      "kind": "DELETE",
+      "line": 873
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss_feed_categories",
+      "kind": "SELECT",
+      "line": 874
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss_version",
+      "kind": "SELECT",
+      "line": 992
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss_user_labels2",
+      "kind": "UPDATE,SELECT",
+      "line": 1155
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss_tags",
+      "kind": "SELECT",
+      "line": 1423
+    },
+    {
+      "from": "ttrss/include/functions.php",
+      "to": "ttrss_labels2",
+      "kind": "SELECT",
+      "line": 1580
+    },
+    {
+      "from": "ttrss/include/functions2.php",
+      "to": "ttrss_feeds",
+      "kind": "SELECT",
+      "line": 28
+    },
+    {
+      "from": "ttrss/include/functions2.php",
+      "to": "ttrss_feed_categories",
+      "kind": "SELECT,INSERT",
+      "line": 367
+    },
+    {
+      "from": "ttrss/include/functions2.php",
+      "to": "ttrss_entries",
+      "kind": "SELECT",
+      "line": 433
+    },
+    {
+      "from": "ttrss/include/functions2.php",
+      "to": "ttrss_tags",
+      "kind": "SELECT,DELETE",
+      "line": 803
+    },
+    {
+      "from": "ttrss/include/functions2.php",
+      "to": "ttrss_user_entries",
+      "kind": "UPDATE,SELECT",
+      "line": 1032
+    },
+    {
+      "from": "ttrss/include/functions2.php",
+      "to": "ttrss_archived_feeds",
+      "kind": "SELECT",
+      "line": 1379
+    },
+    {
+      "from": "ttrss/include/functions2.php",
+      "to": "ttrss_filters2",
+      "kind": "SELECT",
+      "line": 1501
+    },
+    {
+      "from": "ttrss/include/functions2.php",
+      "to": "ttrss_filters2_rules",
+      "kind": "SELECT",
+      "line": 1511
+    },
+    {
+      "from": "ttrss/include/functions2.php",
+      "to": "ttrss_filters2_actions",
+      "kind": "SELECT",
+      "line": 1534
+    },
+    {
+      "from": "ttrss/include/functions2.php",
+      "to": "ttrss_enclosures",
+      "kind": "SELECT",
+      "line": 1736
+    },
+    {
+      "from": "ttrss/include/functions2.php",
+      "to": "ttrss_access_keys",
+      "kind": "SELECT,INSERT",
+      "line": 1769
+    },
+    {
+      "from": "ttrss/include/functions2.php",
+      "to": "ttrss_labels2",
+      "kind": "SELECT",
+      "line": 1825
+    },
+    {
+      "from": "ttrss/include/labels.php",
+      "to": "ttrss_labels2",
+      "kind": "SELECT,DELETE,INSERT",
+      "line": 4
+    },
+    {
+      "from": "ttrss/include/labels.php",
+      "to": "ttrss_user_entries",
+      "kind": "SELECT,UPDATE",
+      "line": 19
+    },
+    {
+      "from": "ttrss/include/labels.php",
+      "to": "ttrss_user_labels2",
+      "kind": "DELETE,INSERT",
+      "line": 113
+    },
+    {
+      "from": "ttrss/include/labels.php",
+      "to": "ttrss_access_keys",
+      "kind": "DELETE",
+      "line": 164
+    },
+    {
+      "from": "ttrss/include/rssfuncs.php",
+      "to": "ttrss_feeds",
+      "kind": "SELECT,UPDATE",
+      "line": 8
+    },
+    {
+      "from": "ttrss/include/rssfuncs.php",
+      "to": "ttrss_feedbrowser_cache",
+      "kind": "DELETE,SELECT,INSERT",
+      "line": 16
+    },
+    {
+      "from": "ttrss/include/rssfuncs.php",
+      "to": "ttrss_entries",
+      "kind": "SELECT,INSERT,UPDATE",
+      "line": 210
+    },
+    {
+      "from": "ttrss/include/rssfuncs.php",
+      "to": "ttrss_user_entries",
+      "kind": "SELECT,INSERT,UPDATE",
+      "line": 832
+    },
+    {
+      "from": "ttrss/include/rssfuncs.php",
+      "to": "ttrss_enclosures",
+      "kind": "SELECT,INSERT",
+      "line": 1012
+    },
+    {
+      "from": "ttrss/include/rssfuncs.php",
+      "to": "ttrss_tags",
+      "kind": "SELECT,INSERT",
+      "line": 1075
+    },
+    {
+      "from": "ttrss/include/rssfuncs.php",
+      "to": "ttrss_error_log",
+      "kind": "DELETE",
+      "line": 1196
+    },
+    {
+      "from": "ttrss/include/sanity_check.php",
+      "to": "ttrss_users",
+      "kind": "SELECT",
+      "line": 91
+    },
+    {
+      "from": "ttrss/include/sessions.php",
+      "to": "ttrss_version",
+      "kind": "SELECT",
+      "line": 30
+    },
+    {
+      "from": "ttrss/include/sessions.php",
+      "to": "ttrss_users",
+      "kind": "SELECT",
+      "line": 79
+    },
+    {
+      "from": "ttrss/include/sessions.php",
+      "to": "ttrss_sessions",
+      "kind": "SELECT,INSERT,UPDATE,DELETE",
+      "line": 112
+    },
+    {
+      "from": "ttrss/install/index.php",
+      "to": "ttrss_feeds",
+      "kind": "SELECT",
+      "line": 367
+    },
+    {
+      "from": "ttrss/opml.php",
+      "to": "ttrss_access_keys",
+      "kind": "SELECT",
+      "line": 20
+    },
+    {
+      "from": "ttrss/plugins/auth_internal/init.php",
+      "to": "ttrss_users",
+      "kind": "SELECT,UPDATE",
+      "line": 28
+    },
+    {
+      "from": "ttrss/register.php",
+      "to": "ttrss_users",
+      "kind": "SELECT,DELETE,INSERT",
+      "line": 35
+    },
+    {
+      "from": "ttrss/update.php",
+      "to": "ttrss_feeds",
+      "kind": "UPDATE",
+      "line": 153
+    },
+    {
+      "from": "ttrss/update.php",
+      "to": "ttrss_filters2",
+      "kind": "DELETE",
+      "line": 262
+    },
+    {
+      "from": "ttrss/update.php",
+      "to": "ttrss_filters",
+      "kind": "SELECT",
+      "line": 264
+    }
+  ],
+  "communities": {
+    "ttrss_labels2": 0,
+    "ttrss_user_entries": 0,
+    "ttrss_feed_categories": 0,
+    "ttrss_access_keys": 0,
+    "ttrss_settings_profiles": 0,
+    "ttrss_archived_feeds": 0,
+    "ttrss/classes/api.php": 0,
+    "ttrss/classes/feeds.php": 0,
+    "ttrss/classes/handler/public.php": 0,
+    "ttrss/classes/pref/feeds.php": 0,
+    "ttrss/classes/rpc.php": 0,
+    "ttrss/include/digest.php": 0,
+    "ttrss/include/labels.php": 0,
+    "ttrss/opml.php": 0,
+    "ttrss_version": 1,
+    "ttrss_error_log": 1,
+    "ttrss_sessions": 1,
+    "ttrss_users": 1,
+    "ttrss/classes/auth/base.php": 1,
+    "ttrss/classes/dbupdater.php": 1,
+    "ttrss/classes/logger/sql.php": 1,
+    "ttrss/classes/pref/system.php": 1,
+    "ttrss/include/sanity_check.php": 1,
+    "ttrss/include/sessions.php": 1,
+    "ttrss/plugins/auth_internal/init.php": 1,
+    "ttrss/register.php": 1,
+    "ttrss_filters": 2,
+    "ttrss_filters2_rules": 2,
+    "ttrss_filters2": 2,
+    "ttrss_filters2_actions": 2,
+    "ttrss_filter_actions": 2,
+    "ttrss_filter_types": 2,
+    "ttrss/classes/opml.php": 2,
+    "ttrss/classes/pref/filters.php": 2,
+    "ttrss/classes/pref/labels.php": 2,
+    "ttrss/update.php": 2,
+    "ttrss_counters_cache": 3,
+    "ttrss_prefs": 3,
+    "ttrss_cat_counters_cache": 3,
+    "ttrss_user_prefs": 3,
+    "ttrss_user_labels2": 3,
+    "ttrss/classes/db/prefs.php": 3,
+    "ttrss/classes/pref/prefs.php": 3,
+    "ttrss/include/ccache.php": 3,
+    "ttrss/include/functions.php": 3,
+    "ttrss_enclosures": 4,
+    "ttrss_tags": 4,
+    "ttrss_entries": 4,
+    "ttrss/classes/article.php": 4,
+    "ttrss/classes/dlg.php": 4,
+    "ttrss/include/functions2.php": 4,
+    "ttrss/include/rssfuncs.php": 4,
+    "ttrss_feeds": 5,
+    "ttrss_linked_feeds": 5,
+    "ttrss_feedbrowser_cache": 5,
+    "ttrss/classes/pref/users.php": 5,
+    "ttrss/include/feedbrowser.php": 5,
+    "ttrss/install/index.php": 5,
+    "ttrss_plugin_storage": 6,
+    "ttrss/classes/pluginhost.php": 6
+  },
+  "levels": {
+    "0": [
+      "ttrss_counters_cache",
+      "ttrss_enclosures",
+      "ttrss_feeds",
+      "ttrss_labels2",
+      "ttrss_user_entries",
+      "ttrss_filters",
+      "ttrss_filters2_rules",
+      "ttrss_filters2",
+      "ttrss_feed_categories",
+      "ttrss_linked_feeds",
+      "ttrss_prefs",
+      "ttrss_cat_counters_cache",
+      "ttrss_version",
+      "ttrss_error_log",
+      "ttrss_sessions",
+      "ttrss_tags",
+      "ttrss_access_keys",
+      "ttrss_user_prefs",
+      "ttrss_settings_profiles",
+      "ttrss_plugin_storage",
+      "ttrss_user_labels2",
+      "ttrss_archived_feeds",
+      "ttrss_users",
+      "ttrss_filters2_actions",
+      "ttrss_filter_actions",
+      "ttrss_filter_types",
+      "ttrss_entries",
+      "ttrss_feedbrowser_cache"
+    ],
+    "1": [
+      "ttrss/classes/api.php",
+      "ttrss/classes/article.php",
+      "ttrss/classes/auth/base.php",
+      "ttrss/classes/db/prefs.php",
+      "ttrss/classes/dbupdater.php",
+      "ttrss/classes/dlg.php",
+      "ttrss/classes/feeds.php",
+      "ttrss/classes/handler/public.php",
+      "ttrss/classes/logger/sql.php",
+      "ttrss/classes/opml.php",
+      "ttrss/classes/pluginhost.php",
+      "ttrss/classes/pref/feeds.php",
+      "ttrss/classes/pref/filters.php",
+      "ttrss/classes/pref/labels.php",
+      "ttrss/classes/pref/prefs.php",
+      "ttrss/classes/pref/system.php",
+      "ttrss/classes/pref/users.php",
+      "ttrss/classes/rpc.php",
+      "ttrss/include/ccache.php",
+      "ttrss/include/digest.php",
+      "ttrss/include/feedbrowser.php",
+      "ttrss/include/functions.php",
+      "ttrss/include/functions2.php",
+      "ttrss/include/labels.php",
+      "ttrss/include/rssfuncs.php",
+      "ttrss/include/sanity_check.php",
+      "ttrss/include/sessions.php",
+      "ttrss/install/index.php",
+      "ttrss/opml.php",
+      "ttrss/plugins/auth_internal/init.php",
+      "ttrss/register.php",
+      "ttrss/update.php"
+    ]
+  },
+  "community_members": {
+    "0": [
+      "ttrss_labels2",
+      "ttrss_user_entries",
+      "ttrss_feed_categories",
+      "ttrss_access_keys",
+      "ttrss_settings_profiles",
+      "ttrss_archived_feeds",
+      "ttrss/classes/api.php",
+      "ttrss/classes/feeds.php",
+      "ttrss/classes/handler/public.php",
+      "ttrss/classes/pref/feeds.php",
+      "ttrss/classes/rpc.php",
+      "ttrss/include/digest.php",
+      "ttrss/include/labels.php",
+      "ttrss/opml.php"
+    ],
+    "1": [
+      "ttrss_version",
+      "ttrss_error_log",
+      "ttrss_sessions",
+      "ttrss_users",
+      "ttrss/classes/auth/base.php",
+      "ttrss/classes/dbupdater.php",
+      "ttrss/classes/logger/sql.php",
+      "ttrss/classes/pref/system.php",
+      "ttrss/include/sanity_check.php",
+      "ttrss/include/sessions.php",
+      "ttrss/plugins/auth_internal/init.php",
+      "ttrss/register.php"
+    ],
+    "2": [
+      "ttrss_filters",
+      "ttrss_filters2_rules",
+      "ttrss_filters2",
+      "ttrss_filters2_actions",
+      "ttrss_filter_actions",
+      "ttrss_filter_types",
+      "ttrss/classes/opml.php",
+      "ttrss/classes/pref/filters.php",
+      "ttrss/classes/pref/labels.php",
+      "ttrss/update.php"
+    ],
+    "3": [
+      "ttrss_counters_cache",
+      "ttrss_prefs",
+      "ttrss_cat_counters_cache",
+      "ttrss_user_prefs",
+      "ttrss_user_labels2",
+      "ttrss/classes/db/prefs.php",
+      "ttrss/classes/pref/prefs.php",
+      "ttrss/include/ccache.php",
+      "ttrss/include/functions.php"
+    ],
+    "4": [
+      "ttrss_enclosures",
+      "ttrss_tags",
+      "ttrss_entries",
+      "ttrss/classes/article.php",
+      "ttrss/classes/dlg.php",
+      "ttrss/include/functions2.php",
+      "ttrss/include/rssfuncs.php"
+    ],
+    "5": [
+      "ttrss_feeds",
+      "ttrss_linked_feeds",
+      "ttrss_feedbrowser_cache",
+      "ttrss/classes/pref/users.php",
+      "ttrss/include/feedbrowser.php",
+      "ttrss/install/index.php"
+    ],
+    "6": [
+      "ttrss_plugin_storage",
+      "ttrss/classes/pluginhost.php"
+    ]
+  }
+}

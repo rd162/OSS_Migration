@@ -27,12 +27,12 @@ and validated at every phase gate. This is NOT a bolt-on — graph analysis is i
 ## Phase Overview
 
 ```
-Phase 1a — Walking Skeleton           [DONE, graph-validate]
-Phase 1b — Complete Foundation         [DONE, graph-validate]
-Phase 2  — Core Logic                  [DONE, graph-validate]
-Phase 3  — Business Logic              [DONE, graph-validate]
-Phase 4  — API Handlers                [DONE, graph-validate]
-Phase 5  — Cross-Cutting               [NOT STARTED]
+Phase 1a — Walking Skeleton           [DONE, graph gate PASSED]
+Phase 1b — Complete Foundation         [DONE, graph gate PASSED]
+Phase 2  — Core Logic                  [DONE, graph gate PASSED]
+Phase 3  — Business Logic              [DONE, graph gate PASSED — hooks wired 2026-04-04]
+Phase 4  — API Handlers                [DONE, graph gate PASSED — hooks already wired]
+Phase 5  — Cross-Cutting               [NOT STARTED — 14 deferred hooks to wire]
 Phase 6  — Deployment                  [NOT STARTED]
 ```
 

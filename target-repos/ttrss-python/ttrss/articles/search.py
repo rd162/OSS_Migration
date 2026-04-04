@@ -477,4 +477,23 @@ def queryFeedHeadlines(
     if limit > 0:
         stmt = stmt.limit(limit).offset(offset)
 
+    # Source: ttrss/include/functions2.php:queryFeedHeadlines — HOOK_QUERY_HEADLINES
+    # Source: ttrss/classes/feeds.php:298 — get_hooks(PluginHost::HOOK_QUERY_HEADLINES)
+    # Fires after query construction, before execution. Plugins may modify the result set.
+    from ttrss.plugins.manager import get_plugin_manager  # New: lazy import avoids circular dependency.
+    pm = get_plugin_manager()
+    qfh_ret = {
+        "stmt": stmt, "feed": feed, "limit": limit, "view_mode": view_mode,
+        "cat_view": cat_view, "search": search, "search_mode": search_mode,
+        "override_order": override_order, "offset": offset, "owner_uid": owner_uid,
+        "filter": filter_, "since_id": since_id, "include_children": include_children,
+    }
+    pm.hook.hook_query_headlines(
+        qfh_ret=qfh_ret, feed=feed, limit=limit, view_mode=view_mode,
+        cat_view=cat_view, search=search, search_mode=search_mode,
+        override_order=override_order, offset=offset, owner_uid=owner_uid,
+        filter_results=filter_, since_id=since_id, include_children=include_children,
+    )
+    stmt = qfh_ret.get("stmt", stmt)
+
     return list(session.execute(stmt).all())

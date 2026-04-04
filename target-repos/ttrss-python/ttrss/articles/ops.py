@@ -167,7 +167,7 @@ def format_article(
     enclosures = get_article_enclosures(session, article_id)
     labels = get_article_labels(session, article_id, owner_uid)
 
-    return {
+    article = {
         "id": row.id,
         "feed_id": row.feed_id,
         "title": row.title,
@@ -191,6 +191,17 @@ def format_article(
         "hide_images": bool(row.hide_images),
         "always_display_enclosures": bool(row.always_display_enclosures),
     }
+
+    # Source: ttrss/include/functions2.php:1250 — HOOK_RENDER_ARTICLE fires after article assembly
+    # Source: ttrss/include/functions2.php:1360 — HOOK_ARTICLE_BUTTON fires for article footer (right)
+    # Source: ttrss/include/functions2.php:1371 — HOOK_ARTICLE_LEFT_BUTTON fires for article footer (left)
+    from ttrss.plugins.manager import get_plugin_manager  # New: lazy import avoids circular dependency.
+    pm = get_plugin_manager()
+    pm.hook.hook_render_article(article=article)
+    article["article_buttons"] = pm.hook.hook_article_button(line=article)
+    article["article_left_buttons"] = pm.hook.hook_article_left_button(line=article)
+
+    return article
 
 
 # ---------------------------------------------------------------------------

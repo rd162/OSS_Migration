@@ -14,6 +14,9 @@
 - [Consistency Rule](feedback_consistency_rule.md) — MANDATORY: update ALL referencing locations when any status/decision changes
 - [Spec Consultation](feedback_spec_consultation.md) — MANDATORY: read relevant specs/ before planning any phase
 
+## Rework (Phase 5 prerequisite)
+- [Rework Execution](rework_execution.md) — Concrete per-phase graph validation: 4 real gaps + validator tuning
+
 ## Superseded (kept for audit trail)
 - [Rework Plan](rework_plan.md) — Superseded by master_plan.md (graph approach now native, not bolt-on)
 - [Next Session Plan](next_session_plan.md) — Superseded by master_plan.md §Current Priority

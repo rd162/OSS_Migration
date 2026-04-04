@@ -3,7 +3,7 @@
   "python_dir": "target-repos/ttrss-python/ttrss",
   "graph_dir": "tools/graph_analysis/output",
   "module_count": 67,
-  "source_comment_count": 650,
+  "source_comment_count": 655,
   "dimensions": [
     {
       "dimension": "call_coverage",
@@ -4030,13 +4030,25 @@
     },
     {
       "dimension": "import_coverage",
-      "edges_checked": 8,
-      "missing_imports": 3,
+      "edges_checked": 10,
+      "missing_imports": 5,
       "missing_import_details": [
         {
           "from_php": "ttrss/include/functions.php::authenticate_user",
           "to_php": "Auth_Internal::authenticate",
           "from_py": "auth/authenticate.py",
+          "to_py": "blueprints/api/views.py"
+        },
+        {
+          "from_php": "ttrss/include/functions2.php::queryFeedHeadlines",
+          "to_php": "ttrss/include/functions.php::getFeedUnread",
+          "from_py": "articles/search.py",
+          "to_py": "blueprints/api/views.py"
+        },
+        {
+          "from_php": "ttrss/include/functions2.php::queryFeedHeadlines",
+          "to_php": "ttrss/include/db-prefs.php::get_pref",
+          "from_py": "articles/search.py",
           "to_py": "blueprints/api/views.py"
         },
         {
@@ -4456,29 +4468,12 @@
       "dimension": "hook_invocation_coverage",
       "edges_checked": 31,
       "skipped_no_mapping": 7,
-      "missing_hook_calls": 22,
+      "missing_hook_calls": 14,
       "missing_hook_call_details": [
-        {
-          "php_file": "ttrss/classes/api.php",
-          "hook": "HOOK_QUERY_HEADLINES",
-          "expected_call": "hook_query_headlines",
-          "python_modules": [
-            "blueprints/api/views.py"
-          ]
-        },
         {
           "php_file": "ttrss/classes/feeds.php",
           "hook": "HOOK_HEADLINE_TOOLBAR_BUTTON",
           "expected_call": "hook_headline_toolbar_button",
-          "python_modules": [
-            "blueprints/backend/views.py",
-            "feeds/ops.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/feeds.php",
-          "hook": "HOOK_QUERY_HEADLINES",
-          "expected_call": "hook_query_headlines",
           "python_modules": [
             "blueprints/backend/views.py",
             "feeds/ops.py"
@@ -4491,32 +4486,6 @@
           "python_modules": [
             "blueprints/backend/views.py",
             "feeds/ops.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/feeds.php",
-          "hook": "HOOK_ARTICLE_LEFT_BUTTON",
-          "expected_call": "hook_article_left_button",
-          "python_modules": [
-            "blueprints/backend/views.py",
-            "feeds/ops.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/feeds.php",
-          "hook": "HOOK_ARTICLE_BUTTON",
-          "expected_call": "hook_article_button",
-          "python_modules": [
-            "blueprints/backend/views.py",
-            "feeds/ops.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/classes/handler/public.php",
-          "hook": "HOOK_QUERY_HEADLINES",
-          "expected_call": "hook_query_headlines",
-          "python_modules": [
-            "blueprints/public/views.py"
           ]
         },
         {
@@ -4618,51 +4587,6 @@
           "php_file": "ttrss/include/functions2.php",
           "hook": "HOOK_HOTKEY_MAP",
           "expected_call": "hook_hotkey_map",
-          "python_modules": [
-            "articles/ops.py",
-            "articles/search.py",
-            "articles/sanitize.py",
-            "articles/tags.py",
-            "feeds/categories.py",
-            "http/client.py",
-            "feeds/ops.py",
-            "utils/misc.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/include/functions2.php",
-          "hook": "HOOK_RENDER_ARTICLE",
-          "expected_call": "hook_render_article",
-          "python_modules": [
-            "articles/ops.py",
-            "articles/search.py",
-            "articles/sanitize.py",
-            "articles/tags.py",
-            "feeds/categories.py",
-            "http/client.py",
-            "feeds/ops.py",
-            "utils/misc.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/include/functions2.php",
-          "hook": "HOOK_ARTICLE_BUTTON",
-          "expected_call": "hook_article_button",
-          "python_modules": [
-            "articles/ops.py",
-            "articles/search.py",
-            "articles/sanitize.py",
-            "articles/tags.py",
-            "feeds/categories.py",
-            "http/client.py",
-            "feeds/ops.py",
-            "utils/misc.py"
-          ]
-        },
-        {
-          "php_file": "ttrss/include/functions2.php",
-          "hook": "HOOK_ARTICLE_LEFT_BUTTON",
-          "expected_call": "hook_article_left_button",
           "python_modules": [
             "articles/ops.py",
             "articles/search.py",

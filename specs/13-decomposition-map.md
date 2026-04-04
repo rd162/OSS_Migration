@@ -75,7 +75,8 @@ target Python module. Grouped by domain responsibility, NOT by PHP file.
 | PHP function | Source file | Lines | Notes |
 |---|---|---|---|
 | `format_article()` | functions2.php | 200-300 | Article HTML rendering |
-| `format_article_enclosures()` | functions2.php | 301-360 | Enclosure HTML |
+| `format_article_enclosures()` | functions2.php | 1847 | Enclosure HTML; calls format_inline_player() |
+| `format_inline_player()` | functions2.php | 1157 | Embed media player HTML; called from format_article_enclosures() |
 | `format_article_labels()` | functions2.php | 361-400 | Label badge HTML |
 | `format_article_note()` | functions2.php | 401-420 | Article note HTML |
 | `format_tags_string()` | functions2.php | 421-440 | Tags display HTML |
@@ -90,9 +91,8 @@ target Python module. Grouped by domain responsibility, NOT by PHP file.
 ### `ttrss/articles/sanitize.py` ← Phase 2 (partial — lxml in feed_tasks.py already)
 | PHP function | Source file | Lines | Notes |
 |---|---|---|---|
-| `sanitize()` | functions2.php | 356-450 | Full HTML sanitizer; invokes HOOK_SANITIZE |
-| `strip_harmful_tags()` | functions2.php | 451-500 | Tag-level filtering |
-| `format_inline_player()` | functions2.php | 501-540 | Embed media player HTML |
+| `sanitize()` | functions2.php | 831-965 | Full HTML sanitizer; HOOK_SANITIZE fires at 919-931 within this range (Author C PHP source inspection) |
+| `strip_harmful_tags()` | functions2.php | 967+ | Tag-level filtering; called from sanitize() after hook invocation |
 
 ---
 

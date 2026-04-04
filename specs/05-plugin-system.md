@@ -95,11 +95,13 @@ foreach (PluginHost::getInstance()->get_hooks($type) as $hook) {
 
 ## Plugin Classification
 
-| Kind | Constant | Capabilities |
-|------|----------|-------------|
-| System | `KIND_SYSTEM` | Hooks + handlers + CLI commands + API methods |
-| User | `KIND_USER` | Hooks only |
-| All | `KIND_ALL` | Load both types |
+| Kind | Constant | Value | Capabilities |
+|------|----------|-------|-------------|
+| All | `KIND_ALL` | 1 | Load both types |
+| System | `KIND_SYSTEM` | 2 | Hooks + handlers + CLI commands + API methods |
+| User | `KIND_USER` | 3 | Hooks only |
+
+Values from `source-repos/ttrss-php/ttrss/classes/pluginhost.php:43-45`.
 
 ### System Plugin Extras
 
@@ -212,12 +214,13 @@ URL: backend.php?op=pluginhandler&plugin=MyPlugin&method=doSomething
 
 ## Python Migration Notes
 
-- **Plugin system**: Python equivalent could use:
-  - `pluggy` library (pytest-style hooks)
-  - `stevedore` (OpenStack plugin loader)
-  - Custom hook system with `importlib` and entry points
-- **Hook pattern**: Maps well to Python signal/event systems (Django signals, blinker)
-- **Plugin storage**: SQLAlchemy JSON column or dedicated table
-- **Discovery**: Python namespace packages or `importlib.metadata` entry points
-- **Configuration**: Replace PHP serialization with JSON
-- **Priority**: Plugin system is a cross-cutting concern — design it early, migrate plugins last
+**Decision: ADR-0010 accepted (2026-04-04) — pluggy + importlib directory discovery.**
+
+- **Plugin system**: `pluggy` library (pytest-style hooks). Hook specifications declared as `@hookspec` classes in `ttrss/plugins/hookspecs.py`; hook implementations use `@hookimpl`. The PHP `PluginHost` singleton maps to a `pluggy.PluginManager` instance (`ttrss/plugins/manager.py`).
+- **Discovery**: `importlib`-based scan of the `plugins/` directory (mirrors PHP `plugins/` and `plugins.local/` scanning). No entry-point packaging required for directory plugins.
+- **firstresult vs collecting**: Only `HOOK_AUTH_USER` uses `firstresult=True` — confirmed from `functions.php:711-718` where PHP has an explicit `break` on truthy `$user_id`. All other hooks are collecting (iterate all registered implementations). `HOOK_FETCH_FEED` is collecting, confirmed from `rssfuncs.php:270-272` (`foreach` with no `break`).
+- **HOOK_SANITIZE ordering**: `sanitize()` spans `functions2.php:831-965`; `HOOK_SANITIZE` fires at lines 919-931 within that range (Author C PHP source inspection). `strip_harmful_tags()` starts at `functions2.php:967+`. Python equivalent: `sanitize()` calls pluggy hooks before delegating to `strip_harmful_tags()` — the hook fires inside the sanitize function body, not after it.
+- **Plugin storage**: `ttrss_plugin_storage` table (already modeled in Phase 1b). PHP serialization replaced with JSON.
+- **Per-user enable/disable**: Application-layer wrapper around `PluginManager`. User→plugin mapping stored in `ttrss_plugin_storage` (per-user, per-plugin).
+- **KIND constants** (Python equivalents of `pluginhost.php:43-45`): `KIND_ALL = 1`, `KIND_SYSTEM = 2`, `KIND_USER = 3`.
+- **Implementation**: `ttrss/plugins/hookspecs.py` (24 hookspecs, Phase 1b DONE), `ttrss/plugins/manager.py` (singleton PluginManager, Phase 1b DONE), `ttrss/plugins/loader.py` (discovery + KIND filtering, Phase 2).

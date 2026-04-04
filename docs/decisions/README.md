@@ -24,7 +24,7 @@ Each ADR follows the standard template:
 | [0007](0007-session-management.md) | Session Management Strategy | **accepted** | P1 — Flask-Login + Redis |
 | [0008](0008-password-migration.md) | Password Hash Migration | **accepted** | P1 — Dual-hash gradual (argon2id) |
 | [0009](0009-feed-credential-encryption.md) | Feed Credential Encryption | **accepted** | P1 — Fernet (cryptography lib) |
-| [0010](0010-plugin-system.md) | Plugin System Implementation | proposed | P2 — blocks plugin migration |
+| [0010](0010-plugin-system.md) | Plugin System Implementation | **accepted** | P2 — pluggy + importlib directory discovery |
 | [0011](0011-background-worker.md) | Background Worker Architecture | **accepted** | P1 — Celery + Redis (two-task fan-out) |
 | [0012](0012-logging-strategy.md) | Logging Strategy | proposed | P2 — informs observability |
 | [0013](0013-i18n-approach.md) | Internationalization Approach | proposed | P2 — blocks i18n migration |

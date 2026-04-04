@@ -86,7 +86,7 @@ The solution space was narrowed from broad options to concrete decisions via ADR
 | Session management | Flask-Login + Redis (server-side sessions) | ADR-0007 | **accepted** (P1) |
 | Password migration | Dual-hash gradual (argon2id, upgrade on login) | ADR-0008 | **accepted** (P1) |
 | Feed credential encryption | Fernet symmetric encryption (MultiFernet key rotation) | ADR-0009 | **accepted** (P1) |
-| Plugin system | pluggy (hook registry) | ADR-0010 | proposed (P2) |
+| Plugin system | pluggy + importlib directory discovery | ADR-0010 | **accepted** (P2) |
 | Background worker | Celery + Redis (two-task fan-out: dispatch_feed_updates + update_feed) | ADR-0011 | **accepted** (P1) |
 | Logging | structlog | ADR-0012 | proposed (P2) |
 | i18n | Python gettext with existing .po/.mo files | ADR-0013 | proposed (P2) |
@@ -140,8 +140,8 @@ These are specific to patterns found in the TT-RSS PHP source:
 | All 31 active DB tables modeled in Python | P2, G3 | G3 | C4 | 02-database | 0006 | **Phase 1b: 31/31 ✓** (4 deprecated tables removed before v124 — see spec-02) |
 | All RPC endpoints preserved | G2 | G2 | C3 | 03-api-routing | 0001 | Not started |
 | REST API backward compatible | G2 | G2 | C3 | 03-api-routing | 0001 | Not started |
-| Feed update daemon equivalent | G1, P7 | G1 | — | 07-caching-performance | 0011 | **Phase 1b: stub (ADR-0011 accepted)** |
-| 24 plugin hooks preserved | G6 | G6 | C9 | 05-plugin-system | 0010 | **Phase 1b: hookspecs in progress** |
+| Feed update daemon equivalent | G1, P7 | G1 | — | 07-caching-performance | 0011 | **Phase 1b: COMPLETE** (Celery tasks functional; Phase 2 wires hook invocations) |
+| 24 plugin hooks preserved | G6 | G6 | C9 | 05-plugin-system | 0010 | **Phase 1b: 24/24 hookspecs complete (ADR-0010 accepted)** |
 | SHA1-to-argon2id password migration | G4 | G4 | — | 06-security | 0008 | **Phase 1a ✓** |
 | Prepared statements (no SQL injection) | G4 | G4 | — | 06-security | 0006 | **Phase 1a ✓** |
 | SSL verification for feed fetching | G4 | G4 | — | 06-security | 0015 | Not started (Phase 3) |

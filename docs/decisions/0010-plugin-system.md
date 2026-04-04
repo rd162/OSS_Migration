@@ -1,8 +1,9 @@
 # ADR-0010: Plugin System Implementation
 
-- **Status**: proposed
+- **Status**: accepted
 - **Date proposed**: 2026-04-03
-- **Deciders**: TBD
+- **Date accepted**: 2026-04-04
+- **Deciders**: Session 2026-04-04
 
 ## Context
 
@@ -84,14 +85,10 @@ The PHP `PluginHost` singleton maps directly to a `pluggy.PluginManager` instanc
 
 ## Decision
 
-**TBD**
+**Option A: pluggy + importlib directory discovery.** Use `pluggy` for the hook system (hook specifications as `@hookspec` classes, hook implementations via `@hookimpl`) combined with `importlib`-based scanning of the `plugins/` directory for discovery. The PHP `PluginHost` singleton maps to a `pluggy.PluginManager` instance. Per-user enable/disable is managed at the application layer.
 
 ## Consequences
 
-- If Option A: hook specifications serve as documentation and contract for plugin authors
-- If Option A: pytest integration is natural (same hook system used in tests)
-- If Option A: per-user enable/disable requires an application-layer wrapper around the PluginManager
-- If Option B: heavier than needed; entry-point discovery adds packaging complexity for simple directory plugins
-- If Option C: lowest initial effort but highest long-term maintenance burden
-- If Option D: cannot support filter-chain hooks (article filtering, feed parsing modification)
-- All options: the 24 PHP hooks must be mapped to Python hook specifications regardless of framework
+- Hook specifications (`ttrss/plugins/hookspecs.py`) serve as documentation and contract for plugin authors; all 24 PHP hooks are mapped to Python hookspecs
+- pytest integration is natural — pluggy is the same hook system used by pytest, so test fixtures can register mock hook implementations without additional scaffolding
+- Per-user enable/disable requires an application-layer wrapper around the PluginManager (a user→plugin mapping table in the DB, already present as `ttrss_plugin_storage`)

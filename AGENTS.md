@@ -155,7 +155,7 @@ OSS_Migration/
 | 0007 | Session Management | **accepted** — P1, Flask-Login + Redis |
 | 0008 | Password Hash Migration | **accepted** — P1, Dual-hash gradual (argon2id) |
 | 0009 | Feed Credential Encryption | **accepted** — P1, Fernet |
-| 0010 | Plugin System Implementation | proposed — P2 |
+| 0010 | Plugin System Implementation | **accepted** — P2, pluggy + importlib directory discovery |
 | 0011 | Background Worker Architecture | **accepted** — P1, Celery + Redis (two-task fan-out) |
 | 0012 | Logging Strategy | proposed — P2 |
 | 0013 | i18n Approach | proposed — P2 |

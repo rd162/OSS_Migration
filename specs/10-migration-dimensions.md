@@ -59,18 +59,18 @@ The entity dimension maps source code to the database tables it operates on. Thi
 
 #### Entity Clusters
 
-| Cluster | Tables | Operating Code |
-|---------|--------|----------------|
-| **User Core** | ttrss_users, ttrss_sessions, ttrss_access_keys | sessions.php, functions.php (auth), auth_internal |
-| **Feed Management** | ttrss_feeds, ttrss_feed_categories, ttrss_archived_feeds | pref/feeds.php, rssfuncs.php, feeds.php |
-| **Article Content** | ttrss_entries, ttrss_user_entries, ttrss_enclosures, ttrss_entry_comments | rssfuncs.php, article.php, feeds.php, functions2.php |
-| **Tagging & Labels** | ttrss_tags, ttrss_labels2, ttrss_user_labels2 | labels.php, article.php, rpc.php |
-| **Filtering** | ttrss_filters2, ttrss_filters2_rules, ttrss_filters2_actions, ttrss_filter_types, ttrss_filter_actions | pref/filters.php, rssfuncs.php |
-| **Preferences** | ttrss_prefs, ttrss_user_prefs, ttrss_prefs_types, ttrss_prefs_sections, ttrss_settings_profiles | db-prefs.php, pref/prefs.php |
-| **Caching** | ttrss_counters_cache, ttrss_cat_counters_cache, ttrss_feedbrowser_cache | ccache.php, feedbrowser.php |
-| **Plugin** | ttrss_plugin_storage | pluginhost.php |
-| **System** | ttrss_version, ttrss_themes, ttrss_error_log | dbupdater.php, logger/sql.php |
-| **Federation** | ttrss_linked_instances, ttrss_linked_feeds | (minimal code — low priority) |
+| Cluster | Tables | Operating Code | Graph Evidence (DB_TABLE community) |
+|---------|--------|----------------|--------------------------------------|
+| **User Core** | ttrss_users, ttrss_sessions, ttrss_access_keys | sessions.php, functions.php (auth), auth_internal | Community [1]: Auth/System — ttrss_users, ttrss_sessions, ttrss_error_log, ttrss_version |
+| **Feed Management** | ttrss_feeds, ttrss_feed_categories, ttrss_archived_feeds | pref/feeds.php, rssfuncs.php, feeds.php | Community [0]: Feed/API — ttrss_feed_categories, ttrss_archived_feeds; Community [5]: ttrss_feeds, ttrss_linked_feeds |
+| **Article Content** | ttrss_entries, ttrss_user_entries, ttrss_enclosures, ttrss_entry_comments | rssfuncs.php, article.php, feeds.php, functions2.php | Community [4]: Articles/Tags — ttrss_enclosures, ttrss_entries, ttrss_tags |
+| **Tagging & Labels** | ttrss_tags, ttrss_labels2, ttrss_user_labels2 | labels.php, article.php, rpc.php | Split: ttrss_tags in [4] (Articles); ttrss_user_labels2 in [0] (Feed/API) and [3] (Counters/Prefs) |
+| **Filtering** | ttrss_filters2, ttrss_filters2_rules, ttrss_filters2_actions, ttrss_filter_types, ttrss_filter_actions | pref/filters.php, rssfuncs.php | Community [2]: Filters — all 6 filter tables + pref/filters.php, pref/labels.php, opml.php |
+| **Preferences** | ttrss_prefs, ttrss_user_prefs, ttrss_prefs_types, ttrss_prefs_sections, ttrss_settings_profiles | db-prefs.php, pref/prefs.php | Community [3]: Counters+Prefs — ttrss_prefs, ttrss_user_prefs (co-located with counter caches) |
+| **Caching** | ttrss_counters_cache, ttrss_cat_counters_cache, ttrss_feedbrowser_cache | ccache.php, feedbrowser.php | Community [3]: ttrss_counters_cache, ttrss_cat_counters_cache; Community [5]: ttrss_feedbrowser_cache |
+| **Plugin** | ttrss_plugin_storage | pluginhost.php | Community [6]: Plugin — isolated (pluginhost.php only) |
+| **System** | ttrss_version, ttrss_themes, ttrss_error_log | dbupdater.php, logger/sql.php | Community [1]: Auth/System — ttrss_version, ttrss_error_log |
+| **Federation** | ttrss_linked_instances, ttrss_linked_feeds | (minimal code — low priority) | Community [5]: ttrss_linked_feeds (co-located with ttrss_feeds) |
 
 #### Entity Dependency Order
 
@@ -411,23 +411,35 @@ Evidence updates:
 - **DB community [6]** (pluginhost.php → ttrss_plugin_storage only) confirms plugin storage
   is fully isolated; can be the last business-logic module before handlers.
 
-### Hook Graph (20 nodes, 18 edges, Leiden → 5 communities)
+### Hook Graph (40 nodes, 39 edges, Leiden → 7 communities)
+
+**ENHANCED 2026-04-04**: Script fix added `get_hooks()` detection alongside `add_hook()`/`run_hooks()`.
+All 24 hooks now detected (was 8). 23 `get_hooks()` invocations discovered.
 
 | Community | Hooks | Invokers |
 |-----------|-------|----------|
-| **[0] Prefs/UI sections** | HOOK_PREFS_TAB, HOOK_PREFS_TAB_SECTION | pref/filters.php, pref/labels.php, pref/prefs.php, pref/system.php, pref/users.php |
-| **[1] Feed/update pipeline** | HOOK_FEED_PARSED, HOOK_HOUSE_KEEPING, HOOK_UPDATE_TASK | handler/public.php, rssfuncs.php, update.php |
-| **[2] Feed config** | HOOK_PREFS_EDIT_FEED, HOOK_PREFS_SAVE_FEED | pref/feeds.php |
-| **[3] Auth** | HOOK_AUTH_USER | plugins/auth_internal/init.php (sole implementer) |
-| **[4] Prefs root** | HOOK_PREFS_TABS | prefs.php |
+| **[0] Feed pipeline** | HOOK_ARTICLE_FILTER, HOOK_FEED_FETCHED, HOOK_FEED_PARSED, HOOK_FETCH_FEED, HOOK_HOUSE_KEEPING | rssfuncs.php (5 hooks), handler/public.php (HOUSE_KEEPING + UPDATE_TASK), update.php (UPDATE_TASK) |
+| **[1] Article rendering** | HOOK_ARTICLE_BUTTON, HOOK_ARTICLE_LEFT_BUTTON, HOOK_RENDER_ARTICLE, HOOK_SANITIZE, HOOK_HOTKEY_INFO, HOOK_HOTKEY_MAP | functions2.php (6 hooks) |
+| **[2] Headline display** | HOOK_HEADLINE_TOOLBAR_BUTTON, HOOK_QUERY_HEADLINES, HOOK_RENDER_ARTICLE_CDM | feeds.php (5 hooks), api.php (2), handler/public.php (QUERY_HEADLINES), pref/filters.php (QUERY_HEADLINES) |
+| **[3] Pref sections** | HOOK_PREFS_TAB, HOOK_PREFS_TAB_SECTION | pref/feeds.php, pref/filters.php, pref/labels.php, pref/prefs.php, pref/system.php, pref/users.php |
+| **[4] Feed editing** | HOOK_PREFS_EDIT_FEED, HOOK_PREFS_SAVE_FEED | pref/feeds.php |
+| **[5] Auth** | HOOK_AUTH_USER | functions.php (INVOKES), plugins/auth_internal/init.php (sole REGISTERS) |
+| **[6] API rendering** | HOOK_RENDER_ARTICLE_API | api.php |
+| **[7] UI chrome** | HOOK_TOOLBAR_BUTTON, HOOK_ACTION_ITEM, HOOK_PREFS_TABS | index.php, prefs.php |
 
 Evidence updates:
-- `HOOK_AUTH_USER` has exactly 1 implementer in the codebase (auth_internal); this matches
-  the pluggy `firstresult=True` hook spec in `ttrss/plugins/hookspecs.py`.
-- All update/housekeeping hooks in community [1] confirm Phase 3f (tasks/housekeeping.py)
-  scope — these three hooks fire in the same pipeline stage.
-- Hook graph is small (20 nodes, 18 edges) — the PHP codebase uses hooks sparingly.
-  Only 8 distinct HOOK_* constants are in active use.
+- `functions.php` INVOKES `HOOK_AUTH_USER` via `get_hooks()` (line 711) — this is the
+  authentication loop, confirmed: `foreach (PluginHost::getInstance()->get_hooks(PluginHost::HOOK_AUTH_USER) as $plugin)`.
+- `functions2.php` is the primary article-rendering hook invoker (6 hooks), confirming
+  that articles/ops.py and articles/sanitize.py need hook invocations for SANITIZE,
+  RENDER_ARTICLE, ARTICLE_BUTTON, ARTICLE_LEFT_BUTTON, HOTKEY_INFO, HOTKEY_MAP.
+- `rssfuncs.php` invokes 5 hooks in the feed pipeline: FETCH_FEED → FEED_FETCHED →
+  FEED_PARSED → ARTICLE_FILTER → HOUSE_KEEPING. This matches the feed_tasks.py hook ordering.
+- `feeds.php` invokes 5 hooks — these are Phase 4 handler hooks.
+- `api.php` invokes QUERY_HEADLINES + RENDER_ARTICLE_API — Phase 4 API handler hooks.
+- Only 1 REGISTERS edge in entire codebase: auth_internal/init.php → HOOK_AUTH_USER.
+  All other hooks have zero REGISTERS (they are registered dynamically by plugins at runtime,
+  not statically in the source code being analyzed).
 
 ### Class Graph (81 nodes, 27 edges, Leiden → 55 communities)
 

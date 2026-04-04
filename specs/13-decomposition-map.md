@@ -52,25 +52,38 @@ target Python module. Grouped by domain responsibility, NOT by PHP file.
 ---
 
 ### `ttrss/ccache.py` ← Phase 3 (before feeds/counters.py — counters reads it)
-| PHP function | Source file | Lines | Notes |
+
+**Graph evidence:** DB_TABLE community [3] (ccache.php + functions.php → ttrss_counters_cache, ttrss_cat_counters_cache). Call graph levels 1-4.
+
+| PHP function | Source file | Graph Level | Notes |
 |---|---|---|---|
-| `invalidate_cache()` | ccache.php | — | Deletes rows from ttrss_counters_cache + ttrss_cat_counters_cache for owner_uid; called from tasks/feed_tasks.py after article insert |
-| `update_cache()` | ccache.php | — | Writes updated counter value into ttrss_counters_cache / ttrss_cat_counters_cache |
-| Cache read helpers | ccache.php | — | Read-side functions used by feeds/counters.py (getAllCounters, getFeedCounters, getCategoryCounters) |
+| `ccache_zero_all()` | ccache.php:8-13 | L1 | Deletes all counter cache rows for owner_uid |
+| `ccache_remove()` | ccache.php:16-27 | L1 | Deletes specific feed/cat counter cache row |
+| `ccache_find()` | ccache.php:56-91 | L4 | Reads cached counter value; calls ccache_update on miss |
+| `ccache_update_all()` | ccache.php:29-53 | L4 | Recalculates all counters for owner_uid |
+| `ccache_update()` | ccache.php:94-191 | L4 | Recalculates counter for one feed/category |
+| `_count_feed_articles()` | — (inlined) | — | Inlines getFeedArticles logic to break circular ccache↔counters dependency (R18) |
 
 ---
 
 ### `ttrss/labels.py` ← Phase 3 (before articles/ops.py and feeds/counters.py)
-| PHP function | Source file | Lines | Notes |
+
+**Graph evidence:** DB_TABLE community [0] (labels.php → ttrss_labels2, ttrss_user_labels2, ttrss_user_entries, ttrss_access_keys). Call graph levels 1-3.
+
+| PHP function | Source file | Graph Level | Notes |
 |---|---|---|---|
-| `label_to_feed_id()` | functions.php | — | Converts label ID to virtual feed ID (negative-id scheme); used by counters and feed handlers |
-| `label_find_id()` | labels.php | — | Find label ID by caption and owner_uid; called from rssfuncs.php during article labeling |
-| `label_to_feed_id()` (labels.php variant) | labels.php | — | labels.php copy of the virtual-id conversion |
-| `labels_get_all()` | labels.php | — | Return all labels for owner_uid from ttrss_labels2 |
-| `label_create()` | labels.php | — | Insert new row into ttrss_labels2 |
-| `label_remove()` | labels.php | — | Delete label from ttrss_labels2 + cascade ttrss_user_labels2 |
-| `label_set_article()` | labels.php | — | Assign or remove a label on an article (ttrss_user_labels2) |
-| `label_find_feed_articles()` | labels.php | — | Return article IDs in a feed that carry a given label |
+| `label_find_id()` | labels.php:2-12 | L2 | Find label ID by caption and owner_uid |
+| `label_find_caption()` | labels.php:60-70 | L2 | Find label caption by ID and owner_uid |
+| `get_all_labels()` | labels.php:72-82 | L2 | Return all labels for owner_uid |
+| `get_article_labels()` | labels.php:14-57 | L2 | Return labels for a specific article |
+| `label_update_cache()` | labels.php:84-97 | L2 | Update label_cache column in ttrss_user_entries |
+| `label_clear_cache()` | labels.php:99-103 | L1 | Clear label_cache for an article |
+| `label_add_article()` | labels.php:121-143 | L3 | Assign label to article (INSERT ttrss_user_labels2) |
+| `label_remove_article()` | labels.php:106-119 | L3 | Remove label from article (DELETE ttrss_user_labels2) |
+| `label_create()` | labels.php:177-199 | L2 | Create new label |
+| `label_remove()` | labels.php:145-175 | L2 | Delete label + cascade |
+
+**Note:** `label_to_feed_id()` and `feed_to_label_id()` moved to `ttrss/utils/feeds.py` (ID conversion utilities).
 
 ---
 
@@ -224,6 +237,82 @@ target Python module. Grouped by domain responsibility, NOT by PHP file.
 
 ---
 
+### `ttrss/utils/feeds.py` ← Phase 3 (constants + ID conversions)
+
+**Graph evidence:** Pure utility, no DB access. Call graph level 0. Used by ccache.py, labels.py, counters.py, articles/search.py.
+
+| PHP function | Source file | Graph Level | Notes |
+|---|---|---|---|
+| `LABEL_BASE_INDEX` | functions2.php | — | Constant: -1024 |
+| `PLUGIN_FEED_BASE_INDEX` | pluginhost.php | — | Constant: -128 |
+| `label_to_feed_id()` | functions2.php:2400-2401 | L0 | Label ID → virtual feed ID |
+| `feed_to_label_id()` | functions2.php:2404-2405 | L0 | Virtual feed ID → label ID |
+| `pfeed_to_feed_id()` | pluginhost.php:381-382 | L0 | Plugin feed ID → feed ID |
+| `feed_to_pfeed_id()` | pluginhost.php:385-386 | L0 | Feed ID → plugin feed ID |
+| `classify_feed_id()` | — (inferred) | L0 | Classify feed ID as real/virtual/label/plugin |
+
+---
+
+### `ttrss/articles/tags.py` ← Phase 3 (tag cache + CRUD)
+
+**Graph evidence:** DB_TABLE community [4] (ttrss_tags). Call graph levels 0-2.
+
+| PHP function | Source file | Graph Level | Notes |
+|---|---|---|---|
+| `tag_is_valid()` | functions2.php:1107-1115 | L0 | Tag name validation |
+| `sanitize_tag()` | functions2.php:991-1000 | L0 | Tag name normalization |
+| `get_article_tags()` | functions2.php:1055-1099 | L2 | DB query for article's tags |
+| `setArticleTags()` | article.php | L2 | Write tag_cache + insert/delete ttrss_tags |
+| `format_tags_string()` | functions2.php:~1680 | L0 | Format tags for display |
+
+---
+
+### `ttrss/articles/filters.py` ← Phase 3 (shared filter module)
+
+**Graph evidence:** Used by BOTH articles/search.py (queryFeedHeadlines) AND tasks/feed_tasks.py (article persistence). Extracted as shared module to prevent coupling.
+
+| PHP function | Source file | Graph Level | Notes |
+|---|---|---|---|
+| `load_filters()` | functions2.php:1491-1563 | L3 | Load filter rules for a feed |
+| `filter_to_sql()` | functions2.php:2082-2165 | L3 | Filter rule → SQLAlchemy clause |
+| `get_article_filters()` | rssfuncs.php:1272-1348 | L0 | Match article against filter rules |
+| `find_article_filter()` | rssfuncs.php:1350-1357 | L0 | Find first matching filter |
+| `find_article_filters()` | rssfuncs.php:1359-1368 | L0 | Find all matching filters |
+| `calculate_article_score()` | rssfuncs.php:1370-1379 | L0 | Sum filter score adjustments |
+
+---
+
+### `ttrss/articles/persist.py` ← Phase 3 (article persistence in feed update pipeline)
+
+**Graph evidence:** Call graph levels 0-6. Part of rssfuncs.php::update_rss_feed decomposition. Handles GUID generation, content hashing, N-gram dedup, enclosure storage.
+
+| PHP function | Source file | Graph Level | Notes |
+|---|---|---|---|
+| `make_guid_from_title()` | rssfuncs.php:550-560 | L0 | GUID generation from title |
+| `build_entry_guid()` | rssfuncs.php:550-621 | L1 | Full GUID construction with hash |
+| `content_hash()` | rssfuncs.php:707 | L0 | SHA1 of content for dedup |
+| `persist_article()` | rssfuncs.php:545-1117 | L6 | Full article upsert pipeline |
+| `upsert_entry()` | rssfuncs.php:720-750 | L2 | INSERT/UPDATE ttrss_entries |
+| `upsert_user_entry()` | rssfuncs.php:887-894 | L2 | INSERT/UPDATE ttrss_user_entries |
+| `persist_enclosures()` | rssfuncs.php:982-1020 | L1 | INSERT ttrss_enclosures |
+| `apply_filter_actions()` | rssfuncs.php:812-863 | L2 | Execute matched filter actions |
+
+---
+
+### `ttrss/tasks/housekeeping.py` ← Phase 3 (background cleanup tasks)
+
+**Graph evidence:** Hook graph community [0] — HOOK_HOUSE_KEEPING invoked by rssfuncs.php and handler/public.php. Call graph level 1.
+
+| PHP function | Source file | Graph Level | Notes |
+|---|---|---|---|
+| `expire_cached_files()` | rssfuncs.php:~1395-1414 | L1 | Delete stale cache files |
+| `expire_error_log()` | rssfuncs.php:~1380-1393 | L1 | Purge old error_log rows |
+| `update_feedbrowser_cache()` | rssfuncs.php:~1330-1370 | L1 | Refresh feedbrowser_cache |
+| `cleanup_tags()` | rssfuncs.php:~1370-1380 | L1 | Remove orphaned tags |
+| `housekeeping_common()` | rssfuncs.php:1415-1430 | L3 | Orchestrator; calls above + HOOK_HOUSE_KEEPING |
+
+---
+
 ## Hook Invocation Cross-Reference
 
 Where each PHP hook is called (informs Phase 2+ implementation):
@@ -274,3 +363,31 @@ Where each PHP hook is called (informs Phase 2+ implementation):
 | `print_checkpoint()` | `logging.debug()` |
 | `_debug()` / `_debug_suppress()` | Python `logging` module |
 | `check_for_update()` | Package versioning handles this; skip |
+| `render_login_form()` | Server-rendered PHP template; Flask route handles |
+| `print_feed_cat_select()` / `print_feed_select()` / `print_label_select()` | Server-rendered HTML <select> helpers |
+| `stylesheet_tag()` / `javascript_tag()` / `get_minified_js()` / `T_js_decl()` | Frontend asset helpers; not needed |
+| `format_warning()` / `format_notice()` / `format_error()` (HTML helpers) | PHP server-rendered HTML; replaced by Flask flash |
+| `implements_interface()` | PHP reflection; Python uses isinstance/Protocol |
+| `startup_gettext()` / `init_js_translations()` | Flask-Babel handles i18n |
+| `print_user_stylesheet()` | CSS generation; eliminated or stub |
+| `calculate_dep_timestamp()` | UI caching timestamp; not reproduced |
+| `stripslashes_deep()` | PHP magic_quotes compat; not needed in Python |
+| `gzdecode()` | Python: `gzip.decompress()` or httpx handles |
+
+---
+
+## Graph Validation Status
+
+**Tool:** `tools/graph_analysis/validate_coverage.py` (5-dimension validator)
+**Graph data:** `tools/graph_analysis/output/` (run 2026-04-04, enhanced script with get_hooks() detection)
+
+| Metric | Value |
+|--------|-------|
+| Call graph nodes (levels 0-10, excluding third-party) | TBD (run validator) |
+| Functions matched to Python | TBD |
+| Functions explicitly eliminated | TBD |
+| Coverage percentage | TBD |
+| Hook invocations covered (of 24) | TBD |
+| Missing imports | TBD |
+
+**Last validated:** Not yet run. Run `python tools/graph_analysis/validate_coverage.py` to populate.

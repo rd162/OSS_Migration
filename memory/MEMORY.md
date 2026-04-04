@@ -7,3 +7,5 @@
 - [Phase 2 Plan](phase2_plan_2026-04-04.md) — Adversarial-thinking selected plan: Candidate A (Dependency-First, 4 batches, 15-criterion exit gate, all hook ordering + session/auth decisions)
 - [Phase 3 Plan](phase3_plan_2026-04-04.md) — Adversarial-thinking winner (Condorcet 2-0): 9 serial batches, filters extracted, ccache inlines getFeedArticles, 18-criterion exit gate
 - [Phase 4 Plan](phase4_plan_2026-04-04.md) — Handlers plan (see file for details)
+- [Rework Plan](rework_plan.md) — Graph-driven enhancement of Phases 1-3 (Candidate B, adversarial-thinking pipeline)
+- [Next Session Plan](next_session_plan.md) — Phase 4 execution with graph-driven validation (validate_coverage.py per batch)

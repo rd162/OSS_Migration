@@ -4,20 +4,56 @@
   "edge_count": 126,
   "community_count": 7,
   "nodes": {
-    "ttrss_counters_cache": {
-      "label": "counters_cache",
+    "ttrss_version": {
+      "label": "version",
       "kind": "table"
     },
-    "ttrss_enclosures": {
-      "label": "enclosures",
+    "ttrss_feed_categories": {
+      "label": "feed_categories",
+      "kind": "table"
+    },
+    "ttrss_user_prefs": {
+      "label": "user_prefs",
+      "kind": "table"
+    },
+    "ttrss_feedbrowser_cache": {
+      "label": "feedbrowser_cache",
+      "kind": "table"
+    },
+    "ttrss_error_log": {
+      "label": "error_log",
+      "kind": "table"
+    },
+    "ttrss_tags": {
+      "label": "tags",
+      "kind": "table"
+    },
+    "ttrss_filter_actions": {
+      "label": "filter_actions",
+      "kind": "table"
+    },
+    "ttrss_prefs": {
+      "label": "prefs",
+      "kind": "table"
+    },
+    "ttrss_access_keys": {
+      "label": "access_keys",
+      "kind": "table"
+    },
+    "ttrss_user_labels2": {
+      "label": "user_labels2",
+      "kind": "table"
+    },
+    "ttrss_filters2": {
+      "label": "filters2",
       "kind": "table"
     },
     "ttrss_feeds": {
       "label": "feeds",
       "kind": "table"
     },
-    "ttrss_labels2": {
-      "label": "labels2",
+    "ttrss_enclosures": {
+      "label": "enclosures",
       "kind": "table"
     },
     "ttrss_user_entries": {
@@ -28,92 +64,56 @@
       "label": "filters",
       "kind": "table"
     },
-    "ttrss_filters2_rules": {
-      "label": "filters2_rules",
+    "ttrss_users": {
+      "label": "users",
       "kind": "table"
     },
-    "ttrss_filters2": {
-      "label": "filters2",
+    "ttrss_labels2": {
+      "label": "labels2",
       "kind": "table"
     },
-    "ttrss_feed_categories": {
-      "label": "feed_categories",
-      "kind": "table"
-    },
-    "ttrss_linked_feeds": {
-      "label": "linked_feeds",
-      "kind": "table"
-    },
-    "ttrss_prefs": {
-      "label": "prefs",
-      "kind": "table"
-    },
-    "ttrss_cat_counters_cache": {
-      "label": "cat_counters_cache",
-      "kind": "table"
-    },
-    "ttrss_version": {
-      "label": "version",
-      "kind": "table"
-    },
-    "ttrss_error_log": {
-      "label": "error_log",
-      "kind": "table"
-    },
-    "ttrss_sessions": {
-      "label": "sessions",
-      "kind": "table"
-    },
-    "ttrss_tags": {
-      "label": "tags",
-      "kind": "table"
-    },
-    "ttrss_access_keys": {
-      "label": "access_keys",
-      "kind": "table"
-    },
-    "ttrss_user_prefs": {
-      "label": "user_prefs",
-      "kind": "table"
-    },
-    "ttrss_settings_profiles": {
-      "label": "settings_profiles",
-      "kind": "table"
-    },
-    "ttrss_plugin_storage": {
-      "label": "plugin_storage",
-      "kind": "table"
-    },
-    "ttrss_user_labels2": {
-      "label": "user_labels2",
+    "ttrss_counters_cache": {
+      "label": "counters_cache",
       "kind": "table"
     },
     "ttrss_archived_feeds": {
       "label": "archived_feeds",
       "kind": "table"
     },
-    "ttrss_users": {
-      "label": "users",
+    "ttrss_linked_feeds": {
+      "label": "linked_feeds",
       "kind": "table"
     },
-    "ttrss_filters2_actions": {
-      "label": "filters2_actions",
-      "kind": "table"
-    },
-    "ttrss_filter_actions": {
-      "label": "filter_actions",
-      "kind": "table"
-    },
-    "ttrss_filter_types": {
-      "label": "filter_types",
+    "ttrss_sessions": {
+      "label": "sessions",
       "kind": "table"
     },
     "ttrss_entries": {
       "label": "entries",
       "kind": "table"
     },
-    "ttrss_feedbrowser_cache": {
-      "label": "feedbrowser_cache",
+    "ttrss_filter_types": {
+      "label": "filter_types",
+      "kind": "table"
+    },
+    "ttrss_filters2_actions": {
+      "label": "filters2_actions",
+      "kind": "table"
+    },
+    "ttrss_plugin_storage": {
+      "label": "plugin_storage",
+      "kind": "table"
+    },
+    "ttrss_settings_profiles": {
+      "label": "settings_profiles",
+      "kind": "table"
+    },
+    "ttrss_filters2_rules": {
+      "label": "filters2_rules",
+      "kind": "table"
+    },
+    "ttrss_cat_counters_cache": {
+      "label": "cat_counters_cache",
       "kind": "table"
     },
     "ttrss/classes/api.php": {
@@ -1036,24 +1036,22 @@
     }
   ],
   "communities": {
-    "ttrss_labels2": 0,
-    "ttrss_user_entries": 0,
-    "ttrss_feed_categories": 0,
-    "ttrss_access_keys": 0,
-    "ttrss_settings_profiles": 0,
-    "ttrss_archived_feeds": 0,
-    "ttrss/classes/api.php": 0,
-    "ttrss/classes/feeds.php": 0,
-    "ttrss/classes/handler/public.php": 0,
-    "ttrss/classes/pref/feeds.php": 0,
-    "ttrss/classes/rpc.php": 0,
-    "ttrss/include/digest.php": 0,
-    "ttrss/include/labels.php": 0,
-    "ttrss/opml.php": 0,
+    "ttrss_feedbrowser_cache": 0,
+    "ttrss_tags": 0,
+    "ttrss_feeds": 0,
+    "ttrss_enclosures": 0,
+    "ttrss_filters": 0,
+    "ttrss_linked_feeds": 0,
+    "ttrss/classes/dlg.php": 0,
+    "ttrss/classes/pref/users.php": 0,
+    "ttrss/include/feedbrowser.php": 0,
+    "ttrss/include/rssfuncs.php": 0,
+    "ttrss/install/index.php": 0,
+    "ttrss/update.php": 0,
     "ttrss_version": 1,
     "ttrss_error_log": 1,
-    "ttrss_sessions": 1,
     "ttrss_users": 1,
+    "ttrss_sessions": 1,
     "ttrss/classes/auth/base.php": 1,
     "ttrss/classes/dbupdater.php": 1,
     "ttrss/classes/logger/sql.php": 1,
@@ -1062,71 +1060,73 @@
     "ttrss/include/sessions.php": 1,
     "ttrss/plugins/auth_internal/init.php": 1,
     "ttrss/register.php": 1,
-    "ttrss_filters": 2,
-    "ttrss_filters2_rules": 2,
-    "ttrss_filters2": 2,
-    "ttrss_filters2_actions": 2,
     "ttrss_filter_actions": 2,
+    "ttrss_filters2": 2,
+    "ttrss_labels2": 2,
     "ttrss_filter_types": 2,
+    "ttrss_filters2_actions": 2,
+    "ttrss_filters2_rules": 2,
     "ttrss/classes/opml.php": 2,
     "ttrss/classes/pref/filters.php": 2,
     "ttrss/classes/pref/labels.php": 2,
-    "ttrss/update.php": 2,
-    "ttrss_counters_cache": 3,
-    "ttrss_prefs": 3,
-    "ttrss_cat_counters_cache": 3,
-    "ttrss_user_prefs": 3,
-    "ttrss_user_labels2": 3,
-    "ttrss/classes/db/prefs.php": 3,
-    "ttrss/classes/pref/prefs.php": 3,
-    "ttrss/include/ccache.php": 3,
-    "ttrss/include/functions.php": 3,
-    "ttrss_enclosures": 4,
-    "ttrss_tags": 4,
-    "ttrss_entries": 4,
-    "ttrss/classes/article.php": 4,
-    "ttrss/classes/dlg.php": 4,
-    "ttrss/include/functions2.php": 4,
-    "ttrss/include/rssfuncs.php": 4,
-    "ttrss_feeds": 5,
-    "ttrss_linked_feeds": 5,
-    "ttrss_feedbrowser_cache": 5,
-    "ttrss/classes/pref/users.php": 5,
-    "ttrss/include/feedbrowser.php": 5,
-    "ttrss/install/index.php": 5,
+    "ttrss/include/functions2.php": 2,
+    "ttrss_feed_categories": 3,
+    "ttrss_user_entries": 3,
+    "ttrss_archived_feeds": 3,
+    "ttrss_entries": 3,
+    "ttrss/classes/api.php": 3,
+    "ttrss/classes/article.php": 3,
+    "ttrss/classes/feeds.php": 3,
+    "ttrss/classes/pref/feeds.php": 3,
+    "ttrss/classes/rpc.php": 3,
+    "ttrss/include/digest.php": 3,
+    "ttrss_user_prefs": 4,
+    "ttrss_prefs": 4,
+    "ttrss_counters_cache": 4,
+    "ttrss_cat_counters_cache": 4,
+    "ttrss/classes/db/prefs.php": 4,
+    "ttrss/classes/pref/prefs.php": 4,
+    "ttrss/include/ccache.php": 4,
+    "ttrss/include/functions.php": 4,
+    "ttrss_access_keys": 5,
+    "ttrss_user_labels2": 5,
+    "ttrss_settings_profiles": 5,
+    "ttrss/classes/handler/public.php": 5,
+    "ttrss/include/labels.php": 5,
+    "ttrss/opml.php": 5,
     "ttrss_plugin_storage": 6,
     "ttrss/classes/pluginhost.php": 6
   },
   "levels": {
     "0": [
-      "ttrss_counters_cache",
-      "ttrss_enclosures",
+      "ttrss_version",
+      "ttrss_feed_categories",
+      "ttrss_user_prefs",
+      "ttrss_feedbrowser_cache",
+      "ttrss_error_log",
+      "ttrss_tags",
+      "ttrss_filter_actions",
+      "ttrss_prefs",
+      "ttrss_access_keys",
+      "ttrss_user_labels2",
+      "ttrss_filters2",
       "ttrss_feeds",
-      "ttrss_labels2",
+      "ttrss_enclosures",
       "ttrss_user_entries",
       "ttrss_filters",
-      "ttrss_filters2_rules",
-      "ttrss_filters2",
-      "ttrss_feed_categories",
-      "ttrss_linked_feeds",
-      "ttrss_prefs",
-      "ttrss_cat_counters_cache",
-      "ttrss_version",
-      "ttrss_error_log",
-      "ttrss_sessions",
-      "ttrss_tags",
-      "ttrss_access_keys",
-      "ttrss_user_prefs",
-      "ttrss_settings_profiles",
-      "ttrss_plugin_storage",
-      "ttrss_user_labels2",
-      "ttrss_archived_feeds",
       "ttrss_users",
-      "ttrss_filters2_actions",
-      "ttrss_filter_actions",
-      "ttrss_filter_types",
+      "ttrss_labels2",
+      "ttrss_counters_cache",
+      "ttrss_archived_feeds",
+      "ttrss_linked_feeds",
+      "ttrss_sessions",
       "ttrss_entries",
-      "ttrss_feedbrowser_cache"
+      "ttrss_filter_types",
+      "ttrss_filters2_actions",
+      "ttrss_plugin_storage",
+      "ttrss_settings_profiles",
+      "ttrss_filters2_rules",
+      "ttrss_cat_counters_cache"
     ],
     "1": [
       "ttrss/classes/api.php",
@@ -1165,26 +1165,24 @@
   },
   "community_members": {
     "0": [
-      "ttrss_labels2",
-      "ttrss_user_entries",
-      "ttrss_feed_categories",
-      "ttrss_access_keys",
-      "ttrss_settings_profiles",
-      "ttrss_archived_feeds",
-      "ttrss/classes/api.php",
-      "ttrss/classes/feeds.php",
-      "ttrss/classes/handler/public.php",
-      "ttrss/classes/pref/feeds.php",
-      "ttrss/classes/rpc.php",
-      "ttrss/include/digest.php",
-      "ttrss/include/labels.php",
-      "ttrss/opml.php"
+      "ttrss_feedbrowser_cache",
+      "ttrss_tags",
+      "ttrss_feeds",
+      "ttrss_enclosures",
+      "ttrss_filters",
+      "ttrss_linked_feeds",
+      "ttrss/classes/dlg.php",
+      "ttrss/classes/pref/users.php",
+      "ttrss/include/feedbrowser.php",
+      "ttrss/include/rssfuncs.php",
+      "ttrss/install/index.php",
+      "ttrss/update.php"
     ],
     "1": [
       "ttrss_version",
       "ttrss_error_log",
-      "ttrss_sessions",
       "ttrss_users",
+      "ttrss_sessions",
       "ttrss/classes/auth/base.php",
       "ttrss/classes/dbupdater.php",
       "ttrss/classes/logger/sql.php",
@@ -1195,44 +1193,46 @@
       "ttrss/register.php"
     ],
     "2": [
-      "ttrss_filters",
-      "ttrss_filters2_rules",
-      "ttrss_filters2",
-      "ttrss_filters2_actions",
       "ttrss_filter_actions",
+      "ttrss_filters2",
+      "ttrss_labels2",
       "ttrss_filter_types",
+      "ttrss_filters2_actions",
+      "ttrss_filters2_rules",
       "ttrss/classes/opml.php",
       "ttrss/classes/pref/filters.php",
       "ttrss/classes/pref/labels.php",
-      "ttrss/update.php"
+      "ttrss/include/functions2.php"
     ],
     "3": [
-      "ttrss_counters_cache",
-      "ttrss_prefs",
-      "ttrss_cat_counters_cache",
+      "ttrss_feed_categories",
+      "ttrss_user_entries",
+      "ttrss_archived_feeds",
+      "ttrss_entries",
+      "ttrss/classes/api.php",
+      "ttrss/classes/article.php",
+      "ttrss/classes/feeds.php",
+      "ttrss/classes/pref/feeds.php",
+      "ttrss/classes/rpc.php",
+      "ttrss/include/digest.php"
+    ],
+    "4": [
       "ttrss_user_prefs",
-      "ttrss_user_labels2",
+      "ttrss_prefs",
+      "ttrss_counters_cache",
+      "ttrss_cat_counters_cache",
       "ttrss/classes/db/prefs.php",
       "ttrss/classes/pref/prefs.php",
       "ttrss/include/ccache.php",
       "ttrss/include/functions.php"
     ],
-    "4": [
-      "ttrss_enclosures",
-      "ttrss_tags",
-      "ttrss_entries",
-      "ttrss/classes/article.php",
-      "ttrss/classes/dlg.php",
-      "ttrss/include/functions2.php",
-      "ttrss/include/rssfuncs.php"
-    ],
     "5": [
-      "ttrss_feeds",
-      "ttrss_linked_feeds",
-      "ttrss_feedbrowser_cache",
-      "ttrss/classes/pref/users.php",
-      "ttrss/include/feedbrowser.php",
-      "ttrss/install/index.php"
+      "ttrss_access_keys",
+      "ttrss_user_labels2",
+      "ttrss_settings_profiles",
+      "ttrss/classes/handler/public.php",
+      "ttrss/include/labels.php",
+      "ttrss/opml.php"
     ],
     "6": [
       "ttrss_plugin_storage",

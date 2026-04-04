@@ -399,8 +399,8 @@ class PHPFileParser:
 
         caller = self._current_qname(data, class_stack, func_stack)
 
-        # Detect add_hook / run_hooks and extract HOOK_ argument
-        if fname in ("add_hook", "run_hooks"):
+        # Detect add_hook / run_hooks / get_hooks and extract HOOK_ argument
+        if fname in ("add_hook", "run_hooks", "get_hooks"):
             hook_const = self._extract_hook_arg(node, src)
             if hook_const:
                 if fname == "add_hook":
@@ -427,8 +427,8 @@ class PHPFileParser:
         line = _line(node)
         caller = self._current_qname(data, class_stack, func_stack)
 
-        # Detect add_hook / run_hooks calls on $this or PluginHost
-        if mname in ("add_hook", "run_hooks"):
+        # Detect add_hook / run_hooks / get_hooks calls on $this or PluginHost
+        if mname in ("add_hook", "run_hooks", "get_hooks"):
             hook_const = self._extract_hook_arg(node, src)
             if hook_const:
                 if mname == "add_hook":
@@ -454,8 +454,8 @@ class PHPFileParser:
                 line = _line(node)
                 caller = self._current_qname(data, class_stack, func_stack)
 
-                # Detect PluginHost::getInstance()->add_hook / run_hooks pattern
-                if mname in ("add_hook", "run_hooks"):
+                # Detect PluginHost::getInstance()->add_hook / run_hooks / get_hooks pattern
+                if mname in ("add_hook", "run_hooks", "get_hooks"):
                     hook_const = self._extract_hook_arg(node, src)
                     if hook_const:
                         if mname == "add_hook":
@@ -532,9 +532,9 @@ class PHPFileParser:
         # SQL
         for line_no, line_text in enumerate(text.splitlines(), 1):
             self._extract_sql(line_text, data, line_no)
-        # Hooks — heuristic: detect add_hook / run_hooks calls by regex
+        # Hooks — heuristic: detect add_hook / run_hooks / get_hooks calls by regex
         add_hook_re = re.compile(
-            r"\b(?:add_hook|run_hooks)\s*\(\s*(HOOK_[A-Z_]+)", re.IGNORECASE
+            r"\b(?:add_hook|run_hooks|get_hooks)\s*\(\s*(?:PluginHost::)?(HOOK_[A-Z_]+)", re.IGNORECASE
         )
         for line_no, line_text in enumerate(text.splitlines(), 1):
             m = add_hook_re.search(line_text)
@@ -890,6 +890,17 @@ class Reporter:
         print(f"  [OK] {out_path} ({G.number_of_nodes()} nodes, "
               f"{G.number_of_edges()} edges, "
               f"{len(comm_members)} communities)")
+
+        # For the call graph, also emit function_levels.json (inverted level map)
+        if dim_name == "call":
+            func_levels: Dict[str, int] = {}
+            for lvl, members in levels.items():
+                for m in members:
+                    func_levels[str(m)] = lvl
+            fl_path = self.output_dir / "function_levels.json"
+            fl_path.write_text(json.dumps(func_levels, indent=2, sort_keys=True))
+            print(f"  [OK] {fl_path} ({len(func_levels)} functions)")
+
         return payload
 
     def save_summary(self, all_results: Dict[str, dict]) -> None:

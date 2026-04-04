@@ -1,13 +1,28 @@
 {
   "call": {
     "node_count": 1206,
-    "edge_count": 2100,
-    "community_count": 303,
+    "edge_count": 2086,
+    "community_count": 305,
     "communities": {
       "0": [
+        "API::wrap",
+        "API::getVersion",
+        "API::getApiLevel",
         "API::login",
+        "API::isLoggedIn",
+        "API::getFeeds",
+        "API::getCategories",
+        "API::getHeadlines",
+        "API::getArticle",
         "API::getConfig",
+        "API::updateFeed",
+        "API::catchupFeed",
+        "API::getPref",
+        "API::index",
+        "API::shareToPublished",
         "API::unsubscribeFeed",
+        "API::subscribeToFeed",
+        "API::getFeedTree",
         "API::isCategoryEmpty",
         "Article::redirect",
         "Article::setScore",
@@ -40,6 +55,7 @@
         "FeedItem_RSS::get_categories",
         "FeedItem_RSS::get_enclosures",
         "FeedParser::init",
+        "Feeds::format_headlines_list",
         "Feeds::view",
         "Feeds::generate_dashboard_feed",
         "Feeds::generate_error_feed",
@@ -48,6 +64,7 @@
         "Handler_Public::pubsub",
         "Handler_Public::share",
         "Handler_Public::rss",
+        "Handler_Public::login",
         "__global__::escape_string",
         "__global__::query",
         "__global__::fetch_assoc",
@@ -56,26 +73,20 @@
         "__global__::affected_rows",
         "Logger_SQL::log_error",
         "Opml::export",
-        "Opml::import",
         "Opml::opml_export_category",
         "Opml::opml_export",
-        "Opml::opml_import_feed",
-        "Opml::opml_import_label",
-        "Opml::opml_import_preference",
         "Opml::opml_import_filter",
-        "Opml::opml_import_category",
-        "Opml::opml_notice",
         "PluginHost::save_data",
         "PluginHost::set",
         "PluginHost::clear_data",
+        "PluginHost::get_feed_handler",
+        "PluginHost::get_api_method",
         "Pref_Feeds::renamecat",
         "Pref_Feeds::get_category_items",
         "Pref_Feeds::getfeedtree",
         "Pref_Feeds::makefeedtree",
         "Pref_Feeds::catsortreset",
         "Pref_Feeds::feedsortreset",
-        "Pref_Feeds::process_category_order",
-        "Pref_Feeds::savefeedorder",
         "Pref_Feeds::removeicon",
         "Pref_Feeds::uploadicon",
         "Pref_Feeds::editfeed",
@@ -87,8 +98,6 @@
         "Pref_Feeds::clear",
         "Pref_Feeds::categorize",
         "Pref_Feeds::removeCat",
-        "Pref_Feeds::addCat",
-        "Pref_Feeds::index",
         "Pref_Feeds::inactiveFeeds",
         "Pref_Feeds::feedsWithErrors",
         "Pref_Feeds::clear_feed_articles",
@@ -123,10 +132,10 @@
         "Pref_Labels::colorreset",
         "Pref_Labels::save",
         "Pref_Labels::index",
-        "Pref_Prefs::saveconfig",
         "Pref_Prefs::getHelp",
         "Pref_Prefs::changeemail",
         "Pref_Prefs::otpqrcode",
+        "Pref_Prefs::otpdisable",
         "Pref_Prefs::clearplugindata",
         "Pref_Prefs::editPrefProfiles",
         "Pref_System::clearLog",
@@ -141,8 +150,6 @@
         "RPC::addprofile",
         "RPC::saveprofile",
         "RPC::remarchive",
-        "RPC::togglepref",
-        "RPC::setpref",
         "RPC::mark",
         "RPC::delete",
         "RPC::unarchive",
@@ -156,14 +163,17 @@
         "RPC::markArticlesById",
         "RPC::getlinktitlebyid",
         "ttrss/include/crypt.php::encrypt_string",
-        "ttrss/include/db-prefs.php::set_pref",
         "ttrss/include/db.php::db_query",
         "ttrss/include/functions.php::print_select_hash",
         "ttrss/include/functions.php::make_local_datetime",
+        "ttrss/include/functions.php::sql_bool_to_bool",
         "ttrss/include/functions.php::bool_to_sql_bool",
         "ttrss/include/functions.php::checkbox_to_sql_bool",
         "ttrss/include/functions.php::getFeedIcon",
-        "ttrss/include/functions2.php::add_feed_category",
+        "ttrss/include/functions2.php::sanitize",
+        "ttrss/include/functions2.php::strip_harmful_tags",
+        "ttrss/include/functions2.php::print_checkpoint",
+        "ttrss/include/functions2.php::get_score_pic",
         "ttrss/include/sessions.php::session_get_schema_version",
         "ttrss/include/sessions.php::validate_session",
         "ttrss/include/sessions.php::ttrss_read",
@@ -173,9 +183,12 @@
       ],
       "1": [
         "API::getUnread",
+        "API::getCounters",
         "API::getLabels",
         "API::setArticleLabel",
         "API::api_get_feeds",
+        "API::api_get_headlines",
+        "Article::view",
         "Article::catchupArticleById",
         "Article::create_published_article",
         "Article::assigntolabel",
@@ -189,24 +202,17 @@
         "Db_Prefs::write",
         "Db::quote",
         "Feeds::catchupAll",
-        "Feeds::quickAddFeed",
         "Feeds::feedBrowser",
         "Feeds::search",
-        "Handler_Public::login",
-        "PluginHost::get_plugin_names",
         "PluginHost::get_feeds",
-        "Pref_Feeds::batch_edit_cbox",
-        "Pref_Feeds::editfeeds",
         "Pref_Feeds::feedlist_init_cat",
         "Pref_Feeds::feedlist_init_feed",
         "Pref_Feeds::remove_feed",
-        "Pref_Feeds::batchSubscribe",
         "Pref_Labels::remove",
         "Pref_Labels::add",
         "Pref_Prefs::resetconfig",
         "RPC::getAllCounters",
         "RPC::catchupSelected",
-        "RPC::sanityCheck",
         "RPC::updateFeedBrowser",
         "RPC::catchupFeed",
         "ttrss/include/ccache.php::ccache_zero_all",
@@ -214,11 +220,11 @@
         "ttrss/include/ccache.php::ccache_update_all",
         "ttrss/include/ccache.php::ccache_find",
         "ttrss/include/ccache.php::ccache_update",
-        "ttrss/include/db-prefs.php::get_pref",
         "ttrss/include/db.php::db_escape_string",
         "ttrss/include/db.php::db_fetch_assoc",
         "ttrss/include/db.php::db_num_rows",
         "ttrss/include/db.php::db_fetch_result",
+        "ttrss/include/db.php::db_affected_rows",
         "ttrss/include/db.php::db_quote",
         "ttrss/include/digest.php::send_headlines_digests",
         "ttrss/include/feedbrowser.php::make_feed_browser",
@@ -227,7 +233,6 @@
         "ttrss/include/functions.php::get_feed_update_interval",
         "ttrss/include/functions.php::initialize_user_prefs",
         "ttrss/include/functions.php::authenticate_user",
-        "ttrss/include/functions.php::smart_date_time",
         "ttrss/include/functions.php::get_schema_version",
         "ttrss/include/functions.php::sanity_check",
         "ttrss/include/functions.php::catchup_feed",
@@ -246,24 +251,26 @@
         "ttrss/include/functions.php::getFeedCounters",
         "ttrss/include/functions.php::get_pgsql_version",
         "ttrss/include/functions.php::print_feed_select",
-        "ttrss/include/functions.php::print_feed_cat_select",
         "ttrss/include/functions.php::getFeedCatTitle",
         "ttrss/include/functions.php::getFeedTitle",
-        "ttrss/include/functions2.php::make_init_params",
-        "ttrss/include/functions2.php::make_runtime_info",
         "ttrss/include/functions2.php::search_to_sql",
         "ttrss/include/functions2.php::getParentCategories",
         "ttrss/include/functions2.php::getChildCategories",
         "ttrss/include/functions2.php::queryFeedHeadlines",
         "ttrss/include/functions2.php::catchupArticlesById",
+        "ttrss/include/functions2.php::format_inline_player",
+        "ttrss/include/functions2.php::format_article",
         "ttrss/include/functions2.php::feed_has_icon",
+        "ttrss/include/functions2.php::format_article_labels",
+        "ttrss/include/functions2.php::format_article_note",
         "ttrss/include/functions2.php::get_feed_category",
         "ttrss/include/functions2.php::getArticleFeed",
+        "ttrss/include/functions2.php::get_article_enclosures",
         "ttrss/include/functions2.php::print_label_select",
+        "ttrss/include/functions2.php::format_article_enclosures",
         "ttrss/include/functions2.php::getLastArticleId",
         "ttrss/include/functions2.php::filter_to_sql",
         "ttrss/include/functions2.php::getFeedCategory",
-        "ttrss/include/functions2.php::calculate_dep_timestamp",
         "ttrss/include/functions2.php::label_to_feed_id",
         "ttrss/include/functions2.php::feed_to_label_id",
         "ttrss/include/labels.php::label_find_id",
@@ -280,6 +287,7 @@
         "ttrss/include/rssfuncs.php::update_daemon_common",
         "ttrss/install/index.php::db_query",
         "Auth_Internal::authenticate",
+        "Auth_Internal::check_password",
         "ttrss/opml.php"
       ],
       "2": [
@@ -288,13 +296,10 @@
         "DbUpdater::isUpdateRequired",
         "DbUpdater::getSchemaLines",
         "DbUpdater::performUpdateTo",
-        "Dlg::importOpml",
         "Handler_Public::sharepopup",
         "Handler_Public::subscribe",
-        "Handler_Public::forgotpass",
         "Handler_Public::dbupdate",
         "__global__::after",
-        "Opml::opml_import",
         "Plugin::get_js",
         "Plugin::get_prefs_js",
         "PluginHandler::catchall",
@@ -314,18 +319,13 @@
         "PluginHost::add_api_method",
         "Pref_Prefs::changepassword",
         "Pref_Prefs::index",
-        "Pref_Prefs::otpenable",
-        "Pref_Prefs::otpdisable",
-        "Pref_Prefs::customizeCSS",
         "Pref_Prefs::getShortDesc",
         "Pref_Prefs::getHelpText",
         "Pref_Prefs::getSectionName",
         "Pref_Users::before",
         "Pref_Users::editSave",
         "Pref_Users::add",
-        "Pref_Users::resetUserPassword",
         "RPC::csrf_ignore",
-        "ttrssMailer::quickMail",
         "ttrss/include/functions.php::get_translations",
         "ttrss/include/functions.php::startup_gettext",
         "ttrss/include/functions.php::print_select",
@@ -340,7 +340,6 @@
         "ttrss/include/functions2.php::format_notice",
         "ttrss/include/functions2.php::print_notice",
         "ttrss/include/functions2.php::print_warning",
-        "ttrss/include/functions2.php::T_sprintf",
         "ttrss/include/functions2.php::encrypt_password",
         "ttrss/include/functions2.php::init_plugins",
         "ttrss/include/functions2.php::print_user_stylesheet",
@@ -352,113 +351,25 @@
         "ttrss/include/functions2.php::javascript_tag",
         "ttrss/include/functions2.php::T_js_decl",
         "ttrss/include/functions2.php::init_js_translations",
-        "ttrss/include/functions2.php::format_libxml_error",
         "ttrss/install/index.php::make_password",
-        "ttrss/install/index.php::sanity_check",
         "ttrss/install/index.php::print_error",
-        "ttrss/install/index.php::print_notice",
-        "ttrss/install/index.php::db_connect",
-        "ttrss/install/index.php::make_config",
         "Mobile_Detect::isMobile",
         "Mobile_Detect::isTablet",
         "ttrss/lib/accept-to-gettext.php::find_match",
         "ttrss/lib/accept-to-gettext.php::al2gt",
-        "PHPMailer::IsHTML",
         "Auth_Internal::about",
-        "Auth_Internal::check_password",
         "Auth_Internal::change_password",
         "Auth_Internal::api_version",
         "ttrss/api/index.php",
         "ttrss/backend.php",
         "ttrss/include/login_form.php",
         "ttrss/index.php",
-        "ttrss/install/index.php",
         "ttrss/prefs.php",
         "ttrss/public.php",
         "ttrss/register.php",
         "ttrss/update.php"
       ],
       "3": [
-        "API::updateArticle",
-        "Article::editArticleTags",
-        "Article::setArticleTags",
-        "Db_PDO::last_error",
-        "Dlg::generatedFeed",
-        "Dlg::newVersion",
-        "FeedItem_Atom::get_id",
-        "FeedItem_Atom::get_link",
-        "FeedItem_RSS::get_id",
-        "FeedItem::get_id",
-        "FeedItem::get_date",
-        "FeedItem::get_description",
-        "FeedItem::get_content",
-        "FeedItem::get_comments_url",
-        "FeedItem::get_comments_count",
-        "FeedItem::get_categories",
-        "FeedItem::get_enclosures",
-        "FeedItem::get_author",
-        "FeedParser::error",
-        "FeedParser::errors",
-        "FeedParser::get_title",
-        "FeedParser::get_items",
-        "FeedParser::get_links",
-        "Opml::opml_publish_url",
-        "PluginHost::get_link",
-        "PluginHost::set_debug",
-        "Pref_Feeds::rescore",
-        "Pref_Feeds::rescoreAll",
-        "Pref_Filters::join",
-        "Pref_Prefs::setplugins",
-        "RPC::addfeed",
-        "RPC::publ",
-        "RPC::publishSelected",
-        "RPC::publishArticlesById",
-        "ttrss/include/crypt.php::decrypt_string",
-        "ttrss/include/functions.php::_debug_suppress",
-        "ttrss/include/functions.php::fetch_file_contents",
-        "ttrss/include/functions.php::get_favicon_url",
-        "ttrss/include/functions.php::check_feed_favicon",
-        "ttrss/include/functions.php::subscribe_to_feed",
-        "ttrss/include/functions2.php::check_for_update",
-        "ttrss/include/functions2.php::get_article_tags",
-        "ttrss/include/functions2.php::trim_array",
-        "ttrss/include/functions2.php::tag_is_valid",
-        "ttrss/include/functions2.php::sanitize_tag",
-        "ttrss/include/functions2.php::get_self_url_prefix",
-        "ttrss/include/functions2.php::add_feed_url",
-        "ttrss/include/functions2.php::load_filters",
-        "ttrss/include/functions2.php::fix_url",
-        "ttrss/include/functions2.php::validate_feed_url",
-        "ttrss/include/functions2.php::get_feed_access_key",
-        "ttrss/include/functions2.php::get_feeds_from_html",
-        "ttrss/include/functions2.php::is_html",
-        "ttrss/include/functions2.php::url_is_html",
-        "ttrss/include/functions2.php::build_url",
-        "ttrss/include/functions2.php::rewrite_relative_url",
-        "ttrss/include/functions2.php::gzdecode",
-        "ttrss/include/functions2.php::geturl",
-        "ttrss/include/rssfuncs.php::update_rss_feed",
-        "ttrss/include/rssfuncs.php::cache_images",
-        "ttrss/include/rssfuncs.php::get_article_filters",
-        "ttrss/include/rssfuncs.php::find_article_filter",
-        "ttrss/include/rssfuncs.php::calculate_article_score",
-        "ttrss/include/rssfuncs.php::labels_contains_caption",
-        "ttrss/include/rssfuncs.php::assign_article_to_label_filters",
-        "ttrss/include/rssfuncs.php::make_guid_from_title",
-        "ttrss/lib/languagedetect/LanguageDetect.php::setNameMode",
-        "QRspec::debug",
-        "QRspec::serial",
-        "QRinputItem::__construct",
-        "QRmask::serial",
-        "Publisher::publish_update",
-        "Publisher::http_post",
-        "Subscriber::find_feed",
-        "Subscriber::subscribe",
-        "Subscriber::unsubscribe",
-        "Subscriber::change_subscription",
-        "Subscriber::http"
-      ],
-      "4": [
         "QRcode::isalnumat",
         "QRcode::identifyMode",
         "QRcode::eatNum",
@@ -537,7 +448,7 @@
         "QRsplit::eat8",
         "QRsplit::splitString"
       ],
-      "5": [
+      "4": [
         "ttrssMailer::__construct",
         "PHPMailer::mail_passthru",
         "PHPMailer::AddAddress",
@@ -588,7 +499,6 @@
         "PHPMailer::Lang",
         "PHPMailer::IsError",
         "PHPMailer::FixEOL",
-        "PHPMailer::MsgHTML",
         "PHPMailer::set",
         "PHPMailer::SecureHeader",
         "PHPMailer::DKIM_QP",
@@ -616,23 +526,106 @@
         "QRrawcode::getCode",
         "SphinxClient::Close"
       ],
+      "5": [
+        "API::updateArticle",
+        "Article::editArticleTags",
+        "Article::setArticleTags",
+        "Db_PDO::last_error",
+        "Dlg::generatedFeed",
+        "FeedItem_Atom::get_id",
+        "FeedItem_Atom::get_link",
+        "FeedItem_RSS::get_id",
+        "FeedItem::get_id",
+        "FeedItem::get_date",
+        "FeedItem::get_description",
+        "FeedItem::get_content",
+        "FeedItem::get_comments_url",
+        "FeedItem::get_comments_count",
+        "FeedItem::get_categories",
+        "FeedItem::get_enclosures",
+        "FeedItem::get_author",
+        "FeedParser::error",
+        "FeedParser::errors",
+        "FeedParser::get_title",
+        "FeedParser::get_items",
+        "FeedParser::get_links",
+        "Opml::opml_publish_url",
+        "PluginHost::get_link",
+        "PluginHost::set_debug",
+        "Pref_Feeds::rescore",
+        "Pref_Feeds::rescoreAll",
+        "Pref_Filters::join",
+        "RPC::addfeed",
+        "RPC::publ",
+        "RPC::publishSelected",
+        "RPC::publishArticlesById",
+        "ttrss/include/crypt.php::decrypt_string",
+        "ttrss/include/functions.php::_debug_suppress",
+        "ttrss/include/functions.php::fetch_file_contents",
+        "ttrss/include/functions.php::get_favicon_url",
+        "ttrss/include/functions.php::check_feed_favicon",
+        "ttrss/include/functions.php::subscribe_to_feed",
+        "ttrss/include/functions2.php::get_article_tags",
+        "ttrss/include/functions2.php::trim_array",
+        "ttrss/include/functions2.php::tag_is_valid",
+        "ttrss/include/functions2.php::sanitize_tag",
+        "ttrss/include/functions2.php::get_self_url_prefix",
+        "ttrss/include/functions2.php::load_filters",
+        "ttrss/include/functions2.php::format_tags_string",
+        "ttrss/include/functions2.php::fix_url",
+        "ttrss/include/functions2.php::validate_feed_url",
+        "ttrss/include/functions2.php::get_feed_access_key",
+        "ttrss/include/functions2.php::get_feeds_from_html",
+        "ttrss/include/functions2.php::is_html",
+        "ttrss/include/functions2.php::url_is_html",
+        "ttrss/include/functions2.php::build_url",
+        "ttrss/include/functions2.php::rewrite_relative_url",
+        "ttrss/include/functions2.php::gzdecode",
+        "ttrss/include/functions2.php::geturl",
+        "ttrss/include/rssfuncs.php::update_rss_feed",
+        "ttrss/include/rssfuncs.php::cache_images",
+        "ttrss/include/rssfuncs.php::get_article_filters",
+        "ttrss/include/rssfuncs.php::find_article_filter",
+        "ttrss/include/rssfuncs.php::calculate_article_score",
+        "ttrss/include/rssfuncs.php::labels_contains_caption",
+        "ttrss/include/rssfuncs.php::assign_article_to_label_filters",
+        "ttrss/include/rssfuncs.php::make_guid_from_title",
+        "ttrss/lib/languagedetect/LanguageDetect.php::setNameMode",
+        "QRspec::debug",
+        "QRspec::serial",
+        "QRinputItem::__construct",
+        "QRmask::serial",
+        "Publisher::publish_update",
+        "Publisher::http_post",
+        "Subscriber::find_feed",
+        "Subscriber::subscribe",
+        "Subscriber::unsubscribe",
+        "Subscriber::change_subscription",
+        "Subscriber::http"
+      ],
       "6": [
         "Db_Mysql::connect",
         "Db_Mysqli::connect",
         "Db_PDO::connect",
         "Db_Pgsql::connect",
+        "Pref_Prefs::otpenable",
+        "HOTP::at",
+        "HOTP::verify",
+        "OTP::generateOTP",
+        "OTP::byteSecret",
+        "OTP::intToBytestring",
+        "TOTP::at",
+        "TOTP::now",
+        "TOTP::verify",
+        "TOTP::timecode",
         "QRcode::__construct",
         "QRcode::encodeString",
         "QRcode::encodeMask",
         "QRcode::getNextPosition",
-        "QRcode::init",
         "QRcode::makeMaskNo",
         "QRcode::makeMask",
         "QRcode::evaluateSymbol",
         "QRcode::mask",
-        "QRcode::init_rs",
-        "QRcode::init_rs_char",
-        "QRcode::encode_rs_char",
         "QRtools::binarize",
         "QRtools::buildCache",
         "QRspec::getWidth",
@@ -640,12 +633,6 @@
         "QRspec::getEccSpec",
         "QRspec::newFrame",
         "QRspec::rsBlockNum",
-        "QRspec::rsBlockNum1",
-        "QRspec::rsDataCodes1",
-        "QRspec::rsEccCodes1",
-        "QRspec::rsBlockNum2",
-        "QRspec::rsDataCodes2",
-        "QRspec::rsEccCodes2",
         "QRspec::rsDataLength",
         "QRspec::rsEccLength",
         "QRinput::getErrorCorrectionLevel",
@@ -653,10 +640,6 @@
         "QRbitstream::toByte",
         "QRsplit::toUpper",
         "QRsplit::splitStringToQRinput",
-        "QRrsItem::modnn",
-        "QRrsItem::init_rs_char",
-        "QRrsItem::encode_rs_char",
-        "QRrs::init_rs",
         "QRmask::writeFormatInformation",
         "QRmask::generateMaskNo",
         "QRmask::makeMaskNo",
@@ -664,7 +647,6 @@
         "QRmask::calcN1N3",
         "QRmask::evaluateSymbol",
         "QRmask::mask",
-        "QRrsblock::__construct",
         "QRrawcode::__construct",
         "QRcode::encodeInput",
         "QRcode::encodeString8bit",
@@ -679,8 +661,13 @@
       ],
       "7": [
         "Backend::digestTest",
+        "Feeds::format_headline_subtoolbar",
         "Handler_Public::generate_syndicated_feed",
+        "Handler_Public::forgotpass",
+        "Pref_Users::resetUserPassword",
+        "ttrssMailer::quickMail",
         "ttrss/include/digest.php::prepare_headlines_digest",
+        "ttrss/include/functions.php::truncate_string",
         "ttrss/include/functions.php::convert_timestamp",
         "MiniTemplator::readTemplateFromFile",
         "MiniTemplator::setTemplateString",
@@ -724,54 +711,62 @@
         "MiniTemplator::parseWordOrQuotedString",
         "MiniTemplator::combineFileSystemPath",
         "MiniTemplator::triggerError",
-        "MiniTemplator::programLogicError"
+        "MiniTemplator::programLogicError",
+        "PHPMailer::IsHTML",
+        "PHPMailer::MsgHTML"
       ],
       "8": [
         "API::before",
-        "API::wrap",
-        "API::getVersion",
-        "API::getApiLevel",
-        "API::logout",
-        "API::isLoggedIn",
-        "API::getCounters",
-        "API::getFeeds",
-        "API::getCategories",
-        "API::getHeadlines",
-        "API::getArticle",
-        "API::updateFeed",
-        "API::catchupFeed",
-        "API::getPref",
-        "API::index",
-        "API::shareToPublished",
-        "API::api_get_headlines",
-        "API::subscribeToFeed",
-        "API::getFeedTree",
-        "Article::view",
         "Backend::display_main_help",
         "Backend::help",
-        "Feeds::format_headline_subtoolbar",
-        "Feeds::format_headlines_list",
-        "Handler_Public::logout",
-        "PluginHost::run_hooks",
-        "PluginHost::get_hooks",
-        "PluginHost::get_feed_handler",
-        "PluginHost::get_api_method",
-        "ttrss/include/functions.php::logout_user",
-        "ttrss/include/functions.php::truncate_string",
-        "ttrss/include/functions.php::sql_bool_to_bool",
+        "Dlg::importOpml",
+        "Dlg::newVersion",
+        "FeedParser::normalize_encoding",
+        "FeedParser::__construct",
+        "Feeds::quickAddFeed",
+        "Opml::import",
+        "Opml::opml_import_feed",
+        "Opml::opml_import_label",
+        "Opml::opml_import_preference",
+        "Opml::opml_import_category",
+        "Opml::opml_import",
+        "Opml::opml_notice",
+        "PluginHost::get_plugin_names",
+        "Pref_Feeds::batch_edit_cbox",
+        "Pref_Feeds::editfeeds",
+        "Pref_Feeds::addCat",
+        "Pref_Feeds::index",
+        "Pref_Feeds::batchSubscribe",
+        "Pref_Prefs::saveconfig",
+        "Pref_Prefs::setplugins",
+        "Pref_Prefs::customizeCSS",
+        "RPC::togglepref",
+        "RPC::setpref",
+        "RPC::sanityCheck",
+        "ttrss/include/db-prefs.php::get_pref",
+        "ttrss/include/db-prefs.php::set_pref",
+        "ttrss/include/functions.php::smart_date_time",
+        "ttrss/include/functions.php::print_feed_cat_select",
+        "ttrss/include/functions2.php::make_init_params",
         "ttrss/include/functions2.php::get_hotkeys_info",
         "ttrss/include/functions2.php::get_hotkeys_map",
-        "ttrss/include/functions2.php::sanitize",
-        "ttrss/include/functions2.php::strip_harmful_tags",
-        "ttrss/include/functions2.php::format_inline_player",
-        "ttrss/include/functions2.php::format_article",
-        "ttrss/include/functions2.php::print_checkpoint",
-        "ttrss/include/functions2.php::get_score_pic",
-        "ttrss/include/functions2.php::format_tags_string",
-        "ttrss/include/functions2.php::format_article_labels",
-        "ttrss/include/functions2.php::format_article_note",
-        "ttrss/include/functions2.php::get_article_enclosures",
-        "ttrss/include/functions2.php::format_article_enclosures"
+        "ttrss/include/functions2.php::make_runtime_info",
+        "ttrss/include/functions2.php::check_for_update",
+        "ttrss/include/functions2.php::format_error",
+        "ttrss/include/functions2.php::print_error",
+        "ttrss/include/functions2.php::T_sprintf",
+        "ttrss/include/functions2.php::add_feed_url",
+        "ttrss/include/functions2.php::add_feed_category",
+        "ttrss/include/functions2.php::calculate_dep_timestamp",
+        "ttrss/include/functions2.php::format_libxml_error",
+        "ttrss/include/sanity_check.php::initial_sanity_check",
+        "ttrss/install/index.php::sanity_check",
+        "ttrss/install/index.php::print_notice",
+        "ttrss/install/index.php::db_connect",
+        "ttrss/install/index.php::make_config",
+        "ttrss/install/index.php::make_self_url_path",
+        "ttrss/include/sanity_check.php",
+        "ttrss/install/index.php"
       ],
       "9": [
         "ttrss/lib/languagedetect/LanguageDetect.php::_readdb",
@@ -841,8 +836,9 @@
         "SphinxClient::FlushAttributes"
       ],
       "11": [
+        "Pref_Feeds::process_category_order",
+        "Pref_Feeds::savefeedorder",
         "RPC::updaterandomfeed_real",
-        "ttrss/include/db.php::db_affected_rows",
         "ttrss/include/functions.php::_debug",
         "ttrss/include/functions.php::purge_orphans",
         "ttrss/include/functions.php::file_is_locked",
@@ -886,6 +882,23 @@
         "FileReader::seekto"
       ],
       "13": [
+        "QRcode::init",
+        "QRcode::init_rs",
+        "QRcode::init_rs_char",
+        "QRcode::encode_rs_char",
+        "QRspec::rsBlockNum1",
+        "QRspec::rsDataCodes1",
+        "QRspec::rsEccCodes1",
+        "QRspec::rsBlockNum2",
+        "QRspec::rsDataCodes2",
+        "QRspec::rsEccCodes2",
+        "QRrsItem::modnn",
+        "QRrsItem::init_rs_char",
+        "QRrsItem::encode_rs_char",
+        "QRrs::init_rs",
+        "QRrsblock::__construct"
+      ],
+      "14": [
         "ttrss/include/colors.php::_resolve_htmlcolor",
         "ttrss/include/colors.php::_color_unpack",
         "ttrss/include/colors.php::_color_pack",
@@ -898,17 +911,6 @@
         "jimIcon::get_color",
         "jimIcon::fromiconstring"
       ],
-      "14": [
-        "HOTP::at",
-        "HOTP::verify",
-        "OTP::generateOTP",
-        "OTP::byteSecret",
-        "OTP::intToBytestring",
-        "TOTP::at",
-        "TOTP::now",
-        "TOTP::verify",
-        "TOTP::timecode"
-      ],
       "15": [
         "Minifier::minify",
         "Minifier::breakdownScript",
@@ -920,15 +922,6 @@
         "Minifier::clean"
       ],
       "16": [
-        "FeedParser::normalize_encoding",
-        "FeedParser::__construct",
-        "ttrss/include/functions2.php::format_error",
-        "ttrss/include/functions2.php::print_error",
-        "ttrss/include/sanity_check.php::initial_sanity_check",
-        "ttrss/install/index.php::make_self_url_path",
-        "ttrss/include/sanity_check.php"
-      ],
-      "17": [
         "QRcode::qrstrset",
         "QRcode::putAlignmentMarker",
         "QRcode::putFinderPattern",
@@ -937,13 +930,19 @@
         "QRspec::getVersionPattern",
         "QRspec::putFinderPattern"
       ],
-      "18": [
+      "17": [
         "Db::__construct",
         "Db::reconnect",
         "Db::last_error",
         "__global__::connect",
         "__global__::last_error",
         "ttrss/include/db.php::db_last_error"
+      ],
+      "18": [
+        "Logger::log_error",
+        "RPC::log",
+        "ttrss/include/errorhandler.php::ttrss_error_handler",
+        "ttrss/include/errorhandler.php::ttrss_fatal_handler"
       ],
       "19": [
         "QRcode::check",
@@ -952,10 +951,9 @@
         "QRinput::checkModeKanji"
       ],
       "20": [
-        "Logger::log_error",
-        "RPC::log",
-        "ttrss/include/errorhandler.php::ttrss_error_handler",
-        "ttrss/include/errorhandler.php::ttrss_fatal_handler"
+        "API::logout",
+        "Handler_Public::logout",
+        "ttrss/include/functions.php::logout_user"
       ],
       "21": [
         "Db_PDO::num_rows",
@@ -1232,588 +1230,594 @@
         "PluginHost::getInstance"
       ],
       "108": [
-        "PluginHost::add_hook"
+        "PluginHost::run_hooks"
       ],
       "109": [
-        "PluginHost::del_hook"
+        "PluginHost::add_hook"
       ],
       "110": [
-        "PluginHost::add_command"
+        "PluginHost::del_hook"
       ],
       "111": [
-        "PluginHost::del_command"
+        "PluginHost::get_hooks"
       ],
       "112": [
-        "PluginHost::lookup_command"
+        "PluginHost::add_command"
       ],
       "113": [
-        "PluginHost::get"
+        "PluginHost::del_command"
       ],
       "114": [
-        "PluginHost::get_debug"
+        "PluginHost::lookup_command"
       ],
       "115": [
-        "PluginHost::add_feed"
+        "PluginHost::get"
       ],
       "116": [
-        "PluginHost::pfeed_to_feed_id"
+        "PluginHost::get_debug"
       ],
       "117": [
-        "PluginHost::feed_to_pfeed_id"
+        "PluginHost::add_feed"
       ],
       "118": [
-        "Pref_Feeds::csrf_ignore"
+        "PluginHost::pfeed_to_feed_id"
       ],
       "119": [
-        "Pref_Filters::csrf_ignore"
+        "PluginHost::feed_to_pfeed_id"
       ],
       "120": [
-        "Pref_Filters::newfilter"
+        "Pref_Feeds::csrf_ignore"
       ],
       "121": [
-        "Pref_Labels::csrf_ignore"
+        "Pref_Filters::csrf_ignore"
       ],
       "122": [
-        "Pref_Prefs::csrf_ignore"
+        "Pref_Filters::newfilter"
       ],
       "123": [
-        "Pref_Prefs::__construct"
+        "Pref_Labels::csrf_ignore"
       ],
       "124": [
-        "Pref_Prefs::toggleAdvanced"
+        "Pref_Prefs::csrf_ignore"
       ],
       "125": [
-        "Pref_System::before"
+        "Pref_Prefs::__construct"
       ],
       "126": [
-        "Pref_System::csrf_ignore"
+        "Pref_Prefs::toggleAdvanced"
       ],
       "127": [
-        "Pref_Users::csrf_ignore"
+        "Pref_System::before"
       ],
       "128": [
-        "RPC::setpanelmode"
+        "Pref_System::csrf_ignore"
       ],
       "129": [
-        "RPC::updaterandomfeed"
+        "Pref_Users::csrf_ignore"
       ],
       "130": [
-        "ttrss/include/autoload.php::__autoload"
+        "RPC::setpanelmode"
       ],
       "131": [
-        "ttrss/include/colors.php::_color_rgb2hsl"
+        "RPC::updaterandomfeed"
       ],
       "132": [
-        "ttrss/include/functions.php::define_default"
+        "ttrss/include/autoload.php::__autoload"
       ],
       "133": [
-        "ttrss/include/functions.php::print_radio"
+        "ttrss/include/colors.php::_color_rgb2hsl"
       ],
       "134": [
-        "ttrss/include/functions.php::make_password"
+        "ttrss/include/functions.php::define_default"
       ],
       "135": [
-        "ttrss/include/functions2.php::save_email_address"
+        "ttrss/include/functions.php::print_radio"
       ],
       "136": [
-        "ttrss/include/functions2.php::tmpdirname"
+        "ttrss/include/functions.php::make_password"
       ],
       "137": [
-        "ttrss/include/rssfuncs.php::convertUrlQuery"
+        "ttrss/include/functions2.php::save_email_address"
       ],
       "138": [
-        "ttrss/include/rssfuncs.php::find_article_filters"
+        "ttrss/include/functions2.php::tmpdirname"
       ],
       "139": [
-        "ttrss/include/sanity_check.php::make_self_url_path"
+        "ttrss/include/rssfuncs.php::convertUrlQuery"
       ],
       "140": [
-        "ttrss/include/sessions.php::ttrss_open"
+        "ttrss/include/rssfuncs.php::find_article_filters"
       ],
       "141": [
-        "ttrss/include/sessions.php::ttrss_close"
+        "ttrss/include/sanity_check.php::make_self_url_path"
       ],
       "142": [
-        "MiniTemplator::MiniTemplator"
+        "ttrss/include/sessions.php::ttrss_open"
       ],
       "143": [
-        "Mobile_Detect::getRules"
+        "ttrss/include/sessions.php::ttrss_close"
       ],
       "144": [
-        "StreamReader::read"
+        "MiniTemplator::MiniTemplator"
       ],
       "145": [
-        "StreamReader::seekto"
+        "Mobile_Detect::getRules"
       ],
       "146": [
-        "StreamReader::currentpos"
+        "StreamReader::read"
       ],
       "147": [
-        "StreamReader::length"
+        "StreamReader::seekto"
       ],
       "148": [
-        "StringReader::StringReader"
+        "StreamReader::currentpos"
       ],
       "149": [
-        "StringReader::read"
+        "StreamReader::length"
       ],
       "150": [
-        "StringReader::seekto"
+        "StringReader::StringReader"
       ],
       "151": [
-        "StringReader::currentpos"
+        "StringReader::read"
       ],
       "152": [
-        "StringReader::length"
+        "StringReader::seekto"
       ],
       "153": [
-        "FileReader::FileReader"
+        "StringReader::currentpos"
       ],
       "154": [
-        "FileReader::currentpos"
+        "StringReader::length"
       ],
       "155": [
-        "FileReader::length"
+        "FileReader::FileReader"
       ],
       "156": [
-        "CachedFileReader::CachedFileReader"
+        "FileReader::currentpos"
       ],
       "157": [
-        "Minifier::isAlphaNumeric"
+        "FileReader::length"
       ],
       "158": [
-        "ttrss/lib/languagedetect/LanguageDetect.php::getLanguageCount"
+        "CachedFileReader::CachedFileReader"
       ],
       "159": [
-        "ttrss/lib/languagedetect/LanguageDetect.php::setPerlCompatible"
+        "Minifier::isAlphaNumeric"
       ],
       "160": [
-        "ttrss/lib/languagedetect/LanguageDetect.php::useUnicodeBlocks"
+        "ttrss/lib/languagedetect/LanguageDetect.php::getLanguageCount"
       ],
       "161": [
-        "ttrss/lib/languagedetect/LanguageDetect.php::_sort_func"
+        "ttrss/lib/languagedetect/LanguageDetect.php::setPerlCompatible"
       ],
       "162": [
-        "ttrss/lib/languagedetect/LanguageDetect.php::utf8strlen"
+        "ttrss/lib/languagedetect/LanguageDetect.php::useUnicodeBlocks"
       ],
       "163": [
-        "__global__::__construct"
+        "ttrss/lib/languagedetect/LanguageDetect.php::_sort_func"
       ],
       "164": [
-        "Text_LanguageDetect_ISO639::nameToCode2"
+        "ttrss/lib/languagedetect/LanguageDetect.php::utf8strlen"
       ],
       "165": [
-        "Text_LanguageDetect_ISO639::nameToCode3"
+        "__global__::__construct"
       ],
       "166": [
-        "Text_LanguageDetect_ISO639::code2ToName"
+        "Text_LanguageDetect_ISO639::nameToCode2"
       ],
       "167": [
-        "Text_LanguageDetect_ISO639::code3ToName"
+        "Text_LanguageDetect_ISO639::nameToCode3"
       ],
       "168": [
-        "Text_LanguageDetect_Parser::Text_LanguageDetect_Parser"
+        "Text_LanguageDetect_ISO639::code2ToName"
       ],
       "169": [
-        "Text_LanguageDetect_Parser::validateString"
+        "Text_LanguageDetect_ISO639::code3ToName"
       ],
       "170": [
-        "HOTP::provisioning_uri"
+        "Text_LanguageDetect_Parser::Text_LanguageDetect_Parser"
       ],
       "171": [
-        "OTP::__construct"
+        "Text_LanguageDetect_Parser::validateString"
       ],
       "172": [
-        "TOTP::__construct"
+        "HOTP::provisioning_uri"
       ],
       "173": [
-        "TOTP::provisioning_uri"
+        "OTP::__construct"
       ],
       "174": [
-        "Base32::encode"
+        "TOTP::__construct"
       ],
       "175": [
-        "Base32::decode"
+        "TOTP::provisioning_uri"
       ],
       "176": [
-        "PHPMailer::edebug"
+        "Base32::encode"
       ],
       "177": [
-        "PHPMailer::__construct"
+        "Base32::decode"
       ],
       "178": [
-        "PHPMailer::IsSMTP"
+        "PHPMailer::edebug"
       ],
       "179": [
-        "PHPMailer::IsMail"
+        "PHPMailer::__construct"
       ],
       "180": [
-        "PHPMailer::IsSendmail"
+        "PHPMailer::IsSMTP"
       ],
       "181": [
-        "PHPMailer::IsQmail"
+        "PHPMailer::IsMail"
       ],
       "182": [
-        "PHPMailer::GetTranslations"
+        "PHPMailer::IsSendmail"
       ],
       "183": [
-        "PHPMailer::GetSentMIMEMessage"
+        "PHPMailer::IsQmail"
       ],
       "184": [
-        "PHPMailer::GetAttachments"
+        "PHPMailer::GetTranslations"
       ],
       "185": [
-        "PHPMailer::AddStringAttachment"
+        "PHPMailer::GetSentMIMEMessage"
       ],
       "186": [
-        "PHPMailer::AddStringEmbeddedImage"
+        "PHPMailer::GetAttachments"
       ],
       "187": [
-        "PHPMailer::ClearAddresses"
+        "PHPMailer::AddStringAttachment"
       ],
       "188": [
-        "PHPMailer::ClearCCs"
+        "PHPMailer::AddStringEmbeddedImage"
       ],
       "189": [
-        "PHPMailer::ClearBCCs"
+        "PHPMailer::ClearAddresses"
       ],
       "190": [
-        "PHPMailer::ClearReplyTos"
+        "PHPMailer::ClearCCs"
       ],
       "191": [
-        "PHPMailer::ClearAllRecipients"
+        "PHPMailer::ClearBCCs"
       ],
       "192": [
-        "PHPMailer::ClearAttachments"
+        "PHPMailer::ClearReplyTos"
       ],
       "193": [
-        "PHPMailer::ClearCustomHeaders"
+        "PHPMailer::ClearAllRecipients"
       ],
       "194": [
-        "PHPMailer::RFCDate"
+        "PHPMailer::ClearAttachments"
       ],
       "195": [
-        "PHPMailer::AddCustomHeader"
+        "PHPMailer::ClearCustomHeaders"
       ],
       "196": [
-        "PHPMailer::_mime_types"
+        "PHPMailer::RFCDate"
       ],
       "197": [
-        "PHPMailer::Sign"
+        "PHPMailer::AddCustomHeader"
       ],
       "198": [
-        "phpmailerException::errorMessage"
+        "PHPMailer::_mime_types"
       ],
       "199": [
-        "SMTP::__construct"
+        "PHPMailer::Sign"
       ],
       "200": [
-        "SMTP::Close"
+        "phpmailerException::errorMessage"
       ],
       "201": [
-        "ttrss/lib/phpqrcode/bindings/tcpdf/qrcode.php::str_split"
+        "SMTP::__construct"
       ],
       "202": [
-        "QRcode::getBarcodeArray"
+        "SMTP::Close"
       ],
       "203": [
-        "QRcode::binarize"
+        "ttrss/lib/phpqrcode/bindings/tcpdf/qrcode.php::str_split"
       ],
       "204": [
-        "QRcode::setFrameAt"
+        "QRcode::getBarcodeArray"
       ],
       "205": [
-        "QRcode::getFrameAt"
+        "QRcode::binarize"
       ],
       "206": [
-        "QRcode::getCode"
+        "QRcode::setFrameAt"
       ],
       "207": [
-        "QRcode::mask0"
+        "QRcode::getFrameAt"
       ],
       "208": [
-        "QRcode::mask1"
+        "QRcode::getCode"
       ],
       "209": [
-        "QRcode::mask2"
+        "QRcode::mask0"
       ],
       "210": [
-        "QRcode::mask3"
+        "QRcode::mask1"
       ],
       "211": [
-        "QRcode::mask4"
+        "QRcode::mask2"
       ],
       "212": [
-        "QRcode::mask5"
+        "QRcode::mask3"
       ],
       "213": [
-        "QRcode::mask6"
+        "QRcode::mask4"
       ],
       "214": [
-        "QRcode::mask7"
+        "QRcode::mask5"
       ],
       "215": [
-        "QRcode::generateMaskNo"
+        "QRcode::mask6"
       ],
       "216": [
-        "QRcode::calcN1N3"
+        "QRcode::mask7"
       ],
       "217": [
-        "QRcode::isdigitat"
+        "QRcode::generateMaskNo"
       ],
       "218": [
-        "QRcode::calcParity"
+        "QRcode::calcN1N3"
       ],
       "219": [
-        "QRcode::checkModeNum"
+        "QRcode::isdigitat"
       ],
       "220": [
-        "QRcode::estimateBitsModeNum"
+        "QRcode::calcParity"
       ],
       "221": [
-        "QRcode::lookAnTable"
+        "QRcode::checkModeNum"
       ],
       "222": [
-        "QRcode::estimateBitsModeAn"
+        "QRcode::estimateBitsModeNum"
       ],
       "223": [
-        "QRcode::estimateBitsMode8"
+        "QRcode::lookAnTable"
       ],
       "224": [
-        "QRcode::estimateBitsModeKanji"
+        "QRcode::estimateBitsModeAn"
       ],
       "225": [
-        "QRcode::checkModeKanji"
+        "QRcode::estimateBitsMode8"
       ],
       "226": [
-        "QRcode::allocate"
+        "QRcode::estimateBitsModeKanji"
       ],
       "227": [
-        "QRcode::getDataLength"
+        "QRcode::checkModeKanji"
       ],
       "228": [
-        "QRcode::getECCLength"
+        "QRcode::allocate"
       ],
       "229": [
-        "QRcode::getWidth"
+        "QRcode::getDataLength"
       ],
       "230": [
-        "QRcode::getRemainder"
+        "QRcode::getECCLength"
       ],
       "231": [
-        "QRcode::getMinimumVersion"
+        "QRcode::getWidth"
       ],
       "232": [
-        "QRcode::lengthIndicator"
+        "QRcode::getRemainder"
       ],
       "233": [
-        "QRcode::maximumWords"
+        "QRcode::getMinimumVersion"
       ],
       "234": [
-        "QRcode::getVersionPattern"
+        "QRcode::lengthIndicator"
       ],
       "235": [
-        "QRcode::getFormatInfo"
+        "QRcode::maximumWords"
       ],
       "236": [
-        "QRcode::rsBlockNum"
+        "QRcode::getVersionPattern"
       ],
       "237": [
-        "QRcode::rsBlockNum1"
+        "QRcode::getFormatInfo"
       ],
       "238": [
-        "QRcode::rsDataCodes1"
+        "QRcode::rsBlockNum"
       ],
       "239": [
-        "QRcode::rsEccCodes1"
+        "QRcode::rsBlockNum1"
       ],
       "240": [
-        "QRcode::rsBlockNum2"
+        "QRcode::rsDataCodes1"
       ],
       "241": [
-        "QRcode::rsDataCodes2"
+        "QRcode::rsEccCodes1"
       ],
       "242": [
-        "QRcode::rsEccCodes2"
+        "QRcode::rsBlockNum2"
       ],
       "243": [
-        "QRcode::rsDataLength"
+        "QRcode::rsDataCodes2"
       ],
       "244": [
-        "QRcode::rsEccLength"
+        "QRcode::rsEccCodes2"
       ],
       "245": [
-        "QRcode::modnn"
+        "QRcode::rsDataLength"
       ],
       "246": [
-        "qrstr::set"
+        "QRcode::rsEccLength"
       ],
       "247": [
-        "QRtools::tcpdfBarcodeArray"
+        "QRcode::modnn"
       ],
       "248": [
-        "QRtools::clearCache"
+        "qrstr::set"
       ],
       "249": [
-        "QRtools::dumpMask"
+        "QRtools::tcpdfBarcodeArray"
       ],
       "250": [
-        "QRtools::markTime"
+        "QRtools::clearCache"
       ],
       "251": [
-        "QRtools::timeBenchmark"
+        "QRtools::dumpMask"
       ],
       "252": [
-        "QRspec::unserial"
+        "QRtools::markTime"
       ],
       "253": [
-        "QRimage::png"
+        "QRtools::timeBenchmark"
       ],
       "254": [
-        "QRimage::jpg"
+        "QRspec::unserial"
       ],
       "255": [
-        "QRimage::image"
+        "QRimage::png"
       ],
       "256": [
-        "QRinput::__construct"
+        "QRimage::jpg"
       ],
       "257": [
-        "QRinput::setErrorCorrectionLevel"
+        "QRimage::image"
       ],
       "258": [
-        "QRinput::appendEntry"
+        "QRinput::__construct"
       ],
       "259": [
-        "QRinput::insertStructuredAppendHeader"
+        "QRinput::setErrorCorrectionLevel"
       ],
       "260": [
-        "QRinput::calcParity"
+        "QRinput::appendEntry"
       ],
       "261": [
-        "QRinput::lengthOfCode"
+        "QRinput::insertStructuredAppendHeader"
       ],
       "262": [
-        "QRsplit::__construct"
+        "QRinput::calcParity"
       ],
       "263": [
-        "QRmask::__construct"
+        "QRinput::lengthOfCode"
       ],
       "264": [
-        "QRmask::mask0"
+        "QRsplit::__construct"
       ],
       "265": [
-        "QRmask::mask1"
+        "QRmask::__construct"
       ],
       "266": [
-        "QRmask::mask2"
+        "QRmask::mask0"
       ],
       "267": [
-        "QRmask::mask3"
+        "QRmask::mask1"
       ],
       "268": [
-        "QRmask::mask4"
+        "QRmask::mask2"
       ],
       "269": [
-        "QRmask::mask5"
+        "QRmask::mask3"
       ],
       "270": [
-        "QRmask::mask6"
+        "QRmask::mask4"
       ],
       "271": [
-        "QRmask::mask7"
+        "QRmask::mask5"
       ],
       "272": [
-        "QRmask::unserial"
+        "QRmask::mask6"
       ],
       "273": [
-        "QRrawcode::init"
+        "QRmask::mask7"
       ],
       "274": [
-        "FrameFiller::__construct"
+        "QRmask::unserial"
       ],
       "275": [
-        "FrameFiller::getFrameAt"
+        "QRrawcode::init"
       ],
       "276": [
-        "QRencode::factory"
+        "FrameFiller::__construct"
       ],
       "277": [
-        "Publisher::__construct"
+        "FrameFiller::getFrameAt"
       ],
       "278": [
-        "Publisher::last_response"
+        "QRencode::factory"
       ],
       "279": [
-        "Subscriber::__construct"
+        "Publisher::__construct"
       ],
       "280": [
-        "SphinxClient::SphinxClient"
+        "Publisher::last_response"
       ],
       "281": [
-        "SphinxClient::__destruct"
+        "Subscriber::__construct"
       ],
       "282": [
-        "SphinxClient::GetLastError"
+        "SphinxClient::SphinxClient"
       ],
       "283": [
-        "SphinxClient::GetLastWarning"
+        "SphinxClient::__destruct"
       ],
       "284": [
-        "SphinxClient::IsConnectError"
+        "SphinxClient::GetLastError"
       ],
       "285": [
-        "SphinxClient::SetMaxQueryTime"
+        "SphinxClient::GetLastWarning"
       ],
       "286": [
-        "SphinxClient::SetSortMode"
+        "SphinxClient::IsConnectError"
       ],
       "287": [
-        "SphinxClient::SetWeights"
+        "SphinxClient::SetMaxQueryTime"
       ],
       "288": [
-        "SphinxClient::SetIndexWeights"
+        "SphinxClient::SetSortMode"
       ],
       "289": [
-        "SphinxClient::SetIDRange"
+        "SphinxClient::SetWeights"
       ],
       "290": [
-        "SphinxClient::SetFilterRange"
+        "SphinxClient::SetIndexWeights"
       ],
       "291": [
-        "SphinxClient::SetFilterFloatRange"
+        "SphinxClient::SetIDRange"
       ],
       "292": [
-        "SphinxClient::SetGeoAnchor"
+        "SphinxClient::SetFilterRange"
       ],
       "293": [
-        "SphinxClient::SetGroupBy"
+        "SphinxClient::SetFilterFloatRange"
       ],
       "294": [
-        "SphinxClient::SetGroupDistinct"
+        "SphinxClient::SetGeoAnchor"
       ],
       "295": [
-        "SphinxClient::SetRetries"
+        "SphinxClient::SetGroupBy"
       ],
       "296": [
-        "SphinxClient::SetOverride"
+        "SphinxClient::SetGroupDistinct"
       ],
       "297": [
-        "SphinxClient::SetSelect"
+        "SphinxClient::SetRetries"
       ],
       "298": [
-        "SphinxClient::ResetFilters"
+        "SphinxClient::SetOverride"
       ],
       "299": [
-        "SphinxClient::ResetGroupBy"
+        "SphinxClient::SetSelect"
       ],
       "300": [
-        "SphinxClient::ResetOverrides"
+        "SphinxClient::ResetFilters"
       ],
       "301": [
-        "SphinxClient::EscapeString"
+        "SphinxClient::ResetGroupBy"
       ],
       "302": [
+        "SphinxClient::ResetOverrides"
+      ],
+      "303": [
+        "SphinxClient::EscapeString"
+      ],
+      "304": [
         "ttrss/public.php::stripslashes_deep"
       ]
     }
@@ -2022,26 +2026,24 @@
     "community_count": 7,
     "communities": {
       "0": [
-        "ttrss_labels2",
-        "ttrss_user_entries",
-        "ttrss_feed_categories",
-        "ttrss_access_keys",
-        "ttrss_settings_profiles",
-        "ttrss_archived_feeds",
-        "ttrss/classes/api.php",
-        "ttrss/classes/feeds.php",
-        "ttrss/classes/handler/public.php",
-        "ttrss/classes/pref/feeds.php",
-        "ttrss/classes/rpc.php",
-        "ttrss/include/digest.php",
-        "ttrss/include/labels.php",
-        "ttrss/opml.php"
+        "ttrss_feedbrowser_cache",
+        "ttrss_tags",
+        "ttrss_feeds",
+        "ttrss_enclosures",
+        "ttrss_filters",
+        "ttrss_linked_feeds",
+        "ttrss/classes/dlg.php",
+        "ttrss/classes/pref/users.php",
+        "ttrss/include/feedbrowser.php",
+        "ttrss/include/rssfuncs.php",
+        "ttrss/install/index.php",
+        "ttrss/update.php"
       ],
       "1": [
         "ttrss_version",
         "ttrss_error_log",
-        "ttrss_sessions",
         "ttrss_users",
+        "ttrss_sessions",
         "ttrss/classes/auth/base.php",
         "ttrss/classes/dbupdater.php",
         "ttrss/classes/logger/sql.php",
@@ -2052,44 +2054,46 @@
         "ttrss/register.php"
       ],
       "2": [
-        "ttrss_filters",
-        "ttrss_filters2_rules",
-        "ttrss_filters2",
-        "ttrss_filters2_actions",
         "ttrss_filter_actions",
+        "ttrss_filters2",
+        "ttrss_labels2",
         "ttrss_filter_types",
+        "ttrss_filters2_actions",
+        "ttrss_filters2_rules",
         "ttrss/classes/opml.php",
         "ttrss/classes/pref/filters.php",
         "ttrss/classes/pref/labels.php",
-        "ttrss/update.php"
+        "ttrss/include/functions2.php"
       ],
       "3": [
-        "ttrss_counters_cache",
-        "ttrss_prefs",
-        "ttrss_cat_counters_cache",
+        "ttrss_feed_categories",
+        "ttrss_user_entries",
+        "ttrss_archived_feeds",
+        "ttrss_entries",
+        "ttrss/classes/api.php",
+        "ttrss/classes/article.php",
+        "ttrss/classes/feeds.php",
+        "ttrss/classes/pref/feeds.php",
+        "ttrss/classes/rpc.php",
+        "ttrss/include/digest.php"
+      ],
+      "4": [
         "ttrss_user_prefs",
-        "ttrss_user_labels2",
+        "ttrss_prefs",
+        "ttrss_counters_cache",
+        "ttrss_cat_counters_cache",
         "ttrss/classes/db/prefs.php",
         "ttrss/classes/pref/prefs.php",
         "ttrss/include/ccache.php",
         "ttrss/include/functions.php"
       ],
-      "4": [
-        "ttrss_enclosures",
-        "ttrss_tags",
-        "ttrss_entries",
-        "ttrss/classes/article.php",
-        "ttrss/classes/dlg.php",
-        "ttrss/include/functions2.php",
-        "ttrss/include/rssfuncs.php"
-      ],
       "5": [
-        "ttrss_feeds",
-        "ttrss_linked_feeds",
-        "ttrss_feedbrowser_cache",
-        "ttrss/classes/pref/users.php",
-        "ttrss/include/feedbrowser.php",
-        "ttrss/install/index.php"
+        "ttrss_access_keys",
+        "ttrss_user_labels2",
+        "ttrss_settings_profiles",
+        "ttrss/classes/handler/public.php",
+        "ttrss/include/labels.php",
+        "ttrss/opml.php"
       ],
       "6": [
         "ttrss_plugin_storage",
@@ -2098,37 +2102,61 @@
     }
   },
   "hook": {
-    "node_count": 20,
-    "edge_count": 18,
-    "community_count": 5,
+    "node_count": 40,
+    "edge_count": 39,
+    "community_count": 7,
     "communities": {
       "0": [
-        "HOOK_PREFS_TAB_SECTION",
+        "HOOK_RENDER_ARTICLE_CDM",
+        "HOOK_HEADLINE_TOOLBAR_BUTTON",
+        "HOOK_HOTKEY_INFO",
+        "HOOK_ARTICLE_BUTTON",
+        "HOOK_RENDER_ARTICLE",
+        "HOOK_ARTICLE_LEFT_BUTTON",
+        "HOOK_SANITIZE",
+        "HOOK_HOTKEY_MAP",
+        "ttrss/classes/feeds.php",
+        "ttrss/include/functions2.php"
+      ],
+      "1": [
         "HOOK_PREFS_TAB",
-        "ttrss/classes/pref/filters.php",
+        "HOOK_PREFS_TAB_SECTION",
+        "HOOK_PREFS_EDIT_FEED",
+        "HOOK_PREFS_SAVE_FEED",
+        "ttrss/classes/pref/feeds.php",
         "ttrss/classes/pref/labels.php",
         "ttrss/classes/pref/prefs.php",
         "ttrss/classes/pref/system.php",
         "ttrss/classes/pref/users.php"
       ],
-      "1": [
-        "HOOK_HOUSE_KEEPING",
+      "2": [
+        "HOOK_FEED_FETCHED",
         "HOOK_UPDATE_TASK",
         "HOOK_FEED_PARSED",
+        "HOOK_FETCH_FEED",
+        "HOOK_ARTICLE_FILTER",
+        "HOOK_HOUSE_KEEPING",
         "ttrss/classes/handler/public.php",
         "ttrss/include/rssfuncs.php",
         "ttrss/update.php"
       ],
-      "2": [
-        "HOOK_PREFS_SAVE_FEED",
-        "HOOK_PREFS_EDIT_FEED",
-        "ttrss/classes/pref/feeds.php"
-      ],
       "3": [
-        "HOOK_AUTH_USER",
-        "ttrss/plugins/auth_internal/init.php"
+        "HOOK_RENDER_ARTICLE_API",
+        "HOOK_QUERY_HEADLINES",
+        "ttrss/classes/api.php",
+        "ttrss/classes/pref/filters.php"
       ],
       "4": [
+        "HOOK_AUTH_USER",
+        "ttrss/include/functions.php",
+        "ttrss/plugins/auth_internal/init.php"
+      ],
+      "5": [
+        "HOOK_ACTION_ITEM",
+        "HOOK_TOOLBAR_BUTTON",
+        "ttrss/index.php"
+      ],
+      "6": [
         "HOOK_PREFS_TABS",
         "ttrss/prefs.php"
       ]

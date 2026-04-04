@@ -12,7 +12,7 @@ Phase 2: HOOK_FETCH_FEED, HOOK_FEED_FETCHED, HOOK_FEED_PARSED, HOOK_ARTICLE_FILT
 from __future__ import annotations
 
 import asyncio
-import logging
+import structlog
 from typing import Any
 
 import feedparser
@@ -21,7 +21,7 @@ import httpx
 from ttrss.articles.sanitize import sanitize  # New: sanitize extracted to ttrss/articles/sanitize.py (Phase 2).
 from ttrss.celery_app import celery_app
 
-logger = logging.getLogger(__name__)  # New: no PHP equivalent — Python logging setup.
+logger = structlog.get_logger(__name__)  # New: no PHP equivalent — Python logging setup.
 
 # Source: ttrss/include/functions.php line 40 — define_default('FEED_FETCH_TIMEOUT', 45)
 # Adapted: PHP FEED_FETCH_TIMEOUT (read-only) mapped to httpx.Timeout object (ADR-0015, R19).

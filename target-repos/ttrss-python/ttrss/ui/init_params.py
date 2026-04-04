@@ -17,10 +17,10 @@ Hook graph communities [0]+[5]:
 """
 from __future__ import annotations
 
-import logging
+import structlog
 from typing import Any
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Source: ttrss/index.php — LABEL_BASE_INDEX constant (feed IDs below this are label feeds)
 _LABEL_BASE_INDEX = -1024

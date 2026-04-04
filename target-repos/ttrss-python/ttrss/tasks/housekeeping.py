@@ -16,7 +16,7 @@ Registered as a Celery periodic task (beat schedule).
 """
 from __future__ import annotations
 
-import logging
+import structlog
 import os
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -30,7 +30,7 @@ from ttrss.models.feedbrowser_cache import TtRssFeedbrowserCache
 from ttrss.models.tag import TtRssTag
 from ttrss.models.user_entry import TtRssUserEntry
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Default retention periods (PHP rssfuncs.php:expire_error_log — 7 days)
 _ERROR_LOG_RETENTION_DAYS = 7

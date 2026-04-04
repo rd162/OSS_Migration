@@ -2,10 +2,12 @@
 Feed update tasks — Celery two-task fan-out (ADR-0011, ADR-0014, ADR-0015).
 
 Source: ttrss/include/rssfuncs.php:update_daemon_common (lines 60-200) — dispatcher
-        ttrss/include/rssfuncs.php:update_rss_feed (lines 203-700) — per-feed update
+        ttrss/include/rssfuncs.php:update_rss_feed (lines 203-900) — per-feed update
         Adapted: Celery tasks replace PHP pcntl_fork() daemon loop (ADR-0011).
 
-Phase 1b scope: fetch → parse → sanitize. Article DB persistence is Phase 2.
+Phase 1b: fetch → parse → sanitize skeleton.
+Phase 2: HOOK_FETCH_FEED, HOOK_FEED_FETCHED, HOOK_FEED_PARSED, HOOK_ARTICLE_FILTER wired.
+         Article DB persistence deferred to Phase 3.
 """
 from __future__ import annotations
 
@@ -15,16 +17,15 @@ from typing import Any
 
 import feedparser
 import httpx
-import lxml.html
-import lxml.html.clean
 
+from ttrss.articles.sanitize import sanitize  # New: sanitize extracted to ttrss/articles/sanitize.py (Phase 2).
 from ttrss.celery_app import celery_app
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # New: no PHP equivalent — Python logging setup.
 
-# R19: HTTP timeouts per ADR-0015.
-# read=45.0 matches PHP FEED_FETCH_TIMEOUT=45 (ttrss/include/functions.php line 40).
-# Source: ttrss/include/functions.php:fetch_file_contents (lines 197-365, cURL timeout config)
+# Source: ttrss/include/functions.php line 40 — define_default('FEED_FETCH_TIMEOUT', 45)
+# Adapted: PHP FEED_FETCH_TIMEOUT (read-only) mapped to httpx.Timeout object (ADR-0015, R19).
+# New: write=10.0 and pool=5.0 have no PHP cURL equivalent — added for httpx Timeout completeness.
 HTTP_TIMEOUT = httpx.Timeout(connect=10.0, read=45.0, write=10.0, pool=5.0)
 
 # Source: ttrss/include/rssfuncs.php line 3 — define_default('DAEMON_FEED_LIMIT', 500)
@@ -40,15 +41,29 @@ DAEMON_FEED_LIMIT = 500
 @celery_app.task(
     name="ttrss.tasks.feed_tasks.dispatch_feed_updates",
     bind=True,
-    max_retries=3,  # R20
+    # New: no PHP equivalent — PHP dispatcher does not retry; max_retries added for Celery resilience.
+    max_retries=3,
     default_retry_delay=60,
 )
 def dispatch_feed_updates(self) -> dict[str, Any]:
     """
     Beat-triggered dispatcher: query due feeds, fan-out update_feed per feed.
     Source: ttrss/include/rssfuncs.php:update_daemon_common (lines 120-192)
+    Note: ttrss/include/rssfuncs.php lines 93-94 — PHP checks last_updated = '1970-01-01 00:00:00'
+          as a sentinel value for feeds that have never been updated.  Python uses IS NULL instead,
+          relying on the ORM schema default; the 1970 sentinel is not reproduced.
+    Note: ttrss/include/rssfuncs.php lines 72-80 — PHP applies DAEMON_UPDATE_LOGIN_LIMIT to cap
+          the number of active users processed per cycle.  Python omits this per-login throttle;
+          all due feeds up to DAEMON_FEED_LIMIT are dispatched unconditionally.
+    Note: ttrss/include/rssfuncs.php lines 120-178 — PHP queries feed_url and deduplicates at the
+          URL level before dispatching.  Python queries only ttrss_feeds.id and dispatches one task
+          per feed row without URL-level deduplication — a structural redesign.
+          Adapted: URL-level dedup omitted; ttrss_feeds.last_update_started guard prevents
+          duplicate in-flight dispatches for the same feed row.
     """
     # Lazy Flask import — keeps celery_app.py independently importable (R18).
+    # New: create_app() per task invocation — no PHP equivalent; required by Flask application
+    #      factory pattern when running inside Celery workers (no shared app context).
     from ttrss import create_app
     from ttrss.extensions import db
 
@@ -98,7 +113,7 @@ def dispatch_feed_updates(self) -> dict[str, Any]:
             {"limit": DAEMON_FEED_LIMIT},
         ).fetchall()
 
-        feed_ids = [r[0] for r in rows]
+        feed_ids = [r[0] for r in rows]  # New: no PHP equivalent — Python unpacks SQLAlchemy Row objects; PHP directly iterates query result arrays.
 
         # Source: rssfuncs.php lines 154-156 — mark feeds as in-progress
         if feed_ids:
@@ -123,6 +138,9 @@ def dispatch_feed_updates(self) -> dict[str, Any]:
 # Async HTTP fetch helper
 # ---------------------------------------------------------------------------
 
+# New: _fetch_feed_async is a Python-only structural addition — PHP has no equivalent async
+#      helper function; cURL is called inline inside update_rss_feed via fetch_file_contents().
+#      Extracted here to allow asyncio.run() isolation inside the synchronous Celery task (R14).
 async def _fetch_feed_async(
     feed_url: str,
     last_etag: str | None,
@@ -133,10 +151,11 @@ async def _fetch_feed_async(
     """
     Async HTTP fetch with conditional GET (R4, R19, ADR-0015).
 
-    Source: ttrss/include/functions.php:fetch_file_contents (lines 197-365)
+    Source: ttrss/include/functions.php:fetch_file_contents (lines 343-495)
             — cURL-based fetch replaced by httpx async (ADR-0015)
     New: ETag/Last-Modified conditional GET stores in ttrss_feeds.last_etag /
          last_modified (ADR-0015 schema extension, specs/02-database.md).
+         No PHP equivalent — PHP does not perform conditional GET.
     """
     headers: dict[str, str] = {}
     # Source: ttrss/include/functions.php:fetch_file_contents — no conditional GET in PHP;
@@ -154,8 +173,10 @@ async def _fetch_feed_async(
     # AR2: new AsyncClient per task invocation — do NOT share across tasks (prefork fork safety).
     async with httpx.AsyncClient(
         timeout=HTTP_TIMEOUT,  # R19
+        # Source: ttrss/include/functions.php lines 374-376 — CURLOPT_FOLLOWLOCATION (conditional on safe_mode).
+        # Adapted: Python always enables follow_redirects=True; safe_mode path not reproduced.
         follow_redirects=True,
-        max_redirects=20,  # Source: ttrss/include/functions.php (CURLOPT_MAXREDIRS default 20)
+        max_redirects=20,  # Source: ttrss/include/functions.php — CURLOPT_MAXREDIRS default 20
     ) as client:
         resp = await client.get(feed_url, headers=headers, auth=auth)
         resp_headers = {
@@ -166,39 +187,10 @@ async def _fetch_feed_async(
 
 
 # ---------------------------------------------------------------------------
-# HTML sanitization helper
-# ---------------------------------------------------------------------------
-
-def _sanitize_html(html_content: str) -> str:
-    """
-    Sanitize HTML content using lxml (ADR-0014).
-    Source: ttrss/include/functions2.php:sanitize (lines 356-450)
-            — PHP's strip_harmful_tags() + DOMDocument replaced by lxml Cleaner.
-    """
-    if not html_content:
-        return ""
-    cleaner = lxml.html.clean.Cleaner(
-        scripts=True,
-        javascript=True,
-        embedded=True,
-        meta=True,
-        remove_unknown_tags=False,
-        safe_attrs_only=True,
-    )
-    try:
-        doc = lxml.html.fragment_fromstring(html_content, create_parent="div")
-        cleaned = cleaner.clean_html(doc)
-        return lxml.html.tostring(cleaned, encoding="unicode")
-    except Exception:
-        logger.warning("_sanitize_html: failed to sanitize, returning empty", exc_info=True)
-        return ""
-
-
-# ---------------------------------------------------------------------------
 # update_feed — per-feed worker
 # ---------------------------------------------------------------------------
 
-# Source: ttrss/include/rssfuncs.php:update_rss_feed (lines 203-700)
+# Source: ttrss/include/rssfuncs.php:update_rss_feed (lines 203-900)
 # R20: max_retries=3, exponential backoff via retry_backoff=True.
 # R14: asyncio.run() inside prefork worker — each process has its own event loop.
 @celery_app.task(
@@ -213,12 +205,30 @@ def _sanitize_html(html_content: str) -> str:
 def update_feed(self, feed_id: int) -> dict[str, Any]:
     """
     Per-feed update task: fetch → 304 check → feedparser → lxml sanitize.
-    Article DB persistence deferred to Phase 2 (marked TODO below).
+    Article DB persistence deferred to Phase 3.
 
-    Source: ttrss/include/rssfuncs.php:update_rss_feed (lines 203-700)
+    Source: ttrss/include/rssfuncs.php:update_rss_feed (lines 203-900)
     ADR-0011 (Celery), ADR-0014 (feedparser+lxml), ADR-0015 (httpx async).
+    Note: ttrss/include/rssfuncs.php lines 235-236 — PHP stamps last_update_started at task
+          start.  Python stamps last_update_started in dispatch_feed_updates before fan-out;
+          not re-stamped at task entry here.
+    Note: ttrss/include/rssfuncs.php lines 424-457 — PHP fetches and updates favicon.
+          Favicon handling not reproduced.
+    Note: ttrss/include/rssfuncs.php lines 459-474 — PHP updates feed title and site_url from
+          parsed feed metadata.  Feed metadata update not reproduced.
+    Note: ttrss/include/rssfuncs.php lines 494-541 — PHP handles PubSubHubbub subscription.
+          PubSubHubbub not reproduced.
+    Note: ttrss/include/rssfuncs.php lines 702-703 — PHP triggers cache_images() per entry.
+          Image caching not reproduced.
+    Note: ttrss/include/rssfuncs.php — entry fields entry_timestamp, entry_language,
+          entry_comments, num_comments, entry_tags are parsed and stored by PHP but are not
+          included in the Python article dict; omitted pending Phase 3 DB persistence.
+    Note: ttrss/include/rssfuncs.php — PHP computes SHA1-prefixed GUID for entries without a
+          stable guid.  GUID hashing not reproduced; feedparser's entry.id used as-is.
     """
     # Lazy Flask import — keeps celery_app.py independently importable (R18).
+    # New: create_app() per task invocation — no PHP equivalent; required by Flask application
+    #      factory pattern when running inside Celery workers (no shared app context).
     from ttrss import create_app
     from ttrss.extensions import db
 
@@ -227,7 +237,7 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
         from ttrss.models.feed import TtRssFeed
 
         feed = db.session.get(TtRssFeed, feed_id)
-        if feed is None:
+        if feed is None:  # New: no PHP equivalent — PHP passes feed_id from a trusted dispatch loop; Python guards against race-condition deletes between dispatch and execution.
             logger.warning("update_feed: feed %d not found, skipping", feed_id)
             return {"feed_id": feed_id, "status": "not_found"}
 
@@ -245,31 +255,55 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
         elif raw_pass:
             auth_pass = raw_pass
 
+        from ttrss.plugins.manager import get_plugin_manager
+        pm = get_plugin_manager()
+
+        # Source: ttrss/include/rssfuncs.php lines 270-272 — HOOK_FETCH_FEED pipeline
+        # Each plugin receives feed_data (None initially) and may return alternative feed bytes,
+        # bypassing the HTTP fetch.  Collecting hook; last non-None result wins.
+        _hook_feed_data_results = pm.hook.hook_fetch_feed(
+            feed_data=None,
+            fetch_url=feed.feed_url,
+            owner_uid=feed.owner_uid,
+            feed=feed_id,
+        )
+        _plugin_feed_data = next(  # New: no PHP equivalent — Python aggregates pipeline results.
+            (r for r in reversed(_hook_feed_data_results) if r is not None), None
+        )
+
         # R14: asyncio.run() wraps async httpx — safe in prefork (AR9: NOT get_event_loop())
-        try:
-            status_code, body, resp_headers = asyncio.run(
-                _fetch_feed_async(
-                    feed.feed_url,
-                    feed.last_etag,
-                    feed.last_modified,
-                    auth_login,
-                    auth_pass,
+        if _plugin_feed_data is not None:
+            # Source: ttrss/include/rssfuncs.php lines 270-272 — plugin-provided data bypasses HTTP fetch.
+            # Note: PHP's local file-cache path (lines 274-291) is a different mechanism; Python's
+            #       plugin-bypass is structurally analogous but not identical to PHP's cache path.
+            body = _plugin_feed_data
+            status_code = 200  # New: synthetic status; plugin bypassed HTTP entirely.
+            resp_headers: dict[str, str] = {}  # New: no PHP equivalent — empty headers dict satisfies the conditional-GET update path below; plugin-provided data has no HTTP response headers.
+        else:
+            try:
+                status_code, body, resp_headers = asyncio.run(
+                    _fetch_feed_async(
+                        feed.feed_url,
+                        feed.last_etag,
+                        feed.last_modified,
+                        auth_login,
+                        auth_pass,
+                    )
                 )
-            )
-        except httpx.HTTPError as exc:
-            feed.last_error = str(exc)[:250]
-            db.session.commit()
-            raise  # triggers autoretry
+            except httpx.HTTPError as exc:  # Source: ttrss/include/rssfuncs.php lines 317-323 — PHP catches cURL errors; Python raises for autoretry (R20).
+                feed.last_error = str(exc)[:250]
+                db.session.commit()
+                raise  # triggers autoretry
 
         # Source: rssfuncs.php lines 352-364 — 304 Not Modified handling
-        if status_code == 304:
+        if status_code == 304:  # Source: rssfuncs.php line 352 — if ($res_code == 304) — skip update, stamp last_updated.
             from sqlalchemy import func as sqlfunc
             feed.last_updated = sqlfunc.now()
             db.session.commit()
             logger.debug("update_feed: feed %d 304 Not Modified", feed_id)
             return {"feed_id": feed_id, "status": "not_modified"}
 
-        if status_code >= 400:
+        if status_code >= 400:  # Source: rssfuncs.php lines 357-364 — if ($res_code == 0 || $res_code >= 400) — record HTTP error, stamp last_updated.
             feed.last_error = f"HTTP {status_code}"
             from sqlalchemy import func as sqlfunc
             feed.last_updated = sqlfunc.now()
@@ -277,9 +311,22 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
             logger.warning("update_feed: feed %d HTTP %d", feed_id, status_code)
             return {"feed_id": feed_id, "status": "http_error", "code": status_code}
 
-        # New: ADR-0015 — store conditional GET response headers for next request
+        # New: no PHP equivalent — ADR-0015 stores ETag/Last-Modified for conditional GET on next fetch.
         feed.last_etag = resp_headers.get("etag") or None
         feed.last_modified = resp_headers.get("last-modified") or None
+
+        # Source: ttrss/include/rssfuncs.php line 367 — HOOK_FEED_FETCHED pipeline
+        # Plugins may transform raw feed bytes (e.g., apply encoding fixes, inject content).
+        # Collecting hook; last non-None result replaces body.
+        _hook_fetched_results = pm.hook.hook_feed_fetched(
+            feed_data=body,
+            fetch_url=feed.feed_url,
+            owner_uid=feed.owner_uid,
+            feed=feed_id,
+        )
+        for _r in _hook_fetched_results:  # New: no PHP equivalent — Python collects all results; pipeline takes last non-None.
+            if _r is not None:
+                body = _r
 
         # Source: rssfuncs.php lines 375-378 — parse feed content (ADR-0014)
         parsed = feedparser.parse(body)
@@ -295,21 +342,45 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
             )
             return {"feed_id": feed_id, "status": "parse_error"}
 
-        # Source: rssfuncs.php lines 391-394 — HOOK_FEED_PARSED (collecting, not firstresult)
-        # TODO Phase 2: pm.hook.hook_feed_parsed(rss=parsed) via get_plugin_manager()
+        # Source: ttrss/include/rssfuncs.php line 394 — HOOK_FEED_PARSED fire-and-forget
+        # run_hooks() in PHP; pluggy collecting call here (results ignored).
+        pm.hook.hook_feed_parsed(rss=parsed)
 
         # Source: rssfuncs.php lines 440-500 — per-entry processing loop
         sanitized_count = 0
         for entry in parsed.entries:
+            # Source: ttrss/include/rssfuncs.php lines 580-600 — extract entry content/summary
+            # Adapted: PHP extracts content from SimplePie entry object; feedparser uses dict-like API.
             content = (
                 entry.get("summary")
                 or (entry.get("content") or [{}])[0].get("value", "")
             )
-            _sanitize_html(content)
-            sanitized_count += 1
-            # TODO Phase 2: upsert entry into ttrss_entries + ttrss_user_entries
 
-        # Source: rssfuncs.php lines 680-690 — update feed metadata
+            # Source: ttrss/include/rssfuncs.php lines 673-689 — build article dict + HOOK_ARTICLE_FILTER
+            # Adapted: PHP builds $article array from local vars; Python builds from feedparser entry.
+            article: dict = {
+                "owner_uid": feed.owner_uid,  # Source: rssfuncs.php line 673 — "owner_uid" => $owner_uid
+                "guid": entry.get("id", ""),  # Source: rssfuncs.php line 674 — "guid" => $entry_guid
+                "title": entry.get("title", ""),  # Source: rssfuncs.php line 675 — "title" => $entry_title
+                "content": content,  # Source: rssfuncs.php line 676 — "content" => $entry_content
+                "link": entry.get("link", ""),  # Source: rssfuncs.php line 677 — "link" => $entry_link
+                "tags": [],  # Source: rssfuncs.php line 678 — "tags" => $entry_tags
+                "plugin_data": "",  # Source: rssfuncs.php line 679 — "plugin_data" => $entry_plugin_data
+                "author": entry.get("author", ""),  # Source: rssfuncs.php line 680 — "author" => $entry_author
+            }
+
+            # Source: ttrss/include/rssfuncs.php lines 687-689 — HOOK_ARTICLE_FILTER pipeline
+            _hook_filter_results = pm.hook.hook_article_filter(article=article)
+            for _r in _hook_filter_results:  # New: no PHP equivalent — Python collects results; pipeline takes last non-None.
+                if _r is not None:
+                    article = _r
+            content = article.get("content", content)  # Source: rssfuncs.php line 697 — $entry_content = $article["content"]
+
+            sanitize(content, owner_uid=feed.owner_uid)  # Source: ttrss/include/rssfuncs.php lines 694-697 — sanitize($entry_content, ...) call per entry.
+            sanitized_count += 1  # New: no PHP equivalent — Python tracks sanitized count for task return value; PHP has no equivalent counter.
+            # TODO Phase 3: upsert entry into ttrss_entries + ttrss_user_entries
+
+        # Source: rssfuncs.php lines 488-490 — update feed last_updated and clear last_error after successful parse
         feed.last_error = ""
         from sqlalchemy import func as sqlfunc
         feed.last_updated = sqlfunc.now()

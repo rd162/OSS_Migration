@@ -29,11 +29,9 @@ target Python module. Grouped by domain responsibility, NOT by PHP file.
 | PHP function | Source file | Lines | Notes |
 |---|---|---|---|
 | `authenticate_user()` | functions.php | 706-760 | Main auth dispatcher; invokes HOOK_AUTH_USER |
-| `login_sequence()` | functions.php | 762-800 | Login flow controller |
-| `logout_user()` | functions.php | 802-820 | Session teardown |
-| `load_user_plugins()` | functions.php | 850-870 | Per-user plugin loading (KIND_USER) |
-| `initialize_user()` | functions.php | 870-920 | New user setup |
-| `initialize_user_prefs()` | functions.php | 920-980 | Populate user_prefs from defaults |
+| `login_sequence()` | functions.php | 830+ | Login flow controller |
+| `logout_user()` | functions.php | 807+ | Session teardown |
+| `initialize_user()` | functions.php | 796+ | New user setup; delegates initialize_user_prefs() to ttrss/prefs/ops.py |
 
 ---
 
@@ -50,6 +48,29 @@ target Python module. Grouped by domain responsibility, NOT by PHP file.
 | `feed_has_icon()` | functions2.php | 900-910 | Icon presence check |
 | `get_feed_access_key()` | functions2.php | 911-930 | API access token for feed |
 | `get_feeds_from_html()` | functions2.php | 931-960 | autodiscover feed URLs from HTML |
+
+---
+
+### `ttrss/ccache.py` ← Phase 3 (before feeds/counters.py — counters reads it)
+| PHP function | Source file | Lines | Notes |
+|---|---|---|---|
+| `invalidate_cache()` | ccache.php | — | Deletes rows from ttrss_counters_cache + ttrss_cat_counters_cache for owner_uid; called from tasks/feed_tasks.py after article insert |
+| `update_cache()` | ccache.php | — | Writes updated counter value into ttrss_counters_cache / ttrss_cat_counters_cache |
+| Cache read helpers | ccache.php | — | Read-side functions used by feeds/counters.py (getAllCounters, getFeedCounters, getCategoryCounters) |
+
+---
+
+### `ttrss/labels.py` ← Phase 3 (before articles/ops.py and feeds/counters.py)
+| PHP function | Source file | Lines | Notes |
+|---|---|---|---|
+| `label_to_feed_id()` | functions.php | — | Converts label ID to virtual feed ID (negative-id scheme); used by counters and feed handlers |
+| `label_find_id()` | labels.php | — | Find label ID by caption and owner_uid; called from rssfuncs.php during article labeling |
+| `label_to_feed_id()` (labels.php variant) | labels.php | — | labels.php copy of the virtual-id conversion |
+| `labels_get_all()` | labels.php | — | Return all labels for owner_uid from ttrss_labels2 |
+| `label_create()` | labels.php | — | Insert new row into ttrss_labels2 |
+| `label_remove()` | labels.php | — | Delete label from ttrss_labels2 + cascade ttrss_user_labels2 |
+| `label_set_article()` | labels.php | — | Assign or remove a label on an article (ttrss_user_labels2) |
+| `label_find_feed_articles()` | labels.php | — | Return article IDs in a feed that carry a given label |
 
 ---
 
@@ -72,19 +93,21 @@ target Python module. Grouped by domain responsibility, NOT by PHP file.
 ---
 
 ### `ttrss/articles/ops.py` ← Phase 3
+**Note: Line ranges marked (approx) are approximate — verify against actual PHP source before implementing.**
+
 | PHP function | Source file | Lines | Notes |
 |---|---|---|---|
 | `format_article()` | functions2.php | 200-300 | Article HTML rendering |
 | `format_article_enclosures()` | functions2.php | 1847 | Enclosure HTML; calls format_inline_player() |
 | `format_inline_player()` | functions2.php | 1157 | Embed media player HTML; called from format_article_enclosures() |
-| `format_article_labels()` | functions2.php | 361-400 | Label badge HTML |
-| `format_article_note()` | functions2.php | 401-420 | Article note HTML |
-| `format_tags_string()` | functions2.php | 421-440 | Tags display HTML |
-| `get_article_enclosures()` | functions2.php | 441-470 | DB query: enclosures |
-| `get_article_tags()` | functions2.php | 471-500 | DB query: tags |
-| `catchupArticlesById()` | functions2.php | 501-540 | Mark articles read by IDs |
+| `format_article_labels()` | functions2.php | ~1608 (approx) | Label badge HTML; depends on ttrss/labels.py |
+| `format_article_note()` | functions2.php | ~1650 (approx) | Article note HTML |
+| `format_tags_string()` | functions2.php | ~1680 (approx) | Tags display HTML |
+| `get_article_enclosures()` | functions2.php | ~1715 (approx) | DB query: enclosures |
+| `get_article_tags()` | functions2.php | ~1750 (approx) | DB query: tags |
+| `catchupArticlesById()` | functions2.php | ~1780 (approx) | Mark articles read by IDs |
 | `catchup_feed()` | functions.php | 1094-1237 | Mark all articles in feed read |
-| `getLastArticleId()` | functions2.php | 1200-1210 | Max entry id query |
+| `getLastArticleId()` | functions2.php | ~1943 (approx) | Max entry id query |
 
 ---
 
@@ -112,6 +135,9 @@ target Python module. Grouped by domain responsibility, NOT by PHP file.
 | PHP function | Source file | Lines | Notes |
 |---|---|---|---|
 | `getCategoryTitle()` | functions.php | 1300-1320 | Category name lookup |
+| `getFeedCatTitle()` | functions.php | — | Returns category name for a category ID; used by counters and feed handlers |
+| `getFeedTitle()` | functions.php | — | Returns display name for a feed ID (including virtual feed IDs); used by counters and feed handlers |
+| `getArticleFeed()` | functions.php | — | Returns feed_id for a given article_id |
 | `get_feed_category()` | functions2.php | 1100-1120 | Feed's category ID |
 | `add_feed_category()` | functions2.php | 1121-1150 | Create category |
 | `getParentCategories()` | functions2.php | 1151-1170 | Ancestor chain |
@@ -137,7 +163,7 @@ target Python module. Grouped by domain responsibility, NOT by PHP file.
 ### `ttrss/prefs/ops.py` ← Phase 2
 | PHP function | Source file | Lines | Notes |
 |---|---|---|---|
-| `initialize_user_prefs()` | functions.php | 920-980 | Populate user_prefs from defaults |
+| `initialize_user_prefs()` | db-prefs.php | — | Populate user_prefs from defaults; canonical home here — authenticate.py delegates to this module |
 | `print_user_stylesheet()` | functions2.php | 1311-1330 | CSS generation — ELIMINATE or stub |
 | `get_schema_version()` | functions.php | 988-1000 | `SELECT schema_version FROM ttrss_version` |
 

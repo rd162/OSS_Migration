@@ -20,7 +20,7 @@ Entry Points → Bootstrap → Handlers → Business Logic → Database
 
 **Core bootstrap chain** (must be migrated first in any flow):
 ```
-autoload.php → config.php → db.php → sessions.php → functions.php → db-prefs.php
+autoload.php → config.php → db.php → functions.php → db-prefs.php
 ```
 
 **Handler dependency chain**:
@@ -42,13 +42,15 @@ rssfuncs.php → functions.php → db.php
 
 | Community | Files | Description |
 |-----------|-------|-------------|
-| **Core** | functions.php, functions2.php, db.php, sessions.php, autoload.php | Foundation — everything depends on this |
-| **Feed Engine** | rssfuncs.php, feedparser.php, feeditem/*.php, ccache.php | Feed update pipeline |
+| **Core** | functions.php, functions2.php, db.php, config.php, autoload.php | Foundation — everything depends on this (bootstrap chain: autoload.php→config.php→db.php→functions.php→db-prefs.php; sessions.php is NOT in this chain; db-prefs.php bootstrap role is cross-cutting — primary community is Preferences) |
+| **Feed Engine** | rssfuncs.php, feedparser.php, feeditem/*.php | Feed update pipeline (ccache.php removed — primarily coupled with counter functions, not the feed pipeline) |
+| **Counters + Caching** | ccache.php | Counter cache (ttrss_counters_cache + ttrss_cat_counters_cache); bidirectionally coupled with functions.php counter functions (getAllCounters, getFeedCounters, getCategoryCounters) |
+| **Labels** | labels.php | Label operations (ttrss_labels2 + ttrss_user_labels2); called from rssfuncs.php (article labeling), article.php, and rpc.php (label toggle) |
 | **User Interface** | feeds.php, article.php, rpc.php, dlg.php + JS files | Frontend-serving handlers |
 | **Preferences** | pref/*.php, db-prefs.php | User/admin settings |
 | **Plugin** | pluginhost.php, plugin.php, pluginhandler.php | Extension system |
 | **API** | api.php, api/index.php | External API |
-| **Auth** | sessions.php, auth/base.php, iauthmodule.php, auth_internal | Authentication |
+| **Auth** | sessions.php, auth/base.php, iauthmodule.php, auth/*.php | Authentication and session management; auth functions (authenticate_user line 706, login_sequence line 830, logout_user line 807, initialize_user line 796, load_user_plugins line 818) are sourced from functions.php (Core community) — these are function citations, not community membership claims |
 | **Infrastructure** | logger/*.php, dbupdater.php, ttrssmailer.php, crypt.php | Cross-cutting services |
 
 ### Dimension 2: Entity / Database Relationships
@@ -263,12 +265,16 @@ Phase 2 — Core Logic (call graph order):
   2b. Preference system
   2c. Utility modules (decomposed from functions.php/functions2.php)
 
-Phase 3 — Business Logic (entity clusters):
-  3a. Feed management (ttrss_feeds + ttrss_feed_categories)
-  3b. Article management (ttrss_entries + ttrss_user_entries)
-  3c. Feed update engine — designed for Celery: pure functions, explicit
-      params (feed_id, config), no Flask request context; httpx for fetching
-  3d. Labels + Tags + Filters
+Phase 3 — Business Logic (dependency DAG order):
+  3a. ccache.py + labels.py (no inter-dependencies between these two;
+      ccache.py must precede feeds/counters.py; labels.py must precede
+      articles/ops.py and feeds/counters.py getLabelCounters)
+  3b. feeds/categories.py (must precede feeds/ops.py — subscribe_to_feed
+      creates categories)
+  3c. feeds/ops.py + feeds/counters.py (counters depends on ccache + labels)
+  3d. articles/ops.py (depends on labels.py for format_article_labels)
+  3e. articles/search.py
+  3f. tasks/housekeeping.py + utils/digest.py
   Hook invocations: HOOK_FEED_PARSED, HOOK_ARTICLE_FILTER, etc. (inert)
 
 Phase 4 — Handlers (frontend-backend contract):

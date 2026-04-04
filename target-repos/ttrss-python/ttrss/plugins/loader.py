@@ -142,3 +142,15 @@ def load_user_plugins(owner_uid: int) -> None:
     plugin_names = [p.strip() for p in plugins_str.split(",") if p.strip()]
     for name in plugin_names:
         _load_plugin(name, KIND_USER, owner_uid)
+
+    # Source: ttrss/include/functions.php line 824 — PluginHost::load_data()
+    # Adapted: PHP load_data() hydrates per-plugin storage after all user plugins are loaded;
+    #          Python calls load_plugin_data() which passes data to plugins implementing load_data().
+    try:
+        from ttrss.extensions import db  # New: no PHP equivalent — lazy import avoids circular import.
+        from ttrss.plugins.storage import load_plugin_data
+
+        pm = get_plugin_manager()
+        load_plugin_data(db.session, pm, owner_uid)
+    except Exception:  # New: no PHP equivalent — guard; storage failure must not block auth.
+        logger.warning("load_user_plugins: storage hydration failed for uid=%d", owner_uid, exc_info=True)

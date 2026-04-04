@@ -125,3 +125,26 @@ def db_session(app):
     with app.app_context():
         yield _db.session
         _db.session.rollback()
+
+
+@pytest.fixture(autouse=True)
+def plugin_manager_with_auth():
+    """
+    Ensure a clean PluginManager with AuthInternal registered for every test.
+
+    Without this fixture, pm.hook.hook_auth_user() returns None (no implementors),
+    causing authenticate_user() to silently fail for any test that exercises auth.
+    AuthInternal is KIND_SYSTEM and does not require an owner_uid to load.
+
+    New: no PHP equivalent — PHP PluginHost is process-scoped; tests need clean state.
+    Source: ttrss/plugins/auth_internal/init.php (Auth_Internal class)
+            ttrss/classes/pluginhost.php:reset_plugins (test helper not present in PHP)
+    """
+    from ttrss.plugins.auth_internal import AuthInternal
+    from ttrss.plugins.manager import get_plugin_manager, reset_plugin_manager
+
+    reset_plugin_manager()
+    pm = get_plugin_manager()
+    pm.register(AuthInternal(), name="auth_internal")
+    yield
+    reset_plugin_manager()

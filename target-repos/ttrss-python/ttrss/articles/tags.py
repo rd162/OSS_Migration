@@ -121,8 +121,15 @@ def setArticleTags(
         .where(TtRssTag.owner_uid == owner_uid)
     )
 
-    # Insert valid new tags
-    valid_tags = [t.strip() for t in tags if tag_is_valid(t.strip())]
+    # Source: ttrss/classes/article.php:227 — array_unique(trim_array(explode(...))) deduplicates tags
+    # Python must also deduplicate to avoid inserting duplicate rows into ttrss_tags.
+    seen_tags: set[str] = set()
+    valid_tags = []
+    for t in tags:
+        ts = t.strip()
+        if tag_is_valid(ts) and ts not in seen_tags:
+            valid_tags.append(ts)
+            seen_tags.add(ts)
     for tag in valid_tags:
         session.add(TtRssTag(tag_name=tag, owner_uid=owner_uid, post_int_id=int_id))
 

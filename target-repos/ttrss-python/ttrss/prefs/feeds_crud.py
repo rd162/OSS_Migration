@@ -371,6 +371,11 @@ def remove_feed(
             if icon_path.exists():
                 icon_path.unlink()
 
+        # Source: ttrss/classes/pref/feeds.php:1759 — ccache_remove($id, $owner_uid)
+        # Invalidate counter cache after feed deletion to prevent stale counts.
+        from ttrss.ccache import ccache_remove
+        ccache_remove(session, feed_id, owner_uid)
+
         session.commit()
     else:
         # Source: ttrss/classes/pref/feeds.php:1762 — label_remove for negative feed IDs

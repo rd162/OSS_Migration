@@ -63,3 +63,7 @@ class Config:
     # PHP: define("ICONS_DIR", "feed-icons"); define("ICONS_URL", "feed-icons");
     ICONS_DIR: str = os.environ.get("TTRSS_ICONS_DIR", "feed-icons")
     ICONS_URL: str = os.environ.get("TTRSS_ICONS_URL", "feed-icons")
+
+    # New: Flask-Limiter toggle — read from env so `RATELIMIT_ENABLED=False flask run` works.
+    # Prevents rate-limit false-positives in development and testing.
+    RATELIMIT_ENABLED: bool = os.environ.get("RATELIMIT_ENABLED", "true").lower() != "false"

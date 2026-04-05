@@ -31,10 +31,17 @@ public_bp = Blueprint("public", __name__)
 logger = structlog.get_logger(__name__)
 
 
-# Source: ttrss/index.php (app root entry point) — Phase 1a health check stub
+# Source: ttrss/index.php (app root entry point)
+# ADR-0017: serves the vanilla-JS SPA shell; health check moved to /healthz
 @public_bp.get("/")
 def index():
-    """Health-check / app root. Phase 1a stub."""
+    """Serve the SPA shell (ADR-0017)."""
+    return send_file(os.path.join(current_app.root_path, "static", "index.html"))
+
+
+@public_bp.get("/healthz")
+def health():
+    """Health-check endpoint (moved from / to /healthz to make room for SPA)."""
     return jsonify({"status": "ok", "app": "ttrss-python", "phase": "1a"})
 
 

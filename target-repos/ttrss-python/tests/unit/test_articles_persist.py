@@ -313,7 +313,18 @@ def test_upsert_entry_existing_same_hash_no_update():
     existing = MagicMock()
     existing.id = 5
     existing.content_hash = "SHA1:xyz"
-    session.execute.return_value.one_or_none.return_value = existing
+
+    # Full-entry check: same hash, same title, same plugin_data, same num_comments → no update
+    existing_full = MagicMock()
+    existing_full.content_hash = "SHA1:xyz"
+    existing_full.title = "T"
+    existing_full.plugin_data = None
+    existing_full.num_comments = 0
+
+    session.execute.side_effect = [
+        MagicMock(**{"one_or_none.return_value": existing}),   # GUID SELECT
+        MagicMock(**{"one_or_none.return_value": existing_full}),  # full-entry SELECT
+    ]
 
     entry_id, is_new = upsert_entry(
         session, guid="SHA1:abc", title="T", link="http://x.com", content="body",
@@ -321,8 +332,8 @@ def test_upsert_entry_existing_same_hash_no_update():
     )
     assert is_new is False
     assert entry_id == 5
-    # No UPDATE executed (content_hash unchanged)
-    session.execute.assert_called_once()  # only the SELECT
+    # No UPDATE executed (nothing changed)
+    assert session.execute.call_count == 2  # GUID SELECT + full-entry SELECT only
 
 
 def test_upsert_entry_existing_changed_hash_updates():
@@ -330,11 +341,17 @@ def test_upsert_entry_existing_changed_hash_updates():
     existing = MagicMock()
     existing.id = 5
     existing.content_hash = "SHA1:old"
-    session.execute.return_value.one_or_none.return_value = existing
 
-    # Second execute is the UPDATE
+    existing_full = MagicMock()
+    existing_full.content_hash = "SHA1:old"  # different from "SHA1:new" → triggers update
+    existing_full.title = "T"
+    existing_full.plugin_data = None
+    existing_full.num_comments = 0
+
+    # Three executes: GUID SELECT, full-entry SELECT, UPDATE
     session.execute.side_effect = [
-        MagicMock(**{"one_or_none.return_value": existing}),  # SELECT
+        MagicMock(**{"one_or_none.return_value": existing}),       # GUID SELECT
+        MagicMock(**{"one_or_none.return_value": existing_full}),  # full-entry SELECT
         MagicMock(),  # UPDATE
     ]
 
@@ -344,7 +361,7 @@ def test_upsert_entry_existing_changed_hash_updates():
     )
     assert is_new is False
     assert entry_id == 5
-    assert session.execute.call_count == 2
+    assert session.execute.call_count == 3
 
 
 # ---------------------------------------------------------------------------

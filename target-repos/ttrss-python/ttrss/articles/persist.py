@@ -297,8 +297,25 @@ def upsert_entry(
 
     if existing is not None:
         entry_id = existing.id
-        # Content update detection (rssfuncs.php:923-970)
-        if existing.content_hash != content_hash_val:
+        # Source: rssfuncs.php lines 926-944 — update if ANY of: content_hash, title,
+        # plugin_data, or num_comments changed (not just content_hash).
+        # PHP: $post_needs_update = content_hash || title || plugin_data || num_comments
+        # Python was only checking content_hash, causing corrected titles to never sync.
+        existing_full = session.execute(
+            select(
+                TtRssEntry.content_hash,
+                TtRssEntry.title,
+                TtRssEntry.plugin_data,
+                TtRssEntry.num_comments,
+            ).where(TtRssEntry.id == entry_id)
+        ).one_or_none()
+
+        hash_changed = existing_full is None or existing_full.content_hash != content_hash_val
+        title_changed = existing_full is None or existing_full.title != title
+        plugin_changed = existing_full is None or existing_full.plugin_data != plugin_data
+        num_changed = existing_full is None or existing_full.num_comments != num_comments
+
+        if hash_changed or title_changed or plugin_changed or num_changed:
             session.execute(
                 sa_update(TtRssEntry)
                 .where(TtRssEntry.id == entry_id)
@@ -311,11 +328,12 @@ def upsert_entry(
                     updated=updated,
                     date_updated=now,
                     plugin_data=plugin_data,
+                    num_comments=num_comments,
                 )
             )
-            # Source: rssfuncs.php lines 964-968 — if content changed significantly
-            # and mark_unread_on_update is set, re-mark all user entries as unread
-            if mark_unread_on_update:
+            # Source: rssfuncs.php lines 964-968 — mark_unread only on significant changes
+            # (content_hash or title change, not minor plugin_data/num_comments)
+            if mark_unread_on_update and (hash_changed or title_changed):
                 session.execute(
                     sa_update(TtRssUserEntry)
                     .where(TtRssUserEntry.ref_id == entry_id)

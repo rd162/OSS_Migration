@@ -48,6 +48,105 @@ OSS_Migration/
 └── target-repos/          ← Python migration target (grows here)
 ```
 
+## Spec-Kit Conventions (MANDATORY)
+
+These conventions follow MADR 4.0, GitHub Spec-Kit, and AGENTS.md open standards (2024-2025).
+Violating them creates contradictions that compound across sessions — treat as hard constraints.
+
+### Directory Purpose Rules (STRICT)
+
+| Directory | Purpose | What goes here | What does NOT go here |
+|-----------|---------|----------------|----------------------|
+| `memory/` | Cross-session context, active work | Session notes, active plans, work-in-progress, current blockers | Completed artefacts, stable docs |
+| `specs/` | Architectural specifications | Stable specs (charter, DB, API, security, etc.) | Plans, decisions, session notes |
+| `docs/` | Completed artefacts | Semantic verification reports, stable documentation | Active plans, ADRs |
+| `docs/decisions/` | Architecture Decision Records | ADRs (immutable once accepted) | Plans, specs, session notes |
+| `.claude/` | Claude-specific config only | Skills, settings | Memory, specs, plans |
+
+**The key distinction:**
+- **Active / in-progress** → `memory/`
+- **Decisions made** → `docs/decisions/` (ADR)
+- **Architecture spec** → `specs/`
+- **Completed report** → `docs/`
+
+### ADR Format (MADR 4.0 — MANDATORY)
+
+Every ADR in `docs/decisions/` MUST use this structure:
+
+```markdown
+---
+status: proposed | accepted | deprecated | superseded by [NNNN]
+date: YYYY-MM-DD
+decision_makers: [list]
+consulted: [list]
+informed: [list]
+---
+
+# NNNN — Title as Present-Tense Verb Phrase
+
+## Context and Problem Statement
+Why this decision is needed.
+
+## Decision Drivers
+- Driver 1
+- Driver 2
+
+## Considered Options
+1. Option A — short description
+2. Option B — short description
+
+## Decision
+Chosen option: **Option X**, because [rationale].
+
+## Consequences
+### Positive
+- ...
+### Negative
+- ...
+
+## Confirmation
+How to verify this decision is being followed in code.
+```
+
+Naming: `NNNN-verb-noun.md` (e.g., `0017-add-rate-limiting.md`). Numbers are sequential, never reused.
+
+### Memory File Rules
+
+Every memory file MUST have YAML frontmatter:
+```yaml
+---
+name: descriptive-slug
+description: One-line description used to decide relevance in future sessions
+type: user | feedback | project | reference
+---
+```
+
+Types:
+- `project` — active plans, phase status, current work
+- `feedback` — behavioral corrections (do/don't rules for Claude)
+- `user` — user role, preferences, expertise
+- `reference` — pointers to external systems, URLs, tool paths
+
+### Test Traceability Rule (MANDATORY)
+
+Every unit test MUST include a docstring citing its PHP source:
+```python
+def test_sanitize_empty_string():
+    """
+    Source: ttrss/include/functions2.php:sanitize line 834
+    PHP: $res = trim($str); if (!$res) return ''
+    Assert: sanitize("") returns empty string.
+    """
+```
+
+No test without a PHP source citation may be committed.
+
+### Plan vs Report Rule
+
+- A **plan** (future work, steps to execute) → `memory/`
+- A **report** (completed analysis, findings) → `docs/`
+- A **decision** (committed architectural choice) → `docs/decisions/` as ADR
+
 ## Critical Rules
 
 ### Storage Rules

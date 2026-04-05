@@ -215,13 +215,16 @@ def send_headlines_digests(app=None) -> int:
 
     # Source: ttrss/include/digest.php lines 18-23 — query users with non-empty email,
     # last_digest_sent IS NULL or older than 1 day
-    # Lazy Flask import — this function may be called from a Celery worker or a CLI script.
+    # FLAW 2 fix: removed create_app() fallback — calling it here would mutate shared
+    # extension singletons with production settings, breaking test isolation.
+    # If app=None and no active context exists, _run() proceeds without one (caller is
+    # responsible; unit tests mock ttrss.extensions.db directly so no context is needed).
     if app is None:
+        from flask import current_app
         try:
-            from ttrss import create_app as _create_app
-            app = _create_app()
-        except Exception:
-            app = None  # caller must have pushed an app context already
+            app = current_app._get_current_object()
+        except RuntimeError:
+            pass  # No active context; fall through to contextless _run() call below
 
     def _run() -> int:
         from ttrss.extensions import db

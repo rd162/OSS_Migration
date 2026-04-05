@@ -18,7 +18,6 @@ from flask_limiter.util import get_remote_address
 from flask_login import LoginManager
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
-from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFProtect
 
 from ttrss.models.base import Base
@@ -37,10 +36,6 @@ sess = Session()
 
 # New: CSRF protection — replaces PHP custom uniqid() tokens (spec/06-security.md F6, R13)
 csrf = CSRFProtect()
-
-# New: security headers — no PHP equivalent (spec/06-security.md F7: missing security headers)
-# Adds HSTS, X-Content-Type-Options, X-Frame-Options per ADR-0002 security requirements.
-talisman = Talisman()
 
 # New: API rate limiting — no PHP equivalent (spec/06-security.md: API abuse prevention).
 # key_func=get_remote_address: limits per client IP.

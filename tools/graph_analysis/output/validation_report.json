@@ -1,9 +1,9 @@
 {
   "tool": "validate_coverage.py",
-  "python_dir": "/Users/rd/devel/Capgemini/Capgemini_Internal/OSS_Migration/target-repos/ttrss-python/../../target-repos/ttrss-python/ttrss",
-  "graph_dir": "/Users/rd/devel/Capgemini/Capgemini_Internal/OSS_Migration/target-repos/ttrss-python/../../tools/graph_analysis/output",
+  "python_dir": "ttrss",
+  "graph_dir": "/Users/rd/devel/Capgemini/Capgemini_Internal/OSS_Migration/tools/graph_analysis/output",
   "module_count": 91,
-  "source_comment_count": 1139,
+  "source_comment_count": 1141,
   "dimensions": [
     {
       "dimension": "call_coverage",
@@ -13,7 +13,7 @@
       "unmatched": 0,
       "skipped_third_party": 629,
       "skipped_high_level": 23,
-      "unparseable_comments": 218,
+      "unparseable_comments": 217,
       "coverage_pct": 100.0,
       "unmatched_details": [],
       "matched_by_file_details": [
@@ -3178,37 +3178,32 @@
         },
         {
           "file": "models/pref.py",
-          "line": 131,
+          "line": 137,
           "raw": "# Source: schema line 369 — ttrss_user_prefs_owner_uid_index"
         },
         {
           "file": "models/pref.py",
-          "line": 133,
+          "line": 139,
           "raw": "# Source: schema line 370 — ttrss_user_prefs_pref_name_idx"
         },
         {
           "file": "models/pref.py",
-          "line": 135,
-          "raw": "# Source: schema line 371 — value index commented out in PHP schema"
-        },
-        {
-          "file": "models/pref.py",
-          "line": 138,
+          "line": 143,
           "raw": "# Source: schema line 364 — owner_uid integer not null references ttrss_users(id) ON DELETE CASCADE"
         },
         {
           "file": "models/pref.py",
-          "line": 145,
+          "line": 150,
           "raw": "# Source: schema line 365 — pref_name varchar(250) not null references ttrss_prefs(pref_name) ON DELETE CASCADE"
         },
         {
           "file": "models/pref.py",
-          "line": 152,
+          "line": 157,
           "raw": "# Source: schema line 366 — profile integer references ttrss_settings_profiles(id) ON DELETE CASCADE"
         },
         {
           "file": "models/pref.py",
-          "line": 161,
+          "line": 166,
           "raw": "# Source: schema line 367 — value text not null"
         },
         {
@@ -3430,7 +3425,7 @@
     },
     {
       "dimension": "import_coverage",
-      "edges_checked": 12,
+      "edges_checked": 13,
       "skipped_architectural": 22,
       "missing_imports": 0,
       "missing_import_details": []

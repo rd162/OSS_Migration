@@ -101,11 +101,16 @@ def create_app(test_config: dict | None = None) -> Flask:
         app.config["FERNET"] = None  # will fail at encrypt/decrypt; acceptable for skeleton
 
     # Extensions — init_app pattern avoids circular imports (AR02)
-    from ttrss.extensions import db, login_manager, sess, csrf, talisman, limiter
+    from ttrss.extensions import db, login_manager, sess, csrf, limiter
+    from flask_talisman import Talisman  # New: security headers (spec/06-security.md F7)
     db.init_app(app)
     login_manager.init_app(app)
     sess.init_app(app)
     csrf.init_app(app)
+    # Instantiated locally (not as module-level singleton) so each create_app() call
+    # gets its own Talisman instance; prevents test create_app() calls from overwriting
+    # force_https on the shared singleton (FLAW 1 fix).
+    talisman = Talisman()
     talisman.init_app(app, content_security_policy=False, force_https=not app.testing)
     limiter.init_app(app)  # New: rate limiting; disabled in tests via RATELIMIT_ENABLED=False.
 

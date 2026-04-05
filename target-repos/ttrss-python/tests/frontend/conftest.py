@@ -15,7 +15,9 @@ from datetime import datetime, timezone
 import psycopg2
 import pytest
 
-DB_URL = "postgresql://ttrss_test:ttrss_test@localhost:5433/ttrss_test"
+# Must point to the SAME DB the dev server uses (ttrss_dev, not ttrss_test).
+# ttrss_test is wiped by integration tests (drop_all); ttrss_dev is isolated for dev.
+DB_URL = "postgresql://ttrss_test:ttrss_test@localhost:5433/ttrss_dev"
 ADMIN_ID = 1
 TEST_FEED_URL = "http://localhost:5001/static/test_feed.xml"
 TEST_FEED_TITLE = "TT-RSS Automation Test Feed"

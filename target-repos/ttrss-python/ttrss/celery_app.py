@@ -71,8 +71,13 @@ def dispose_db_pool_on_fork(**kwargs):
 
     New: no PHP equivalent — PHP used pcntl_fork() with explicit resource cleanup.
     """
-    from ttrss.extensions import db
-    db.engine.dispose()
+    try:
+        from flask import current_app  # noqa: F401 — check for app context
+        current_app._get_current_object()
+        from ttrss.extensions import db
+        db.engine.dispose()
+    except RuntimeError:
+        pass  # No app context during fork — safe to skip pool disposal
 
 
 @worker_process_shutdown.connect

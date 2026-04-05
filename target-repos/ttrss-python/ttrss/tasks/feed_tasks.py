@@ -385,6 +385,16 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
             )
             return {"feed_id": feed_id, "status": "parse_error"}
 
+        # Source: ttrss/include/rssfuncs.php lines 459-474 — update feed title + site_url
+        # PHP: if ($feed_title) db_query("UPDATE ttrss_feeds SET title='$feed_title'...")
+        # Previously noted as "not reproduced" — now implemented so feed title shows in UI.
+        parsed_title = (getattr(parsed.feed, "title", None) or "").strip()
+        parsed_site = (getattr(parsed.feed, "link", None) or "").strip()
+        if parsed_title and feed.title in ("", "[Unknown]", None):
+            feed.title = parsed_title[:200]
+        if parsed_site and not feed.site_url:
+            feed.site_url = parsed_site[:250]
+
         # Source: ttrss/include/rssfuncs.php line 394 — HOOK_FEED_PARSED fire-and-forget
         # run_hooks() in PHP; pluggy collecting call here (results ignored).
         pm.hook.hook_feed_parsed(rss=parsed)
@@ -487,18 +497,30 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
                 }
                 for e in (entry.get("enclosures") or [])
             ]
-            is_new = persist_article(
-                db.session,
-                entry=entry_copy,
-                feed_id=feed_id,
-                owner_uid=feed.owner_uid,
-                filters=feed_filters,
-                enclosures=enc_list,
-                mark_unread_on_update=feed.mark_unread_on_update,
-                allow_duplicate_posts=_allow_dup_posts,
-            )
-            if is_new:
-                persisted_count += 1
+            # Source: ttrss/include/rssfuncs.php lines 720-1117 — per-entry persist
+            # Adapted: Python wraps each article in a savepoint so one bad article
+            # (e.g., constraint violation) does not abort the whole batch transaction.
+            savepoint = db.session.begin_nested()
+            try:
+                is_new = persist_article(
+                    db.session,
+                    entry=entry_copy,
+                    feed_id=feed_id,
+                    owner_uid=feed.owner_uid,
+                    filters=feed_filters,
+                    enclosures=enc_list,
+                    mark_unread_on_update=feed.mark_unread_on_update,
+                    allow_duplicate_posts=_allow_dup_posts,
+                )
+                savepoint.commit()
+                if is_new:
+                    persisted_count += 1
+            except Exception as _art_exc:
+                savepoint.rollback()
+                logger.warning(
+                    "update_feed: feed %d — skipped article (persist error): %s",
+                    feed_id, _art_exc,
+                )
 
         # Source: rssfuncs.php line 1121 — purge old articles after processing all entries
         from ttrss.feeds.ops import purge_feed

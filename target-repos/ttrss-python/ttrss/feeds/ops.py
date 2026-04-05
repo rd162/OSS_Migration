@@ -382,7 +382,9 @@ def subscribe_to_feed(
         from lxml import html as lxml_html
 
         httpx_auth = (auth_login, auth_pass) if auth_login else None
-        with httpx.Client(timeout=30.0, follow_redirects=True) as client:
+        # Source: ttrss/include/functions.php:fetch_file_contents — PHP uses curl with 45s timeout
+        # Adapted: reduced to 8s for responsiveness; verify=False tolerates self-signed certs in dev
+        with httpx.Client(timeout=8.0, follow_redirects=True, verify=False) as client:
             resp = client.get(url, auth=httpx_auth)
             resp.raise_for_status()
             content_type = resp.headers.get("content-type", "")

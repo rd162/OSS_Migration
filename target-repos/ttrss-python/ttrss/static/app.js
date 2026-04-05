@@ -222,7 +222,7 @@ function renderFeedlist() {
   // Source: ttrss/js/feedlist.js — user feed categories
   const bycat = {};
   for (const f of S.feeds) {
-    if (f.id < 0 || f.cat_id === -2) continue; // skip virtual + label feeds
+    if (f.id <= 0 || f.cat_id === -2) continue; // skip virtual (id<=0) + label feeds
     const k = f.cat_id > 0 ? f.cat_id : '__uncat__';
     (bycat[k] = bycat[k] || []).push(f);
   }

@@ -6,46 +6,48 @@ Migrate Tiny Tiny RSS (TT-RSS) from PHP to Python, fully preserving all specs, d
 
 ## Project Layout
 
+Managed with **specify-cli** (GitHub Spec-Kit). Install: `uv tool install specify-cli --from git+https://github.com/github/spec-kit.git`
+
 ```
 OSS_Migration/
-├── AGENTS.md              ← This file (project rules & conventions)
-├── CLAUDE.md              ← Umbrella pointing here
-├── specs/                 ← Spec-kit: charter, architecture, DB, API, etc.
-│   ├── 00-project-charter.md  ← Mission, Goals, Premises, Constraints (governs all specs)
-│   ├── 01-architecture.md
-│   ├── 02-database.md
-│   ├── 03-api-routing.md
-│   ├── 04-frontend.md
-│   ├── 05-plugin-system.md
-│   ├── 06-security.md
-│   ├── 07-caching-performance.md
-│   ├── 08-deployment.md
-│   ├── 09-source-index.md
-│   ├── 10-migration-dimensions.md
-│   ├── 11-business-rules.md
-│   └── 12-testing-strategy.md
-├── docs/decisions/        ← Architecture Decision Records (MADR convention)
-│   ├── README.md          ← Decision index + dependency graph
-│   ├── 0001-migration-flow-variant.md
-│   ├── 0002-python-framework.md
-│   ├── 0003-database-engine.md
-│   ├── 0004-frontend-strategy.md
-│   ├── 0005-call-graph-analysis.md
-│   ├── 0006-orm-strategy.md
-│   ├── 0007-session-management.md
-│   ├── 0008-password-migration.md
-│   ├── 0009-feed-credential-encryption.md
-│   ├── 0010-plugin-system.md
-│   ├── 0011-background-worker.md
-│   ├── 0012-logging-strategy.md
-│   ├── 0013-i18n-approach.md
-│   ├── 0014-feed-parsing-library.md
-│   └── 0015-http-client.md
-├── memory/                ← Project memory (cross-session context)
-├── rules/                 ← Supplementary rules if needed
-├── source-repos/          ← READ-ONLY: PHP source (ttrss-php/)
-│   └── ttrss-php/
-└── target-repos/          ← Python migration target (grows here)
+├── AGENTS.md                    ← Project rules & conventions (this file)
+├── CLAUDE.md                    ← Umbrella: points here
+├── constitution.md              ← Governing principles (spec-kit root doc)
+│
+├── specs/                       ← Spec-kit feature specs (non-flat)
+│   ├── architecture/            ← System reference specs (stable, read-only)
+│   │   ├── 00-project-charter.md
+│   │   ├── 01-architecture.md … 14-semantic-discrepancies.md
+│   ├── 001-foundation/          ← Phase 1  [DONE]  spec.md · plan.md · tasks.md
+│   ├── 002-core-logic/          ← Phase 2  [DONE]  spec.md · plan.md · tasks.md
+│   ├── 003-business-logic/      ← Phase 3  [DONE]  spec.md · plan.md · tasks.md
+│   ├── 004-api-handlers/        ← Phase 4  [DONE]  spec.md · plan.md · tasks.md
+│   ├── 005-semantic-verification/ ← Phase 5 [DONE]  spec.md · plan.md · tasks.md
+│   └── 006-deployment/          ← Phase 6  [ACTIVE] spec.md · plan.md · tasks.md
+│
+├── docs/
+│   ├── decisions/               ← ADRs 0001-0016 (MADR 4.0)
+│   │   └── README.md
+│   └── reports/                 ← Completed analysis reports
+│       └── semantic-verification.md
+│
+├── memory/                      ← Cross-session context (Claude extension)
+│   ├── MEMORY.md                ← Index (loaded every session)
+│   ├── sessions/                ← Per-session notes
+│   │   ├── 2026-04-03.md
+│   │   ├── 2026-04-04.md
+│   │   └── 2026-04-05.md
+│   ├── feedback/                ← Behavioral rules for Claude
+│   │   ├── consistency-rule.md
+│   │   └── spec-consultation.md
+│   ├── project/                 ← Project-level context
+│   │   └── setup.md
+│   ├── test_coverage_uplift_plan.md  ← ACTIVE: 32 files → 80% coverage
+│   └── archive/                 ← Superseded plans (audit trail)
+│
+├── rules/                       ← Supplementary verification rules
+├── source-repos/                ← READ-ONLY: PHP source
+└── target-repos/                ← Python migration output
 ```
 
 ## Spec-Kit Conventions (MANDATORY)
@@ -234,25 +236,38 @@ No test without PHP source citation may be committed.
 
     **Applies to**: ADR acceptance/rejection, phase completion, security finding remediation, requirement status changes, any table row that tracks status or decisions.
 
-## Spec-Kit Index
+## Spec-Kit Phase Index
 
-| Spec | Contents |
+| Phase spec | Status | Contents |
+|-----------|--------|----------|
+| `specs/001-foundation/` | DONE | Flask skeleton, 31 models, 24 hookspecs, Alembic |
+| `specs/002-core-logic/` | DONE | Feed parsing, sanitize, counter cache, auth |
+| `specs/003-business-logic/` | DONE | Prefs CRUD, digests, OPML, backend blueprint |
+| `specs/004-api-handlers/` | DONE | 17 API ops, 2-guard auth, getFeedTree BFS |
+| `specs/005-semantic-verification/` | DONE | 40-cat taxonomy, 8 pipelines, 105+ fixes, 598 tests, 0 gaps |
+| `specs/006-deployment/` | **ACTIVE** | CI (done), coverage gate (done), Docker, nginx, pgloader |
+
+## Architecture Reference Index
+
+All under `specs/architecture/` — stable, read-only reference:
+
+| File | Contents |
 |------|----------|
-| `00-project-charter.md` | **Project Charter**: Mission, Goals, Premises, Constraints, Solution Space, traceability matrix |
-| `01-architecture.md` | Application layers, design patterns, request lifecycle, class hierarchy |
-| `02-database.md` | 35 tables, FK map, migration system, seed data, schema patterns |
-| `03-api-routing.md` | Entry points, handler dispatch, RPC endpoints, request/response contracts |
-| `04-frontend.md` | JS files, AJAX patterns, Dojo/Prototype widgets, server-rendered HTML |
-| `05-plugin-system.md` | 24 hooks, plugin lifecycle, storage, system vs user plugins |
-| `06-security.md` | 10 findings by severity, auth flow, session management, encryption |
-| `07-caching-performance.md` | Counter cache, file cache, HTTP caching, daemon architecture |
-| `08-deployment.md` | Docker, Nginx/PHP-FPM, CI/CD, environment config |
-| `09-source-index.md` | Complete file inventory with purpose annotations and cross-references |
-| `10-migration-dimensions.md` | Call graph, entity graph, frontend/backend dimensions, migration flow variants |
-| `11-business-rules.md` | 20 business rules with exact line refs, edge cases, search, digest, OPML, registration |
-| `12-testing-strategy.md` | Parity verification, 5 test categories, fixtures, test matrix for top 20 endpoints |
-| `13-decomposition-map.md` | functions.php / functions2.php decomposition into Python modules by domain |
-| `14-semantic-discrepancies.md` | 40-category discrepancy taxonomy (D01-D40), semantic traps, 8 integration pipeline contracts, model depth checks |
+| `00-project-charter.md` | Mission, Goals, Premises, Constraints, traceability matrix |
+| `01-architecture.md` | Application layers, design patterns, request lifecycle |
+| `02-database.md` | 35 tables, FK map, migration system, seed data |
+| `03-api-routing.md` | Entry points, handler dispatch, RPC endpoints |
+| `04-frontend.md` | JS files, AJAX patterns |
+| `05-plugin-system.md` | 24 hooks, plugin lifecycle, system vs user plugins |
+| `06-security.md` | 10 findings by severity, auth flow, encryption |
+| `07-caching-performance.md` | Counter cache, HTTP caching, daemon architecture |
+| `08-deployment.md` | Docker, Nginx, CI/CD, environment config |
+| `09-source-index.md` | Complete PHP file inventory with annotations |
+| `10-migration-dimensions.md` | Call graph, entity graph, migration flow variants |
+| `11-business-rules.md` | 20 business rules with exact PHP line refs |
+| `12-testing-strategy.md` | Parity verification, 5 test categories, fixtures |
+| `13-decomposition-map.md` | functions.php decomposition into Python modules |
+| `14-semantic-discrepancies.md` | D01-D40 taxonomy, traps, 8 pipeline contracts |
 
 ## Architecture Decisions (docs/decisions/)
 

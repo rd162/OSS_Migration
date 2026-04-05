@@ -1,30 +1,141 @@
+---
+name: memory-index
+description: Cross-session project index — spec-kit structure, active plan pointers, session history, rules
+type: reference
+---
+
 # Memory Index
 
-## Active Plans
-- [**Semantic Verification Plan v3**](semantic_verification_plan.md) — Phase 5d (2026-04-05): 40-category taxonomy (D01-D40), 8 integration pipelines, complexity-tiered triage (52 Tier 1 deep, ~150 Tier 2, ~270 Tier 3, 37 models), proven against 6 real function-pair samples
-- [**Coverage Gap Plan**](coverage_gap_plan.md) — Phase 5b/5c (2026-04-05): strict tree-sitter audit 100%; 2 Source errors fixed; all complete
-- [**Master Plan**](master_plan.md) — Unified graph-driven migration plan (Phases 1-6), tree-sitter+NetworkX native at every gate
-- [Phase 2 Detail](phase2_plan_2026-04-04.md) — 4 batches, dependency-first (Condorcet winner)
-- [Phase 3 Detail](phase3_plan_2026-04-04.md) — 9 serial batches with graph-level annotations (Condorcet winner)
-- [Phase 4 Detail](phase4_plan_2026-04-04.md) — 5 batches, 17 API ops
-- [Phase 5 Detail](phase5_plan_2026-04-04.md) — 7 batches, Hook-Community Topological Drain (Condorcet winner)
-- [Phase 6 Detail](phase6_plan_2026-04-04.md) — 6 batches, CI-first gate-driven (Condorcet winner). Key: Phase 5 DONE/0 missing hooks; exact function audit 100% (2026-04-05)
+## Project Structure
 
-## Active Work Plans
-- [**Test Coverage Uplift**](test_coverage_uplift_plan.md) — 32 files below 80%; ~250 tests in 5 batches; every test traces to PHP source. Start: B1 pure functions.
+```
+OSS_Migration/
+├── constitution.md               ← specs/architecture/00-project-charter.md
+├── specs/
+│   ├── architecture/             (14 reference specs — stable, read-only)
+│   │   ├── 00-project-charter.md
+│   │   ├── 01-architecture.md
+│   │   ├── 02-database.md
+│   │   ├── 03-api-routing.md
+│   │   ├── 04-frontend.md
+│   │   ├── 05-plugin-system.md
+│   │   ├── 06-security.md
+│   │   ├── 07-caching-performance.md
+│   │   ├── 08-deployment.md
+│   │   ├── 09-source-index.md
+│   │   ├── 10-migration-dimensions.md
+│   │   ├── 11-business-rules.md
+│   │   ├── 12-testing-strategy.md
+│   │   ├── 13-decomposition-map.md
+│   │   └── 14-semantic-discrepancies.md
+│   ├── 001-foundation/           (DONE) spec.md + plan.md + tasks.md
+│   ├── 002-core-logic/           (DONE) spec.md + plan.md + tasks.md
+│   ├── 003-business-logic/       (DONE) spec.md + plan.md + tasks.md
+│   ├── 004-api-handlers/         (DONE) spec.md + plan.md + tasks.md
+│   ├── 005-semantic-verification/ (DONE) spec.md + plan.md + tasks.md
+│   └── 006-deployment/           (ACTIVE) spec.md + plan.md + tasks.md
+├── memory/
+│   ├── MEMORY.md                 ← This file
+│   ├── phase4_plan_2026-04-04.md ← Source for specs/004-api-handlers/
+│   ├── phase5_plan_2026-04-04.md ← Source for specs/005-semantic-verification/ (Phase 5)
+│   ├── phase6_plan_2026-04-04.md ← Source for specs/006-deployment/
+│   ├── semantic_verification_plan.md ← Source for specs/005-semantic-verification/ (5b)
+│   ├── test_coverage_uplift_plan.md  ← Source for specs/006-deployment/tasks.md (coverage uplift)
+│   ├── session_2026-04-03.md
+│   ├── session_2026-04-04.md
+│   └── session_2026-04-05.md
+└── docs/
+    ├── decisions/                (ADRs 0001-0016, MADR 4.0 format)
+    └── reports/
+```
+
+## Active Plan (CURRENT)
+
+**[specs/006-deployment/tasks.md](../specs/006-deployment/tasks.md)** — Phase 6 Deployment (IN PROGRESS)
+
+Status of deployment batches:
+- B1 CI Foundation: **DONE** — all 4 CI jobs running on master push
+- B2 Validator Calibration: **DONE** — coverage gate 0 gaps; ≥95% confirmed
+- B3 Gunicorn + Docker: PENDING
+- B4 Production Compose + nginx: PENDING
+- B5 Data Migration Scripts: PENDING
+- B6 Coverage Gate Lock: PENDING
+
+**[memory/test_coverage_uplift_plan.md](test_coverage_uplift_plan.md)** — Test Coverage Uplift (ACTIVE parallel track)
+
+Status: 32 files below 80%; ~250 tests in 5 batches.
+- Coverage Uplift B1 Pure functions: PENDING — start here
+- Coverage Uplift B2 CRUD/services: PENDING
+- Coverage Uplift B3 Blueprint handlers: PENDING
+- Coverage Uplift B4 Plugin system: PENDING
+- Coverage Uplift B5 Infrastructure: PENDING
+
+Next action: Begin Coverage Uplift B1 (utils/colors.py, utils/misc.py, utils/mail.py, http/client.py, articles/sanitize.py — ~65 tests, no DB mocks needed).
+
+## Spec-Kit Phase Summary
+
+| Spec | Phase | Status | Key deliverable |
+|------|-------|--------|----------------|
+| [001-foundation](../specs/001-foundation/) | 1 | DONE | Models, auth, DB, Alembic, app factory |
+| [002-core-logic](../specs/002-core-logic/) | 2 | DONE | Feed parsing, counter cache, filters, labels, sanitize |
+| [003-business-logic](../specs/003-business-logic/) | 3 | DONE | Prefs CRUD, digests, OPML, backend blueprint |
+| [004-api-handlers](../specs/004-api-handlers/) | 4 | DONE | 17 API ops; 2-guard auth; getFeedTree BFS |
+| [005-semantic-verification](../specs/005-semantic-verification/) | 5/5b | DONE | 14 hooks wired; 40-cat taxonomy; 105+ fixes; 598 tests; 0 gaps |
+| [006-deployment](../specs/006-deployment/) | 6 | ACTIVE | CI, Docker, nginx, pgloader, coverage gate ≥95% |
+
+## Key Numbers (as of 2026-04-05)
+
+| Metric | Value |
+|--------|-------|
+| Tests passing | 598 |
+| Coverage gaps | 0 |
+| Hooks wired | 14 of 14 |
+| Discrepancies fixed (Phase 5b) | 105+ |
+| Files below 80% coverage | 32 |
+| Tests needed for coverage uplift | ~250 |
+| CI coverage (strict, with B2 calibration) | ≥95% |
 
 ## Session History
-- [Session 2026-04-03](session_2026-04-03.md) — Spec-kit built, P0+P1 ADRs accepted, Phase 1a complete
-- [Session 2026-04-04](session_2026-04-04.md) — Phases 1b-4 complete, graph analysis built + enhanced, specs updated
-- [Session 2026-04-05](session_2026-04-05.md) — Strict tree-sitter audit; verification plan v3 (40-cat taxonomy, 8 pipelines, tiered triage); NEXT: start Phase A Tier 1 deep audit with Pipeline 1 (Feed Update) functions
 
-## Rules
-- [Consistency Rule](feedback_consistency_rule.md) — MANDATORY: update ALL referencing locations when any status/decision changes
-- [Spec Consultation](feedback_spec_consultation.md) — MANDATORY: read relevant specs/ before planning any phase
+- [2026-04-03](sessions/2026-04-03.md) — Spec-kit built, P0+P1 ADRs accepted, Phase 1a complete
+- [2026-04-04](sessions/2026-04-04.md) — Phases 1b-4 complete; graph analysis built + enhanced
+- [2026-04-05](sessions/2026-04-05.md) — Semantic verification 105+ fixes; spec-kit refactor; justfile + coverage gate
 
-## Rework (Phase 5 prerequisite)
-- [Rework Execution](rework_execution.md) — Concrete per-phase graph validation: 4 real gaps + validator tuning
+## Rules (MANDATORY)
 
-## Superseded (kept for audit trail)
-- [Rework Plan](rework_plan.md) — Superseded by master_plan.md (graph approach now native, not bolt-on)
-- [Next Session Plan](next_session_plan.md) — Superseded by master_plan.md §Current Priority
+- [Consistency Rule](feedback/consistency-rule.md) — Update ALL referencing locations on any status/decision change
+- [Spec Consultation](feedback/spec-consultation.md) — Read relevant specs/ before planning any phase
+
+## ADR Index
+
+| ADR | Decision | Status |
+|-----|----------|--------|
+| [0001](../docs/decisions/0001-migration-flow-variant.md) | Migration flow variant (D-revised) | accepted |
+| [0002](../docs/decisions/0002-python-framework.md) | Python framework (Flask) | accepted |
+| [0003](../docs/decisions/0003-database-engine.md) | Database engine (PostgreSQL) | accepted |
+| [0004](../docs/decisions/0004-frontend-strategy.md) | Frontend strategy | proposed |
+| [0005](../docs/decisions/0005-call-graph-analysis.md) | Call graph analysis | accepted |
+| [0006](../docs/decisions/0006-orm-strategy.md) | ORM strategy (SQLAlchemy) | accepted |
+| [0007](../docs/decisions/0007-session-management.md) | Session management (Flask-Login) | accepted |
+| [0008](../docs/decisions/0008-password-migration.md) | Password migration (argon2id) | accepted |
+| [0009](../docs/decisions/0009-feed-credential-encryption.md) | Feed credential encryption (Fernet) | accepted |
+| [0010](../docs/decisions/0010-plugin-system.md) | Plugin system (pluggy) | accepted |
+| [0011](../docs/decisions/0011-background-worker.md) | Background worker (Celery) | accepted |
+| [0012](../docs/decisions/0012-logging-strategy.md) | Logging strategy (structlog) | proposed |
+| [0013](../docs/decisions/0013-i18n-approach.md) | i18n approach | proposed |
+| [0014](../docs/decisions/0014-feed-parsing-library.md) | Feed parsing library (feedparser) | accepted |
+| [0015](../docs/decisions/0015-http-client.md) | HTTP client (httpx) | accepted |
+| [0016](../docs/decisions/0016-semantic-verification.md) | Semantic verification methodology | accepted |
+
+## Archive (superseded — kept for audit trail)
+
+Moved to `memory/archive/`. Superseded by spec-kit phase specs (001-006).
+
+| Archived | Superseded by |
+|----------|--------------|
+| master_plan.md | specs/001-006 plan.md files |
+| phase2-6_plan_*.md | specs/002-006 plan.md files |
+| semantic_verification_plan.md | specs/005-semantic-verification/plan.md |
+| coverage_gap_plan.md | specs/006-deployment/tasks.md §Coverage |
+| rework_plan.md, rework_execution.md | Phase 5b complete; 0 gaps confirmed |
+| next_session_plan.md | specs/006-deployment/tasks.md |

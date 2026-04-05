@@ -197,5 +197,26 @@ Audit date: 2026-04-05
 | `_handle_getHeadlines` | blueprints/api/views.py | classes/rpc.php:RPC::getHeadlines | Tier 1 |
 | `_handle_login` | blueprints/api/views.py | classes/rpc.php:RPC::login | Tier 1 |
 
-### Remaining Tier 1 functions:
+---
+
+## Phase A — Pipeline 3: API dispatch, login, getHeadlines
+
+PHP source: `ttrss/classes/api.php`
+Python: `ttrss/blueprints/api/views.py`
+Audit date: 2026-04-05
+
+| # | D-code | Severity | PHP Behavior | Python Behavior | Status |
+|---|--------|----------|--------------|-----------------|--------|
+| 1 | D34 | CRITICAL | `getHeadlines`: if `sanitize_content=true` (default), calls `sanitize()` on content | Content returned raw — XSS risk | **FIXED** — parse `sanitize` param; call `sanitize()` when `show_content=True and sanitize_content=True`; pass `search_words` for highlighting |
+| 2 | D28 | MEDIUM | Failed login logs IP + username via `user_error()` | No logging | **FIXED** — `logger.warning("Failed login attempt for user %r", login)` |
+| 3 | D23 | MEDIUM | Session sets `$_SESSION["uid"]`, `auth_module`, `version`, `pwd_hash` | Only `session["user_id"]` via Flask-Login | **DOCUMENTED** — `pwd_hash` intentionally NOT stored (security improvement); `auth_module`/`version` not needed by Python callers |
+| 4 | D34 | HIGH | `session_id` in login response is `session_id()` PHP cookie | `getattr(session, "sid", "")` — empty without Redis | **DOCUMENTED** — Flask-Session sets `.sid` with Redis backend; test env uses mem sessions |
+| 5 | D10 | MEDIUM | `content`/`excerpt`/`attachments` fields omitted from response when `show_content`/`show_excerpt`/`include_attachments`=false | Always included (empty string/list) | **DOCUMENTED** — extra empty fields don't break clients; response size minor |
+| 6 | D34 | MEDIUM | Unknown API ops dispatch to `PluginHost` before returning `UNKNOWN_METHOD` | Immediately returns `UNKNOWN_METHOD` | **DOCUMENTED** — plugin-extended API endpoints won't work |
+| 7 | D34 | MEDIUM | `shareToPublished`: `strip_tags()` on title/url/content before INSERT | No stripping | **DOCUMENTED** — XSS risk in published feed; lower priority |
+
+---
+
+## Pending — Remaining Tier 1 functions:
+
 `sanitize`, `catchup_feed`, `make_init_params`, `get_pref`, `prepare_headlines_digest`, `opml_export_full`

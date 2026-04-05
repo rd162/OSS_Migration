@@ -279,7 +279,8 @@ def _handle_login(data: dict, seq: int):
         )
 
     if not password_ok:
-        # Source: ttrss/classes/api.php:API.login (lines 79-82 — "LOGIN_ERROR")
+        # Source: ttrss/classes/api.php:API.login (line 80 — user_error for failed attempt)
+        logger.warning("Failed login attempt for user %r", login)
         return _err(seq, "LOGIN_ERROR")
 
     # Upgrade legacy hash to argon2id on first successful login (ADR-0008)
@@ -1033,6 +1034,13 @@ def _handle_getHeadlines(data: dict, seq: int):
     include_nested = _truthy(
         data.get("include_nested") or request.args.get("include_nested", "")
     )
+    # Source: ttrss/classes/api.php:API.getHeadlines (line 201-202) —
+    # sanitize_content defaults True; pass sanitize=false to disable
+    sanitize_content = _truthy(
+        data.get("sanitize", "1") or request.args.get("sanitize", "1") or "1"
+    )
+
+    from ttrss.articles.sanitize import sanitize as _sanitize
 
     # Source: ttrss/include/functions2.php:queryFeedHeadlines (lines 392-841)
     rows = queryFeedHeadlines(
@@ -1107,7 +1115,18 @@ def _handle_getHeadlines(data: dict, seq: int):
             "always_display_attachments": bool(
                 getattr(row, "always_display_enclosures", False)
             ),
-            "content": (row.content or "") if show_content else "",
+            # Source: api.php:681-690 — sanitize_content=true calls sanitize() before returning
+            "content": (
+                _sanitize(
+                    row.content or "",
+                    owner_uid=current_user.id,
+                    site_url=getattr(row, "site_url", None),
+                    highlight_words=rows.search_words or None,
+                    article_id=row.id,
+                )
+                if show_content and sanitize_content
+                else (row.content or "") if show_content else ""
+            ),
             "excerpt": excerpt,
             "author": row.author or "",
             "note": row.note or "",

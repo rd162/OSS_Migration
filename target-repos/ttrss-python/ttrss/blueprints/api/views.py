@@ -1265,6 +1265,21 @@ def _handle_unsubscribeFeed(data: dict, seq: int):
         .where(TtRssFeed.id == feed_id)
         .where(TtRssFeed.owner_uid == current_user.id)
     )
+
+    # Source: ttrss/include/functions.php:remove_feed line 1745-1746 —
+    # DELETE FROM ttrss_access_keys WHERE feed_id='$id' AND owner_uid=$owner_uid
+    from ttrss.models.access_key import TtRssAccessKey
+    db.session.execute(
+        sa_delete(TtRssAccessKey)
+        .where(TtRssAccessKey.feed_id == str(feed_id))
+        .where(TtRssAccessKey.owner_uid == current_user.id)
+    )
+
+    # Source: ttrss/include/functions.php:remove_feed line 1759 —
+    # ccache_remove($id, $owner_uid) — clear stale counter cache
+    from ttrss.ccache import ccache_remove
+    ccache_remove(db.session, feed_id, current_user.id)
+
     db.session.commit()
 
     return _ok(seq, {"status": "OK"})
@@ -1298,6 +1313,11 @@ def _handle_shareToPublished(data: dict, seq: int):
 
     # Source: api.php — url is required
     if not url:
+        return _err(seq, "INCORRECT_USAGE")
+
+    # Source: ttrss/classes/article.php:104 — filter_var($url, FILTER_VALIDATE_URL)
+    from ttrss.http.client import validate_feed_url as _validate_url
+    if not _validate_url(url):
         return _err(seq, "INCORRECT_USAGE")
 
     # Source: article.php — title fallback to url when empty

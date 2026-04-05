@@ -518,7 +518,7 @@ class TestShareToPublished:
             "/api/",
             method="POST",
             data=json.dumps(
-                {"op": "shareToPublished", "seq": 3, "title": "T", "url": "U", "content": "C"}
+                {"op": "shareToPublished", "seq": 3, "title": "T", "url": "https://example.com/shared", "content": "C"}
             ),
             content_type="application/json",
         ):

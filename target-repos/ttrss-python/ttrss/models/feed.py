@@ -141,10 +141,14 @@ class TtRssFeed(Base):
         """
         Encrypt feed password before writing to column (ADR-0009, R11).
         Source: ttrss/include/crypt.php:encrypt_string (lines 22-29) → Fernet.encrypt()
+        Source: ttrss/classes/pref/feeds.php:916-928 — sets auth_pass_encrypted flag alongside password.
         """
         if not value:
             self._auth_pass = ""
+            self.auth_pass_encrypted = False
         else:
             from ttrss.crypto.fernet import fernet_encrypt
 
             self._auth_pass = fernet_encrypt(value)
+            # Source: pref/feeds.php:927 — auth_pass_encrypted = true when password is set
+            self.auth_pass_encrypted = True

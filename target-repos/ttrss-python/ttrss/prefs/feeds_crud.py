@@ -669,10 +669,17 @@ def batch_subscribe_feeds(
     Source: ttrss/classes/pref/feeds.php:batchAddFeeds (line 1815)
     PHP: subscribe each URL in a newline-separated list.
     """
+    from ttrss.http.client import validate_feed_url
+
     results = []
     for line in feeds_text.split("\n"):
         feed_url = line.strip()
         if not feed_url:
+            continue
+
+        # Source: ttrss/classes/pref/feeds.php:1820 — validate_feed_url() check before subscribe
+        if not validate_feed_url(feed_url):
+            results.append({"url": feed_url, "status": "invalid_url"})
             continue
 
         existing = session.execute(

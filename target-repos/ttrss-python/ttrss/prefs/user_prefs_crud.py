@@ -75,18 +75,22 @@ def reset_user_prefs(owner_uid: int, profile: Optional[int] = None) -> None:
     """Delete all user preference overrides for the given profile and re-initialize from defaults.
 
     Source: ttrss/classes/pref/prefs.php:resetconfig (line 161-174)
+    PHP wraps DELETE + re-initialize in BEGIN/COMMIT (lines 171-174).
+    Python uses begin_nested() savepoint to ensure atomicity.
     """
     # Source: ttrss/classes/pref/prefs.php:170-172 — DELETE ttrss_user_prefs WHERE owner_uid AND profile
-    q = sa_delete(TtRssUserPref).where(TtRssUserPref.owner_uid == owner_uid)
-    if profile is not None:
-        q = q.where(TtRssUserPref.profile == profile)
-    else:
-        q = q.where(TtRssUserPref.profile.is_(None))
-    db.session.execute(q)
+    # Wrapped in savepoint: if initialize_user_prefs fails, the DELETE is rolled back.
+    with db.session.begin_nested():
+        q = sa_delete(TtRssUserPref).where(TtRssUserPref.owner_uid == owner_uid)
+        if profile is not None:
+            q = q.where(TtRssUserPref.profile == profile)
+        else:
+            q = q.where(TtRssUserPref.profile.is_(None))
+        db.session.execute(q)
 
-    # Source: ttrss/classes/pref/prefs.php:174 — re-initialize defaults
-    from ttrss.prefs.ops import initialize_user_prefs
-    initialize_user_prefs(owner_uid, profile=profile)
+        # Source: ttrss/classes/pref/prefs.php:174 — re-initialize defaults
+        from ttrss.prefs.ops import initialize_user_prefs
+        initialize_user_prefs(owner_uid, profile=profile)
 
 
 def get_user_for_otp(owner_uid: int) -> Optional[object]:

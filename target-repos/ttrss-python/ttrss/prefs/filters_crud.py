@@ -222,25 +222,37 @@ def save_rules_and_actions(filter_id: int, rules_json_list: list[str], actions_j
     Source: ttrss/classes/pref/filters.php:saveRulesAndActions (line 477)
     Caller must pass request.form.getlist("rule") and request.form.getlist("action").
     Does NOT commit — caller is responsible.
+
+    Uses a savepoint so that if insertions fail after deletions, the filter is not left
+    with no rules/actions (PHP wraps in BEGIN/COMMIT: filters.php:577,592).
     """
-    # Source: ttrss/classes/pref/filters.php:479-480 — delete existing
-    db.session.execute(sa_delete(TtRssFilter2Rule).where(TtRssFilter2Rule.filter_id == filter_id))
-    db.session.execute(sa_delete(TtRssFilter2Action).where(TtRssFilter2Action.filter_id == filter_id))
+    import re as _re
+    # Wrap in savepoint so deletion + re-insertion is atomic
+    with db.session.begin_nested():
+        # Source: ttrss/classes/pref/filters.php:479-480 — delete existing
+        db.session.execute(sa_delete(TtRssFilter2Rule).where(TtRssFilter2Rule.filter_id == filter_id))
+        db.session.execute(sa_delete(TtRssFilter2Action).where(TtRssFilter2Action.filter_id == filter_id))
 
-    # Source: ttrss/classes/pref/filters.php:488-536 — insert rules
-    seen_rules: list = []
-    for r_json in rules_json_list:
-        try:
-            rule = json.loads(r_json)
-        except (json.JSONDecodeError, TypeError):
-            continue
-        if not rule or rule in seen_rules:
-            continue
-        seen_rules.append(rule)
+        # Source: ttrss/classes/pref/filters.php:488-536 — insert rules
+        seen_rules: list = []
+        for r_json in rules_json_list:
+            try:
+                rule = json.loads(r_json)
+            except (json.JSONDecodeError, TypeError):
+                continue
+            if not rule or rule in seen_rules:
+                continue
+            seen_rules.append(rule)
 
-        reg_exp = (rule.get("reg_exp") or "").strip()
-        if not reg_exp:
-            continue
+            reg_exp = (rule.get("reg_exp") or "").strip()
+            if not reg_exp:
+                continue
+
+            # Source: ttrss/classes/pref/filters.php:509 — validate regex before saving
+            try:
+                _re.compile(reg_exp)
+            except _re.error:
+                continue  # skip invalid regex silently (matches PHP @preg_match pattern)
 
         inverse = rule.get("inverse", False)
         filter_type = int(rule.get("filter_type", 1))
@@ -269,32 +281,32 @@ def save_rules_and_actions(filter_id: int, rules_json_list: list[str], actions_j
             inverse=bool(inverse),
         ))
 
-    # Source: ttrss/classes/pref/filters.php:538-560 — insert actions
-    seen_actions: list = []
-    for a_json in actions_json_list:
-        try:
-            action = json.loads(a_json)
-        except (json.JSONDecodeError, TypeError):
-            continue
-        if not action or action in seen_actions:
-            continue
-        seen_actions.append(action)
+        # Source: ttrss/classes/pref/filters.php:538-560 — insert actions
+        seen_actions: list = []
+        for a_json in actions_json_list:
+            try:
+                action = json.loads(a_json)
+            except (json.JSONDecodeError, TypeError):
+                continue
+            if not action or action in seen_actions:
+                continue
+            seen_actions.append(action)
 
-        action_id = int(action.get("action_id", 1))
-        action_param = action.get("action_param", "")
-        action_param_label = action.get("action_param_label", "")
+            action_id = int(action.get("action_id", 1))
+            action_param = action.get("action_param", "")
+            action_param_label = action.get("action_param_label", "")
 
-        # Source: ttrss/classes/pref/filters.php:545-551
-        if action_id == 7:
-            action_param = action_param_label
-        if action_id == 6:
-            action_param = str(int(str(action_param).replace("+", "") or "0"))
+            # Source: ttrss/classes/pref/filters.php:545-551
+            if action_id == 7:
+                action_param = action_param_label
+            if action_id == 6:
+                action_param = str(int(str(action_param).replace("+", "") or "0"))
 
-        db.session.add(TtRssFilter2Action(
-            filter_id=filter_id,
-            action_id=action_id,
-            action_param=action_param,
-        ))
+            db.session.add(TtRssFilter2Action(
+                filter_id=filter_id,
+                action_id=action_id,
+                action_param=action_param,
+            ))
 
 
 # ---------------------------------------------------------------------------
@@ -340,15 +352,35 @@ def join_filters(owner_uid: int, base_id: int, merge_ids: list[int]) -> None:
 
     Source: ttrss/classes/pref/filters.php:join (line 979)
     """
+    if not merge_ids:
+        return
+
+    # D01 security: restrict merge_ids to filters owned by owner_uid before moving rules/actions.
+    # Without this check, an attacker could move rules from other users' filters into base_id.
+    owned_merge_ids_subq = (
+        select(TtRssFilter2.id)
+        .where(TtRssFilter2.id.in_(merge_ids))
+        .where(TtRssFilter2.owner_uid == owner_uid)
+        .scalar_subquery()
+    )
+    # Also verify base_id is owned by owner_uid
+    base_owned = db.session.execute(
+        select(TtRssFilter2.id)
+        .where(TtRssFilter2.id == base_id)
+        .where(TtRssFilter2.owner_uid == owner_uid)
+    ).scalar_one_or_none()
+    if base_owned is None:
+        return  # base filter not owned by caller — abort
+
     # Source: ttrss/classes/pref/filters.php:986-993 — move rules and actions
     db.session.execute(
         update(TtRssFilter2Rule)
-        .where(TtRssFilter2Rule.filter_id.in_(merge_ids))
+        .where(TtRssFilter2Rule.filter_id.in_(owned_merge_ids_subq))
         .values(filter_id=base_id)
     )
     db.session.execute(
         update(TtRssFilter2Action)
-        .where(TtRssFilter2Action.filter_id.in_(merge_ids))
+        .where(TtRssFilter2Action.filter_id.in_(owned_merge_ids_subq))
         .values(filter_id=base_id)
     )
 

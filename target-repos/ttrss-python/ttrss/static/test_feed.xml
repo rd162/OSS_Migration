@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>TT-RSS Automation Test Feed</title>
+    <link>http://localhost:5001/static/test_feed.xml</link>
+    <description>Local test feed for UI automation — served by Python app static files.</description>
+    <language>en</language>
+    <atom:link href="http://localhost:5001/static/test_feed.xml" rel="self" type="application/rss+xml"/>
+
+    <item>
+      <title>Python RSS Migration: Architecture Overview</title>
+      <link>https://example.com/articles/python-rss-migration</link>
+      <description><![CDATA[
+        <p>This article covers the architecture of migrating a PHP RSS aggregator to Python Flask.
+        The migration involved 31 database models, a REST API with 17 operations, and a Celery
+        background task system replacing the PHP daemon.</p>
+        <p>Key decisions included using SQLAlchemy for ORM, argon2id for password hashing,
+        and pluggy for the plugin system.</p>
+      ]]></description>
+      <author>Tech Team</author>
+      <pubDate>Sat, 05 Apr 2026 12:00:00 GMT</pubDate>
+      <guid isPermaLink="false">test-e2e-automation-article-1</guid>
+    </item>
+
+    <item>
+      <title>Flask Backend: REST API Design Patterns</title>
+      <link>https://example.com/articles/flask-api-design</link>
+      <description><![CDATA[
+        <p>Designing a clean REST API in Flask requires careful attention to response envelopes,
+        error handling, and authentication guards. The TT-RSS API protocol specifies a JSON
+        envelope with seq, status, and content fields.</p>
+        <p>All 17 API operations are tested with both unit tests (mocked DB) and
+        integration tests (real PostgreSQL).</p>
+      ]]></description>
+      <author>Backend Team</author>
+      <pubDate>Sat, 05 Apr 2026 11:00:00 GMT</pubDate>
+      <guid isPermaLink="false">test-e2e-automation-article-2</guid>
+    </item>
+
+    <item>
+      <title>Playwright UI Automation: End-to-End Testing Strategy</title>
+      <link>https://example.com/articles/playwright-e2e-testing</link>
+      <description><![CDATA[
+        <p>Playwright has become the leading tool for browser automation in 2025.
+        Key advantages over Selenium include parallel execution, auto-waiting,
+        and built-in network interception.</p>
+        <p>For RSS reader applications, the critical test flows are: feed navigation,
+        article reading, mark-as-read, starring, and subscription management.</p>
+      ]]></description>
+      <author>QA Team</author>
+      <pubDate>Sat, 05 Apr 2026 10:00:00 GMT</pubDate>
+      <guid isPermaLink="false">test-e2e-automation-article-3</guid>
+    </item>
+  </channel>
+</rss>

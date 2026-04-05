@@ -25,9 +25,10 @@ from ttrss.articles.persist import (
 
 
 def test_make_guid_from_title_returns_sha1_prefix():
+    # PHP make_guid_from_title returns plain text (lowercase + punctuation→hyphen).
+    # The SHA1 prefix is added later in build_entry_guid (owner-scoped hash).
     result = _make_guid_from_title("Hello World")
-    assert result.startswith("SHA1:")
-    assert len(result) == len("SHA1:") + 40  # SHA1 hex digest = 40 chars
+    assert result == "hello-world"  # PHP: mb_strtolower + replace space→hyphen
 
 
 def test_make_guid_from_title_deterministic():

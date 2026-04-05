@@ -56,12 +56,21 @@ _ACTION_PLUGIN = "plugin"
 
 
 def _make_guid_from_title(title: str) -> str:
-    """Fallback GUID from article title hash.
+    """Fallback GUID from article title (no ID and no link available).
 
     Source: ttrss/include/rssfuncs.php:make_guid_from_title (lines 1401-1404)
-    Source: ttrss/include/rssfuncs.php (lines 550-560)
+    PHP: preg_replace("/[ \"',.:;]/", "-", mb_strtolower(strip_tags($title), 'utf-8'))
+    Adapted: lxml.html.fromstring used to strip HTML tags (equivalent to strip_tags).
+    Note: This raw GUID is subsequently owner-scoped and SHA1-hashed in build_entry_guid,
+    so the final stored value is always "SHA1:..." regardless of this raw form.
     """
-    return "SHA1:" + hashlib.sha1(title.encode("utf-8", errors="replace")).hexdigest()
+    import re as _re
+    # Strip HTML tags (PHP strip_tags equivalent)
+    clean = _re.sub(r"<[^>]+>", "", title)
+    # Lowercase (PHP mb_strtolower)
+    clean = clean.lower()
+    # Replace punctuation chars with hyphen (PHP preg_replace("/[ \"',.:;]/", "-", ...))
+    return _re.sub(r'[ "\',.:\;]', "-", clean)
 
 
 def build_entry_guid(
@@ -110,15 +119,25 @@ def _is_ngram_duplicate(session: Session, title: str, owner_uid: int) -> bool:
     Source: ttrss/include/rssfuncs.php lines 867-882
     Requires pg_trgm extension (CREATE EXTENSION IF NOT EXISTS pg_trgm).
     Returns True if a similar article already exists.
+
+    Source: rssfuncs.php:871 — WHERE updated >= NOW() - INTERVAL '7 day'
+    PHP only checks articles from the last 7 days to avoid false matches against
+    old content. Python must also restrict to avoid over-suppression.
+    Source: rssfuncs.php:872 — similarity(...) >= threshold (inclusive >=, not >).
     """
     if not title:
         return False
     try:
+        from datetime import timedelta
+        cutoff = datetime.now(timezone.utc) - timedelta(days=7)
         result = session.execute(
             select(TtRssEntry.id)
             .join(TtRssUserEntry, TtRssUserEntry.ref_id == TtRssEntry.id)
             .where(TtRssUserEntry.owner_uid == owner_uid)
-            .where(func.similarity(TtRssEntry.title, title) > _NGRAM_THRESHOLD)
+            # Source: rssfuncs.php:871 — 7-day window to avoid matching stale articles
+            .where(TtRssEntry.date_updated >= cutoff)
+            # Source: rssfuncs.php:872 — >= (inclusive boundary)
+            .where(func.similarity(TtRssEntry.title, title) >= _NGRAM_THRESHOLD)
             .limit(1)
         ).scalar_one_or_none()
         return result is not None

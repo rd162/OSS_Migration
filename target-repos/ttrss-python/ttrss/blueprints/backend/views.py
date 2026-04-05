@@ -648,30 +648,43 @@ def _rpc_update_feed_browser():
     mode = int(_param("mode", "1"))
 
     # Source: rpc.php:381-391 — feedbrowser query by mode
-    # mode 1 = popular feeds across all users, mode 2 = per-user subscriptions
-    q = select(
-        TtRssFeedbrowserCache.feed_url,
-        TtRssFeedbrowserCache.title,
-        TtRssFeedbrowserCache.site_url,
-        TtRssFeedbrowserCache.subscribers,
-    ).order_by(TtRssFeedbrowserCache.subscribers.desc()).limit(limit)
-
-    if search:
-        q = q.where(
-            TtRssFeedbrowserCache.title.ilike(f"%{search}%")
-            | TtRssFeedbrowserCache.feed_url.ilike(f"%{search}%")
-        )
-
-    rows = db.session.execute(q).all()
-    content = [
-        {
-            "feed_url": r.feed_url,
-            "title": r.title,
-            "site_url": r.site_url,
-            "subscribers": r.subscribers,
-        }
-        for r in rows
-    ]
+    # mode 1 = popular feeds from feedbrowser cache (global); mode 2 = user's archived feeds
+    if mode == 2:
+        # Source: rpc.php make_feed_browser mode=2 — queries ttrss_archived_feeds for current user
+        from ttrss.models.archived_feed import TtRssArchivedFeed
+        q2 = select(
+            TtRssArchivedFeed.feed_url,
+            TtRssArchivedFeed.title,
+            TtRssArchivedFeed.site_url,
+        ).where(TtRssArchivedFeed.owner_uid == current_user.id).limit(limit)
+        if search:
+            q2 = q2.where(
+                TtRssArchivedFeed.title.ilike(f"%{search}%")
+                | TtRssArchivedFeed.feed_url.ilike(f"%{search}%")
+            )
+        rows = db.session.execute(q2).all()
+        content = [
+            {"feed_url": r.feed_url, "title": r.title, "site_url": r.site_url, "subscribers": 0}
+            for r in rows
+        ]
+    else:
+        # Source: rpc.php make_feed_browser mode=1 — global popular feeds from cache
+        q = select(
+            TtRssFeedbrowserCache.feed_url,
+            TtRssFeedbrowserCache.title,
+            TtRssFeedbrowserCache.site_url,
+            TtRssFeedbrowserCache.subscribers,
+        ).order_by(TtRssFeedbrowserCache.subscribers.desc()).limit(limit)
+        if search:
+            q = q.where(
+                TtRssFeedbrowserCache.title.ilike(f"%{search}%")
+                | TtRssFeedbrowserCache.feed_url.ilike(f"%{search}%")
+            )
+        rows = db.session.execute(q).all()
+        content = [
+            {"feed_url": r.feed_url, "title": r.title, "site_url": r.site_url, "subscribers": r.subscribers}
+            for r in rows
+        ]
     return jsonify({"content": content, "mode": mode})
 
 
@@ -731,7 +744,21 @@ def _rpc_sanity_check():
     session["clientTzOffset"] = _param("clientTzOffset", "0")
 
     reply: dict[str, Any] = {}
-    # Source: rpc.php:340-346 — error=0 means OK; populate init-params
+
+    # Source: ttrss/include/functions.php:sanity_check (lines 1001-1024)
+    # PHP checks schema version against SCHEMA_VERSION constant (error code 5 on mismatch).
+    # Python checks against the SCHEMA_VERSION defined at migration time (124).
+    _EXPECTED_SCHEMA = current_app.config.get("SCHEMA_VERSION", 124)
+    try:
+        from ttrss.prefs.ops import get_schema_version
+        _actual = get_schema_version()
+        if _actual != _EXPECTED_SCHEMA:
+            reply["error"] = {"code": 5}
+            return jsonify(reply)
+    except Exception:
+        pass  # DB unavailable — proceed; clients will fail naturally
+
+    # Source: rpc.php:340-346 — error=0 means OK; populate init-params only on success
     reply["error"] = {"code": 0}
     reply["init-params"] = make_init_params(current_user.id)
     reply["runtime-info"] = make_runtime_info(current_user.id)

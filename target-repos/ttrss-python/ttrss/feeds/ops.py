@@ -267,9 +267,14 @@ def get_feeds_from_html(url: str, content: str) -> dict[str, str]:
 
     Source: ttrss/include/functions2.php:get_feeds_from_html (lines 1787-1813)
     Adapted: Uses lxml.html instead of PHP DOMDocument + XPath.
+    Source: functions2.php:1789 — fix_url($url) normalises base URL before link resolution.
     """
     try:
         from lxml import html as lxml_html
+        from ttrss.http.client import fix_url as _fix_url
+
+        # Source: functions2.php:1789 — fix_url($url) before using as base
+        url = _fix_url(url) or url
 
         doc = lxml_html.fromstring(content, base_url=url)
         doc.make_links_absolute(url)

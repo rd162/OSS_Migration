@@ -1,19 +1,19 @@
 {
   "tool": "validate_coverage.py",
-  "python_dir": "target-repos/ttrss-python/ttrss",
-  "graph_dir": "tools/graph_analysis/output",
+  "python_dir": "/Users/rd/devel/Capgemini/Capgemini_Internal/OSS_Migration/target-repos/ttrss-python/../../target-repos/ttrss-python/ttrss",
+  "graph_dir": "/Users/rd/devel/Capgemini/Capgemini_Internal/OSS_Migration/target-repos/ttrss-python/../../tools/graph_analysis/output",
   "module_count": 91,
-  "source_comment_count": 1047,
+  "source_comment_count": 1139,
   "dimensions": [
     {
       "dimension": "call_coverage",
-      "matched_exact": 87,
-      "matched_by_file": 320,
+      "matched_exact": 91,
+      "matched_by_file": 316,
       "eliminated": 147,
       "unmatched": 0,
       "skipped_third_party": 629,
       "skipped_high_level": 23,
-      "unparseable_comments": 217,
+      "unparseable_comments": 218,
       "coverage_pct": 100.0,
       "unmatched_details": [],
       "matched_by_file_details": [
@@ -60,11 +60,6 @@
         {
           "qname": "API::getFeeds",
           "level": 6,
-          "match": "file_level"
-        },
-        {
-          "qname": "API::getHeadlines",
-          "level": 7,
           "match": "file_level"
         },
         {
@@ -548,6 +543,11 @@
           "match": "file_level"
         },
         {
+          "qname": "Pref_Feeds::batchAddFeeds",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
           "qname": "Pref_Feeds::batchSubscribe",
           "level": 3,
           "match": "file_level"
@@ -578,11 +578,6 @@
           "match": "file_level"
         },
         {
-          "qname": "Pref_Feeds::makefeedtree",
-          "level": 6,
-          "match": "file_level"
-        },
-        {
           "qname": "Pref_Feeds::regenFeedKey",
           "level": 4,
           "match": "file_level"
@@ -590,6 +585,11 @@
         {
           "qname": "Pref_Feeds::regenOPMLKey",
           "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::removeCat",
+          "level": 3,
           "match": "file_level"
         },
         {
@@ -815,11 +815,6 @@
         {
           "qname": "Pref_Users::resetPass",
           "level": 1,
-          "match": "file_level"
-        },
-        {
-          "qname": "Pref_Users::resetUserPassword",
-          "level": 8,
           "match": "file_level"
         },
         {
@@ -1178,11 +1173,6 @@
           "match": "file_level"
         },
         {
-          "qname": "ttrss/include/functions.php::sanity_check",
-          "level": 3,
-          "match": "file_level"
-        },
-        {
           "qname": "ttrss/include/functions.php::smart_date_time",
           "level": 2,
           "match": "file_level"
@@ -1289,11 +1279,6 @@
         },
         {
           "qname": "ttrss/include/functions2.php::getFeedCategory",
-          "level": 2,
-          "match": "file_level"
-        },
-        {
-          "qname": "ttrss/include/functions2.php::getLastArticleId",
           "level": 2,
           "match": "file_level"
         },
@@ -1604,11 +1589,6 @@
         },
         {
           "qname": "ttrss/install/index.php::make_password",
-          "level": 0,
-          "match": "file_level"
-        },
-        {
-          "qname": "ttrss/install/index.php::sanity_check",
           "level": 0,
           "match": "file_level"
         },
@@ -2360,6 +2340,11 @@
           "file": "feeds/browser.py",
           "line": 183,
           "raw": "\"subscribers\": 0,  # Source: archived feeds have no subscriber count (mode 2 only)"
+        },
+        {
+          "file": "feeds/ops.py",
+          "line": 77,
+          "raw": "# Source: ttrss/schema/ttrss_schema_pgsql.sql — DEFAULT_UPDATE_INTERVAL def_value = '30'"
         },
         {
           "file": "models/access_key.py",
@@ -3445,136 +3430,10 @@
     },
     {
       "dimension": "import_coverage",
-      "edges_checked": 32,
-      "missing_imports": 21,
-      "missing_import_details": [
-        {
-          "from_php": "API::login",
-          "to_php": "ttrss/include/db-prefs.php::get_pref",
-          "from_py": "blueprints/public/views.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "API::getUnread",
-          "to_php": "ttrss/include/functions.php::getFeedUnread",
-          "from_py": "blueprints/public/views.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "API::getUnread",
-          "to_php": "ttrss/include/functions.php::getGlobalUnread",
-          "from_py": "blueprints/public/views.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "Handler_Public::generate_syndicated_feed",
-          "to_php": "ttrss/include/functions2.php::get_feed_access_key",
-          "from_py": "blueprints/public/views.py",
-          "to_py": "feeds/opml.py"
-        },
-        {
-          "from_php": "Handler_Public::generate_syndicated_feed",
-          "to_php": "ttrss/include/functions2.php::sanitize",
-          "from_py": "blueprints/public/views.py",
-          "to_py": "articles/sanitize.py"
-        },
-        {
-          "from_php": "Handler_Public::getUnread",
-          "to_php": "ttrss/include/functions.php::getGlobalUnread",
-          "from_py": "blueprints/public/views.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "Handler_Public::login",
-          "to_php": "ttrss/include/db-prefs.php::get_pref",
-          "from_py": "blueprints/public/views.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "Handler_Public::subscribe",
-          "to_php": "ttrss/include/functions.php::subscribe_to_feed",
-          "from_py": "blueprints/public/views.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "Pref_Feeds::get_category_items",
-          "to_php": "Pref_Feeds::calculate_children_count",
-          "from_py": "blueprints/api/views.py",
-          "to_py": "prefs/feeds_crud.py"
-        },
-        {
-          "from_php": "Pref_Feeds::editfeed",
-          "to_php": "ttrss/include/db-prefs.php::get_pref",
-          "from_py": "prefs/feeds_crud.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "Pref_Feeds::feedlist_init_feed",
-          "to_php": "ttrss/include/functions.php::getFeedUnread",
-          "from_py": "prefs/feeds_crud.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "Pref_Feeds::update_feed_access_key",
-          "to_php": "ttrss/include/functions2.php::get_feed_access_key",
-          "from_py": "prefs/feeds_crud.py",
-          "to_py": "feeds/opml.py"
-        },
-        {
-          "from_php": "ttrss/include/digest.php::send_headlines_digests",
-          "to_php": "ttrss/include/db-prefs.php::get_pref",
-          "from_py": "tasks/digest.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "ttrss/include/digest.php::prepare_headlines_digest",
-          "to_php": "ttrss/include/db-prefs.php::get_pref",
-          "from_py": "tasks/digest.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "ttrss/include/functions.php::authenticate_user",
-          "to_php": "Auth_Internal::authenticate",
-          "from_py": "auth/authenticate.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "ttrss/include/functions2.php::queryFeedHeadlines",
-          "to_php": "ttrss/include/functions.php::getFeedUnread",
-          "from_py": "articles/search.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "ttrss/include/functions2.php::queryFeedHeadlines",
-          "to_php": "ttrss/include/db-prefs.php::get_pref",
-          "from_py": "articles/search.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "ttrss/include/functions2.php::sanitize",
-          "to_php": "ttrss/include/db-prefs.php::get_pref",
-          "from_py": "articles/sanitize.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "ttrss/include/rssfuncs.php::update_daemon_common",
-          "to_php": "ttrss/include/digest.php::send_headlines_digests",
-          "from_py": "tasks/feed_tasks.py",
-          "to_py": "tasks/digest.py"
-        },
-        {
-          "from_php": "ttrss/include/rssfuncs.php::update_rss_feed",
-          "to_php": "ttrss/include/db-prefs.php::get_pref",
-          "from_py": "tasks/feed_tasks.py",
-          "to_py": "blueprints/api/views.py"
-        },
-        {
-          "from_php": "ttrss/include/rssfuncs.php::update_rss_feed",
-          "to_php": "ttrss/include/functions2.php::get_feed_access_key",
-          "from_py": "tasks/feed_tasks.py",
-          "to_py": "feeds/opml.py"
-        }
-      ]
+      "edges_checked": 12,
+      "skipped_architectural": 22,
+      "missing_imports": 0,
+      "missing_import_details": []
     },
     {
       "dimension": "db_table_coverage",

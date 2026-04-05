@@ -1,0 +1,91 @@
+# TT-RSS Python — local CI task runner
+# Requires: just (https://just.systems), uv, docker compose v2
+#
+# Quick reference:
+#   just          — list all recipes
+#   just check    — full suite: lint + test + coverage
+#   just test     — unit tests only (no Docker)
+#   just coverage — migration coverage gate (0 gaps required)
+#   just lint     — ruff + mypy + alembic drift
+#   just test-int — all tests with live postgres + redis
+
+set dotenv-load := false
+
+repo_root  := justfile_directory() / "../.."
+graph_dir  := repo_root / "tools/graph_analysis/output"
+python_dir := repo_root / "target-repos/ttrss-python/ttrss"
+validator  := repo_root / "tools/graph_analysis/validate_coverage.py"
+
+test_db_url    := "postgresql://ttrss_test:ttrss_test@localhost:5433/ttrss_test"
+test_redis_url := "redis://localhost:6380/1"
+
+# ── Default: list recipes ────────────────────────────────────────────────────
+
+[private]
+default:
+    @just --list
+
+# ── Full suite ───────────────────────────────────────────────────────────────
+
+# Run lint + unit tests + coverage gate
+check: lint test coverage
+
+# ── Lint ─────────────────────────────────────────────────────────────────────
+
+# Ruff, mypy, and alembic migration drift check (needs postgres)
+lint:
+    uv run ruff check ttrss/
+    uv run mypy ttrss/ --ignore-missing-imports
+    DATABASE_URL={{test_db_url}} uv run alembic upgrade head
+    DATABASE_URL={{test_db_url}} uv run alembic check
+
+# ── Tests ────────────────────────────────────────────────────────────────────
+
+# Unit tests — no Docker needed, ~2s
+test:
+    uv run pytest tests/unit/ -q --tb=short
+
+# All tests including integration (starts Docker services automatically)
+test-int: services-up
+    DATABASE_URL={{test_db_url}} \
+    REDIS_URL={{test_redis_url}} \
+    SECRET_KEY="ci-local-only" \
+    FEED_CRYPT_KEY="" \
+    uv run pytest tests/ -q --tb=short
+
+# ── Coverage gate ────────────────────────────────────────────────────────────
+
+# PHP→Python migration coverage validator (must report 0 gaps)
+coverage:
+    #!/usr/bin/env sh
+    if [ ! -f "{{graph_dir}}/call_graph.json" ]; then
+        echo "ERROR: graph files missing in {{graph_dir}}"
+        echo "       Run: python {{repo_root}}/tools/graph_analysis/build_php_graphs.py"
+        exit 1
+    fi
+    uv run python {{validator}} \
+        --graph-dir {{graph_dir}} \
+        --python-dir {{python_dir}}
+
+# Rebuild PHP call graphs from source (slow, only needed when PHP source changes)
+build-graphs:
+    uv run python {{repo_root}}/tools/graph_analysis/build_php_graphs.py
+
+# ── Docker services ──────────────────────────────────────────────────────────
+
+# Start isolated postgres (port 5433) + redis (port 6380) for integration tests
+services-up:
+    docker compose -f docker-compose.test.yml up -d
+    @until docker compose -f docker-compose.test.yml exec -T db_test pg_isready -U ttrss_test -q 2>/dev/null; do sleep 1; done
+    @echo "services ready"
+
+# Stop and remove test services
+services-down:
+    docker compose -f docker-compose.test.yml down -v
+
+# ── Housekeeping ─────────────────────────────────────────────────────────────
+
+# Remove pytest cache and build artefacts
+clean:
+    rm -rf .pytest_cache htmlcov .coverage coverage.xml test-results.xml
+    find . -type d -name __pycache__ | xargs rm -rf

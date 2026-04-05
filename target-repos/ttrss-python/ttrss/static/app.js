@@ -1,220 +1,498 @@
 /**
  * TT-RSS Python — Vanilla-JS SPA (ADR-0017)
+ * Visually faithful to the PHP TT-RSS Claro theme.
  *
- * Source: ttrss/js/app.js (top-level application bootstrap)
+ * Source: ttrss/js/app.js, ttrss/js/feedlist.js, ttrss/js/headlines.js
  *         ttrss/classes/api.php:API (protocol contract)
  * Adapted: PHP Dojo Toolkit frontend replaced by zero-dependency vanilla JS.
- *          State lives in a plain object; re-render is full innerHTML replacement.
- *          Article content is isolated in <iframe srcdoc> to prevent XSS (R08).
- * New: no PHP frontend equivalent; implements TT-RSS API level 8 client.
+ *          Light cream/beige theme matching PHP claro skin.
+ *          Hash routing #f=FEED_ID&c=CAT_ID matching PHP URL scheme.
  */
 
-// ── State ────────────────────────────────────────────────────────────────────
+// ── Virtual feed definitions (order and icons matching PHP claro sidebar) ─────
+// Source: ttrss/include/functions.php:getFeedTitle + ttrss/js/feedlist.js
+const VFEEDS = [
+  { id: -4, title: "All articles",      icon: "🗀",  cls: "vf-all"       },
+  { id: -3, title: "Fresh articles",    icon: "⟳",  cls: "vf-fresh"     },
+  { id: -1, title: "Starred articles",  icon: "★",  cls: "vf-starred"   },
+  { id: -2, title: "Published articles",icon: "◎",  cls: "vf-published" },
+  { id:  0, title: "Archived articles", icon: "☰",  cls: "vf-archived"  },
+  { id: -6, title: "Recently read",     icon: "◷",  cls: "vf-recent"    },
+];
+
+// Source: ttrss/js/app.js — view mode constants
+const VM = {
+  ALL:       'all_articles',
+  UNREAD:    'unread',
+  STARRED:   'marked',
+  PUBLISHED: 'published',
+};
+
+// ── State ─────────────────────────────────────────────────────────────────────
 // Source: ttrss/js/app.js — global App object
 const S = {
-  view: 'login',       // 'login' | 'app'
-  seq: 1,
-  user: null,
-  categories: [],      // [{id, title, unread}]
-  feeds: [],           // [{id, title, unread, cat_id, has_icon}]
-  catExpanded: {},     // {cat_id: bool}
-  selectedFeed: null,  // feed object
-  headlines: [],       // [{id, title, author, updated, unread, marked, feed_title}]
-  article: null,       // full article object from getArticle
-  modal: null,         // null | 'settings' | 'subscribe'
+  view:         'login',
+  seq:          1,
+  user:         null,
+  categories:   [],     // [{id, title, unread, order_id}]
+  feeds:        [],     // [{id, title, unread, cat_id, has_icon}]
+  labels:       [],     // [{id, caption, fg_color, bg_color}]
+  catExpanded:  {},     // {cat_id: bool}  default: true
+  selectedFeed: null,   // {id, title, unread}
+  selectedCat:  null,
+  headlines:    [],
+  article:      null,
+  modal:        null,   // null | 'subscribe' | 'settings'
   globalUnread: 0,
-  loginError: '',
+  loginError:   '',
+  viewMode:     VM.ALL, // current headlines filter
   headlinesOffset: 0,
   headlinesEnd: false,
-  loading: false,
+  loading:      false,
   subscribeUrl: '',
   subscribeStatus: '',
+  actionsOpen:  false,
 };
 
 // ── API helper ────────────────────────────────────────────────────────────────
 // Source: ttrss/api/index.php — all ops route through POST /api/
 async function api(op, params = {}) {
   const resp = await fetch('/api/', {
-    method: 'POST',
-    credentials: 'include',    // R08: HttpOnly session cookie sent automatically
+    method:  'POST',
+    credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ op, seq: S.seq++, ...params }),
+    body:    JSON.stringify({ op, seq: S.seq++, ...params }),
   });
   const j = await resp.json();
   if (j.status !== 0) {
     const err = j.content?.error || 'UNKNOWN_ERROR';
     if (err === 'NOT_LOGGED_IN') { S.view = 'login'; render(); }
-    throw Object.assign(new Error(err), { apiError: true, op });
+    throw Object.assign(new Error(err), { apiError: true });
   }
   return j.content;
+}
+
+// ── Hash routing ──────────────────────────────────────────────────────────────
+// Source: ttrss/js/app.js — hash-based feed navigation (#f=FEED_ID&c=CAT_ID)
+function writeHash(feedId, catId = 0) {
+  const tag = `#f=${feedId}&c=${catId ?? 0}`;
+  if (location.hash !== tag) history.replaceState(null, '', tag);
+}
+
+function readHash() {
+  const m = location.hash.match(/[#&]f=(-?\d+)/);
+  return m ? parseInt(m[1]) : null;
 }
 
 // ── Render dispatcher ─────────────────────────────────────────────────────────
 function render() {
   const root = document.getElementById('app');
   if (!root) return;
-  const sidebarScroll = document.querySelector('.sidebar')?.scrollTop || 0;
-  const listScroll    = document.querySelector('.article-list')?.scrollTop || 0;
+  // Preserve scroll positions across re-renders
+  const sbScroll = document.querySelector('.feedlist')?.scrollTop || 0;
+  const hlScroll = document.querySelector('.headlines-list')?.scrollTop || 0;
   root.innerHTML = S.view === 'login' ? renderLogin() : renderApp();
   bind();
   if (S.view === 'app') {
-    const sb = document.querySelector('.sidebar');
-    const al = document.querySelector('.article-list');
-    if (sb) sb.scrollTop = sidebarScroll;
-    if (al) al.scrollTop = listScroll;
+    const sb = document.querySelector('.feedlist');
+    const hl = document.querySelector('.headlines-list');
+    if (sb) sb.scrollTop = sbScroll;
+    if (hl) hl.scrollTop = hlScroll;
     renderArticleContent();
   }
 }
 
 // ── Login ─────────────────────────────────────────────────────────────────────
-// Source: ttrss/classes/handler/login.php:Handler_Login (login form rendering)
+// Source: ttrss/include/login_form.php — login form
 function renderLogin() {
   return `
   <div class="login-wrap">
-    <div class="login-box">
-      <div class="login-logo">🗞 Tiny Tiny RSS</div>
+    <form class="login-box" id="login-form" autocomplete="on">
+      <div class="login-logo">
+        <span class="logo-icon">📰</span>
+        <span>Tiny Tiny RSS</span>
+      </div>
       ${S.loginError ? `<div class="login-error">${esc(S.loginError)}</div>` : ''}
-      <form id="login-form" autocomplete="on">
-        <input id="login-user" name="username" type="text"
-               placeholder="Username" autocomplete="username" required>
-        <input id="login-pass" name="password" type="password"
-               placeholder="Password" autocomplete="current-password" required>
-        <button type="submit">Sign in</button>
-      </form>
-    </div>
+      <label class="login-label">Login</label>
+      <input id="login-user" name="username" type="text"
+             class="login-input" placeholder="" autocomplete="username" required>
+      <label class="login-label">Password</label>
+      <input id="login-pass" name="password" type="password"
+             class="login-input" placeholder="" autocomplete="current-password" required>
+      <div class="login-actions">
+        <button class="login-btn" type="submit">Log in</button>
+      </div>
+    </form>
   </div>`;
 }
 
 async function doLogin(user, pass) {
+  S.loginError = '';
   try {
-    S.loginError = '';
     // Source: ttrss/classes/api.php:API.login (lines 49-88)
     await api('login', { user, password: pass });
     S.view = 'app';
-    S.loginError = '';
     render();
-    await loadSidebar();
-    await loadGlobalUnread();
+    await Promise.all([loadSidebar(), loadGlobalUnread()]);
   } catch (e) {
-    S.loginError = e.message === 'LOGIN_ERROR' ? 'Invalid username or password.'
-                 : e.message === 'API_DISABLED' ? 'API access disabled for this account.'
-                 : e.message;
+    S.loginError = e.message === 'LOGIN_ERROR'  ? 'Incorrect username or password.' :
+                   e.message === 'API_DISABLED'  ? 'API access is disabled for this user.' :
+                   e.message;
     render();
   }
 }
 
 // ── App shell ─────────────────────────────────────────────────────────────────
+// Source: ttrss/js/app.js — three-panel layout
 function renderApp() {
   return `
-  ${renderHeader()}
-  <div class="layout">
-    <div class="sidebar">${renderSidebar()}</div>
-    <div class="article-list">${renderArticleList()}</div>
-    <div class="reading-pane" id="reading-pane">${renderReadingPanePlaceholder()}</div>
+  <div class="app-wrap">
+    <div class="sidebar-col">
+      ${renderToolbar()}
+      <div class="feedlist">${renderFeedlist()}</div>
+    </div>
+    <div class="headlines-col">
+      ${renderHeadlinesHeader()}
+      <div class="headlines-list">${renderHeadlinesList()}</div>
+    </div>
+    <div class="article-col" id="article-col">
+      ${renderArticlePlaceholder()}
+    </div>
   </div>
   ${S.modal ? renderModal() : ''}`;
 }
 
-// ── Header ────────────────────────────────────────────────────────────────────
-// Source: ttrss/templates/header.html + ttrss/js/app.js (toolbar)
-function renderHeader() {
+// ── Sidebar toolbar (top of sidebar, PHP-style) ───────────────────────────────
+// Source: ttrss/js/app.js — sidebar header controls
+function renderToolbar() {
   return `
-  <header class="topbar">
-    <div class="topbar-left">
-      <span class="logo">🗞 Tiny Tiny RSS</span>
-    </div>
-    <div class="topbar-center">
-      <button class="btn-icon" data-action="refresh" title="Refresh counters">⟳</button>
-      <span class="unread-badge" title="Global unread">${S.globalUnread || ''}</span>
-    </div>
-    <div class="topbar-right">
-      <button class="btn-text" data-action="subscribe">+ Subscribe</button>
-      <button class="btn-icon" data-action="settings" title="Settings">⚙</button>
-      <button class="btn-text" data-action="logout">Sign out</button>
-    </div>
-  </header>`;
-}
-
-// ── Sidebar ───────────────────────────────────────────────────────────────────
-// Source: ttrss/js/feedlist.js (feed list component)
-//         ttrss/classes/handler/default.php:Handler_Default._generate_feedlist()
-function renderSidebar() {
-  if (!S.categories.length && !S.feeds.length) {
-    return `<div class="sidebar-empty">
-      <p>No feeds yet.</p>
-      <button class="btn-text" data-action="subscribe">+ Add feed</button>
-    </div>`;
-  }
-
-  // Group feeds by cat_id
-  const bycat = {};
-  for (const f of S.feeds) {
-    const k = f.cat_id ?? 0;
-    (bycat[k] = bycat[k] || []).push(f);
-  }
-
-  // Render categories + uncategorized
-  let html = '';
-
-  // Special virtual categories first (All Articles -4, Fresh -3, Starred -1)
-  const virtFeeds = S.feeds.filter(f => f.id < 0);
-  if (virtFeeds.length) {
-    html += `<div class="cat-group">
-      <div class="cat-title special-cat">Special</div>
-      ${virtFeeds.map(f => renderFeedItem(f)).join('')}
-    </div>`;
-  }
-
-  // Real categories
-  for (const cat of S.categories) {
-    const catFeeds = bycat[cat.id] || [];
-    const expanded = S.catExpanded[cat.id] !== false; // default open
-    html += `<div class="cat-group">
-      <div class="cat-title ${expanded ? 'expanded' : ''}"
-           data-action="toggle-cat" data-cat="${cat.id}">
-        <span class="cat-arrow">${expanded ? '▾' : '▸'}</span>
-        ${esc(cat.title)}
-        ${cat.unread ? `<span class="badge">${cat.unread}</span>` : ''}
-      </div>
-      ${expanded ? `<div class="cat-feeds">${catFeeds.map(f => renderFeedItem(f)).join('')}</div>` : ''}
-    </div>`;
-  }
-
-  // Uncategorized feeds (cat_id = 0 or null)
-  const uncatFeeds = (bycat[0] || []).filter(f => f.id > 0);
-  if (uncatFeeds.length) {
-    const expanded = S.catExpanded['uncat'] !== false;
-    html += `<div class="cat-group">
-      <div class="cat-title ${expanded ? 'expanded' : ''}"
-           data-action="toggle-cat" data-cat="uncat">
-        <span class="cat-arrow">${expanded ? '▾' : '▸'}</span>
-        Uncategorized
-      </div>
-      ${expanded ? `<div class="cat-feeds">${uncatFeeds.map(f => renderFeedItem(f)).join('')}</div>` : ''}
-    </div>`;
-  }
-
-  return html || '<div class="sidebar-empty">No feeds.</div>';
-}
-
-function renderFeedItem(feed) {
-  const sel = S.selectedFeed?.id === feed.id;
-  return `<div class="feed-item ${sel ? 'selected' : ''} ${feed.unread ? 'has-unread' : ''}"
-              data-action="select-feed" data-feed="${feed.id}">
-    <span class="feed-title">${esc(feed.title)}</span>
-    ${feed.unread ? `<span class="badge">${feed.unread}</span>` : ''}
+  <div class="sidebar-toolbar">
+    <span class="app-title" title="Tiny Tiny RSS">
+      📰 <span>tt-rss</span>
+    </span>
+    <span class="toolbar-right">
+      <button class="tb-btn" data-action="refresh" title="Refresh">⟳</button>
+      <button class="tb-btn" data-action="subscribe" title="Subscribe to feed">+</button>
+    </span>
   </div>`;
 }
 
+// ── Feedlist sidebar ──────────────────────────────────────────────────────────
+// Source: ttrss/js/feedlist.js — feed tree rendering
+//         ttrss/classes/handler/default.php:Handler_Default._generate_feedlist()
+function renderFeedlist() {
+  let html = '';
+
+  // ── Special virtual feeds ──────────────────────────────────────────────────
+  // Source: ttrss/js/feedlist.js — SPECIAL section always shown first
+  html += `<div class="cat-header">Special</div>`;
+  html += `<div class="cat-feeds special-feeds">`;
+  for (const vf of VFEEDS) {
+    const sel = S.selectedFeed?.id === vf.id;
+    html += `<div class="feed-item ${sel ? 'selected' : ''} ${vf.cls}"
+                  data-action="sel-feed" data-fid="${vf.id}" data-cat="-1">
+      <span class="feed-icon">${vf.icon}</span>
+      <span class="feed-name">${vf.title}</span>
+    </div>`;
+  }
+  html += `</div>`;
+
+  // ── Labels ─────────────────────────────────────────────────────────────────
+  // Source: ttrss/js/feedlist.js — labels section (cat_id=-2)
+  if (S.labels.length) {
+    const labelFeeds = S.feeds.filter(f => f.cat_id === -2);
+    const expanded = S.catExpanded['labels'] !== false;
+    html += renderCatHeader('labels', 'Labels', null, expanded);
+    if (expanded) {
+      html += `<div class="cat-feeds">`;
+      for (const lf of labelFeeds) {
+        const sel = S.selectedFeed?.id === lf.id;
+        html += `<div class="feed-item ${sel ? 'selected' : ''} ${lf.unread ? 'unread' : ''}"
+                      data-action="sel-feed" data-fid="${lf.id}" data-cat="-2">
+          <span class="feed-icon label-dot" style="color:${lf.fg_color||'#999'};background:${lf.bg_color||'transparent'}">●</span>
+          <span class="feed-name">${esc(lf.title)}</span>
+          ${lf.unread ? `<span class="badge">${lf.unread}</span>` : ''}
+        </div>`;
+      }
+      html += `</div>`;
+    }
+  }
+
+  // ── User categories + feeds ────────────────────────────────────────────────
+  // Source: ttrss/js/feedlist.js — user feed categories
+  const bycat = {};
+  for (const f of S.feeds) {
+    if (f.id < 0 || f.cat_id === -2) continue; // skip virtual + label feeds
+    const k = f.cat_id > 0 ? f.cat_id : '__uncat__';
+    (bycat[k] = bycat[k] || []).push(f);
+  }
+
+  for (const cat of S.categories) {
+    const catFeeds = bycat[cat.id] || [];
+    const expanded = S.catExpanded[cat.id] !== false;
+    html += renderCatHeader(cat.id, cat.title, cat.unread, expanded);
+    if (expanded) {
+      html += `<div class="cat-feeds">`;
+      for (const f of catFeeds) {
+        html += renderRealFeedItem(f);
+      }
+      html += `</div>`;
+    }
+  }
+
+  // ── Uncategorized feeds ────────────────────────────────────────────────────
+  // Source: ttrss/js/feedlist.js — uncategorized feeds shown last
+  const uncatFeeds = bycat['__uncat__'] || [];
+  if (uncatFeeds.length) {
+    const expanded = S.catExpanded['__uncat__'] !== false;
+    html += renderCatHeader('__uncat__', 'Uncategorized', null, expanded);
+    if (expanded) {
+      html += `<div class="cat-feeds">`;
+      for (const f of uncatFeeds) {
+        html += renderRealFeedItem(f);
+      }
+      html += `</div>`;
+    }
+  }
+
+  if (!S.feeds.length && !S.categories.length) {
+    html += `<div class="feedlist-empty">No feeds. Click + to subscribe.</div>`;
+  }
+
+  // ── Footer ─────────────────────────────────────────────────────────────────
+  html += `<div class="feedlist-footer">
+    <a class="fl-link" data-action="settings">Preferences</a> ·
+    <a class="fl-link" data-action="logout">Log out</a>
+    <span class="fl-unread">${S.globalUnread > 0 ? S.globalUnread + ' unread' : ''}</span>
+  </div>`;
+
+  return html;
+}
+
+function renderCatHeader(catKey, title, unread, expanded) {
+  return `<div class="cat-row ${expanded ? 'open' : 'closed'}"
+               data-action="toggle-cat" data-cat="${catKey}">
+    <span class="cat-arrow">${expanded ? '▼' : '▶'}</span>
+    <span class="cat-title-text">${esc(title)}</span>
+    ${unread ? `<span class="badge">${unread}</span>` : ''}
+  </div>`;
+}
+
+function renderRealFeedItem(f) {
+  const sel = S.selectedFeed?.id === f.id;
+  return `<div class="feed-item ${sel ? 'selected' : ''} ${f.unread ? 'unread' : ''}"
+               data-action="sel-feed" data-fid="${f.id}" data-cat="${f.cat_id || 0}">
+    <span class="feed-icon feed-icon-real">◈</span>
+    <span class="feed-name">${esc(f.title)}</span>
+    ${f.unread ? `<span class="badge">${f.unread}</span>` : ''}
+  </div>`;
+}
+
+// ── Headlines header (filter bar matching PHP) ────────────────────────────────
+// Source: ttrss/js/headlines.js — filter/toolbar above article list
+//         ttrss/classes/api.php — view_mode parameter
+function renderHeadlinesHeader() {
+  const feedTitle = S.selectedFeed?.title || 'No feed selected';
+  const vm = S.viewMode;
+  const vmLink = (mode, label) =>
+    `<a class="vm-link ${vm === mode ? 'active' : ''}" data-action="set-vm" data-vm="${mode}">${label}</a>`;
+
+  return `
+  <div class="headlines-header">
+    <div class="hh-left">
+      <span class="hh-feed-title">${esc(feedTitle)}</span>
+    </div>
+    <div class="hh-right">
+      <span class="hh-viewmodes">
+        ${vmLink(VM.ALL, 'All')},
+        ${vmLink(VM.UNREAD, 'Unread')},
+        ${vmLink(VM.STARRED, 'Starred')},
+        ${vmLink(VM.PUBLISHED, 'Published')}
+      </span>
+      <span class="hh-sep">|</span>
+      <button class="hh-btn" data-action="catchup" title="Mark all as read">Mark as read</button>
+      <span class="hh-sep">|</span>
+      <div class="hh-actions-wrap">
+        <button class="hh-btn" data-action="toggle-actions">Actions ▾</button>
+        ${S.actionsOpen ? renderActionsMenu() : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderActionsMenu() {
+  return `<div class="actions-menu">
+    <div class="am-item" data-action="reload-feed">Refresh feed</div>
+    <div class="am-item" data-action="subscribe">Subscribe to feed…</div>
+    <div class="am-item" data-action="unsubscribe-current">Unsubscribe</div>
+  </div>`;
+}
+
+// ── Headlines list ────────────────────────────────────────────────────────────
+// Source: ttrss/js/headlines.js — article list rendering
+function renderHeadlinesList() {
+  if (!S.selectedFeed) {
+    return `<div class="hl-empty">No feed selected.</div>`;
+  }
+  if (S.loading && !S.headlines.length) {
+    return `<div class="hl-empty">Loading…</div>`;
+  }
+  if (!S.headlines.length) {
+    return `<div class="hl-empty">No articles found to display.</div>`;
+  }
+
+  const items = S.headlines.map(h => {
+    const sel = S.article?.id === h.id;
+    const date = h.updated ? fmtDate(h.updated * 1000) : '';
+    const excerpt = h.excerpt ? `<div class="hl-excerpt">${esc(h.excerpt)}</div>` : '';
+    return `<div class="hl-item ${sel ? 'selected' : ''} ${h.unread ? 'unread' : 'read'}"
+                 data-action="open-article" data-id="${h.id}">
+      <div class="hl-row">
+        <span class="hl-marker ${h.unread ? 'unread-dot' : ''}">●</span>
+        <span class="hl-title">${esc(h.title || '(no title)')}</span>
+        ${h.marked ? `<span class="hl-star">★</span>` : ''}
+        <span class="hl-date">${date}</span>
+      </div>
+      ${excerpt}
+      <div class="hl-meta">
+        ${h.feed_title && h.feed_title !== S.selectedFeed?.title ? `<span class="hl-feed">${esc(h.feed_title)}</span>` : ''}
+        ${h.author ? `<span class="hl-author">${esc(h.author)}</span>` : ''}
+      </div>
+    </div>`;
+  });
+
+  const more = S.headlinesEnd
+    ? `<div class="hl-end">— End of feed —</div>`
+    : `<button class="hl-more-btn" data-action="load-more">Load more…</button>`;
+
+  return items.join('') + more;
+}
+
+// ── Article reading pane ──────────────────────────────────────────────────────
+// Source: ttrss/js/article.js — article content rendering
+function renderArticlePlaceholder() {
+  if (!S.article) return `<div class="article-empty">← Select an article to read</div>`;
+  return `<div id="article-inner"></div>`;
+}
+
+function renderArticleContent() {
+  const col = document.getElementById('article-col');
+  if (!col || !S.article) return;
+  const a = S.article;
+  const date = a.updated ? new Date(a.updated * 1000).toLocaleString() : '';
+
+  // Source: ttrss/js/article.js — srcdoc iframe for XSS isolation (R08)
+  const iframeDoc = `<!doctype html><html><head>
+    <meta charset="utf-8">
+    <style>
+      body{font-family:Georgia,serif;font-size:15px;line-height:1.7;
+           max-width:680px;margin:0 auto;padding:20px 24px;color:#222;background:#fff}
+      a{color:#2563eb}
+      img{max-width:100%;height:auto;border-radius:3px}
+      pre,code{background:#f5f5f5;padding:2px 5px;border-radius:3px;font-size:13px}
+      blockquote{border-left:3px solid #ccc;margin:0;padding-left:14px;color:#555}
+      h1,h2,h3{color:#111;margin-top:1.4em}
+    </style>
+  </head><body>${a.content || '<p><em>No content available.</em></p>'}</body></html>`;
+
+  col.innerHTML = `
+    <div class="article-header">
+      <div class="ah-title-row">
+        <button class="ah-btn ${a.marked ? 'ah-star-on' : ''}" data-action="tog-star" data-id="${a.id}" title="${a.marked ? 'Unstar' : 'Star'}">★</button>
+        <h1 class="ah-title"><a href="${esc(a.link||'#')}" target="_blank" rel="noopener">${esc(a.title||'(no title)')}</a></h1>
+      </div>
+      <div class="ah-meta">
+        ${a.author ? `<span class="ah-author">${esc(a.author)}</span>` : ''}
+        ${date ? `<span class="ah-date">${date}</span>` : ''}
+        ${a.feed_title ? `<span class="ah-feed">${esc(a.feed_title)}</span>` : ''}
+        <a class="ah-link" href="${esc(a.link||'#')}" target="_blank" rel="noopener">Open original ↗</a>
+      </div>
+    </div>
+    <iframe class="article-frame"
+            srcdoc="${escAttr(iframeDoc)}"
+            sandbox="allow-same-origin allow-popups"
+            title="Article content"></iframe>`;
+}
+
+// ── Modals ────────────────────────────────────────────────────────────────────
+function renderModal() {
+  if (S.modal === 'subscribe') return renderSubscribeModal();
+  if (S.modal === 'settings')  return renderSettingsModal();
+  return '';
+}
+
+// Source: ttrss/js/prefs.js — subscribe dialog
+function renderSubscribeModal() {
+  return `
+  <div class="modal-bg" id="modal-overlay">
+    <div class="modal-dlg">
+      <div class="modal-title">
+        <span>Subscribe to feed</span>
+        <button class="modal-close" data-action="close-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <label>Feed URL or website address:</label>
+        <input id="sub-url" type="url" class="modal-input"
+               placeholder="https://example.com/feed.xml"
+               value="${esc(S.subscribeUrl)}">
+        ${S.subscribeStatus ? `<p class="sub-status">${esc(S.subscribeStatus)}</p>` : ''}
+      </div>
+      <div class="modal-btns">
+        <button class="btn-ok" data-action="do-subscribe">Subscribe</button>
+        <button class="btn-cancel modal-cancel" data-action="close-modal">Cancel</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Source: ttrss/js/prefs.js — preferences/settings dialog
+function renderSettingsModal() {
+  const realFeeds = S.feeds.filter(f => f.id > 0);
+  return `
+  <div class="modal-bg" id="modal-overlay">
+    <div class="modal-dlg modal-wide">
+      <div class="modal-title">
+        <span>Preferences</span>
+        <button class="modal-close" data-action="close-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="pref-section">
+          <h3>Account</h3>
+          <p>Logged in as <strong>${esc(S.user||'')}</strong></p>
+        </div>
+        <div class="pref-section">
+          <h3>Subscribed feeds (${realFeeds.length})</h3>
+          ${realFeeds.length ? `
+            <div class="feeds-mgr">
+              ${realFeeds.map(f => `
+                <div class="feed-mgr-row">
+                  <span class="fmr-title">${esc(f.title)}</span>
+                  <span class="fmr-url">${esc(f.feed_url||'')}</span>
+                  <button class="btn-danger-sm" data-action="unsub-feed" data-fid="${f.id}">Remove</button>
+                </div>`).join('')}
+            </div>` : `<p class="muted">No feeds subscribed yet.</p>`}
+          <button class="btn-ok" style="margin-top:10px" data-action="subscribe">+ Subscribe to new feed</button>
+        </div>
+      </div>
+      <div class="modal-btns">
+        <button class="btn-cancel" data-action="close-modal">Close</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Data loaders ──────────────────────────────────────────────────────────────
 async function loadSidebar() {
   try {
-    // Source: ttrss/classes/api.php:API.getCategories + getFeeds
-    const [cats, feeds] = await Promise.all([
+    // Source: ttrss/classes/api.php:getCategories + getFeeds
+    const [cats, feeds, labels] = await Promise.all([
       api('getCategories', { include_empty: true }),
       api('getFeeds', { cat_id: -4, include_nested: false }),
+      api('getLabels'),
     ]);
-    S.categories = (cats || []).filter(c => c.id > 0); // exclude virtual cats
-    S.feeds = feeds || [];
+    S.categories = (cats || []).filter(c => c.id > 0).sort((a,b) => (a.order_id||0)-(b.order_id||0));
+    S.feeds      = feeds  || [];
+    S.labels     = labels || [];
     render();
   } catch (e) {
     console.error('loadSidebar', e);
@@ -226,49 +504,9 @@ async function loadGlobalUnread() {
     // Source: ttrss/include/functions.php:getGlobalUnread
     const r = await api('getUnread');
     S.globalUnread = parseInt(r.unread) || 0;
-    const badge = document.querySelector('.unread-badge');
-    if (badge) badge.textContent = S.globalUnread || '';
+    const badge = document.querySelector('.fl-unread');
+    if (badge) badge.textContent = S.globalUnread > 0 ? S.globalUnread + ' unread' : '';
   } catch (_) {}
-}
-
-// ── Article list ──────────────────────────────────────────────────────────────
-// Source: ttrss/js/headlines.js (headline list rendering)
-function renderArticleList() {
-  if (!S.selectedFeed && !S.headlines.length) {
-    return `<div class="list-empty">← Select a feed</div>`;
-  }
-  if (S.loading && !S.headlines.length) {
-    return `<div class="list-empty">Loading…</div>`;
-  }
-  if (!S.headlines.length) {
-    return `<div class="list-empty">No articles.</div>`;
-  }
-
-  const items = S.headlines.map(h => {
-    const sel = S.article?.id === h.id;
-    const date = h.updated ? new Date(h.updated * 1000).toLocaleDateString() : '';
-    return `<div class="headline-item ${sel ? 'selected' : ''} ${h.unread ? 'unread' : 'read'}"
-                data-action="select-article" data-id="${h.id}">
-      <div class="hl-title">${esc(h.title || '(no title)')}</div>
-      <div class="hl-meta">
-        <span class="hl-feed">${esc(h.feed_title || '')}</span>
-        <span class="hl-date">${date}</span>
-        ${h.marked ? '<span class="hl-star">★</span>' : ''}
-      </div>
-    </div>`;
-  });
-
-  const more = !S.headlinesEnd
-    ? `<button class="btn-load-more" data-action="load-more">Load more…</button>`
-    : `<div class="list-end">— end —</div>`;
-
-  return `
-    <div class="list-toolbar">
-      <button class="btn-icon" data-action="catchup" title="Mark all read">✓ All read</button>
-      <button class="btn-icon" data-action="reload-feed" title="Refresh">⟳</button>
-    </div>
-    ${items.join('')}
-    ${more}`;
 }
 
 async function loadHeadlines(feedId, reset = true) {
@@ -283,18 +521,19 @@ async function loadHeadlines(feedId, reset = true) {
   try {
     const LIMIT = 30;
     // Source: ttrss/classes/api.php:API.getHeadlines
-    const hs = await api('getHeadlines', {
-      feed_id: feedId,
-      limit: LIMIT,
-      offset: S.headlinesOffset,
-      show_content: false,
-      view_mode: 'all_articles',
-      order_by: 'date_reverse',
+    const items = await api('getHeadlines', {
+      feed_id:        feedId,
+      limit:          LIMIT,
+      offset:         S.headlinesOffset,
+      show_content:   false,
+      view_mode:      S.viewMode,
+      order_by:       'date_reverse',
+      include_attachments: false,
     });
-    const items = hs || [];
-    S.headlines = reset ? items : [...S.headlines, ...items];
-    S.headlinesOffset += items.length;
-    S.headlinesEnd = items.length < LIMIT;
+    const hs = items || [];
+    S.headlines      = reset ? hs : [...S.headlines, ...hs];
+    S.headlinesOffset += hs.length;
+    S.headlinesEnd    = hs.length < LIMIT;
   } catch (e) {
     console.error('loadHeadlines', e);
   }
@@ -302,127 +541,26 @@ async function loadHeadlines(feedId, reset = true) {
   render();
 }
 
-async function selectArticle(id) {
-  // Source: ttrss/classes/api.php:API.getArticle
-  const items = await api('getArticle', { article_id: id });
-  if (!items?.length) return;
-  S.article = items[0];
-  // mark-read in background
-  // Source: ttrss/classes/api.php:API.updateArticle field=2 (UNREAD), mode=0 (set false)
-  if (S.article.unread) {
-    api('updateArticle', { article_ids: String(id), field: 2, mode: 0 })
-      .then(() => {
-        const h = S.headlines.find(x => x.id === id);
-        if (h) { h.unread = false; S.globalUnread = Math.max(0, S.globalUnread - 1); }
-        if (S.selectedFeed) S.selectedFeed.unread = Math.max(0, (S.selectedFeed.unread || 1) - 1);
-      }).catch(() => {});
+async function openArticle(id) {
+  try {
+    // Source: ttrss/classes/api.php:API.getArticle
+    const items = await api('getArticle', { article_id: id });
+    if (!items?.length) return;
+    S.article = items[0];
+    // Mark read — Source: api.php:updateArticle field=2 (UNREAD), mode=0
+    if (S.article.unread) {
+      api('updateArticle', { article_ids: String(id), field: 2, mode: 0 })
+        .then(() => {
+          const h = S.headlines.find(x => x.id === id);
+          if (h) h.unread = false;
+          S.globalUnread = Math.max(0, S.globalUnread - 1);
+          if (S.selectedFeed) S.selectedFeed.unread = Math.max(0, (S.selectedFeed.unread||1)-1);
+        }).catch(()=>{});
+    }
+    render();
+  } catch (e) {
+    console.error('openArticle', e);
   }
-  render();
-}
-
-// ── Reading pane ──────────────────────────────────────────────────────────────
-// Source: ttrss/js/article.js (article view)
-function renderReadingPanePlaceholder() {
-  if (!S.article) return `<div class="pane-empty">← Select an article</div>`;
-  return ''; // actual content injected by renderArticleContent() after DOM insert
-}
-
-function renderArticleContent() {
-  const pane = document.getElementById('reading-pane');
-  if (!pane || !S.article) return;
-  const a = S.article;
-  const date = a.updated ? new Date(a.updated * 1000).toLocaleString() : '';
-  // Source: ttrss/classes/api.php:API.getArticle — content field contains feed HTML
-  // Security: article content rendered in sandboxed iframe srcdoc to prevent XSS (R08)
-  const iframeDoc = `<!doctype html><html><head>
-    <meta charset="utf-8">
-    <style>
-      body { font-family: system-ui, sans-serif; font-size: 15px; line-height: 1.6;
-             max-width: 700px; margin: 0 auto; padding: 16px; color: #cdd6f4;
-             background: #1e1e2e; }
-      a { color: #89b4fa; }
-      img { max-width: 100%; height: auto; border-radius: 4px; }
-      pre, code { background: #313244; padding: 2px 6px; border-radius: 4px; }
-      blockquote { border-left: 3px solid #89b4fa; margin: 0; padding-left: 12px; color: #a6adc8; }
-    </style>
-  </head><body>${a.content || '<p><em>No content.</em></p>'}</body></html>`;
-
-  pane.innerHTML = `
-    <div class="article-header">
-      <h2 class="article-title"><a href="${esc(a.link || '#')}" target="_blank" rel="noopener">${esc(a.title || '(no title)')}</a></h2>
-      <div class="article-meta">
-        ${a.author ? `<span>${esc(a.author)}</span> · ` : ''}
-        <span>${date}</span>
-        ${a.feed_title ? ` · <span>${esc(a.feed_title)}</span>` : ''}
-      </div>
-      <div class="article-actions">
-        <button class="btn-icon ${a.marked ? 'active' : ''}" data-action="toggle-star" data-id="${a.id}" title="Star">★</button>
-        <a class="btn-icon" href="${esc(a.link || '#')}" target="_blank" rel="noopener" title="Open original">↗ Original</a>
-      </div>
-    </div>
-    <iframe class="article-frame" srcdoc="${escAttr(iframeDoc)}"
-            sandbox="allow-same-origin allow-popups"
-            title="Article content"></iframe>`;
-}
-
-// ── Settings / Subscribe modal ────────────────────────────────────────────────
-// Source: ttrss/js/prefs.js + ttrss/classes/handler/prefs.php (settings UI)
-function renderModal() {
-  if (S.modal === 'subscribe') return renderSubscribeModal();
-  if (S.modal === 'settings') return renderSettingsModal();
-  return '';
-}
-
-function renderSubscribeModal() {
-  return `
-  <div class="modal-overlay" id="modal-overlay">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h3>Subscribe to feed</h3>
-        <button class="btn-icon" data-action="close-modal">✕</button>
-      </div>
-      <div class="modal-body">
-        <p>Enter a feed URL or website address:</p>
-        <input id="sub-url" type="url" class="modal-input"
-               placeholder="https://example.com/feed.xml"
-               value="${esc(S.subscribeUrl)}">
-        ${S.subscribeStatus ? `<div class="sub-status">${esc(S.subscribeStatus)}</div>` : ''}
-      </div>
-      <div class="modal-footer">
-        <button class="btn-primary" data-action="do-subscribe">Subscribe</button>
-        <button class="btn-text modal-cancel" data-action="close-modal">Cancel</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderSettingsModal() {
-  return `
-  <div class="modal-overlay" id="modal-overlay">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h3>Settings</h3>
-        <button class="btn-icon" data-action="close-modal">✕</button>
-      </div>
-      <div class="modal-body">
-        <p class="settings-info">
-          Server: TT-RSS Python · API Level 8<br>
-          User: ${esc(S.user || '')}
-        </p>
-        <h4>Subscribed feeds (${S.feeds.filter(f => f.id > 0).length})</h4>
-        <div class="feeds-list">
-          ${S.feeds.filter(f => f.id > 0).map(f => `
-            <div class="feed-settings-row">
-              <span>${esc(f.title)}</span>
-              <button class="btn-danger-sm" data-action="unsubscribe" data-feed="${f.id}">Remove</button>
-            </div>`).join('') || '<p><em>No feeds subscribed.</em></p>'}
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-text" data-action="close-modal">Close</button>
-      </div>
-    </div>
-  </div>`;
 }
 
 async function doSubscribe() {
@@ -433,31 +571,16 @@ async function doSubscribe() {
   render();
   try {
     // Source: ttrss/classes/api.php:API.subscribeToFeed
-    const r = await api('subscribeToFeed', { feed_url: url });
+    const r   = await api('subscribeToFeed', { feed_url: url });
     const code = r?.status?.code ?? r?.code ?? -1;
-    S.subscribeStatus = code === 1 ? '✓ Subscribed!' : code === 0 ? 'Already subscribed.' : `Done (code ${code})`;
+    S.subscribeStatus = code === 1 ? '✓ Subscribed!' :
+                        code === 0 ? 'Already subscribed.' :
+                        `Done (code ${code}).`;
     S.subscribeUrl = '';
     await loadSidebar();
     await loadGlobalUnread();
   } catch (e) {
-    S.subscribeStatus = `Error: ${e.message}`;
-  }
-  render();
-}
-
-async function doUnsubscribe(feedId) {
-  try {
-    // Source: ttrss/classes/api.php:API.unsubscribeFeed
-    await api('unsubscribeFeed', { feed_id: feedId });
-    await loadSidebar();
-    if (S.selectedFeed?.id === feedId) {
-      S.selectedFeed = null;
-      S.headlines = [];
-      S.article = null;
-    }
-    S.modal = 'settings'; // keep modal open, re-render
-  } catch (e) {
-    alert('Unsubscribe failed: ' + e.message);
+    S.subscribeStatus = 'Error: ' + e.message;
   }
   render();
 }
@@ -467,128 +590,186 @@ function bind() {
   const root = document.getElementById('app');
   if (!root) return;
 
-  // Login form submit
+  // Login form
   root.querySelector('#login-form')?.addEventListener('submit', e => {
     e.preventDefault();
-    const user = root.querySelector('#login-user')?.value?.trim();
-    const pass = root.querySelector('#login-pass')?.value;
-    if (user && pass) doLogin(user, pass);
+    const u = root.querySelector('#login-user')?.value?.trim();
+    const p = root.querySelector('#login-pass')?.value;
+    if (u && p) doLogin(u, p);
   });
 
-  // Subscribe URL input — update state on keyup so value survives re-render
+  // Subscribe URL input
   root.querySelector('#sub-url')?.addEventListener('input', e => {
     S.subscribeUrl = e.target.value;
   });
 
-  // Modal overlay background click — close only when clicking the backdrop, not the box
+  // Modal overlay background click
   root.querySelector('#modal-overlay')?.addEventListener('click', e => {
     if (e.target === e.currentTarget) { S.modal = null; S.subscribeStatus = ''; render(); }
   });
 
-  // Delegated click handler for all data-action elements
+  // Delegated click handler
   root.addEventListener('click', e => {
     const el = e.target.closest('[data-action]');
     if (!el) return;
-    const action = el.dataset.action;
+    const a = el.dataset.action;
 
-    if (action === 'logout') {
-      api('logout').catch(() => {}).finally(() => {
-        S.view = 'login'; S.user = null; S.feeds = []; S.categories = [];
-        S.headlines = []; S.article = null; S.globalUnread = 0;
+    if (a === 'logout') {
+      api('logout').catch(()=>{}).finally(()=>{
+        Object.assign(S, { view:'login', feeds:[], categories:[], headlines:[], article:null,
+                           globalUnread:0, selectedFeed:null, labels:[], user:null });
         render();
       });
     }
-    else if (action === 'refresh') {
+    else if (a === 'refresh') {
       loadSidebar(); loadGlobalUnread();
+      if (S.selectedFeed) loadHeadlines(S.selectedFeed.id);
     }
-    else if (action === 'subscribe') {
-      S.modal = 'subscribe'; S.subscribeStatus = ''; render();
+    else if (a === 'subscribe') {
+      S.modal = 'subscribe'; S.subscribeStatus = ''; S.actionsOpen = false; render();
     }
-    else if (action === 'settings') {
-      S.modal = 'settings'; render();
+    else if (a === 'settings') {
+      S.modal = 'settings'; S.actionsOpen = false; render();
     }
-    else if (action === 'close-modal') {
+    else if (a === 'close-modal') {
       S.modal = null; S.subscribeStatus = ''; render();
     }
-    else if (action === 'do-subscribe') {
+    else if (a === 'do-subscribe') {
       doSubscribe();
     }
-    else if (action === 'unsubscribe') {
-      doUnsubscribe(parseInt(el.dataset.feed));
+    else if (a === 'unsub-feed') {
+      const fid = parseInt(el.dataset.fid);
+      api('unsubscribeFeed', { feed_id: fid })
+        .then(() => {
+          if (S.selectedFeed?.id === fid) { S.selectedFeed = null; S.headlines = []; S.article = null; }
+          loadSidebar();
+        }).catch(e => alert('Unsubscribe failed: ' + e.message));
     }
-    else if (action === 'toggle-cat') {
+    else if (a === 'unsubscribe-current') {
+      S.actionsOpen = false;
+      if (!S.selectedFeed || S.selectedFeed.id < 0) return render();
+      if (!confirm(`Unsubscribe from "${S.selectedFeed.title}"?`)) return;
+      api('unsubscribeFeed', { feed_id: S.selectedFeed.id })
+        .then(() => {
+          S.selectedFeed = null; S.headlines = []; S.article = null;
+          loadSidebar();
+        }).catch(e => alert('Error: ' + e.message));
+    }
+    else if (a === 'toggle-cat') {
       const k = el.dataset.cat;
       S.catExpanded[k] = !(S.catExpanded[k] !== false);
       render();
     }
-    else if (action === 'select-feed') {
-      const fid = parseInt(el.dataset.feed);
-      S.selectedFeed = S.feeds.find(f => f.id === fid) || { id: fid, title: '' };
+    else if (a === 'sel-feed') {
+      const fid = parseInt(el.dataset.fid);
+      const catId = el.dataset.cat;
+      const vf = VFEEDS.find(v => v.id === fid);
+      S.selectedFeed = vf
+        ? { ...vf }
+        : S.feeds.find(f => f.id === fid) || { id: fid, title: String(fid) };
+      S.article = null;
+      S.actionsOpen = false;
+      writeHash(fid, catId);
       loadHeadlines(fid);
     }
-    else if (action === 'reload-feed') {
+    else if (a === 'reload-feed') {
+      S.actionsOpen = false;
       if (S.selectedFeed) loadHeadlines(S.selectedFeed.id);
     }
-    else if (action === 'catchup') {
+    else if (a === 'catchup') {
       if (!S.selectedFeed) return;
+      S.actionsOpen = false;
       // Source: ttrss/classes/api.php:API.catchupFeed
       api('catchupFeed', { feed_id: S.selectedFeed.id })
         .then(() => {
           S.headlines.forEach(h => h.unread = false);
-          S.selectedFeed.unread = 0;
-          S.globalUnread = 0;
+          if (S.selectedFeed) S.selectedFeed.unread = 0;
           render(); loadGlobalUnread();
-        }).catch(e => alert('Catchup failed: ' + e.message));
+        }).catch(e => alert('Error: ' + e.message));
     }
-    else if (action === 'select-article') {
-      const id = parseInt(el.dataset.id);
-      selectArticle(id);
+    else if (a === 'toggle-actions') {
+      S.actionsOpen = !S.actionsOpen; render();
     }
-    else if (action === 'load-more') {
+    else if (a === 'set-vm') {
+      S.viewMode = el.dataset.vm;
+      if (S.selectedFeed) loadHeadlines(S.selectedFeed.id);
+      else render();
+    }
+    else if (a === 'open-article') {
+      openArticle(parseInt(el.dataset.id));
+    }
+    else if (a === 'load-more') {
       if (S.selectedFeed && !S.headlinesEnd) loadHeadlines(S.selectedFeed.id, false);
     }
-    else if (action === 'toggle-star') {
+    else if (a === 'tog-star') {
       const id = parseInt(el.dataset.id);
       if (!S.article || S.article.id !== id) return;
-      const nowStarred = !S.article.marked;
-      // Source: ttrss/classes/api.php:API.updateArticle field=0 (MARKED)
-      api('updateArticle', { article_ids: String(id), field: 0, mode: nowStarred ? 1 : 0 })
+      const starred = !S.article.marked;
+      // Source: ttrss/classes/api.php:updateArticle field=0 (MARKED)
+      api('updateArticle', { article_ids: String(id), field: 0, mode: starred ? 1 : 0 })
         .then(() => {
-          S.article.marked = nowStarred;
+          S.article.marked = starred;
           const h = S.headlines.find(x => x.id === id);
-          if (h) h.marked = nowStarred;
+          if (h) h.marked = starred;
           render();
-        }).catch(e => console.error('star', e));
+        }).catch(console.error);
     }
   });
 }
 
+// Escape key closes modals / actions menu
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (S.modal)        { S.modal = null; S.subscribeStatus = ''; render(); }
+    else if (S.actionsOpen) { S.actionsOpen = false; render(); }
+  }
+});
+
+// Hash change navigation
+window.addEventListener('hashchange', () => {
+  const fid = readHash();
+  if (fid !== null && S.view === 'app') {
+    const vf = VFEEDS.find(v => v.id === fid);
+    const rf = S.feeds.find(f => f.id === fid);
+    if (vf || rf) {
+      S.selectedFeed = vf ? { ...vf } : { ...rf };
+      S.article = null;
+      loadHeadlines(fid);
+    }
+  }
+});
+
 // ── Utilities ─────────────────────────────────────────────────────────────────
-// Escape HTML for text content
 function esc(s) {
   return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-// Escape for HTML attribute values (e.g. srcdoc)
 function escAttr(s) {
   return String(s ?? '').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
 }
-
-// Close modal on Escape key
-// New: keyboard UX — no PHP equivalent
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && S.modal) { S.modal = null; render(); }
-});
+function fmtDate(ms) {
+  const d = new Date(ms);
+  const now = new Date();
+  if (d.toDateString() === now.toDateString()) {
+    return d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+  }
+  return d.toLocaleDateString([], { month:'short', day:'numeric' });
+}
 
 // ── Bootstrap ─────────────────────────────────────────────────────────────────
-// Source: ttrss/index.php (app entry point) + ttrss/classes/api.php:API.isLoggedIn
+// Source: ttrss/index.php — app entry point
 (async () => {
   try {
-    // Source: ttrss/classes/api.php:API.isLoggedIn (lines 94-95)
+    // Source: ttrss/classes/api.php:API.isLoggedIn
     const r = await api('isLoggedIn');
     if (r?.status === true) {
       S.view = 'app';
       render();
+      const fid = readHash();
       await Promise.all([loadSidebar(), loadGlobalUnread()]);
+      if (fid !== null) {
+        const vf = VFEEDS.find(v => v.id === fid);
+        if (vf) { S.selectedFeed = { ...vf }; loadHeadlines(fid); }
+      }
     } else {
       render();
     }

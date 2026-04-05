@@ -96,7 +96,7 @@ def change_password():
     if user is None:
         return jsonify({"error": "user_not_found"}), 404
 
-    from ttrss.auth.password import check_password
+    from ttrss.auth.password import verify_password as check_password
     if not check_password(old_password, user.pwd_hash, getattr(user, "salt", "")):
         return jsonify({"error": "incorrect_password"}), 403
 
@@ -202,7 +202,7 @@ def otp_enable():
     if user is None:
         return jsonify({"error": "user_not_found"}), 404
 
-    from ttrss.auth.password import check_password
+    from ttrss.auth.password import verify_password as check_password
     if not check_password(password, user.pwd_hash, getattr(user, "salt", "")):
         return jsonify({"error": "incorrect_password"}), 403
 
@@ -250,7 +250,7 @@ def otp_disable():
     if user is None:
         return jsonify({"error": "user_not_found"}), 404
 
-    from ttrss.auth.password import check_password
+    from ttrss.auth.password import verify_password as check_password
     if not check_password(password, user.pwd_hash, getattr(user, "salt", "")):
         return jsonify({"error": "incorrect_password"}), 403
 

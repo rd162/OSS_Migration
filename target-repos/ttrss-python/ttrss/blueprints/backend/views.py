@@ -26,7 +26,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 import structlog
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from flask_login import current_user, login_required
 from sqlalchemy import delete as sa_delete
 from sqlalchemy import func, select

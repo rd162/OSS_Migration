@@ -203,7 +203,7 @@ def get_unread():
     """
     from ttrss.extensions import db
     from ttrss.models.user import TtRssUser
-    from ttrss.feeds.counters import get_global_unread
+    from ttrss.feeds.counters import getGlobalUnread as get_global_unread
 
     login_name = request.args.get("login", "")
     fresh = request.args.get("fresh") == "1"

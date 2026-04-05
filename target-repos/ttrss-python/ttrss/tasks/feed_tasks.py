@@ -36,6 +36,11 @@ HTTP_TIMEOUT = httpx.Timeout(connect=10.0, read=45.0, write=10.0, pool=5.0)
 # Source: ttrss/include/rssfuncs.php line 3 — define_default('DAEMON_FEED_LIMIT', 500)
 DAEMON_FEED_LIMIT = 500
 
+# Source: ttrss/include/rssfuncs.php line 2 — define_default('DAEMON_UPDATE_LOGIN_LIMIT', 30)
+# Feeds owned by users who have not logged in within this many days are skipped.
+# Set to 0 to disable (update all users regardless of last login).
+DAEMON_UPDATE_LOGIN_LIMIT = 30
+
 
 # ---------------------------------------------------------------------------
 # dispatch_feed_updates — Beat-triggered dispatcher
@@ -57,9 +62,9 @@ def dispatch_feed_updates(self) -> dict[str, Any]:
     Note: ttrss/include/rssfuncs.php lines 93-94 — PHP checks last_updated = '1970-01-01 00:00:00'
           as a sentinel value for feeds that have never been updated.  Python uses IS NULL instead,
           relying on the ORM schema default; the 1970 sentinel is not reproduced.
-    Note: ttrss/include/rssfuncs.php lines 72-80 — PHP applies DAEMON_UPDATE_LOGIN_LIMIT to cap
-          the number of active users processed per cycle.  Python omits this per-login throttle;
-          all due feeds up to DAEMON_FEED_LIMIT are dispatched unconditionally.
+    Note: ttrss/include/rssfuncs.php lines 72-80 — PHP applies DAEMON_UPDATE_LOGIN_LIMIT to skip
+          feeds belonging to users who have not logged in within the last 30 days.
+          Python implements this as an optional WHERE clause (see DAEMON_UPDATE_LOGIN_LIMIT below).
     Note: ttrss/include/rssfuncs.php lines 120-178 — PHP queries feed_url and deduplicates at the
           URL level before dispatching.  Python queries only ttrss_feeds.id and dispatches one task
           per feed row without URL-level deduplication — a structural redesign.
@@ -79,9 +84,17 @@ def dispatch_feed_updates(self) -> dict[str, Any]:
         # last_update_started guard prevents duplicate dispatch for in-flight feeds.
         from sqlalchemy import text
 
+        # Source: rssfuncs.php lines 72-80 — login threshold: skip feeds for inactive users
+        # Parameterised separately so DAEMON_UPDATE_LOGIN_LIMIT=0 disables the filter.
+        login_thresh_sql = (
+            "AND ttrss_users.last_login >= NOW() - CAST((:login_days || ' days') AS INTERVAL)"
+            if DAEMON_UPDATE_LOGIN_LIMIT > 0
+            else ""
+        )
+
         rows = db.session.execute(
             text(
-                """
+                f"""
                 SELECT DISTINCT ttrss_feeds.id
                 FROM ttrss_feeds
                 JOIN ttrss_users ON ttrss_feeds.owner_uid = ttrss_users.id
@@ -111,11 +124,12 @@ def dispatch_feed_updates(self) -> dict[str, Any]:
                     ttrss_feeds.last_update_started IS NULL
                     OR ttrss_feeds.last_update_started < NOW() - INTERVAL '10 minutes'
                   )
-                ORDER BY ttrss_feeds.id
+                  {login_thresh_sql}
+                ORDER BY ttrss_feeds.last_updated NULLS FIRST
                 LIMIT :limit
                 """
             ),
-            {"limit": DAEMON_FEED_LIMIT},
+            {"limit": DAEMON_FEED_LIMIT, "login_days": DAEMON_UPDATE_LOGIN_LIMIT},
         ).fetchall()
 
         feed_ids = [r[0] for r in rows]  # New: no PHP equivalent — Python unpacks SQLAlchemy Row objects; PHP directly iterates query result arrays.
@@ -149,6 +163,14 @@ def dispatch_feed_updates(self) -> dict[str, Any]:
             pm.hook.hook_update_task()
         except Exception:
             logger.debug("dispatch_feed_updates: hook_update_task (post) failed — continuing", exc_info=True)
+
+        # Source: rssfuncs.php lines 193-196 — send_headlines_digests at end of update cycle
+        # Called with app=None: reuses the current app context already pushed above.
+        from ttrss.tasks.digest import send_headlines_digests
+        try:
+            send_headlines_digests(app=None)
+        except Exception:
+            logger.warning("dispatch_feed_updates: send_headlines_digests failed", exc_info=True)
 
         logger.info("dispatch_feed_updates: dispatched %d feeds", len(feed_ids))
         return {"dispatched": len(feed_ids), "feed_ids": feed_ids}

@@ -135,22 +135,59 @@ Overwrites raw feedparser content structure with plugin-filtered content so `per
 
 ---
 
+---
+
+## Phase A — WS-06 Pipeline 1: dispatch_feed_updates
+
+PHP source: `rssfuncs.php:update_daemon_common` (lines 60–200)
+Python: `ttrss/tasks/feed_tasks.py:dispatch_feed_updates`
+Audit date: 2026-04-05
+
+| # | D-code | Severity | PHP Behavior | Python Behavior | Status |
+|---|--------|----------|--------------|-----------------|--------|
+| 1 | D38 | MEDIUM | Login limit: skips feeds for users with no login in 30 days (`DAEMON_UPDATE_LOGIN_LIMIT`) | No login filter | **FIXED** — added `DAEMON_UPDATE_LOGIN_LIMIT=30` constant + WHERE clause |
+| 2 | D38 | LOW | `ORDER BY last_updated` (oldest first = highest priority) | `ORDER BY id` (arbitrary) | **FIXED** — changed to `ORDER BY ttrss_feeds.last_updated NULLS FIRST` |
+| 3 | D34 | MEDIUM | `send_headlines_digests()` called at end of update cycle | Not called | **FIXED** — added call within app context |
+| 4 | D38 | ACKNOWLEDGED | URL-level dedup: fetches feed XML once for all subscriptions to same URL | Per-row dispatch, no URL dedup | ACKNOWLEDGED (already noted in code) |
+
+---
+
+## Phase A — Pipeline 1: load_filters + get_article_filters
+
+PHP source: `functions2.php:load_filters` (1491–1563), `rssfuncs.php:get_article_filters` (1272–1348)
+Python: `ttrss/articles/filters.py`
+Audit date: 2026-04-05
+
+| # | D-code | Severity | PHP Behavior | Python Behavior | Status |
+|---|--------|----------|--------------|-----------------|--------|
+| 1 | D01 | LOW | When cat_id=0: `(cat_id IS NULL OR cat_id IN (0, ...))` | Only `cat_id IS NULL` (misses `cat_id=0` rules) | **DOCUMENTED** — rules with `cat_id=0` are rare; schema uses NULL for "no cat" |
+| 2 | D03 | LOW | `str_getcsv($search, " ")` — CSV-style space split | `shlex.split(search)` — shell-style split | **DOCUMENTED** — shlex more permissive; edge case only |
+
+Both functions structurally correct. No critical fixes needed.
+
+---
+
+## Phase A — Pipeline 2: queryFeedHeadlines + search_to_sql
+
+PHP source: `functions2.php:queryFeedHeadlines` (392–841), `functions2.php:search_to_sql` (260–362)
+Python: `ttrss/articles/search.py`
+Audit date: 2026-04-05
+
+| # | D-code | Severity | PHP Behavior | Python Behavior | Status |
+|---|--------|----------|--------------|-----------------|--------|
+| 1 | D01 | CRITICAL | Tag join filters `ttrss_tags WHERE owner_uid = $owner_uid` | `TtRssTag` joined without owner_uid filter — cross-user tags visible | **FIXED** — owner_uid added to both "any" join and EXISTS subqueries |
+| 2 | D01 | CRITICAL | Multi-tag "all" mode: correlated subquery per tag; ALL must be present | Single `tag_name == str(feed)` — wrong for comma-separated tags | **FIXED** — correlated `tag_sq.exists()` per tag |
+| 3 | D29 | HIGH | Returns 6-tuple `(rows, feed_title, feed_site_url, last_error, last_updated, search_words)` | Returns only `list[Row]`; search_words discarded | **FIXED** — `QueryHeadlinesResult` list-subclass with `.search_words` attribute; backward-compatible |
+| 4 | D16 | HIGH | `favicon_avg_color` included in SELECT when `vfeed_query_part` set | Never selected | **FIXED** — added to `select_cols` when `include_feed_title=True` |
+| 5 | D39 | MEDIUM | `VFEED_GROUP_BY_FEED` pref adds feed title to ORDER BY | Not implemented | **DOCUMENTED** (noted in code comment) |
+| 6 | D04 | MEDIUM | `@date` via `strtotime()` accepts flexible formats | Only `%Y-%m-%d` ISO format | **DOCUMENTED** — low impact; strtotime permissiveness rarely matters |
+| 7 | D04 | MEDIUM | Bare `star`/`pub` keyword without `:arg` falls back to title+content search | Ignored silently | **DOCUMENTED** |
+| 8 | D03 | MEDIUM | `str_getcsv($search, " ")` — CSV-style | `shlex.split` — shell-style | **DOCUMENTED** |
+| 9 | D22 | MEDIUM | Filter probe query validates filter before applying | No probe | **DOCUMENTED** — SQLAlchemy will raise at execute time for bad filters |
+
+---
+
 ## Pending — Phase A Tier 1 (remaining functions)
-
-### Next functions to audit (Pipeline 1 continued):
-
-| Function | File | PHP Source | Priority |
-|----------|------|------------|----------|
-| `dispatch_feed_updates` | tasks/feed_tasks.py:53 | rssfuncs.php:update_daemon_common (60-200) | Tier 1 |
-| `load_filters` | articles/filters.py:41 | functions2.php:load_filters (1491-1563) | Tier 1 |
-| `get_article_filters` | articles/filters.py:164 | rssfuncs.php:get_article_filters (1272-1348) | Tier 1 |
-
-### Pipeline 2 — Article Search:
-
-| Function | File | PHP Source | Priority |
-|----------|------|------------|----------|
-| `queryFeedHeadlines` | blueprints/backend/views.py | classes/feeds.php:Feeds::queryFeedHeadlines | Tier 1 |
-| `search_to_sql` | articles/search.py | include/functions2.php:search_to_sql | Tier 1 |
 
 ### Pipeline 3 — API Lifecycle:
 
@@ -159,3 +196,6 @@ Overwrites raw feedparser content structure with plugin-filtered content so `per
 | `dispatch` | blueprints/api/views.py | classes/rpc.php:RPC::dispatch | Tier 1 |
 | `_handle_getHeadlines` | blueprints/api/views.py | classes/rpc.php:RPC::getHeadlines | Tier 1 |
 | `_handle_login` | blueprints/api/views.py | classes/rpc.php:RPC::login | Tier 1 |
+
+### Remaining Tier 1 functions:
+`sanitize`, `catchup_feed`, `make_init_params`, `get_pref`, `prepare_headlines_digest`, `opml_export_full`

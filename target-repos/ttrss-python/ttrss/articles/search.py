@@ -7,7 +7,8 @@ Source: ttrss/include/functions2.php
 Eliminated (R11): MySQL DATE_SUB/REGEXP branches — PostgreSQL INTERVAL used.
 Eliminated (R13): Sphinx search, PHP debug printing.
 Adapted: search_to_sql returns SQLAlchemy clauses instead of SQL strings.
-Adapted: queryFeedHeadlines returns list[Row] (NamedTuple) instead of PHP query result.
+Adapted: queryFeedHeadlines returns QueryHeadlinesResult (list subclass with search_words attribute)
+         instead of PHP 6-tuple.  Callers that iterate or compare against list continue to work.
 """
 from __future__ import annotations
 
@@ -29,6 +30,27 @@ from ttrss.models.user_entry import TtRssUserEntry
 from ttrss.utils.feeds import LABEL_BASE_INDEX, feed_to_label_id
 
 logger = logging.getLogger(__name__)
+
+
+class QueryHeadlinesResult(list):
+    """list subclass returned by queryFeedHeadlines.
+
+    Source: ttrss/include/functions2.php:queryFeedHeadlines line 827
+    PHP returns array($result, $feed_title, $feed_site_url, $last_error, $last_updated, $search_words).
+    Python: rows are the list body; search_words attached as an attribute.
+    Inheriting list ensures isinstance(result, list) and equality comparisons remain compatible.
+    """
+
+    search_words: list[str]
+
+    def __new__(cls, rows: list, search_words: list[str]) -> "QueryHeadlinesResult":
+        obj = super().__new__(cls, rows)
+        return obj
+
+    def __init__(self, rows: list, search_words: list[str]) -> None:
+        super().__init__(rows)
+        self.search_words = search_words
+
 
 # Default ORDER BY when no override is provided
 _DEFAULT_ORDER = [
@@ -163,7 +185,7 @@ def queryFeedHeadlines(
     override_strategy: Optional[Any] = None,
     override_vfeed: bool = False,
     start_ts: Optional[str] = None,
-) -> list[Any]:
+) -> "QueryHeadlinesResult":
     """Return headline rows for a feed, category, virtual feed, label, or tag.
 
     Source: ttrss/include/functions2.php:queryFeedHeadlines (lines 392-841)
@@ -183,8 +205,10 @@ def queryFeedHeadlines(
     # Search clause
     # -----------------------------------------------------------------------
     search_clauses: list[Any] = []
+    search_words: list[str] = []
     if search:
-        search_clauses, _ = search_to_sql(search)
+        # Source: functions2.php line 827 — $search_words returned for frontend highlighting
+        search_clauses, search_words = search_to_sql(search)
 
     # -----------------------------------------------------------------------
     # Filter clause + date window (functions2.php:418-451)
@@ -414,6 +438,8 @@ def queryFeedHeadlines(
 
     if include_feed_title:
         select_cols.append(TtRssFeed.title.label("feed_title"))
+        # Source: functions2.php lines 706-707 — favicon_avg_color added when vfeed_query_part set
+        select_cols.append(TtRssFeed.favicon_avg_color)
 
     # -----------------------------------------------------------------------
     # Build FROM / JOIN
@@ -439,13 +465,32 @@ def queryFeedHeadlines(
         all_tags = str(feed).split(",")
         stmt = select(*select_cols).distinct().select_from(TtRssEntry)
         stmt = stmt.join(TtRssUserEntry, TtRssUserEntry.ref_id == TtRssEntry.id)
-        stmt = stmt.join(TtRssTag, TtRssTag.post_int_id == TtRssUserEntry.int_id)
         stmt = stmt.outerjoin(TtRssFeed, TtRssFeed.id == TtRssUserEntry.feed_id)
 
         if search_mode == "any":
+            # Source: functions2.php:796-800 — "any" mode: single IN across all tags
+            # owner_uid filter on TtRssTag prevents cross-user tag matches (functions2.php:803)
+            stmt = stmt.join(
+                TtRssTag,
+                and_(
+                    TtRssTag.post_int_id == TtRssUserEntry.int_id,
+                    TtRssTag.owner_uid == owner_uid,
+                ),
+            )
             stmt = stmt.where(TtRssTag.tag_name.in_(all_tags))
         else:
-            stmt = stmt.where(TtRssTag.tag_name == str(feed))
+            # Source: functions2.php:801-818 — "all" (default) mode:
+            # each tag in the list must be present — correlated EXISTS per tag.
+            # owner_uid scopes each EXISTS to the current user's tags.
+            for tag in all_tags:
+                tag_sq = (
+                    select(TtRssTag.post_int_id)
+                    .where(TtRssTag.tag_name == tag)
+                    .where(TtRssTag.owner_uid == owner_uid)
+                    .where(TtRssTag.post_int_id == TtRssUserEntry.int_id)
+                    .correlate(TtRssUserEntry)
+                )
+                stmt = stmt.where(tag_sq.exists())
 
     # -----------------------------------------------------------------------
     # Apply WHERE clauses
@@ -496,4 +541,8 @@ def queryFeedHeadlines(
     )
     stmt = qfh_ret.get("stmt", stmt)
 
-    return list(session.execute(stmt).all())
+    # Source: functions2.php line 827 — return array($result, $feed_title, $feed_site_url,
+    #   $last_error, $last_updated, $search_words). Python: rows are the list, search_words
+    #   attached as QueryHeadlinesResult.search_words attribute.
+    rows = list(session.execute(stmt).all())
+    return QueryHeadlinesResult(rows, search_words)

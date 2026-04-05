@@ -399,11 +399,28 @@ def forgotpass():
             return jsonify({"error": "expired_or_invalid_token"}), 400
 
         # Source: handler/public.php line 754 — Pref_Users::resetUserPassword($id, true)
+        # Generates a new random password, clears token, and emails the new credentials.
         db.session.execute(
             text("UPDATE ttrss_users SET resetpass_token = NULL WHERE id = :id"),
             {"id": user.id}
         )
-        db.session.commit()
+        # Source: pref/users.php:resetUserPassword — generate temp password and update hash
+        from ttrss.prefs.users_crud import reset_user_password
+        result = reset_user_password(user.id)
+
+        # Source: handler/public.php:forgotpass lines 870-876 — send new password by email
+        if result and user.email:
+            try:
+                from ttrss.utils.mail import send_mail
+                _msg = (
+                    f"Hi!\n\n"
+                    f"Your password for Tiny Tiny RSS has been reset.\n\n"
+                    f"New temporary password: {result.get('tmp_password', '')}\n\n"
+                    f"Please change it after logging in."
+                )
+                send_mail(user.email, "", "[tt-rss] Password reset", _msg)
+            except Exception:
+                pass  # Non-fatal — password was reset, email failed
         return jsonify({"status": "ok", "message": "Password reset completed"})
 
     method = request.form.get("method", "")
@@ -428,6 +445,23 @@ def forgotpass():
             {"token": token_full, "id": user.id}
         )
         db.session.commit()
+
+        # Source: handler/public.php lines 839-877 — send reset link email
+        self_url = current_app.config.get("SELF_URL_PATH", request.host_url.rstrip("/"))
+        reset_link = f"{self_url}/forgotpass?login={login_name}&hash={reset_token}"
+        try:
+            from ttrss.utils.mail import send_mail
+            _msg = (
+                f"Hi!\n\n"
+                f"Someone (hopefully you) requested a password reset for your Tiny Tiny RSS account.\n\n"
+                f"To reset your password, please click the following link:\n\n"
+                f"{reset_link}\n\n"
+                f"This link expires in 15 hours. If you did not request this, ignore this message."
+            )
+            send_mail(email, "", "[tt-rss] Password reset request", _msg)
+        except Exception:
+            pass  # Non-fatal — token stored; user can manually use the link if known
+
         logger.info("forgotpass: reset token issued for user %s", login_name)
         return jsonify({"status": "ok", "message": "Reset instructions sent"})
 

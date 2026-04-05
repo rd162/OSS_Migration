@@ -74,7 +74,9 @@ def get_feed_update_interval(session: Session, feed_id: int) -> int:
     update_interval, owner_uid = row.update_interval, row.owner_uid
     if update_interval != 0:
         return update_interval
-    return _pref_int(session, "DEFAULT_UPDATE_INTERVAL", owner_uid, default=120)
+    # Source: ttrss/schema/ttrss_schema_pgsql.sql — DEFAULT_UPDATE_INTERVAL def_value = '30'
+    # PHP get_pref() returns the DB def_value (30); hardcoding 120 was wrong.
+    return _pref_int(session, "DEFAULT_UPDATE_INTERVAL", owner_uid, default=30)
 
 
 # ---------------------------------------------------------------------------

@@ -80,9 +80,16 @@ def create_app(test_config: dict | None = None) -> Flask:
     if test_config is not None:
         app.config.from_mapping(test_config)
 
-    # New: structlog stdlib wrapper — only in non-test mode to preserve pytest log capture.
+    # Security: validate critical config at startup (fail loudly rather than silently).
+    # Source: ttrss/include/sanity_config.php — PHP validates config before serving.
     if not app.testing:
         _configure_structlog()
+        _secret = app.config.get("SECRET_KEY", "")
+        if not _secret:
+            raise RuntimeError(
+                "SECRET_KEY must be set to a long random string. "
+                "Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\""
+            )
 
     # Fernet — instantiated ONCE here, stored in app.config (R11, ADR-0009, AR11).
     # MultiFernet supports key rotation per ADR-0009.

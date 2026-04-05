@@ -390,8 +390,18 @@ def queryFeedHeadlines(
     # ORDER BY
     # -----------------------------------------------------------------------
     if override_order:
-        # Parse simple column name override — use sa_text for raw SQL column spec
-        order_clauses = [sa_text(override_order)]
+        # Security: whitelist allowed ORDER BY values to prevent SQL injection.
+        # User-supplied override_order must not be passed to sa_text() directly.
+        _ALLOWED_ORDER = {
+            "date_reverse": TtRssEntry.date_entered.asc(),
+            "date_reverse_updated": TtRssEntry.date_updated.asc(),
+            "score_desc": TtRssUserEntry.score.desc(),
+            "score_asc": TtRssUserEntry.score.asc(),
+            "title_asc": TtRssEntry.title.asc(),
+            "feed_dates": TtRssEntry.date_updated.desc(),
+        }
+        safe_order = _ALLOWED_ORDER.get(override_order)
+        order_clauses = [safe_order] if safe_order is not None else _DEFAULT_ORDER[:]
     elif extra_order_cols:
         order_clauses = extra_order_cols
     else:

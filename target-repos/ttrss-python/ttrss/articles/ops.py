@@ -435,8 +435,10 @@ def catchup_feed(
                     stmt = _with_date(stmt)
                     session.execute(stmt)
 
-            elif nfeed <= LABEL_BASE_INDEX:
-                # Label feed
+            elif nfeed < LABEL_BASE_INDEX:
+                # Source: ttrss/include/functions.php:catchup_feed line 1213 — $feed < LABEL_BASE_INDEX (strict)
+                # Label feed IDs are LABEL_BASE_INDEX-1, LABEL_BASE_INDEX-2, etc.
+                # LABEL_BASE_INDEX itself is not a valid label feed ID.
                 label_id = feed_to_label_id(nfeed)
                 label_subq = (
                     select(TtRssUserLabel2.article_id)

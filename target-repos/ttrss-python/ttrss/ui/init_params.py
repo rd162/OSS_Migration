@@ -203,6 +203,16 @@ def make_init_params(owner_uid: int) -> dict[str, Any]:
     params["default_view_limit"] = int(get_user_pref(owner_uid, "_DEFAULT_VIEW_LIMIT") or 30)
     params["default_view_order_by"] = get_user_pref(owner_uid, "_DEFAULT_VIEW_ORDER_BY") or "score"
 
+    # Source: functions2.php:13 — icons_url: ICONS_URL constant
+    # Source: functions2.php:14 — cookie_lifetime: SESSION_COOKIE_LIFETIME constant
+    # Source: functions2.php:42 — simple_update: SIMPLE_UPDATE_MODE (false for Celery daemon, ADR-0011)
+    from flask import current_app
+    params["icons_url"] = current_app.config.get("ICONS_URL", "feed-icons")
+    params["cookie_lifetime"] = int(current_app.config.get("PERMANENT_SESSION_LIFETIME", 86400 * 7).total_seconds()
+                                    if hasattr(current_app.config.get("PERMANENT_SESSION_LIFETIME", None), "total_seconds")
+                                    else current_app.config.get("PERMANENT_SESSION_LIFETIME", 604800))
+    params["simple_update"] = 0  # Source: functions2.php:42 — Python uses Celery daemon; SIMPLE_UPDATE_MODE=false
+
     # Source: functions2.php:37 — get_hotkeys_map()
     prefixes, hotkeys = get_hotkeys_map()
     params["hotkeys"] = [prefixes, hotkeys]

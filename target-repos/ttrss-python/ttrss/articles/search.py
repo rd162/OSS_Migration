@@ -367,7 +367,8 @@ def queryFeedHeadlines(
         strategy_clause = true()
         include_feed_title = True
         allow_archived = True
-    elif nfeed <= LABEL_BASE_INDEX:
+    elif nfeed < LABEL_BASE_INDEX:
+        # Source: ttrss/include/functions.php:catchup_feed line 1213 — strict less-than (not <=)
         # Label virtual feed
         label_id = feed_to_label_id(nfeed)
         strategy_clause = and_(

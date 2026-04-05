@@ -145,8 +145,11 @@ class TtRssHookSpec:
     # Source: ttrss/classes/pluginhost.php:HOOK_SANITIZE (const 13)
     # Trigger: ttrss/include/functions2.php:sanitize (pipeline)
     @hookspec
-    def hook_sanitize(self, doc, site_url, allowed_elements, disallowed_attributes):
-        """HTML content sanitization hook. Returns modified doc."""
+    def hook_sanitize(self, doc, site_url, allowed_elements, disallowed_attributes, article_id):
+        """HTML content sanitization hook. Returns modified doc.
+
+        Source: ttrss/include/functions2.php:sanitize line 920 — 5th argument article_id added.
+        """
 
     # --- HOOK_RENDER_ARTICLE_API = 14 ---
     # Source: ttrss/classes/pluginhost.php:HOOK_RENDER_ARTICLE_API (const 14)

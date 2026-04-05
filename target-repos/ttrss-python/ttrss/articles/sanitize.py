@@ -152,8 +152,8 @@ def sanitize(
 
     # Source: ttrss/include/functions2.php lines 919-928 — HOOK_SANITIZE plugin loop
     # Note: ttrss/include/functions2.php line 920 — PHP passes $article_id as 5th argument to hook.
-    #       Adapted: Python hook_sanitize spec does not include article_id (hookspecs.py line 147);
-    #       article_id omitted from pluggy call — a divergence from PHP's plugin interface.
+    # Source: ttrss/include/functions2.php line 920 — $plugin->hook_sanitize($doc, $site_url,
+    #   $allowed_elements, $disallowed_attributes, $article_id) — 5 arguments.
     try:
         from ttrss.plugins.manager import get_plugin_manager  # New: lazy import avoids circular dependency.
         pm = get_plugin_manager()
@@ -162,6 +162,7 @@ def sanitize(
             site_url=site_url,
             allowed_elements=allowed_elements,
             disallowed_attributes=disallowed_attributes,
+            article_id=article_id,
         )
         # Source: ttrss/include/functions2.php lines 921-927 — if is_array($retval) unpack; else use as $doc
         # Adapted: PHP iterates PluginHost::get_hooks; pluggy returns all results as list.

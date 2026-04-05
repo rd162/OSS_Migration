@@ -187,9 +187,27 @@ def sanitize(
     # Source: ttrss/include/functions2.php line 931 — $doc = strip_harmful_tags($doc, $allowed_elements, ...)
     doc = strip_harmful_tags(doc, allowed_elements, disallowed_attributes)
 
-    # Note: ttrss/include/functions2.php lines 933-959 — highlight_words loop not yet reproduced; deferred.
     # Source: ttrss/include/functions2.php line 962 — $res = $doc->saveHTML()
-    return lxml.html.tostring(doc, encoding="unicode")
+    html_out = lxml.html.tostring(doc, encoding="unicode")
+
+    # Source: ttrss/include/functions2.php lines 933-959 — highlight_words: wrap matched text in <span class="highlight">
+    # Adapted: PHP uses DOMXPath('//*/text()') + DOM node replacement; Python applies
+    #          substitution to text segments only (split on HTML tags, skip tag tokens).
+    if highlight_words:
+        import re as _re
+        for word in highlight_words:
+            if not word:
+                continue
+            pat = _re.compile(_re.escape(word), _re.IGNORECASE | _re.UNICODE)
+            # Split on HTML tags, apply substitution only to text segments.
+            segments = _re.split(r"(<[^>]+>)", html_out)
+            html_out = "".join(
+                seg if seg.startswith("<")
+                else pat.sub(r'<span class="highlight">\g<0></span>', seg)
+                for seg in segments
+            )
+
+    return html_out
 
 
 def strip_harmful_tags(

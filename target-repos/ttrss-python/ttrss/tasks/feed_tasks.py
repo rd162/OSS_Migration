@@ -395,6 +395,12 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
         from ttrss.articles.persist import persist_article
 
         feed_filters = load_filters(db.session, feed_id=feed_id, owner_uid=feed.owner_uid)
+
+        # Source: rssfuncs.php lines 803-808 — ALLOW_DUPLICATE_POSTS pref (read once per feed)
+        from ttrss.prefs.ops import get_user_pref as _gup
+        _adp_raw = _gup(feed.owner_uid, "ALLOW_DUPLICATE_POSTS") or "false"
+        _allow_dup_posts = _adp_raw.lower() not in {"false", "0", ""}
+
         sanitized_count = 0
         persisted_count = 0
         from sqlalchemy import select as sa_select
@@ -489,6 +495,7 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
                 filters=feed_filters,
                 enclosures=enc_list,
                 mark_unread_on_update=feed.mark_unread_on_update,
+                allow_duplicate_posts=_allow_dup_posts,
             )
             if is_new:
                 persisted_count += 1

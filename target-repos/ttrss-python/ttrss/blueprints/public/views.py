@@ -486,3 +486,48 @@ def rss():
         "articles": headlines,
         "format": fmt,
     })
+
+
+# Source: ttrss/opml.php (lines 17-32) + ttrss/classes/opml.php:Opml::export
+# PHP: public.php?op=opml&key=... → validates key → opml_export("", $owner_uid, true, false)
+@public_bp.get("/opml")
+def opml_export():
+    """
+    Public OPML export via access key.
+    Source: ttrss/opml.php (lines 17-32) — key-authenticated OPML subscription export.
+    Adapted: PHP sent HTTP headers inline; Python returns Flask Response.
+             hide_private_feeds=True, include_settings=False (public subscription view).
+    """
+    from flask import Response
+
+    from ttrss.extensions import db
+    from ttrss.feeds.opml import opml_export_full
+    from ttrss.models.access_key import TtRssAccessKey
+
+    key = request.args.get("key", "")
+    if not key:
+        return jsonify({"error": "access_key required"}), 403
+
+    # Source: ttrss/opml.php lines 17-26 — validate access key for feed_id = -3 (OPML virtual feed)
+    access_key_row = db.session.query(TtRssAccessKey).filter_by(
+        access_key=key,
+        feed_id="-3",
+    ).first()
+    if not access_key_row:
+        return jsonify({"error": "forbidden"}), 403
+
+    owner_uid = access_key_row.owner_uid
+
+    # Source: ttrss/opml.php line 30 — opml_export("", $owner_uid, hide_private_feeds=true, include_settings=false)
+    xml_content = opml_export_full(
+        db.session,
+        owner_uid,
+        hide_private_feeds=True,
+        include_settings=False,
+    )
+
+    return Response(
+        xml_content,
+        mimetype="application/xml+opml",
+        headers={"Content-Disposition": "attachment; filename=tt-rss-subscriptions.opml"},
+    )

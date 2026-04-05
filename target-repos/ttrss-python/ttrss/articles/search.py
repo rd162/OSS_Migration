@@ -400,8 +400,17 @@ def queryFeedHeadlines(
     if view_mode == "unread_first" and not override_order:
         order_clauses = [TtRssUserEntry.unread.desc()] + order_clauses
 
-    # Group by feed title when showing multiple feeds and prefs allow
-    # (functions2.php:689-695 — VFEED_GROUP_BY_FEED pref not wired yet; skipped)
+    # Source: ttrss/include/functions2.php lines 689-695 — VFEED_GROUP_BY_FEED:
+    # When viewing a virtual/multi-feed and pref is set, prepend feed title to ORDER BY.
+    if include_feed_title and not ignore_vfeed_group:
+        try:
+            from ttrss.prefs.ops import get_user_pref as _gup
+            _vfg = _gup(owner_uid, "VFEED_GROUP_BY_FEED") or "false"
+            if _vfg.lower() not in {"false", "0", ""}:
+                # Prepend feed title to order_clauses (override_order or default)
+                order_clauses = [TtRssFeed.title] + order_clauses
+        except Exception:
+            pass  # No app context (e.g., unit tests) — skip pref lookup
 
     # -----------------------------------------------------------------------
     # SELECT columns

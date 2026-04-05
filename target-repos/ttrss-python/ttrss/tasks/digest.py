@@ -13,10 +13,11 @@ from __future__ import annotations
 
 import html
 import logging
+import re
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from ttrss.models.category import TtRssFeedCategory  # noqa: F401 — DB table coverage
+from ttrss.models.category import TtRssFeedCategory
 
 logger = logging.getLogger(__name__)  # New: no PHP equivalent — Python logging setup.
 
@@ -39,6 +40,7 @@ def prepare_headlines_digest(
     """
     # Source: ttrss/include/digest.php lines 88-96 — get user timezone, compute local date/time
     from ttrss.extensions import db
+    from ttrss.models.category import TtRssFeedCategory
     from ttrss.models.entry import TtRssEntry
     from ttrss.models.feed import TtRssFeed
     from ttrss.models.user_entry import TtRssUserEntry
@@ -64,7 +66,8 @@ def prepare_headlines_digest(
     cutoff = datetime.now(tz=timezone.utc) - timedelta(days=days)
 
     # Source: ttrss/include/digest.php lines 107-128 — main query joining user_entries, entries, feeds
-    # Fetches unread articles with score >= 0, include_in_digest=true, ordered by feed/score/date
+    # LEFT JOIN ttrss_feed_categories to get cat_title for sorting and display.
+    # Source: digest.php ORDER BY ttrss_feed_categories.title, ttrss_feeds.title, score DESC, date_updated DESC
     stmt = (
         select(
             TtRssEntry.title,
@@ -75,10 +78,12 @@ def prepare_headlines_digest(
             TtRssFeed.title.label("feed_title"),
             TtRssUserEntry.score,
             TtRssUserEntry.int_id,
+            TtRssFeedCategory.title.label("cat_title"),
         )
         .select_from(TtRssUserEntry)
         .join(TtRssEntry, TtRssUserEntry.ref_id == TtRssEntry.id)
         .join(TtRssFeed, TtRssUserEntry.feed_id == TtRssFeed.id)
+        .outerjoin(TtRssFeedCategory, TtRssFeed.cat_id == TtRssFeedCategory.id)
         .where(
             and_(
                 TtRssUserEntry.owner_uid == user_id,
@@ -89,6 +94,8 @@ def prepare_headlines_digest(
             )
         )
         .order_by(
+            # Source: digest.php — ORDER BY ttrss_feed_categories.title (NULLs first so uncategorised sorts before named cats)
+            TtRssFeedCategory.title.nulls_first(),
             TtRssFeed.title,
             TtRssUserEntry.score.desc(),
             TtRssEntry.date_updated.desc(),
@@ -119,10 +126,17 @@ def prepare_headlines_digest(
     text_parts: list[str] = []
     text_parts.append(f"Date: {cur_date} {cur_time}\n")
 
+    # Source: ttrss/include/digest.php lines 171-175 — ENABLE_FEED_CATS: prepend cat_title to feed_title
+    enable_feed_cats_raw = get_user_pref(user_id, "ENABLE_FEED_CATS") or "false"
+    enable_feed_cats = enable_feed_cats_raw.lower() not in {"false", "0", ""}
+
     current_feed: Optional[str] = None
 
     for row in rows:
         feed_title = row.feed_title or ""
+        # Source: ttrss/include/digest.php lines 171-175 — if ENABLE_FEED_CATS, prefix "CatTitle / FeedTitle"
+        if enable_feed_cats and row.cat_title:
+            feed_title = f"{row.cat_title} / {feed_title}"
         article_title = row.title or "(untitled)"
         article_link = row.link or ""
         # Source: ttrss/include/digest.php line 144 — make_local_datetime for display timestamp
@@ -133,9 +147,7 @@ def prepare_headlines_digest(
         )
         # Source: ttrss/include/digest.php line 161-162 — ARTICLE_EXCERPT: truncate_string(strip_tags(...), 300)
         raw_content = row.content or ""
-        # New: simple HTML tag stripping via a regex-free approach using html.unescape + split
-        import re
-        plain_content = re.sub(r"<[^>]+>", " ", raw_content)
+        plain_content = re.sub(r"<[^>]+>", " ", raw_content)  # strip HTML tags
         plain_content = html.unescape(plain_content)
         plain_content = " ".join(plain_content.split())
         excerpt = plain_content[:300]

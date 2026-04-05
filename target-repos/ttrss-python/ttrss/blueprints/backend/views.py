@@ -1059,9 +1059,10 @@ def _dlg_import_opml():
         return jsonify({"status": "ERR", "error": str(exc)})
 
     # Source: dlg.php:24 — $opml->opml_import($_SESSION["uid"])
-    # Delegate to OPML parser (ttrss.utils.misc or a dedicated opml module if available).
-    imported = _do_opml_import(content, current_user.id)
-    return jsonify({"status": "OK", "imported": imported})
+    # Delegate to full OPML importer (handles feeds, categories, labels, filters, prefs).
+    from ttrss.feeds.opml import import_opml
+    result = import_opml(db.session, current_user.id, content)
+    return jsonify({"status": "OK", "imported": result.get("imported", 0), "errors": result.get("errors", [])})
 
 
 def _do_opml_import(content: str, owner_uid: int) -> int:
@@ -1122,7 +1123,7 @@ def _dlg_export_opml():
     # Construct the OPML export URL with an access key for feed -3 (OPML virtual feed)
     key = get_feed_access_key(db.session, -3, is_cat=False, owner_uid=current_user.id)
     base_url = flask_request.host_url.rstrip("/")
-    url = f"{base_url}/public.php?op=opml&key={key}"
+    url = f"{base_url}/opml?key={key}"
     db.session.commit()
     return jsonify({"url": url})
 

@@ -340,19 +340,30 @@ def upsert_user_entry(
     marked: bool = False,
     published: bool = False,
     score: int = 0,
+    allow_duplicate_posts: bool = False,
 ) -> Optional[int]:
     """INSERT into ttrss_user_entries if not exists; return int_id or None.
 
     Source: ttrss/include/rssfuncs.php lines 887-894
     Skips insert if ref_id already has a user_entry for this owner.
     Returns int_id of the new row, or None if already existed.
+
+    Source: ttrss/include/rssfuncs.php lines 803-808 — ALLOW_DUPLICATE_POSTS:
+    When False (default): check across all feeds (same GUID blocks duplicate user_entry).
+    When True: restrict check to current feed only — allows same GUID in multiple feeds.
     """
-    existing_int_id = session.execute(
+    # Source: rssfuncs.php lines 832-834 — dupcheck_qpart
+    dup_check = (
         select(TtRssUserEntry.int_id)
         .where(TtRssUserEntry.ref_id == ref_id)
         .where(TtRssUserEntry.owner_uid == owner_uid)
-        .limit(1)
-    ).scalar_one_or_none()
+    )
+    if allow_duplicate_posts:
+        # Source: rssfuncs.php line 806 — AND (feed_id = '$feed' OR feed_id IS NULL)
+        dup_check = dup_check.where(
+            (TtRssUserEntry.feed_id == feed_id) | (TtRssUserEntry.feed_id.is_(None))
+        )
+    existing_int_id = session.execute(dup_check.limit(1)).scalar_one_or_none()
 
     if existing_int_id is not None:
         return None  # already exists
@@ -391,6 +402,7 @@ def persist_article(
     filters: list[dict[str, Any]],
     enclosures: Optional[list[dict[str, Any]]] = None,
     mark_unread_on_update: bool = False,
+    allow_duplicate_posts: bool = False,
 ) -> bool:
     """Persist a single feedparser entry to ttrss_entries + ttrss_user_entries.
 
@@ -479,6 +491,7 @@ def persist_article(
         logger.debug("persist_article: n-gram duplicate detected for %r", title)
 
     # User entry INSERT
+    # Source: rssfuncs.php lines 803-808 — allow_duplicate_posts from caller
     int_id = upsert_user_entry(
         session,
         ref_id=entry_id,
@@ -488,6 +501,7 @@ def persist_article(
         marked=False,
         published=False,
         score=extra_score,
+        allow_duplicate_posts=allow_duplicate_posts,
     )
 
     if int_id is None:

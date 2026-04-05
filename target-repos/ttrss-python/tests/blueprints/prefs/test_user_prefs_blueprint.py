@@ -162,6 +162,228 @@ class TestResetConfig:
 
 
 # ---------------------------------------------------------------------------
+# Additional route coverage: /prefs/user/plugin_data/clear,
+#   /prefs/user/plugins variant, /prefs/user/email, /prefs/user/config
+# ---------------------------------------------------------------------------
+
+
+class TestAdditionalRoutes:
+    """Extra coverage for routes not yet exhaustively tested.
+
+    Source: ttrss/classes/pref/prefs.php (Pref_Prefs, 1129 lines)
+    """
+
+    # ------------------------------------------------------------------
+    # POST /prefs/user/plugin_data/clear
+    # ------------------------------------------------------------------
+
+    def test_clear_plugin_data_valid_returns_200(self, client):
+        """POST /prefs/user/plugin_data/clear with plugin name → 200 ok.
+
+        Source: ttrss/classes/pref/prefs.php:962 — clearplugindata:
+                DELETE FROM ttrss_plugin_storage WHERE owner_uid AND plugin_name.
+        """
+        mock_user = _make_user()
+
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("ttrss.blueprints.prefs.user_prefs.user_prefs_crud") as mock_crud:
+            resp = client.post(
+                "/prefs/user/plugin_data/clear",
+                data={"plugin": "my_plugin"},
+            )
+
+        assert resp.status_code == 200
+        assert resp.get_json()["status"] == "ok"
+        mock_crud.clear_plugin_data.assert_called_once_with(mock_user.id, "my_plugin")
+
+    def test_clear_plugin_data_missing_plugin_returns_400(self, client):
+        """POST /prefs/user/plugin_data/clear without plugin param → 400.
+
+        Source: ttrss/classes/pref/prefs.php:962 — clearplugindata:
+                plugin name is required; empty/missing triggers 400.
+        """
+        mock_user = _make_user()
+
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("ttrss.blueprints.prefs.user_prefs.user_prefs_crud"):
+            resp = client.post("/prefs/user/plugin_data/clear", data={})
+
+        assert resp.status_code == 400
+        assert resp.get_json()["error"] == "plugin_required"
+
+    # ------------------------------------------------------------------
+    # POST /prefs/user/plugins — variant: allowed plugin passes filter
+    # ------------------------------------------------------------------
+
+    def test_set_plugins_allowed_plugin_is_saved(self, client):
+        """POST /prefs/user/plugins with an allowed KIND_USER plugin → saved in pref.
+
+        Source: ttrss/classes/pref/prefs.php:950-954 — setplugins:
+                ttrss/classes/pref/prefs.php:806-820 — only KIND_USER plugins shown in UI.
+        """
+        from ttrss.plugins.hookspecs import KIND_USER
+
+        mock_user = _make_user()
+        allowed_plugin = MagicMock()
+        allowed_plugin.KIND = KIND_USER
+
+        mock_pm = MagicMock()
+        mock_pm.get_plugins.return_value = {"my_user_plugin": allowed_plugin}
+
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("ttrss.plugins.manager.get_plugin_manager", return_value=mock_pm), \
+             patch("ttrss.prefs.ops.set_user_pref") as mock_set:
+            resp = client.post(
+                "/prefs/user/plugins",
+                data={"plugins[]": ["my_user_plugin"]},
+            )
+
+        assert resp.status_code == 200
+        assert resp.get_json()["status"] == "ok"
+        mock_set.assert_called_once_with(mock_user.id, "_ENABLED_PLUGINS", "my_user_plugin")
+
+    def test_set_plugins_disallowed_plugin_is_filtered(self, client):
+        """POST /prefs/user/plugins with a non-KIND_USER plugin → filtered out, empty saved.
+
+        Source: ttrss/classes/pref/prefs.php:806-820 — enforce KIND_USER to
+                prevent injection of system plugin names via crafted POST.
+        """
+        mock_user = _make_user()
+        system_plugin = MagicMock()
+        system_plugin.KIND = "system"  # not KIND_USER
+
+        mock_pm = MagicMock()
+        mock_pm.get_plugins.return_value = {"system_plugin": system_plugin}
+
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("ttrss.plugins.manager.get_plugin_manager", return_value=mock_pm), \
+             patch("ttrss.prefs.ops.set_user_pref") as mock_set:
+            resp = client.post(
+                "/prefs/user/plugins",
+                data={"plugins[]": ["system_plugin"]},
+            )
+
+        assert resp.status_code == 200
+        mock_set.assert_called_once_with(mock_user.id, "_ENABLED_PLUGINS", "")
+
+    # ------------------------------------------------------------------
+    # POST /prefs/user/email
+    # ------------------------------------------------------------------
+
+    def test_change_email_returns_200(self, client):
+        """POST /prefs/user/email with email + full_name → 200 ok.
+
+        Source: ttrss/classes/pref/prefs.php:153 — changeemail:
+                UPDATE ttrss_users SET email, full_name.
+        """
+        mock_user = _make_user()
+
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("ttrss.blueprints.prefs.user_prefs.user_prefs_crud") as mock_crud:
+            resp = client.post(
+                "/prefs/user/email",
+                data={"email": "new@example.com", "full_name": "New Name"},
+            )
+
+        assert resp.status_code == 200
+        assert resp.get_json()["status"] == "ok"
+        mock_crud.save_email_and_name.assert_called_once_with(
+            mock_user.id, "new@example.com", "New Name"
+        )
+
+    def test_change_email_empty_values_still_returns_200(self, client):
+        """POST /prefs/user/email with empty strings → 200 (PHP allows clearing).
+
+        Source: ttrss/classes/pref/prefs.php:153 — changeemail:
+                empty email/full_name clears the fields in the DB.
+        """
+        mock_user = _make_user()
+
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("ttrss.blueprints.prefs.user_prefs.user_prefs_crud"):
+            resp = client.post("/prefs/user/email", data={})
+
+        assert resp.status_code == 200
+
+    # ------------------------------------------------------------------
+    # POST /prefs/user/config — pref_name required
+    # ------------------------------------------------------------------
+
+    def test_save_config_missing_pref_name_returns_400(self, client):
+        """POST /prefs/user/config without pref_name → 400.
+
+        Source: ttrss/classes/pref/prefs.php:106 — saveconfig:
+                pref_name is required; empty triggers 400.
+        """
+        mock_user = _make_user()
+
+        with patch("flask_login.utils._get_user", return_value=mock_user):
+            resp = client.post("/prefs/user/config", data={"value": "true"})
+
+        assert resp.status_code == 400
+        assert resp.get_json()["error"] == "pref_name_required"
+
+    def test_save_config_digest_time_change_clears_sent_time(self, client):
+        """POST /prefs/user/config for DIGEST_PREFERRED_TIME with changed value calls clear.
+
+        Source: ttrss/classes/pref/prefs.php:107 — only clear digest time
+                if value actually changed; calls clear_digest_sent_time.
+        """
+        mock_user = _make_user()
+
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("ttrss.blueprints.prefs.user_prefs.user_prefs_crud") as mock_crud, \
+             patch("ttrss.prefs.ops.get_user_pref", return_value="08:00"), \
+             patch("ttrss.prefs.ops.set_user_pref"):
+            resp = client.post(
+                "/prefs/user/config",
+                data={"pref_name": "DIGEST_PREFERRED_TIME", "value": "09:00"},
+            )
+
+        assert resp.status_code == 200
+        mock_crud.clear_digest_sent_time.assert_called_once_with(mock_user.id)
+
+    def test_save_config_digest_time_unchanged_skips_clear(self, client):
+        """POST /prefs/user/config for DIGEST_PREFERRED_TIME with same value → no clear.
+
+        Source: ttrss/classes/pref/prefs.php:107 — clear only if value CHANGED;
+                same value must not trigger clear_digest_sent_time.
+        """
+        mock_user = _make_user()
+
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("ttrss.blueprints.prefs.user_prefs.user_prefs_crud") as mock_crud, \
+             patch("ttrss.prefs.ops.get_user_pref", return_value="08:00"), \
+             patch("ttrss.prefs.ops.set_user_pref"):
+            resp = client.post(
+                "/prefs/user/config",
+                data={"pref_name": "DIGEST_PREFERRED_TIME", "value": "08:00"},
+            )
+
+        assert resp.status_code == 200
+        mock_crud.clear_digest_sent_time.assert_not_called()
+
+    # ------------------------------------------------------------------
+    # POST /prefs/user/config/reset — with profile param
+    # ------------------------------------------------------------------
+
+    def test_reset_config_with_profile_passes_profile_id(self, client):
+        """POST /prefs/user/config/reset with profile=3 → reset_user_prefs called with profile=3.
+
+        Source: ttrss/classes/pref/prefs.php:170-174 — resetconfig:
+                profile parameter scopes which prefs are deleted/reset.
+        """
+        mock_user = _make_user()
+
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("ttrss.blueprints.prefs.user_prefs.user_prefs_crud") as mock_crud:
+            resp = client.post("/prefs/user/config/reset", data={"profile": "3"})
+
+        assert resp.status_code == 200
+        mock_crud.reset_user_prefs.assert_called_once_with(mock_user.id, profile=3)
+
+
+# ---------------------------------------------------------------------------
 # POST /prefs/user/otp/enable
 # ---------------------------------------------------------------------------
 

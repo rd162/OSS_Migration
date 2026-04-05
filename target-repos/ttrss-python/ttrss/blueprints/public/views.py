@@ -510,7 +510,7 @@ def rss():
     """
     from ttrss.extensions import db
     from ttrss.models.access_key import TtRssAccessKey
-    from ttrss.articles.search import query_feed_headlines
+    from ttrss.articles.search import queryFeedHeadlines as query_feed_headlines
 
     feed_id = request.args.get("id", "")
     key = request.args.get("key", "")

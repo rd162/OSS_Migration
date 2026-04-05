@@ -10,17 +10,18 @@ import pytest
 
 from ttrss.auth.password import hash_password
 from ttrss.extensions import db as _db
-from ttrss.models.pref import TtRssUserPref
 from ttrss.models.user import TtRssUser
 
 
 @pytest.fixture()
 def test_user(app, db_session, seed_prefs):
-    """Create a test user with argon2id-hashed password and API access enabled.
+    """Create a test user with argon2id-hashed password.
+
+    API access enabled via system default: seed_prefs sets
+    TtRssPref(ENABLE_API_ACCESS, def_value='true') so get_user_pref()
+    returns 'true' for all users via system-default fallback.
 
     Source: ttrss/classes/pref/users.php:Pref_Users::save (user creation)
-    Adapted: seed_prefs ensures ENABLE_API_ACCESS system default exists;
-             user_pref row sets it explicitly for this user.
     """
     with app.app_context():
         user = TtRssUser(
@@ -29,18 +30,12 @@ def test_user(app, db_session, seed_prefs):
             access_level=0,
         )
         db_session.add(user)
-        db_session.flush()
-        # Explicitly enable API access for this user
-        db_session.add(TtRssUserPref(
-            owner_uid=user.id,
-            pref_name="ENABLE_API_ACCESS",
-            profile=None,
-            value="true",
-        ))
         db_session.commit()
         yield user
-        db_session.delete(user)
-        db_session.commit()
+        existing = db_session.get(TtRssUser, user.id)
+        if existing:
+            db_session.delete(existing)
+            db_session.commit()
 
 
 def test_login_success(client, test_user):

@@ -147,12 +147,14 @@ class TestSeqEcho:
         resp = client.post("/api/", json={"op": "getFeeds", "seq": 77})
         assert resp.get_json()["seq"] == 77
 
-    def test_seq_echoed_on_unknown_method(self, client):
-        """seq is echoed for UNKNOWN_METHOD (CG-04).
+    def test_seq_echoed_on_unknown_method(self, logged_in_client):
+        """seq is echoed for UNKNOWN_METHOD when authenticated (CG-04).
 
         Source: ttrss/classes/api.php:API.index (line 488 — UNKNOWN_METHOD)
+        Note: must be authenticated — unauthenticated requests hit NOT_LOGGED_IN guard
+        before reaching the UNKNOWN_METHOD fallback.
         """
-        resp = client.post("/api/", json={"op": "completelyUnknownOp", "seq": 99})
+        resp = logged_in_client.post("/api/", json={"op": "completelyUnknownOp", "seq": 99})
         data = resp.get_json()
         assert data["seq"] == 99
         assert data["content"]["error"] == "UNKNOWN_METHOD"

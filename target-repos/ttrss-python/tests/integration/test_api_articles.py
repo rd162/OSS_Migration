@@ -241,10 +241,11 @@ class TestUpdateArticle:
         assert data["status"] == 0
 
     def test_update_article_set_note(self, logged_in_client, test_entry_pair, db_session):
-        """updateArticle field=4 → set note on article.
+        """updateArticle field=3 → set note on article.
 
         Source: ttrss/classes/api.php:API.updateArticle (lines 232-296)
-        PHP: field=4 is NOTE field — stores user annotation.
+        PHP: field=3 is NOTE field (FIELD_MAP: 3→note) — stores user annotation.
+        Python: strips HTML tags from note (security improvement over PHP).
         """
         entry, user_entry = test_entry_pair
 
@@ -253,7 +254,7 @@ class TestUpdateArticle:
             json={
                 "op": "updateArticle",
                 "article_ids": str(entry.id),
-                "field": 4,   # NOTE
+                "field": 3,   # NOTE (PHP api.php FIELD_MAP)
                 "mode": 1,
                 "data": "My test note",
                 "seq": 323,
@@ -263,13 +264,12 @@ class TestUpdateArticle:
         assert data["status"] == 0
 
     def test_update_article_toggle_mode(self, logged_in_client, test_entry_pair, db_session):
-        """updateArticle mode=2 → toggle current state.
+        """updateArticle mode=2 → toggle current boolean state.
 
         Source: ttrss/classes/api.php:API.updateArticle (lines 232-296)
-        PHP: mode=2 toggles current value (NOT current).
+        PHP: mode=2 toggles current value (XOR with current).
         """
-        entry, user_entry = test_entry_pair
-        initial_marked = user_entry.marked
+        entry, _ = test_entry_pair
 
         resp = logged_in_client.post(
             "/api/",

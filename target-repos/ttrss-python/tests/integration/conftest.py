@@ -25,7 +25,7 @@ from ttrss.auth.password import hash_password
 from ttrss.extensions import db as _db
 from ttrss.models.entry import TtRssEntry
 from ttrss.models.feed import TtRssFeed
-from ttrss.models.pref import TtRssPref, TtRssPrefsSection, TtRssPrefsType, TtRssUserPref
+from ttrss.models.pref import TtRssPref, TtRssPrefsSection, TtRssPrefsType
 from ttrss.models.user import TtRssUser
 from ttrss.models.user_entry import TtRssUserEntry
 
@@ -88,12 +88,14 @@ def seed_prefs(app):
 @pytest.fixture()
 def api_user(app, db_session, seed_prefs):
     """
-    Create a TtRssUser with a known password and ENABLE_API_ACCESS=true.
+    Create a TtRssUser with a known password.
+
+    API access is enabled via the system default: seed_prefs sets
+    TtRssPref(ENABLE_API_ACCESS, def_value='true'), so get_user_pref() returns
+    'true' for all users without a user-level override.
 
     Source: ttrss/classes/pref/users.php:Pref_Users::save (user creation)
-            ttrss/include/db-prefs.php:initialize_user_prefs (pref defaults)
-    Adapted: Python creates user + inserts ENABLE_API_ACCESS pref directly
-             (bypasses initialize_user_prefs which needs all ~51 prefs seeded).
+            ttrss/include/db-prefs.php:get_pref — system default fallback.
     """
     login = f"int_user_{uuid.uuid4().hex[:8]}"
     with app.app_context():
@@ -103,24 +105,15 @@ def api_user(app, db_session, seed_prefs):
             access_level=0,
         )
         db_session.add(user)
-        db_session.flush()  # get user.id before commit
-
-        # Source: ttrss/include/db-prefs.php:set_pref — upsert ENABLE_API_ACCESS
-        db_session.add(
-            TtRssUserPref(
-                owner_uid=user.id,
-                pref_name="ENABLE_API_ACCESS",
-                profile=None,
-                value="true",
-            )
-        )
         db_session.commit()
         yield user
 
         # Teardown: cascade delete via user (feeds, entries, prefs all cascade)
         try:
-            db_session.delete(db_session.get(TtRssUser, user.id))
-            db_session.commit()
+            existing = db_session.get(TtRssUser, user.id)
+            if existing:
+                db_session.delete(existing)
+                db_session.commit()
         except Exception:
             db_session.rollback()
 

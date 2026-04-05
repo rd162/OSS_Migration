@@ -14,8 +14,8 @@ import pytest
 
 from ttrss.auth.password import hash_password, needs_upgrade, verify_password
 from ttrss.extensions import db as _db
-from ttrss.models.pref import TtRssUserPref
 from ttrss.models.user import TtRssUser
+from ttrss.prefs.ops import set_user_pref
 
 
 class TestLoginLogoutCycle:
@@ -145,12 +145,9 @@ class TestPasswordHashUpgrade:
         with app.app_context():
             user = TtRssUser(login=login, pwd_hash=sha1_hash, access_level=0)
             db_session.add(user)
-            db_session.flush()
-            db_session.add(TtRssUserPref(
-                owner_uid=user.id, pref_name="ENABLE_API_ACCESS", profile=None, value="true"
-            ))
             db_session.commit()
             user_id = user.id
+            # API access enabled via system default (seed_prefs)
 
         # Login with plain password "password" — SHA1 check, then upgrade
         resp = client.post(

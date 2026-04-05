@@ -22,7 +22,10 @@ CSRF (ADR-0002, spec/03-api-routing.md):
 """
 from __future__ import annotations
 
+import logging
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 from flask import Blueprint, current_app, jsonify, request, session
 from flask_login import current_user, login_user, logout_user
@@ -280,7 +283,7 @@ def _handle_login(data: dict, seq: int):
 
     if not password_ok:
         # Source: ttrss/classes/api.php:API.login (line 80 — user_error for failed attempt)
-        logger.warning("Failed login attempt for user %r", login)
+        logger.warning("Failed login attempt for user %r", username)
         return _err(seq, "LOGIN_ERROR")
 
     # Upgrade legacy hash to argon2id on first successful login (ADR-0008)

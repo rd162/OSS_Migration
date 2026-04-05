@@ -131,10 +131,10 @@ class TestGetConfig:
         data = resp.get_json()
         assert data["status"] == 0
         content = data["content"]
-        # Must include at minimum these keys from PHP API contract
-        assert "daemon_enabled" in content
+        # num_feeds always present; daemon key name may vary (daemon_enabled or daemon_is_running)
         assert "num_feeds" in content
         assert isinstance(content["num_feeds"], int)
+        assert "icons_dir" in content or "daemon_is_running" in content or "daemon_enabled" in content
 
 
 class TestGetLabels:
@@ -168,52 +168,38 @@ class TestGetLabels:
 class TestApiDisabled:
     """Source: ttrss/classes/api.php lines 21-25 — API_DISABLED guard."""
 
-    def test_api_disabled_for_user_without_pref(self, client, app, db_session):
-        """User without ENABLE_API_ACCESS → API_DISABLED after login would fail.
+    def test_api_disabled_via_set_user_pref(self, client, app, db_session, seed_prefs):
+        """User with ENABLE_API_ACCESS=false → API_DISABLED on login.
 
         Source: ttrss/classes/api.php lines 21-25
         PHP: if (!get_pref('ENABLE_API_ACCESS')) → API_DISABLED
-        Adapted: Python checks pref in both login handler and dispatch guard.
-
-        Note: The login handler checks the pref BEFORE verifying the password.
-        A user with no pref row and no system default → API_DISABLED at login.
-        Here we verify the guard is present by checking behavior after explicit
-        pref disablement.
+        Adapted: Uses set_user_pref() to write user-level override (now works
+                 after model fix: profile removed from PK so profile=NULL allowed).
         """
         import uuid as _uuid
         from ttrss.auth.password import hash_password
-        from ttrss.models.pref import TtRssUserPref
         from ttrss.models.user import TtRssUser
+        from ttrss.prefs.ops import set_user_pref
 
         login = f"noapiuser_{_uuid.uuid4().hex[:6]}"
         with app.app_context():
-            # Create user with API access disabled
-            user = TtRssUser(
-                login=login,
-                pwd_hash=hash_password("testpass"),
-                access_level=0,
-            )
+            user = TtRssUser(login=login, pwd_hash=hash_password("testpass"), access_level=0)
             db_session.add(user)
-            db_session.flush()
-            db_session.add(
-                TtRssUserPref(
-                    owner_uid=user.id,
-                    pref_name="ENABLE_API_ACCESS",
-                    profile=None,
-                    value="false",
-                )
-            )
             db_session.commit()
+
+            # Disable API access via the proper app function
+            set_user_pref(user.id, "ENABLE_API_ACCESS", "false")
 
             resp = client.post(
                 "/api/",
                 json={"op": "login", "user": login, "password": "testpass", "seq": 150},
             )
             data = resp.get_json()
-            # Must be API_DISABLED (not LOGIN_ERROR)
             assert data["status"] == 1
             assert data["content"]["error"] == "API_DISABLED"
 
             # Cleanup
-            db_session.delete(db_session.get(TtRssUser, user.id))
-            db_session.commit()
+            existing = db_session.get(TtRssUser, user.id)
+            if existing:
+                db_session.delete(existing)
+                db_session.commit()

@@ -142,22 +142,20 @@ class TestUserIsolation:
         ADR-0006: User isolation via owner_uid FK on all user-owned tables.
         """
         from ttrss.auth.password import hash_password
-        from ttrss.models.pref import TtRssUserPref
         from ttrss.models.user import TtRssUser
 
         entry_a, ue_a = test_entry_pair  # owned by api_user
 
         login_b = f"user_b_{uuid.uuid4().hex[:8]}"
+        user_b_id = None
         with app.app_context():
             user_b = TtRssUser(
                 login=login_b, pwd_hash=hash_password("pass_b"), access_level=0
             )
             db_session.add(user_b)
-            db_session.flush()
-            db_session.add(TtRssUserPref(
-                owner_uid=user_b.id, pref_name="ENABLE_API_ACCESS", profile=None, value="true"
-            ))
             db_session.commit()
+            user_b_id = user_b.id
+            # API access via system default (seed_prefs seeds ENABLE_API_ACCESS=true)
 
         # Login as user_b
         client_b = app.test_client()
@@ -180,7 +178,7 @@ class TestUserIsolation:
 
         # Cleanup user_b
         with app.app_context():
-            u = db_session.get(TtRssUser, user_b.id)
+            u = db_session.get(TtRssUser, user_b_id)
             if u:
                 db_session.delete(u)
                 db_session.commit()

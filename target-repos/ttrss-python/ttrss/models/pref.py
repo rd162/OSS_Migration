@@ -117,8 +117,14 @@ class TtRssSettingsProfile(Base):
 
 
 # Source: ttrss/schema/ttrss_schema_pgsql.sql (table ttrss_user_prefs, lines 364-367)
-# Note: No declared PK in schema — composite (owner_uid, pref_name, profile) is the logical key.
-# The profile column is nullable (NULL = default profile).
+# Note: PHP schema has NO declared PK. The logical key is (owner_uid, pref_name, profile)
+# where profile=NULL means the default (no-profile) setting.
+# Bug fix: original Python model put profile in primary_key=True, which Postgres enforces as
+# NOT NULL — making profile=NULL impossible and breaking set_user_pref() for the default profile.
+# Fix: PK is (owner_uid, pref_name) only; profile is a regular nullable column.
+# Consequence: only one row per (owner_uid, pref_name) is supported via session.merge(),
+# which covers 100% of current app usage (default profile only). Multi-profile support
+# would require explicit SQL or a separate UNIQUE NULLS NOT DISTINCT index (Postgres 15+).
 class TtRssUserPref(Base):
     """
     Per-user preference override. If absent, the system default from ttrss_prefs.def_value applies.
@@ -132,7 +138,6 @@ class TtRssUserPref(Base):
         Index("ttrss_user_prefs_owner_uid_index", "owner_uid"),
         # Source: schema line 370 — ttrss_user_prefs_pref_name_idx
         Index("ttrss_user_prefs_pref_name_idx", "pref_name"),
-        # Source: schema line 371 — value index commented out in PHP schema
     )
 
     # Source: schema line 364 — owner_uid integer not null references ttrss_users(id) ON DELETE CASCADE
@@ -151,10 +156,10 @@ class TtRssUserPref(Base):
     )
     # Source: schema line 366 — profile integer references ttrss_settings_profiles(id) ON DELETE CASCADE
     # Nullable — NULL means the default (no-profile) setting.
+    # Not part of PK: Postgres PK columns are implicitly NOT NULL, which would forbid profile=NULL.
     profile: Mapped[Optional[int]] = mapped_column(
         Integer,
         ForeignKey("ttrss_settings_profiles.id", ondelete="CASCADE"),
-        primary_key=True,
         nullable=True,
         default=None,
     )

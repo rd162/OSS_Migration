@@ -34,6 +34,7 @@ dev = [
     "pytest-flask>=1.3",
     "factory-boy>=3.3",
     "coverage>=7.0",
+    "pillow>=10.0",
     # sqlacodegen is NOT listed here — install manually in dev venv (AR08)
     # pip install 'sqlacodegen>=3.0'
 ]

@@ -117,7 +117,8 @@ Run: `just test-int` (requires docker compose services on :5433/:6380)
 
 - [2026-04-03](sessions/2026-04-03.md) — Spec-kit built, P0+P1 ADRs accepted, Phase 1a complete
 - [2026-04-04](sessions/2026-04-04.md) — Phases 1b-4 complete; graph analysis built + enhanced
-- [2026-04-05](sessions/2026-04-05.md) — Semantic verification 105+ fixes; spec-kit refactor; justfile + coverage gate
+- [2026-04-05 morning](session_2026-04-05.md) — Semantic verification 105+ fixes; spec-kit refactor; justfile + coverage gate
+- [2026-04-05 full](session_2026-04-05.md) — Integration tests (115), SPA frontend (ADR-0017), PHP UI faithful clone, E2E automation (51 Playwright), DB isolation fix
 
 ## Rules (MANDATORY)
 

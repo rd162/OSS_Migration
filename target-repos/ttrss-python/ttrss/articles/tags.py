@@ -126,6 +126,10 @@ def setArticleTags(
     for tag in valid_tags:
         session.add(TtRssTag(tag_name=tag, owner_uid=owner_uid, post_int_id=int_id))
 
+    # Source: ttrss/classes/article.php:265 — sort($tags_to_cache) before cache write
+    # PHP sorts tag array alphabetically before joining; Python must match to keep cache consistent.
+    valid_tags.sort()
+
     # Update cache
     session.execute(
         sa_update(TtRssUserEntry)

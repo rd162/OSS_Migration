@@ -179,11 +179,53 @@ def reset_config():
 @prefs_bp.route("/user/otp/enable", methods=["POST"])
 @login_required
 def otp_enable():
-    """Enable OTP for the current user.
+    """Enable OTP for the current user after verifying password + current OTP code.
 
-    Source: ttrss/classes/pref/prefs.php:896 — otpenable
+    Source: ttrss/classes/pref/prefs.php:896-932 — otpenable
+    PHP requires: (1) correct password, (2) valid current OTP code before enabling.
     """
+    import base64
+    import hashlib
+    import hmac
+    import struct
+    import time
+
     owner_uid = _owner_uid()
+    password = request.form.get("password", "")
+    otp_code = request.form.get("otp", "").strip()
+
+    # Source: prefs.php:900-910 — verify password via authenticator
+    user = user_prefs_crud.get_user_for_password_change(owner_uid)
+    if user is None:
+        return jsonify({"error": "user_not_found"}), 404
+
+    from ttrss.auth.password import check_password
+    if not check_password(password, user.pwd_hash, getattr(user, "salt", "")):
+        return jsonify({"error": "incorrect_password"}), 403
+
+    # Source: prefs.php:912-919 — verify OTP code before enabling
+    # OTP secret = base32_encode(sha1(salt))
+    if not otp_code:
+        return jsonify({"error": "otp_code_required"}), 400
+
+    if user.salt:
+        _salt_sha1 = hashlib.sha1(user.salt.encode()).digest()
+        _otp_secret = base64.b32encode(_salt_sha1).decode()
+        # Verify using TOTP (±1 step window)
+        _t = int(time.time())
+        valid = False
+        for _delta in range(-1, 2):
+            _counter = struct.pack(">Q", (_t + _delta * 30) // 30)
+            _key = base64.b32decode(_otp_secret.upper() + "=" * (-len(_otp_secret) % 8))
+            _mac = hmac.new(_key, _counter, hashlib.sha1).digest()
+            _off = _mac[-1] & 0x0F
+            _code = struct.unpack(">I", _mac[_off:_off + 4])[0] & 0x7FFFFFFF
+            if hmac.compare_digest(f"{_code % 1_000_000:06d}", otp_code):
+                valid = True
+                break
+        if not valid:
+            return jsonify({"error": "incorrect_otp"}), 403
+
     # Source: ttrss/classes/pref/prefs.php:920-921 — set otp_enabled = True
     user_prefs_crud.set_otp_enabled(owner_uid, enabled=True)
     return jsonify({"status": "ok"})
@@ -192,11 +234,23 @@ def otp_enable():
 @prefs_bp.route("/user/otp/disable", methods=["POST"])
 @login_required
 def otp_disable():
-    """Disable OTP for the current user.
+    """Disable OTP for the current user after verifying password.
 
-    Source: ttrss/classes/pref/prefs.php:933 — otpdisable
+    Source: ttrss/classes/pref/prefs.php:933-949 — otpdisable
+    PHP requires correct password before disabling OTP.
     """
     owner_uid = _owner_uid()
+    password = request.form.get("password", "")
+
+    # Source: prefs.php:937-942 — verify password before disabling
+    user = user_prefs_crud.get_user_for_password_change(owner_uid)
+    if user is None:
+        return jsonify({"error": "user_not_found"}), 404
+
+    from ttrss.auth.password import check_password
+    if not check_password(password, user.pwd_hash, getattr(user, "salt", "")):
+        return jsonify({"error": "incorrect_password"}), 403
+
     # Source: ttrss/classes/pref/prefs.php:940-941 — set otp_enabled = False
     user_prefs_crud.set_otp_enabled(owner_uid, enabled=False)
     return jsonify({"status": "ok"})
@@ -240,7 +294,18 @@ def set_plugins():
     from ttrss.prefs.ops import set_user_pref
 
     owner_uid = _owner_uid()
+    from ttrss.plugins.hookspecs import KIND_USER
+    from ttrss.plugins.manager import get_plugin_manager
+
     plugins_raw = request.form.getlist("plugins[]") or request.form.getlist("plugins")
-    plugins_value = ",".join(p.strip() for p in plugins_raw if p.strip())
+    pm = get_plugin_manager()
+    # Source: ttrss/classes/pref/prefs.php:806-820 — UI only shows KIND_USER plugins;
+    # enforce KIND_USER here so a crafted request can't inject KIND_SYSTEM plugin names.
+    allowed = {
+        name for name, plugin in pm.get_plugins().items()
+        if getattr(plugin, "KIND", None) == KIND_USER
+    }
+    valid_plugins = [p.strip() for p in plugins_raw if p.strip() in allowed]
+    plugins_value = ",".join(valid_plugins)
     set_user_pref(owner_uid, "_ENABLED_PLUGINS", plugins_value)
     return jsonify({"status": "ok"})

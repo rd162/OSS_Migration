@@ -358,8 +358,12 @@ def subscribe_to_feed(
     4 = HTML page with multiple feed links (feeds list in result)
     5 = fetch failed (message in result)
     """
+    from ttrss.http.client import fix_url, validate_feed_url
+
     url = url.strip()
-    if not url:
+    # Source: ttrss/include/functions.php:1679-1681 — fix_url() then validate_feed_url()
+    url = fix_url(url)
+    if not url or not validate_feed_url(url):
         return {"code": 2}
 
     try:
@@ -413,4 +417,15 @@ def subscribe_to_feed(
         new_feed.auth_pass = auth_pass  # Fernet encryption via property (ADR-0009)
 
     session.add(new_feed)
+    session.flush()  # Assign new_feed.id before triggering task
+
+    # Source: ttrss/include/functions.php:1747 — update_rss_feed($feed_id, true) immediately after INSERT
+    # Adapted: Python dispatches Celery task instead of blocking call (ADR-0011).
+    # This populates feed title, site_url, and initial articles without waiting for scheduled update.
+    try:
+        from ttrss.tasks.feed_tasks import update_feed
+        update_feed.delay(new_feed.id)
+    except Exception:
+        pass  # Celery unavailable (e.g., tests/CLI) — feed will update on next scheduled run
+
     return {"code": 1}

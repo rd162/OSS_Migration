@@ -30,3 +30,4 @@ htmlcov/
 .vscode/
 *.swp
 *.swo
+flask_session/

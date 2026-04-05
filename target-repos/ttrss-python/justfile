@@ -45,6 +45,15 @@ lint:
 test:
     uv run pytest tests/unit/ -q --tb=short
 
+# Blueprint handler tests — no Docker needed, ~1s (run separately due to singleton isolation)
+test-blueprints:
+    uv run pytest tests/blueprints/ -q --tb=short
+
+# All tests combined (may have ordering issues due to singleton state — use test + test-blueprints instead)
+test-all:
+    uv run pytest tests/unit/ -q --tb=short
+    uv run pytest tests/blueprints/ -q --tb=short
+
 # All tests including integration (starts Docker services automatically)
 test-int: services-up
     DATABASE_URL={{test_db_url}} \

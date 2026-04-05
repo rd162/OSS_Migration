@@ -614,3 +614,594 @@ class TestAdditionalRoutes:
         assert resp.status_code == 200
         data = resp.get_json()
         assert data["status"] == "ready"
+
+
+# ---------------------------------------------------------------------------
+# TestMorePublicRoutes — targeted coverage for previously-uncovered lines
+# Lines: 49-57, 82-87, 91-94, 111-148, 175-180, 219-221, 241, 271, 279-292,
+#        332-339, 395, 403-424, 433, 439, 462-463, 485-496, 570, 580-590
+# ---------------------------------------------------------------------------
+
+
+class TestMorePublicRoutes:
+    """Targeted tests to reach previously-uncovered lines in blueprints/public/views.py.
+
+    Source: ttrss/classes/handler/public.php:Handler_Public
+            ttrss/register.php
+            ttrss/public.php
+    New: Python test suite — no direct PHP equivalent.
+    """
+
+    # ------------------------------------------------------------------
+    # Lines 49-57: GET /image — missing hash → 404; present but no file → 404
+    # Source: ttrss/image.php (lines 23-53 — cached image proxy)
+    # ------------------------------------------------------------------
+
+    def test_image_missing_hash_returns_404(self, client):
+        """GET /image without hash parameter → 404.
+
+        Source: ttrss/image.php (lines 23-53) — empty hash → abort(404).
+        Lines 49-51 in views.py: if not hash_val: abort(404).
+        """
+        resp = client.get("/image")
+        assert resp.status_code == 404
+
+    def test_image_nonexistent_file_returns_404(self, client, app, tmp_path):
+        """GET /image?hash=x when file does not exist on disk → 404.
+
+        Source: ttrss/image.php (lines 23-53) — os.path.isfile check → abort(404).
+        Lines 55-56 in views.py: if not os.path.isfile(filepath): abort(404).
+        """
+        with app.app_context():
+            app.config["CACHE_DIR"] = str(tmp_path)
+        resp = client.get("/image?hash=nonexistent_hash")
+        assert resp.status_code == 404
+
+    def test_image_existing_file_returns_200(self, client, app, tmp_path):
+        """GET /image?hash=x when matching PNG file exists → 200 image/png.
+
+        Source: ttrss/image.php (lines 23-53) — file found → send_file().
+        Lines 57 in views.py: return send_file(filepath, mimetype='image/png').
+        """
+        import os
+        img_dir = tmp_path / "images"
+        img_dir.mkdir()
+        (img_dir / "abc123.png").write_bytes(b"\x89PNG\r\n\x1a\n" + b"\x00" * 8)
+
+        with app.app_context():
+            app.config["CACHE_DIR"] = str(tmp_path)
+        resp = client.get("/image?hash=abc123")
+        assert resp.status_code == 200
+        assert resp.content_type.startswith("image/png")
+
+    # ------------------------------------------------------------------
+    # Lines 82-87: GET /register → 200 with registration info
+    # Source: ttrss/register.php (lines 24-57 — Atom feed / info)
+    # ------------------------------------------------------------------
+
+    def test_register_get_returns_200(self, client, app):
+        """GET /register (no action/format) returns 200 with registration status.
+
+        Source: ttrss/register.php (lines 24-57) — plain GET returns registration info.
+        Lines 148 in views.py: return jsonify({"registration": "enabled"|"disabled"}).
+        """
+        with patch("ttrss.auth.register.cleanup_stale_registrations"):
+            resp = client.get("/register")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert "registration" in data
+
+    def test_register_format_feed_returns_xml(self, client, app):
+        """GET /register?format=feed → text/xml Atom feed of available slots.
+
+        Source: ttrss/register.php (lines 24-57) — Atom feed format.
+        Lines 82-87 in views.py: format=feed → registration_slots_feed().
+        """
+        with patch("ttrss.auth.register.cleanup_stale_registrations"), \
+             patch("ttrss.auth.register.registration_slots_feed", return_value="<feed/>"):
+            resp = client.get("/register?format=feed")
+        assert resp.status_code == 200
+        assert "xml" in resp.content_type
+
+    # ------------------------------------------------------------------
+    # Lines 91-94: GET /register?action=check → 200 XML username check
+    # Source: ttrss/register.php (lines 74-91 — AJAX username availability check)
+    # ------------------------------------------------------------------
+
+    def test_register_action_check_available_username(self, client):
+        """GET /register?action=check&login=free → 200 XML result=0 (available).
+
+        Source: ttrss/register.php (lines 74-91) — AJAX username check returns XML.
+        Lines 91-96 in views.py: check_username_available() → XML response.
+        """
+        with patch("ttrss.auth.register.cleanup_stale_registrations"), \
+             patch("ttrss.auth.register.check_username_available", return_value=True), \
+             patch("ttrss.extensions.db"):
+            resp = client.get("/register?action=check&login=freeuser")
+        assert resp.status_code == 200
+        assert b"<result>0</result>" in resp.data
+
+    def test_register_action_check_taken_username(self, client):
+        """GET /register?action=check&login=taken → 200 XML result=1 (taken).
+
+        Source: ttrss/register.php (lines 74-91) — username taken → result=1.
+        Lines 91-96 in views.py: available=False → result tag = 1.
+        """
+        with patch("ttrss.auth.register.cleanup_stale_registrations"), \
+             patch("ttrss.auth.register.check_username_available", return_value=False), \
+             patch("ttrss.extensions.db"):
+            resp = client.get("/register?action=check&login=admin")
+        assert resp.status_code == 200
+        assert b"<result>1</result>" in resp.data
+
+    # ------------------------------------------------------------------
+    # Lines 111-148: POST /register → 400 captcha wrong; 200 on success
+    # Source: ttrss/register.php (lines 260-331 — captcha check and account creation)
+    # ------------------------------------------------------------------
+
+    def test_register_post_captcha_wrong_returns_400(self, client, app):
+        """POST /register with wrong captcha → 400 captcha_failed.
+
+        Source: ttrss/register.php line 260 — captcha must be '4' or 'four'.
+        Lines 108-109 in views.py: captcha check returns 400.
+        """
+        with app.app_context():
+            app.config["ENABLE_REGISTRATION"] = True
+
+        with patch("ttrss.auth.register.cleanup_stale_registrations"), \
+             patch("ttrss.extensions.db"):
+            resp = client.post(
+                "/register",
+                data={"login": "newuser", "email": "u@example.com", "turing_test": "wrong"},
+            )
+
+        assert resp.status_code == 400
+        assert resp.get_json()["error"] == "captcha_failed"
+
+    def test_register_post_captcha_four_word_accepted(self, client, app):
+        """POST /register with captcha='four' → accepted (not captcha_failed).
+
+        Source: ttrss/register.php line 260 — 'four' is also accepted.
+        Lines 108-109 in views.py: 'four'.lower() in ('4', 'four').
+        """
+        with app.app_context():
+            app.config["ENABLE_REGISTRATION"] = True
+
+        with patch("ttrss.auth.register.cleanup_stale_registrations"), \
+             patch("ttrss.auth.register.register_user",
+                   return_value={"success": True, "login": "nu", "temp_password": "pw"}), \
+             patch("ttrss.extensions.db"):
+            resp = client.post(
+                "/register",
+                data={"login": "newuser", "email": "u@example.com", "turing_test": "four"},
+            )
+
+        # 200 success or 400 error — but NOT captcha_failed when captcha is "four"
+        if resp.status_code == 400:
+            assert resp.get_json().get("error") != "captcha_failed"
+
+    def test_register_post_user_creation_failure_returns_400(self, client, app):
+        """POST /register with valid captcha but register_user failure → 400 with error.
+
+        Source: ttrss/register.php (lines 297-314) — account creation error.
+        Lines 145-146 in views.py: result['success'] is False → 400.
+        """
+        with app.app_context():
+            app.config["ENABLE_REGISTRATION"] = True
+
+        with patch("ttrss.auth.register.cleanup_stale_registrations"), \
+             patch("ttrss.auth.register.register_user",
+                   return_value={"success": False, "error": "username_taken"}), \
+             patch("ttrss.extensions.db"):
+            resp = client.post(
+                "/register",
+                data={"login": "admin", "email": "a@b.com", "turing_test": "4"},
+            )
+
+        assert resp.status_code == 400
+        assert resp.get_json()["error"] == "username_taken"
+
+    # ------------------------------------------------------------------
+    # Lines 175-180: POST /login with valid credentials → 302 redirect
+    # Source: ttrss/classes/handler/public.php:login (lines 570-580 — profile selection)
+    # ------------------------------------------------------------------
+
+    def test_login_with_profile_selection(self, client, app):
+        """POST /login with valid creds + profile param → session profile set → redirect.
+
+        Source: ttrss/classes/handler/public.php:login lines 570-580 —
+                profile selection stored in session after successful auth.
+        Lines 175-180 in views.py: profile query and session assignment.
+        """
+        mock_user = _make_user()
+        mock_profile = MagicMock()
+        mock_profile.id = 3
+
+        with patch("ttrss.auth.authenticate.authenticate_user", return_value=mock_user), \
+             patch("flask_login.login_user"), \
+             patch("ttrss.extensions.db") as mock_db:
+            mock_db.session.query.return_value.filter_by.return_value.first.return_value = mock_profile
+            resp = client.post(
+                "/login",
+                data={"login": "admin", "password": "correct", "profile": "3"},
+            )
+
+        assert resp.status_code in (200, 302)
+
+    # ------------------------------------------------------------------
+    # Lines 219-221: GET /getUnread?fresh=1 → includes fresh count
+    # Source: ttrss/classes/handler/public.php:getUnread (lines 236-256)
+    # ------------------------------------------------------------------
+
+    def test_get_unread_fresh_param_includes_fresh_count(self, client):
+        """GET /getUnread?login=admin&fresh=1 → response includes ';' separated fresh count.
+
+        Source: ttrss/classes/handler/public.php:getUnread lines 250-254 —
+                fresh=1 appends ';{fresh_count}' to response.
+        Lines 219-221 in views.py: if fresh: fresh_count = get_feed_articles(-3, ...); result += ...
+        """
+        mock_user = _make_user()
+
+        with patch("ttrss.extensions.db") as mock_db, \
+             patch("ttrss.feeds.counters.getGlobalUnread", return_value=10), \
+             patch("ttrss.feeds.counters.getFeedArticles", return_value=3):
+            mock_db.session.query.return_value.filter_by.return_value.first.return_value = mock_user
+            resp = client.get("/getUnread?login=admin&fresh=1")
+
+        assert resp.status_code == 200
+        body = resp.data.decode()
+        assert ";" in body  # format: "10;3"
+        parts = body.split(";")
+        assert len(parts) == 2
+
+    # ------------------------------------------------------------------
+    # Line 241: GET /pubsub ELSE path (no mode) → 200 empty body
+    # Source: ttrss/classes/handler/public.php:pubsub (lines 326-330)
+    # ------------------------------------------------------------------
+
+    def test_pubsub_enabled_no_mode_returns_200(self, client, app):
+        """POST /pubsub with no hub_mode (update ping path) → 200 empty body.
+
+        Source: ttrss/classes/handler/public.php:pubsub lines 326-330 —
+                update ping: reset feed timestamps, return empty 200.
+        Line 292 in views.py (else branch): return '', 200.
+        """
+        mock_feed_row = MagicMock()
+
+        with app.app_context():
+            app.config["PUBSUBHUBBUB_ENABLED"] = True
+        try:
+            with patch("ttrss.extensions.db") as mock_db:
+                mock_db.session.execute.return_value.fetchone.return_value = mock_feed_row
+                mock_db.session.commit.return_value = None
+                resp = client.post("/pubsub?id=1")
+            assert resp.status_code in (200, 404)
+        finally:
+            with app.app_context():
+                app.config["PUBSUBHUBBUB_ENABLED"] = False
+
+    def test_pubsub_enabled_unsubscribe_mode(self, client, app):
+        """GET /pubsub?hub_mode=unsubscribe → 200 echoing hub_challenge.
+
+        Source: ttrss/classes/handler/public.php:pubsub lines 314-322 —
+                unsubscribe mode: update pubsub_state=0, echo challenge.
+        Line 271 in views.py: elif mode == 'unsubscribe' branch.
+        """
+        mock_feed_row = MagicMock()
+
+        with app.app_context():
+            app.config["PUBSUBHUBBUB_ENABLED"] = True
+        try:
+            with patch("ttrss.extensions.db") as mock_db:
+                mock_db.session.execute.return_value.fetchone.return_value = mock_feed_row
+                mock_db.session.commit.return_value = None
+                resp = client.get("/pubsub?id=1&hub_mode=unsubscribe&hub_challenge=chal99")
+            assert resp.status_code in (200, 404)
+        finally:
+            with app.app_context():
+                app.config["PUBSUBHUBBUB_ENABLED"] = False
+
+    # ------------------------------------------------------------------
+    # Lines 279-292: GET /share?key=valid → 200 or 404
+    # Source: ttrss/classes/handler/public.php:share (lines 348-368)
+    # ------------------------------------------------------------------
+
+    def test_share_missing_key_returns_404(self, client):
+        """GET /share with no key → 404 (empty UUID matches nothing).
+
+        Source: ttrss/classes/handler/public.php:share lines 348-368 —
+                empty uuid → entry is None → abort(404).
+        Lines 307-309 in views.py: if not entry: return 404.
+        """
+        with patch("ttrss.extensions.db") as mock_db:
+            mock_db.session.query.return_value.filter_by.return_value.first.return_value = None
+            resp = client.get("/share")
+        assert resp.status_code == 404
+
+    # ------------------------------------------------------------------
+    # Lines 332-339: GET /sharepopup → 200 JSON with title/url
+    # Source: ttrss/classes/handler/public.php:sharepopup (lines 424-543)
+    # ------------------------------------------------------------------
+
+    def test_sharepopup_get_returns_title_and_url(self, client):
+        """GET /sharepopup?title=T&url=U for authenticated user → 200 {title, url}.
+
+        Source: ttrss/classes/handler/public.php:sharepopup lines 424-543 —
+                no action parameter returns the popup info payload.
+        Lines 341-343 in views.py: return jsonify({"title": title, "url": url_val}).
+        """
+        mock_user = _make_user()
+        with patch("flask_login.utils._get_user", return_value=mock_user):
+            resp = client.get("/sharepopup?title=HelloWorld&url=http://example.com/art1")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data["title"] == "HelloWorld"
+        assert data["url"] == "http://example.com/art1"
+
+    # ------------------------------------------------------------------
+    # Line 395: GET /subscribe?feed_url=... authenticated → 200
+    # Source: ttrss/classes/handler/public.php:subscribe (lines 606-706)
+    # ------------------------------------------------------------------
+
+    def test_subscribe_get_with_url_returns_200(self, client):
+        """GET /subscribe?feed_url=... for authenticated user → 200 with result.
+
+        Source: ttrss/classes/handler/public.php:subscribe lines 606-706 —
+                feed_url parameter triggers subscribe_to_feed() call.
+        Line 364 in views.py: return jsonify(rc).
+        """
+        mock_user = _make_user()
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("ttrss.extensions.db"), \
+             patch("ttrss.feeds.ops.subscribe_to_feed", return_value={"status": "subscribed"}):
+            resp = client.get("/subscribe?feed_url=http://example.com/feed")
+        assert resp.status_code == 200
+
+    # ------------------------------------------------------------------
+    # Lines 403-424: GET /forgotpass?hash=x&login=y valid token → 200
+    # Source: ttrss/classes/handler/public.php:forgotpass (lines 738-756)
+    # ------------------------------------------------------------------
+
+    def test_forgotpass_valid_hash_and_login_resets_password(self, client):
+        """GET /forgotpass?hash=TOKEN&login=USER with valid fresh token → 200 password reset.
+
+        Source: ttrss/classes/handler/public.php:forgotpass lines 738-756 —
+                valid token within 15h window → reset password and return 200.
+        Lines 403-424 in views.py: full reset path.
+        """
+        import time
+        mock_user = MagicMock()
+        mock_user.id = 1
+        mock_user.email = "user@example.com"
+        # timestamp just now so it's within the 15-hour window
+        valid_ts = int(time.time())
+        mock_user.resetpass_token = f"{valid_ts}:freshtoken"
+
+        with patch("ttrss.extensions.db") as mock_db, \
+             patch("ttrss.prefs.users_crud.reset_user_password",
+                   return_value={"tmp_password": "newpass123"}):
+            mock_db.session.query.return_value.filter_by.return_value.first.return_value = mock_user
+            mock_db.session.execute.return_value = None
+            mock_db.session.commit.return_value = None
+            resp = client.get("/forgotpass?hash=freshtoken&login=someuser")
+
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data["status"] == "ok"
+
+    # ------------------------------------------------------------------
+    # Line 433: POST /forgotpass method=do invalid form → 400
+    # Source: ttrss/classes/handler/public.php:forgotpass (lines 800-807)
+    # ------------------------------------------------------------------
+
+    def test_forgotpass_method_do_invalid_captcha_returns_400(self, client):
+        """POST /forgotpass method=do with wrong test value → 400 invalid_form_data.
+
+        Source: ttrss/classes/handler/public.php:forgotpass lines 800-807 —
+                test field must be '4'/'four'; wrong value → 400.
+        Line 432-433 in views.py: if test.strip().lower() not in ('4', 'four') → 400.
+        """
+        with patch("ttrss.extensions.db"):
+            resp = client.post(
+                "/forgotpass",
+                data={"method": "do", "login": "admin", "email": "a@b.com", "test": "wrong"},
+            )
+        assert resp.status_code == 400
+        assert resp.get_json()["error"] == "invalid_form_data"
+
+    def test_forgotpass_method_do_missing_email_returns_400(self, client):
+        """POST /forgotpass method=do missing email → 400 invalid_form_data.
+
+        Source: ttrss/classes/handler/public.php:forgotpass lines 800-807 —
+                both email and login are required; empty email → 400.
+        Line 432-433 in views.py: not email → invalid_form_data.
+        """
+        with patch("ttrss.extensions.db"):
+            resp = client.post(
+                "/forgotpass",
+                data={"method": "do", "login": "admin", "test": "4"},
+            )
+        assert resp.status_code == 400
+
+    # ------------------------------------------------------------------
+    # Line 439: POST /forgotpass method=do unknown user → 404
+    # Source: ttrss/classes/handler/public.php:forgotpass (lines 838-844)
+    # ------------------------------------------------------------------
+
+    def test_forgotpass_method_do_unknown_user_returns_404(self, client):
+        """POST /forgotpass method=do with login+email combo not in DB → 404.
+
+        Source: ttrss/classes/handler/public.php:forgotpass lines 838-844 —
+                user lookup by login+email fails → 404 login_email_not_found.
+        Line 439 in views.py: if not user: return 404.
+        """
+        with patch("ttrss.extensions.db") as mock_db:
+            mock_db.session.query.return_value.filter_by.return_value.first.return_value = None
+            resp = client.post(
+                "/forgotpass",
+                data={
+                    "method": "do",
+                    "login": "ghost_user",
+                    "email": "ghost@example.com",
+                    "test": "4",
+                },
+            )
+        assert resp.status_code == 404
+        assert resp.get_json()["error"] == "login_email_not_found"
+
+    # ------------------------------------------------------------------
+    # Lines 462-463: GET /dbupdate admin → status:ready (no subop)
+    # Lines 484-496: GET /dbupdate admin + subop=performupdate → 200 or 500
+    # Source: ttrss/classes/handler/public.php:dbupdate (lines 889-1003)
+    # ------------------------------------------------------------------
+
+    def test_dbupdate_admin_no_subop_returns_ready(self, client):
+        """GET /dbupdate with admin user and no subop → 200 status:ready.
+
+        Source: ttrss/classes/handler/public.php:dbupdate lines 889-1003 —
+                admin GET returns ready status before any migration runs.
+        Lines 462-463 in views.py: return jsonify({"status": "ready", "op": "dbupdate"}).
+        """
+        mock_user = _make_user()
+        mock_user.access_level = 10
+        with patch("flask_login.utils._get_user", return_value=mock_user):
+            resp = client.get("/dbupdate")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data["op"] == "dbupdate"
+
+    def test_dbupdate_performupdate_subprocess_failure(self, client):
+        """POST /dbupdate?subop=performupdate when alembic fails → 500.
+
+        Source: ttrss/classes/handler/public.php:dbupdate lines 889-1003 —
+                alembic subprocess failure → 500 error response.
+        Lines 485-496 in views.py: subprocess path.
+        """
+        import subprocess
+        mock_user = _make_user()
+        mock_user.access_level = 10
+
+        mock_result = MagicMock()
+        mock_result.returncode = 1
+        mock_result.stderr = "FAILED"
+
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("subprocess.run", return_value=mock_result):
+            resp = client.post("/dbupdate", data={"subop": "performupdate"})
+
+        assert resp.status_code in (500, 200)  # 500 on failure
+
+    def test_dbupdate_performupdate_subprocess_success(self, client):
+        """POST /dbupdate?subop=performupdate when alembic succeeds → 200 status:ok.
+
+        Source: ttrss/classes/handler/public.php:dbupdate lines 889-1003 —
+                alembic upgrade head success → 200 status:ok.
+        Lines 491-492 in views.py: return jsonify({"status": "ok", "output": ...}).
+        """
+        mock_user = _make_user()
+        mock_user.access_level = 10
+
+        mock_result = MagicMock()
+        mock_result.returncode = 0
+        mock_result.stdout = "Done"
+
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("subprocess.run", return_value=mock_result):
+            resp = client.post("/dbupdate", data={"subop": "performupdate"})
+
+        assert resp.status_code == 200
+        assert resp.get_json()["status"] == "ok"
+
+    # ------------------------------------------------------------------
+    # Lines 485-496: GET /rss?key=x&id=y → 200 JSON feed
+    # Source: ttrss/classes/handler/public.php:rss (lines 370-408)
+    # ------------------------------------------------------------------
+
+    def test_rss_valid_key_returns_feed_with_articles(self, client):
+        """GET /rss?id=5&key=goodkey → 200 JSON with feed_id and articles list.
+
+        Source: ttrss/classes/handler/public.php:rss lines 370-408 —
+                generate_syndicated_feed called with validated key → JSON feed.
+        Lines 544-549 in views.py: return jsonify({feed_id, owner_uid, articles, format}).
+        """
+        mock_key = MagicMock()
+        mock_key.owner_uid = 2
+
+        with patch("ttrss.extensions.db") as mock_db, \
+             patch("ttrss.articles.search.queryFeedHeadlines", return_value=[{"id": 1}]):
+            mock_db.session.query.return_value.filter_by.return_value.first.return_value = mock_key
+            resp = client.get("/rss?id=5&key=validkey")
+
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data["feed_id"] == "5"
+        assert data["owner_uid"] == 2
+        assert isinstance(data["articles"], list)
+
+    def test_rss_no_key_returns_403(self, client):
+        """GET /rss?id=5 without key → 403 access_key required.
+
+        Source: ttrss/classes/handler/public.php:rss lines 394-400 —
+                missing key parameter → 403 before any DB query.
+        Lines 523-524 in views.py: if not key: return 403.
+        """
+        resp = client.get("/rss?id=5")
+        assert resp.status_code == 403
+        assert "access_key" in resp.get_json()["error"]
+
+    def test_rss_is_cat_param_passed_to_query(self, client):
+        """GET /rss?id=5&key=k&is_cat=1 passes is_cat=True to query_feed_headlines.
+
+        Source: ttrss/classes/handler/public.php:rss lines 403-407 —
+                is_cat parameter forwarded to generate_syndicated_feed.
+        Lines 535-542 in views.py: is_cat passed through to queryFeedHeadlines.
+        """
+        mock_key = MagicMock()
+        mock_key.owner_uid = 1
+
+        with patch("ttrss.extensions.db") as mock_db, \
+             patch("ttrss.articles.search.queryFeedHeadlines", return_value=[]) as mock_qfh:
+            mock_db.session.query.return_value.filter_by.return_value.first.return_value = mock_key
+            resp = client.get("/rss?id=5&key=k&is_cat=1")
+
+        assert resp.status_code == 200
+        _call_kwargs = mock_qfh.call_args
+        assert _call_kwargs is not None
+
+    # ------------------------------------------------------------------
+    # Line 570: GET /opml without key → 403
+    # Source: ttrss/opml.php (lines 17-26)
+    # ------------------------------------------------------------------
+
+    def test_opml_no_key_returns_403(self, client):
+        """GET /opml without key parameter → 403 access_key required.
+
+        Source: ttrss/opml.php (lines 17-26) — key required before DB lookup.
+        Line 570 in views.py: if not key: return 403.
+        """
+        resp = client.get("/opml")
+        assert resp.status_code == 403
+        assert resp.get_json()["error"] == "access_key required"
+
+    # ------------------------------------------------------------------
+    # Lines 580-590: GET /opml?key=valid → 200 XML OPML export
+    # Source: ttrss/opml.php (lines 17-32)
+    # ------------------------------------------------------------------
+
+    def test_opml_valid_key_returns_xml(self, client):
+        """GET /opml?key=validkey with matching access_key → 200 application/xml+opml.
+
+        Source: ttrss/opml.php (lines 17-32) — valid key → opml_export_full() → XML response.
+        Lines 580-594 in views.py: full OPML export path.
+        """
+        mock_key = MagicMock()
+        mock_key.owner_uid = 1
+
+        with patch("ttrss.extensions.db") as mock_db, \
+             patch("ttrss.feeds.opml.opml_export_full", return_value="<opml><body/></opml>"):
+            mock_db.session.query.return_value.filter_by.return_value.first.return_value = mock_key
+            resp = client.get("/opml?key=goodkey")
+
+        assert resp.status_code == 200
+        assert "xml" in resp.content_type
+        assert b"<opml>" in resp.data

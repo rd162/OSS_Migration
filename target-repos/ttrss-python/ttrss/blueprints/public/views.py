@@ -216,7 +216,7 @@ def get_unread():
     result = str(unread)
 
     if fresh:
-        from ttrss.feeds.counters import get_feed_articles
+        from ttrss.feeds.counters import getFeedArticles as get_feed_articles
         fresh_count = get_feed_articles(-3, False, True, user.id)
         result += f";{fresh_count}"
 

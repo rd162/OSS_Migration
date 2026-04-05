@@ -33,7 +33,7 @@ OSS_Migration/
 │   ├── 003-business-logic/       (DONE) spec.md + plan.md + tasks.md
 │   ├── 004-api-handlers/         (DONE) spec.md + plan.md + tasks.md
 │   ├── 005-semantic-verification/ (DONE) spec.md + plan.md + tasks.md
-│   └── 006-deployment/           (ACTIVE) spec.md + plan.md + tasks.md
+│   └── 006-deployment/           (DONE) spec.md + plan.md + tasks.md
 ├── memory/
 │   ├── MEMORY.md                 ← This file
 │   ├── phase4_plan_2026-04-04.md ← Source for specs/004-api-handlers/
@@ -49,29 +49,28 @@ OSS_Migration/
     └── reports/
 ```
 
-## Active Plan (CURRENT)
+## Project Status: PHASE 6 COMPLETE — READY TO SHIP
 
-**[specs/006-deployment/tasks.md](../specs/006-deployment/tasks.md)** — Phase 6 Deployment (IN PROGRESS)
+All 6 phases of the PHP→Python migration are done. Phase 6 deployment gates B1–B6 are ALL complete.
 
-Status of deployment batches:
-- B1 CI Foundation: **DONE** — all 4 CI jobs running on master push
-- B2 Validator Calibration: **DONE** — coverage gate 0 gaps; ≥95% confirmed
-- B3 Gunicorn + Docker: PENDING
-- B4 Production Compose + nginx: PENDING
-- B5 Data Migration Scripts: PENDING
-- B6 Coverage Gate Lock: PENDING
+**[specs/006-deployment/tasks.md](../specs/006-deployment/tasks.md)** — Phase 6 Deployment (**DONE**)
 
-**[memory/test_coverage_uplift_plan.md](test_coverage_uplift_plan.md)** — Test Coverage Uplift (COMPLETE)
+| Batch | Status | Deliverable |
+|-------|--------|-------------|
+| B1 CI Foundation | **DONE** | 4 CI jobs (lint/test/build/coverage-gate) on master push |
+| B2 Validator Calibration | **DONE** | Coverage gap = 0; ≥95% confirmed |
+| B3 Gunicorn + Docker | **DONE** | gunicorn.conf.py (gthread, post_fork dispose), multi-stage Dockerfile |
+| B4 Production Compose + nginx | **DONE** | docker-compose.prod.yml, nginx/nginx.conf, .env.production.example |
+| B5 Data Migration Scripts | **DONE** | pre_migration_audit.sh, pgloader.load, convert_php_serialized.py |
+| B6 Coverage Gate Lock | **DONE** | continue-on-error removed; .github/workflows/deploy.yml on tag push |
 
-- Coverage Uplift B1–B5: **ALL DONE** — 89.3% overall, 1275 unit/integration tests, 0 gaps
+**Test Coverage Uplift** — **DONE** — 89.3% overall, 1275 unit/integration tests, 0 gaps
 
-**SME Review Track (2026-04-06 — COMPLETE)**
-- Ingested: demo video (90 cadres), transcription, test spreadsheet
-- Created: spec-15, ADR-0017/18/19
-- Implemented: 10 new frontend features (tags, publish, mark-unread, categories, filters, OPML, category assignment, update interval, force refresh)
-- E2E: 67/68 tests pass (↑ from 51/52)
+**SME Review Track (2026-04-06)** — **DONE** — spec-15 + ADR-0017/18/19; 10 frontend features; 67/68 E2E pass
 
-Next action: Phase 6 B3 — Gunicorn config + multi-stage Dockerfile.
+**Next action: Tag `v1.0.0` to trigger deploy.yml, OR continue with Phase 7 deferred items.**
+
+See [Phase 7 plan](project/phase7-plan.md) for deferred backlog.
 
 ## Spec-Kit Phase Summary
 
@@ -82,7 +81,7 @@ Next action: Phase 6 B3 — Gunicorn config + multi-stage Dockerfile.
 | [003-business-logic](../specs/003-business-logic/) | 3 | DONE | Prefs CRUD, digests, OPML, backend blueprint |
 | [004-api-handlers](../specs/004-api-handlers/) | 4 | DONE | 17 API ops; 2-guard auth; getFeedTree BFS |
 | [005-semantic-verification](../specs/005-semantic-verification/) | 5/5b | DONE | 14 hooks wired; 40-cat taxonomy; 105+ fixes; 598 tests; 0 gaps |
-| [006-deployment](../specs/006-deployment/) | 6 | ACTIVE | CI, Docker, nginx, pgloader, coverage gate ≥95% |
+| [006-deployment](../specs/006-deployment/) | 6 | **DONE** | CI, Docker, nginx, pgloader, coverage gate ≥95%, deploy.yml |
 
 ## Integration Tests (as of 2026-04-05)
 
@@ -134,7 +133,7 @@ Run: `just test-int` (requires docker compose services on :5433/:6380)
 | [0001](../docs/decisions/0001-migration-flow-variant.md) | Migration flow variant (D-revised) | accepted |
 | [0002](../docs/decisions/0002-python-framework.md) | Python framework (Flask) | accepted |
 | [0003](../docs/decisions/0003-database-engine.md) | Database engine (PostgreSQL) | accepted |
-| [0004](../docs/decisions/0004-frontend-strategy.md) | Frontend strategy | proposed |
+| [0004](../docs/decisions/0004-frontend-strategy.md) | Frontend strategy → resolved by ADR-0017 | accepted |
 | [0005](../docs/decisions/0005-call-graph-analysis.md) | Call graph analysis | accepted |
 | [0006](../docs/decisions/0006-orm-strategy.md) | ORM strategy (SQLAlchemy) | accepted |
 | [0007](../docs/decisions/0007-session-management.md) | Session management (Flask-Login) | accepted |
@@ -150,6 +149,27 @@ Run: `just test-int` (requires docker compose services on :5433/:6380)
 | [0017](../docs/decisions/0017-frontend-spa-vanilla-js.md) | Vanilla JS SPA replaces Dojo (ADR-0004 resolved) | accepted |
 | [0018](../docs/decisions/0018-drag-drop-deferred.md) | Drag-drop category assignment deferred; dropdown used | accepted |
 | [0019](../docs/decisions/0019-preferences-modal-pattern.md) | Simplified in-app preferences modal (tabbed) | accepted |
+
+## Local Dev Startup
+
+- [local-dev-startup](project/local-dev-startup.md) — Flask :5001 + Celery + test DB (:5433/:6380); first-time setup; 3 bugs fixed 2026-04-06
+
+## Phase 7 Backlog
+
+- [Phase 7 plan](project/phase7-plan.md) — All deferred items with backend readiness + effort estimates
+
+| Item | Effort | Priority |
+|------|--------|---------|
+| Labels CRUD in settings modal | S (~80 lines JS) | P0 |
+| Users tab in settings modal (admin) | S (~100 lines JS) | P0 |
+| Drag-drop category assignment (ADR-0018) | M (~150 lines JS) | P1 |
+| Multi-rule filter builder | M (~120 lines JS) | P1 |
+| Keyboard shortcuts | S (~60 lines JS) | P1 |
+| Logging strategy (ADR-0012) | S (config) | P2 |
+| i18n / localization (ADR-0013) | XL | P2 |
+| Plugin UI hooks | varies | P2 |
+
+**Release gate before Phase 7:** `git tag v1.0.0 && git push origin v1.0.0` → triggers deploy.yml
 
 ## SME Review Artifacts
 

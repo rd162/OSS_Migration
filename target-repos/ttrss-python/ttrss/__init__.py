@@ -111,7 +111,8 @@ def create_app(test_config: dict | None = None) -> Flask:
     # gets its own Talisman instance; prevents test create_app() calls from overwriting
     # force_https on the shared singleton (FLAW 1 fix).
     talisman = Talisman()
-    talisman.init_app(app, content_security_policy=False, force_https=not app.testing)
+    force_https = app.config.get("FORCE_HTTPS", False) and not app.testing
+    talisman.init_app(app, content_security_policy=False, force_https=force_https)
     limiter.init_app(app)  # New: rate limiting; disabled in tests via RATELIMIT_ENABLED=False.
 
     # Blueprints — imported inside factory to prevent circular imports (AR02)

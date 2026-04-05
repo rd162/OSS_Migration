@@ -67,3 +67,8 @@ class Config:
     # New: Flask-Limiter toggle — read from env so `RATELIMIT_ENABLED=False flask run` works.
     # Prevents rate-limit false-positives in development and testing.
     RATELIMIT_ENABLED: bool = os.environ.get("RATELIMIT_ENABLED", "true").lower() != "false"
+
+    # New: HTTPS redirect toggle for Talisman.
+    # Default False: apps behind a reverse proxy should let the proxy handle HTTPS.
+    # Set FORCE_HTTPS=true only when Flask is directly internet-facing without a proxy.
+    FORCE_HTTPS: bool = os.environ.get("FORCE_HTTPS", "false").lower() == "true"

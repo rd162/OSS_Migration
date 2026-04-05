@@ -112,6 +112,15 @@ def _pref_is_true(val: Optional[str]) -> bool:
 @limiter.limit("60 per minute")
 def dispatch():
     """Single dispatch endpoint for all API operations (spec/03-api-routing.md)."""
+    try:
+        return _dispatch()
+    except Exception:
+        logger.exception("Unhandled error in API dispatch")
+        return _err(_seq(), "INTERNAL_ERROR")
+
+
+def _dispatch():
+    """Inner dispatch — separated so exceptions never escape to the Werkzeug HTML debugger."""
     data = request.get_json(silent=True) or {}
     op = data.get("op") or request.args.get("op", "")
     seq = _seq()

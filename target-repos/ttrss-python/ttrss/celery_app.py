@@ -50,9 +50,9 @@ celery_app.conf.update(
             "schedule": float(os.environ.get("HOUSEKEEPING_INTERVAL", "3600")),  # 1 hr default
         },
     },
-    task_routes={
-        "ttrss.tasks.feed_tasks.*": {"queue": "feeds"},
-    },
+    # task_routes removed: custom "feeds" queue required -Q feeds on every worker invocation,
+    # causing tasks to silently queue forever when workers started with defaults.
+    # All tasks now use the default "celery" queue so plain `celery worker` works.
 )
 
 

@@ -147,9 +147,12 @@ def save_config():
     if not pref_name:
         return jsonify({"error": "pref_name_required"}), 400
 
-    # Source: ttrss/classes/pref/prefs.php:106-112 — DIGEST_PREFERRED_TIME special case
+    # Source: ttrss/classes/pref/prefs.php:107 — only clear digest time if value CHANGED
     if pref_name == "DIGEST_PREFERRED_TIME":
-        user_prefs_crud.clear_digest_sent_time(owner_uid)
+        from ttrss.prefs.ops import get_user_pref
+        current = get_user_pref(owner_uid, "DIGEST_PREFERRED_TIME") or ""
+        if current != value:
+            user_prefs_crud.clear_digest_sent_time(owner_uid)
 
     set_user_pref(owner_uid, pref_name, value)
     return jsonify({"status": "ok"})

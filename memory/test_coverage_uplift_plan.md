@@ -1,3 +1,9 @@
+---
+name: test_coverage_uplift_plan
+description: Active plan to lift unit test coverage from 51% to >80% in all 32 below-threshold Python files — 5 batches, ~250 tests, every test traced to PHP source
+type: project
+---
+
 # Test Coverage Uplift Plan
 
 **Goal:** All Python files ≥ 80% line coverage.  

@@ -10,6 +10,9 @@
 - [Phase 5 Detail](phase5_plan_2026-04-04.md) — 7 batches, Hook-Community Topological Drain (Condorcet winner)
 - [Phase 6 Detail](phase6_plan_2026-04-04.md) — 6 batches, CI-first gate-driven (Condorcet winner). Key: Phase 5 DONE/0 missing hooks; exact function audit 100% (2026-04-05)
 
+## Active Work Plans
+- [**Test Coverage Uplift**](test_coverage_uplift_plan.md) — 32 files below 80%; ~250 tests in 5 batches; every test traces to PHP source. Start: B1 pure functions.
+
 ## Session History
 - [Session 2026-04-03](session_2026-04-03.md) — Spec-kit built, P0+P1 ADRs accepted, Phase 1a complete
 - [Session 2026-04-04](session_2026-04-04.md) — Phases 1b-4 complete, graph analysis built + enhanced, specs updated

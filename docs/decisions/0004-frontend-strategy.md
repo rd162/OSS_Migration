@@ -61,7 +61,14 @@ The frontend communicates with the backend through a well-defined JSON RPC contr
 
 ## Decision
 
-**TBD**
+**Option C (Vanilla JS SPA) — accepted 2026-04-05, superseded by ADR-0017.**
+
+See [ADR-0017](0017-frontend-spa-vanilla-js.md) for the full rationale. In practice the team
+chose zero-dependency vanilla JS (no Jinja2 server-side fragments, no htmx, no Alpine.js) to
+eliminate the CDN dependency on Dojo 1.8 and Prototype.js. The vanilla SPA uses the same JSON
+API contract (`POST /api/`) as the PHP frontend.
+
+Status: **accepted** (resolved).
 
 ## Consequences
 

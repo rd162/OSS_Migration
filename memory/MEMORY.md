@@ -61,17 +61,17 @@ Status of deployment batches:
 - B5 Data Migration Scripts: PENDING
 - B6 Coverage Gate Lock: PENDING
 
-**[memory/test_coverage_uplift_plan.md](test_coverage_uplift_plan.md)** — Test Coverage Uplift (ACTIVE parallel track)
+**[memory/test_coverage_uplift_plan.md](test_coverage_uplift_plan.md)** — Test Coverage Uplift (COMPLETE)
 
-Status: 32 files below 80%; ~250 tests in 5 batches.
-- Coverage Uplift B1 Pure functions: **DONE** — 87–96% each
-- Coverage Uplift B2 CRUD/services: **DONE** — 80–100% each
-- Coverage Uplift B3 Blueprint handlers: **DONE** — overall >80%
-- Coverage Uplift B4 Plugin system: **DONE** — 67–89% each
-- Coverage Uplift B5 Infrastructure: **DONE** — 80–100% each
-- **Overall: 89.3% coverage, 1275 tests, 0 gaps**
+- Coverage Uplift B1–B5: **ALL DONE** — 89.3% overall, 1275 unit/integration tests, 0 gaps
 
-Next action: Begin Coverage Uplift B1 (utils/colors.py, utils/misc.py, utils/mail.py, http/client.py, articles/sanitize.py — ~65 tests, no DB mocks needed).
+**SME Review Track (2026-04-06 — COMPLETE)**
+- Ingested: demo video (90 cadres), transcription, test spreadsheet
+- Created: spec-15, ADR-0017/18/19
+- Implemented: 10 new frontend features (tags, publish, mark-unread, categories, filters, OPML, category assignment, update interval, force refresh)
+- E2E: 67/68 tests pass (↑ from 51/52)
+
+Next action: Phase 6 B3 — Gunicorn config + multi-stage Dockerfile.
 
 ## Spec-Kit Phase Summary
 
@@ -101,17 +101,18 @@ Files created:
 
 Run: `just test-int` (requires docker compose services on :5433/:6380)
 
-## Key Numbers (as of 2026-04-05)
+## Key Numbers (as of 2026-04-06)
 
 | Metric | Value |
 |--------|-------|
-| Tests passing | 598 |
+| Tests passing | 598 unit/integration + 67 E2E |
+| E2E tests | 67 passed / 68 total (1 skipped — PHP Dojo JS compat) |
 | Coverage gaps | 0 |
 | Hooks wired | 14 of 14 |
 | Discrepancies fixed (Phase 5b) | 105+ |
-| Files below 80% coverage | 32 |
-| Tests needed for coverage uplift | ~250 |
+| Files below 80% coverage | 32 (pre-uplift baseline) |
 | CI coverage (strict, with B2 calibration) | ≥95% |
+| SME review items implemented | 10 new frontend features (tags, publish, mark-unread, categories, filters, OPML, category assignment, update interval, force refresh) |
 
 ## Session History
 
@@ -119,6 +120,7 @@ Run: `just test-int` (requires docker compose services on :5433/:6380)
 - [2026-04-04](sessions/2026-04-04.md) — Phases 1b-4 complete; graph analysis built + enhanced
 - [2026-04-05 morning](session_2026-04-05.md) — Semantic verification 105+ fixes; spec-kit refactor; justfile + coverage gate
 - [2026-04-05 full](session_2026-04-05.md) — Integration tests (115), SPA frontend (ADR-0017), PHP UI faithful clone, E2E automation (51 Playwright), DB isolation fix
+- [2026-04-06](sessions/2026-04-06.md) — SME review ingested; ADR-0017/18/19 + spec-15; 10 frontend features added; 67/68 E2E pass
 
 ## Rules (MANDATORY)
 

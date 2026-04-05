@@ -83,6 +83,14 @@ services-up:
 services-down:
     docker compose -f docker-compose.test.yml down -v
 
+# ── Spec-kit ─────────────────────────────────────────────────────────────────
+
+# Verify required tools are installed (specify-cli, uv, docker compose)
+check-tools:
+    specify check
+    uv --version
+    docker compose version
+
 # ── Housekeeping ─────────────────────────────────────────────────────────────
 
 # Remove pytest cache and build artefacts

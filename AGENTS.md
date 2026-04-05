@@ -50,28 +50,44 @@ OSS_Migration/
 
 ## Spec-Kit Conventions (MANDATORY)
 
-These conventions follow MADR 4.0, GitHub Spec-Kit, and AGENTS.md open standards (2024-2025).
-Violating them creates contradictions that compound across sessions — treat as hard constraints.
+This project uses **GitHub Spec-Kit** (`specify-cli` v0.5.1, MIT) for Spec-Driven Development.
+Install: `uv tool install specify-cli --from git+https://github.com/github/spec-kit.git`
+CLI: `specify init`, `specify check`, `specify extension`, `specify integration`
+
+Spec-Kit defines 6 phases: **Constitution → Specification → Planning → Tasks → Execution → Validation**
+
+### Tooling Rule
+
+`specify` must be available (installed via `uv tool`). Add `just check-tools` to verify:
+```
+specify check
+```
 
 ### Directory Purpose Rules (STRICT)
 
-| Directory | Purpose | What goes here | What does NOT go here |
-|-----------|---------|----------------|----------------------|
-| `memory/` | Cross-session context, active work | Session notes, active plans, work-in-progress, current blockers | Completed artefacts, stable docs |
-| `specs/` | Architectural specifications | Stable specs (charter, DB, API, security, etc.) | Plans, decisions, session notes |
-| `docs/` | Completed artefacts | Semantic verification reports, stable documentation | Active plans, ADRs |
-| `docs/decisions/` | Architecture Decision Records | ADRs (immutable once accepted) | Plans, specs, session notes |
-| `.claude/` | Claude-specific config only | Skills, settings | Memory, specs, plans |
+This project was initialized before spec-kit; its structure maps to spec-kit as follows:
 
-**The key distinction:**
-- **Active / in-progress** → `memory/`
-- **Decisions made** → `docs/decisions/` (ADR)
-- **Architecture spec** → `specs/`
+| This project | Spec-Kit equivalent | Purpose | Rule |
+|---|---|---|---|
+| `specs/` | `specs/` | Stable architectural specifications | No plans, no decisions, no session notes |
+| `docs/decisions/` | project-root ADRs | Architecture Decision Records | Immutable once accepted; MADR 4.0 format |
+| `docs/` | `docs/` | Completed artefacts and reports | No active plans; no ADRs |
+| `memory/` | *(Claude extension)* | Cross-session context, active plans | Session notes, work-in-progress, active plans |
+| `.claude/commands/` | `.claude/commands/` | Claude Code skill files | Skills only; no specs or memory |
+| `specs/00-project-charter.md` | `constitution.md` | Governing principles | Supersedes all other practices |
+
+**The routing rule — one question determines where a file goes:**
+
+> *"Is this work still in progress, or is it a settled record?"*
+
+- **In progress / active** → `memory/` (plans, current phase, blockers)
+- **Settled decision** → `docs/decisions/` as ADR
+- **Stable spec** → `specs/`
 - **Completed report** → `docs/`
 
 ### ADR Format (MADR 4.0 — MANDATORY)
 
-Every ADR in `docs/decisions/` MUST use this structure:
+Every ADR in `docs/decisions/` MUST use this exact structure:
 
 ```markdown
 ---
@@ -89,47 +105,48 @@ Why this decision is needed.
 
 ## Decision Drivers
 - Driver 1
-- Driver 2
 
 ## Considered Options
-1. Option A — short description
-2. Option B — short description
+1. Option A — one line
+2. Option B — one line
 
 ## Decision
-Chosen option: **Option X**, because [rationale].
+Chosen: **Option X**, because [rationale].
 
 ## Consequences
 ### Positive
-- ...
 ### Negative
-- ...
 
 ## Confirmation
-How to verify this decision is being followed in code.
+How to verify this decision is implemented in code.
 ```
 
-Naming: `NNNN-verb-noun.md` (e.g., `0017-add-rate-limiting.md`). Numbers are sequential, never reused.
+Naming: `NNNN-verb-noun.md`. Numbers sequential, never reused.
 
-### Memory File Rules
+### Spec-Kit Template Shapes (for new work)
 
-Every memory file MUST have YAML frontmatter:
+When starting new features, use spec-kit templates:
+- `constitution.md` — project principles (already: `specs/00-project-charter.md`)
+- `spec-template.md` → user stories, FR-NNN requirements, acceptance criteria
+- `plan-template.md` → technical context, constitution check gate, structure
+- `tasks-template.md` → phased tasks with [P] parallel markers, US# story refs, checkboxes
+
+### Memory File Rules (MANDATORY)
+
+Every `memory/*.md` MUST have YAML frontmatter:
 ```yaml
 ---
 name: descriptive-slug
-description: One-line description used to decide relevance in future sessions
-type: user | feedback | project | reference
+description: One-line — used to decide relevance in future sessions
+type: project | feedback | user | reference
 ---
 ```
 
-Types:
-- `project` — active plans, phase status, current work
-- `feedback` — behavioral corrections (do/don't rules for Claude)
-- `user` — user role, preferences, expertise
-- `reference` — pointers to external systems, URLs, tool paths
+`project` = active plans/status | `feedback` = behavioral rules | `user` = user profile | `reference` = external pointers
 
 ### Test Traceability Rule (MANDATORY)
 
-Every unit test MUST include a docstring citing its PHP source:
+Every unit test docstring MUST cite its PHP source:
 ```python
 def test_sanitize_empty_string():
     """
@@ -139,13 +156,7 @@ def test_sanitize_empty_string():
     """
 ```
 
-No test without a PHP source citation may be committed.
-
-### Plan vs Report Rule
-
-- A **plan** (future work, steps to execute) → `memory/`
-- A **report** (completed analysis, findings) → `docs/`
-- A **decision** (committed architectural choice) → `docs/decisions/` as ADR
+No test without PHP source citation may be committed.
 
 ## Critical Rules
 

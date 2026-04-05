@@ -122,9 +122,11 @@ def update_feedbrowser_cache(session: Session) -> None:
     # Clear stale cache
     session.execute(delete(TtRssFeedbrowserCache))
 
-    # Aggregate: feeds with site_url + title, count subscriptions
-    # Source: rssfuncs.php — SELECT site_url, title, feed_url, count(*) as subscribers
-    #         FROM ttrss_feeds WHERE ... GROUP BY ... ORDER BY subscribers DESC LIMIT 500
+    # Aggregate: feeds with site_url + title, count subscriptions.
+    # Source: rssfuncs.php — SELECT site_url, title, feed_url, count(*) AS subscribers
+    #         FROM ttrss_feeds WHERE ... GROUP BY ... ORDER BY subscribers DESC LIMIT 1000
+    # Source: rssfuncs.php lines 9-11 — exclude private feeds, feeds with credentials, and
+    #         feeds with authentication in the URL (privacy filter for public browser).
     stmt = (
         select(
             TtRssFeed.feed_url,
@@ -136,9 +138,15 @@ def update_feedbrowser_cache(session: Session) -> None:
         .where(TtRssFeed.feed_url != "")
         .where(TtRssFeed.site_url.isnot(None))
         .where(TtRssFeed.site_url != "")
+        # Source: rssfuncs.php lines 9-11 — exclude private and credential-bearing feeds
+        .where(TtRssFeed.private.is_(False))
+        .where(TtRssFeed.auth_login == "")
+        .where(TtRssFeed.auth_pass == "")
+        # Source: rssfuncs.php line 11 — exclude URLs with embedded credentials (%:%@%)
+        .where(~TtRssFeed.feed_url.contains("@"))
         .group_by(TtRssFeed.feed_url, TtRssFeed.title, TtRssFeed.site_url)
         .order_by(func.count(TtRssFeed.id).desc())
-        .limit(500)
+        .limit(1000)
     )
     rows = session.execute(stmt).all()
 

@@ -247,6 +247,11 @@ def label_create(
     """Create a label if it doesn't already exist; return True if created.
     Source: ttrss/include/labels.php:label_create (lines 177-199)
     """
+    # Source: ttrss/classes/pref/labels.php:172 — trim($_REQUEST["caption"]) before INSERT
+    caption = caption.strip()
+    if not caption:
+        return False
+
     existing = session.execute(
         select(TtRssLabel2.id)
         .where(TtRssLabel2.caption == caption)

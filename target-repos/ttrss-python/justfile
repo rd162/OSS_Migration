@@ -17,6 +17,9 @@ python_dir := repo_root / "target-repos/ttrss-python/ttrss"
 validator  := repo_root / "tools/graph_analysis/validate_coverage.py"
 
 test_db_url    := "postgresql://ttrss_test:ttrss_test@localhost:5433/ttrss_test"
+# dev_db_url is SEPARATE from test_db_url — integration tests run drop_all() on
+# test DB which would wipe dev data. NEVER point the dev server at ttrss_test.
+dev_db_url     := "postgresql://ttrss_test:ttrss_test@localhost:5433/ttrss_dev"
 test_redis_url := "redis://localhost:6380/1"
 
 # ── Default: list recipes ────────────────────────────────────────────────────
@@ -120,6 +123,35 @@ check-tools:
     specify check
     uv --version
     docker compose version
+
+# ── Dev server ───────────────────────────────────────────────────────────────
+
+# Start the dev server on port 5001 using the ISOLATED dev DB (ttrss_dev).
+# IMPORTANT: uses ttrss_dev NOT ttrss_test — integration tests wipe ttrss_test.
+# Prerequisite: docker compose -f docker-compose.test.yml up -d
+dev: services-up
+    DATABASE_URL={{dev_db_url}} \
+    REDIS_URL={{test_redis_url}} \
+    SECRET_KEY="dev-local-only" \
+    FEED_CRYPT_KEY="" \
+    RATELIMIT_ENABLED=false \
+    uv run flask --app "ttrss:create_app({'TESTING':True,'WTF_CSRF_ENABLED':False})" \
+        run --host 0.0.0.0 --port 5001
+
+# Bootstrap the dev DB (run once after docker compose up -d)
+dev-setup: services-up
+    DATABASE_URL={{dev_db_url}} uv run alembic upgrade head
+    DATABASE_URL={{dev_db_url}} uv run python -c "\
+from ttrss import create_app; from ttrss.extensions import db; \
+from ttrss.models.user import TtRssUser; from ttrss.auth.password import hash_password; \
+from ttrss.prefs.ops import initialize_user_prefs, set_user_pref; \
+app = create_app({'SQLALCHEMY_DATABASE_URI':'{{dev_db_url}}','FEED_CRYPT_KEY':b'','SECRET_KEY':'dev','TESTING':True}); \
+ctx = app.app_context(); ctx.push(); \
+u = db.session.query(TtRssUser).filter_by(login='admin').first() or ( \
+    db.session.add(TtRssUser(login='admin',pwd_hash=hash_password('admin'),access_level=10)) or \
+    db.session.commit() or db.session.query(TtRssUser).filter_by(login='admin').first()); \
+initialize_user_prefs(u.id); set_user_pref(u.id,'ENABLE_API_ACCESS','true'); \
+print('Dev DB ready — admin/admin at http://localhost:5001')"
 
 # ── Housekeeping ─────────────────────────────────────────────────────────────
 

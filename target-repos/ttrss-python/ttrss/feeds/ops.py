@@ -333,6 +333,10 @@ def get_feed_access_key(
             owner_uid=owner_uid,
         )
     )
+    # Source: functions2.php:1780-1782 — INSERT is immediate within PHP's transaction.
+    # flush() makes the row visible within the current SQLAlchemy session so the
+    # returned key is usable in the same request before the outer commit.
+    session.flush()
     return key
 
 

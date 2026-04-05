@@ -1111,7 +1111,8 @@ def _handle_getHeadlines(data: dict, seq: int):
             "link": row.link or "",
             "feed_id": row.feed_id,
             "tags": tags,
-            "attachments": attachments,
+            # Source: api.php:674-676 — attachments key omitted when include_attachments=false
+            **({"attachments": attachments} if include_attachments else {}),
             "score": int(row.score or 0),
             "feed_title": feed_title,
             "comments_count": int(row.num_comments or 0),

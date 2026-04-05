@@ -88,7 +88,6 @@ function readHash() {
 function render() {
   const root = document.getElementById('app');
   if (!root) return;
-  // Preserve scroll positions across re-renders
   const sbScroll = document.querySelector('.feedlist')?.scrollTop || 0;
   const hlScroll = document.querySelector('.headlines-list')?.scrollTop || 0;
   root.innerHTML = S.view === 'login' ? renderLogin() : renderApp();
@@ -101,6 +100,10 @@ function render() {
     renderArticleContent();
   }
 }
+// Aliases kept for callers — all route to full render (simplest, most reliable)
+const renderSidebarOnly = render;
+const renderHLOnly      = render;
+const renderArticleOnly = render;
 
 // ── Login ─────────────────────────────────────────────────────────────────────
 // Source: ttrss/include/login_form.php — login form
@@ -381,20 +384,9 @@ function renderArticleContent() {
   const a = S.article;
   const date = a.updated ? new Date(a.updated * 1000).toLocaleString() : '';
 
-  // Source: ttrss/js/article.js — srcdoc iframe for XSS isolation (R08)
-  const iframeDoc = `<!doctype html><html><head>
-    <meta charset="utf-8">
-    <style>
-      body{font-family:Georgia,serif;font-size:15px;line-height:1.7;
-           max-width:680px;margin:0 auto;padding:20px 24px;color:#222;background:#fff}
-      a{color:#2563eb}
-      img{max-width:100%;height:auto;border-radius:3px}
-      pre,code{background:#f5f5f5;padding:2px 5px;border-radius:3px;font-size:13px}
-      blockquote{border-left:3px solid #ccc;margin:0;padding-left:14px;color:#555}
-      h1,h2,h3{color:#111;margin-top:1.4em}
-    </style>
-  </head><body>${a.content || '<p><em>No content available.</em></p>'}</body></html>`;
-
+  // Source: ttrss/js/article.js — sandboxed iframe for XSS isolation (R08)
+  // Use contentDocument.write() instead of srcdoc: avoids attribute-encoding issues
+  // with large/complex HTML and is more reliable across browsers.
   col.innerHTML = `
     <div class="article-header">
       <div class="ah-title-row">
@@ -408,10 +400,31 @@ function renderArticleContent() {
         <a class="ah-link" href="${esc(a.link||'#')}" target="_blank" rel="noopener">Open original ↗</a>
       </div>
     </div>
-    <iframe class="article-frame"
-            srcdoc="${escAttr(iframeDoc)}"
+    <iframe class="article-frame" id="article-iframe"
             sandbox="allow-same-origin allow-popups"
             title="Article content"></iframe>`;
+
+  // Write article content via contentDocument.write() — no escaping needed,
+  // works for arbitrarily large content, sandbox still applies.
+  const iframe = document.getElementById('article-iframe');
+  if (iframe) {
+    const iDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (iDoc) {
+      iDoc.open();
+      iDoc.write(`<!doctype html><html><head>
+        <meta charset="utf-8">
+        <style>
+          body{font-family:Georgia,serif;font-size:15px;line-height:1.7;
+               max-width:680px;margin:0 auto;padding:20px 24px;color:#222;background:#fff}
+          a{color:#2563eb} img{max-width:100%;height:auto;border-radius:3px}
+          pre,code{background:#f5f5f5;padding:2px 5px;border-radius:3px;font-size:13px}
+          blockquote{border-left:3px solid #ccc;margin:0;padding-left:14px;color:#555}
+          h1,h2,h3{color:#111;margin-top:1.4em}
+        </style>
+      </head><body>${a.content || '<p><em>No content available.</em></p>'}</body></html>`);
+      iDoc.close();
+    }
+  }
 }
 
 // ── Modals ────────────────────────────────────────────────────────────────────
@@ -493,7 +506,7 @@ async function loadSidebar() {
     S.categories = (cats || []).filter(c => c.id > 0).sort((a,b) => (a.order_id||0)-(b.order_id||0));
     S.feeds      = feeds  || [];
     S.labels     = labels || [];
-    render();
+    renderSidebarOnly();  // only sidebar changed, don't rebuild headlines/article
   } catch (e) {
     console.error('loadSidebar', e);
   }
@@ -517,7 +530,7 @@ async function loadHeadlines(feedId, reset = true) {
     S.article = null;
   }
   S.loading = true;
-  render();
+  renderHLOnly();   // show loading state in headlines panel only
   try {
     const LIMIT = 30;
     // Source: ttrss/classes/api.php:API.getHeadlines
@@ -538,7 +551,7 @@ async function loadHeadlines(feedId, reset = true) {
     console.error('loadHeadlines', e);
   }
   S.loading = false;
-  render();
+  renderHLOnly();   // render results without touching sidebar or article
 }
 
 async function openArticle(id) {
@@ -547,17 +560,19 @@ async function openArticle(id) {
     const items = await api('getArticle', { article_id: id });
     if (!items?.length) return;
     S.article = items[0];
+    renderArticleOnly();  // open article pane without rebuilding sidebar or list
     // Mark read — Source: api.php:updateArticle field=2 (UNREAD), mode=0
     if (S.article.unread) {
       api('updateArticle', { article_ids: String(id), field: 2, mode: 0 })
         .then(() => {
           const h = S.headlines.find(x => x.id === id);
-          if (h) h.unread = false;
+          if (h) { h.unread = false; renderHLOnly(); }  // update unread dot only
           S.globalUnread = Math.max(0, S.globalUnread - 1);
+          const badge = document.querySelector('.fl-unread');
+          if (badge) badge.textContent = S.globalUnread > 0 ? S.globalUnread + ' unread' : '';
           if (S.selectedFeed) S.selectedFeed.unread = Math.max(0, (S.selectedFeed.unread||1)-1);
         }).catch(()=>{});
     }
-    render();
   } catch (e) {
     console.error('openArticle', e);
   }
@@ -586,6 +601,9 @@ async function doSubscribe() {
 }
 
 // ── Event binding ─────────────────────────────────────────────────────────────
+// bind() is called once on full render. Delegated click handler on root covers
+// all panels — partial updates to inner panels don't need re-binding.
+let _rootBound = false;
 function bind() {
   const root = document.getElementById('app');
   if (!root) return;
@@ -608,7 +626,9 @@ function bind() {
     if (e.target === e.currentTarget) { S.modal = null; S.subscribeStatus = ''; render(); }
   });
 
-  // Delegated click handler
+  // Delegated click handler — attach once; survives partial panel updates
+  if (_rootBound) return;
+  _rootBound = true;
   root.addEventListener('click', e => {
     const el = e.target.closest('[data-action]');
     if (!el) return;
@@ -658,7 +678,7 @@ function bind() {
     else if (a === 'toggle-cat') {
       const k = el.dataset.cat;
       S.catExpanded[k] = !(S.catExpanded[k] !== false);
-      render();
+      renderSidebarOnly();
     }
     else if (a === 'sel-feed') {
       const fid = parseInt(el.dataset.fid);
@@ -684,16 +704,16 @@ function bind() {
         .then(() => {
           S.headlines.forEach(h => h.unread = false);
           if (S.selectedFeed) S.selectedFeed.unread = 0;
-          render(); loadGlobalUnread();
+          renderHLOnly(); renderSidebarOnly(); loadGlobalUnread();
         }).catch(e => alert('Error: ' + e.message));
     }
     else if (a === 'toggle-actions') {
-      S.actionsOpen = !S.actionsOpen; render();
+      S.actionsOpen = !S.actionsOpen; renderHLOnly();
     }
     else if (a === 'set-vm') {
       S.viewMode = el.dataset.vm;
       if (S.selectedFeed) loadHeadlines(S.selectedFeed.id);
-      else render();
+      else renderHLOnly();
     }
     else if (a === 'open-article') {
       openArticle(parseInt(el.dataset.id));
@@ -711,7 +731,8 @@ function bind() {
           S.article.marked = starred;
           const h = S.headlines.find(x => x.id === id);
           if (h) h.marked = starred;
-          render();
+          renderArticleOnly();  // only update star button in article header
+          renderHLOnly();       // update star indicator in headline list
         }).catch(console.error);
     }
   });

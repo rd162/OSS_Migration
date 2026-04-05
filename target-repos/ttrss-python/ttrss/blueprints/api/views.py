@@ -1018,10 +1018,13 @@ def _handle_getHeadlines(data: dict, seq: int):
     import re as _re
 
     # Source: api.php:543-545 — feed_id is required; absent/empty → INCORRECT_USAGE
-    feed_id_raw = data.get("feed_id") or request.args.get("feed_id", "")
-    if not feed_id_raw:
+    # Note: feed_id=0 (Archived articles virtual feed) is valid — must use 'is None' not falsy check.
+    _fid_raw = data.get("feed_id")
+    if _fid_raw is None:
+        _fid_raw = request.args.get("feed_id")
+    if _fid_raw is None or _fid_raw == "":
         return _err(seq, "INCORRECT_USAGE")
-    feed_id: int = int(feed_id_raw)
+    feed_id: int = int(_fid_raw)
     # Source: api.php:548 — limit=0 means "use max" (200); cap at 200 to match PHP behaviour
     _limit_raw: int = int(data.get("limit") or request.args.get("limit", 30) or 30)
     limit: int = 200 if (_limit_raw == 0 or _limit_raw >= 200) else _limit_raw

@@ -37,12 +37,24 @@ def _make_user(uid: int = 1, login: str = "admin") -> MagicMock:
 class TestIndex:
     """Source: ttrss/index.php — Phase 1a health-check stub."""
 
-    def test_health_check_returns_200(self, client):
-        """GET / returns 200 with status:ok health payload.
+    def test_index_serves_spa_html(self, client):
+        """GET / returns 200 with HTML SPA shell (ADR-0017).
 
-        Source: ttrss/index.php (app root entry point) — Phase 1a health check stub.
+        Source: ttrss/blueprints/public/views.py:index() — serves static/index.html.
+        ADR-0017: / now serves the vanilla-JS SPA instead of health-check JSON.
         """
         resp = client.get("/")
+        assert resp.status_code == 200
+        # SPA shell is HTML, not JSON
+        assert "text/html" in resp.content_type
+
+    def test_health_check_at_healthz(self, client):
+        """GET /healthz returns 200 with status:ok health payload.
+
+        Source: ttrss/blueprints/public/views.py:health() — health check moved from / to /healthz.
+        ADR-0017: / now serves the SPA; /healthz is the health check endpoint.
+        """
+        resp = client.get("/healthz")
         assert resp.status_code == 200
         data = resp.get_json()
         assert data["status"] == "ok"

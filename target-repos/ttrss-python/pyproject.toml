@@ -44,7 +44,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+# Default testpaths exclude tests/frontend (requires live server on :5001).
+# Run frontend tests separately: just test-fe
+testpaths = ["tests/unit", "tests/blueprints", "tests/integration"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]

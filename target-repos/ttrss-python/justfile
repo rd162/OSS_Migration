@@ -49,10 +49,19 @@ test:
 test-blueprints:
     uv run pytest tests/blueprints/ -q --tb=short
 
-# All tests combined (may have ordering issues due to singleton state — use test + test-blueprints instead)
+# All non-browser tests (unit + blueprints + integration)
 test-all:
     uv run pytest tests/unit/ -q --tb=short
     uv run pytest tests/blueprints/ -q --tb=short
+
+# Frontend browser tests — requires live server on :5001 (RATELIMIT_ENABLED=false)
+# Run server first: DATABASE_URL=... RATELIMIT_ENABLED=false flask run --port 5001
+test-fe:
+    uv run pytest tests/frontend/ -q --tb=short --base-url http://localhost:5001
+
+# Frontend browser tests (verbose, headed browser)
+test-fe-headed:
+    uv run pytest tests/frontend/ -v --tb=short --base-url http://localhost:5001 --headed
 
 # Integration tests only (starts Docker services automatically)
 test-int: services-up

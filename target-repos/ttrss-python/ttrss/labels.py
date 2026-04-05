@@ -5,7 +5,7 @@ Source: ttrss/include/labels.php (201 lines, 10 functions)
 from __future__ import annotations
 
 import json
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 from sqlalchemy import delete as sa_delete
 from sqlalchemy import select, update
@@ -130,7 +130,7 @@ def label_update_cache(
     Source: ttrss/include/labels.php:label_update_cache (lines 84-97)
     """
     if force:
-        label_clear_cache(session, article_id)
+        label_clear_cache(session, article_id, owner_uid)
 
     if labels is None:
         labels = get_article_labels(session, article_id, owner_uid)
@@ -144,17 +144,21 @@ def label_update_cache(
     )
 
 
-def label_clear_cache(session: Session, article_id: int) -> None:
-    """Reset label_cache to empty string for all user entries on this article.
+def label_clear_cache(
+    session: Session, article_id: int, owner_uid: Optional[int] = None
+) -> None:
+    """Reset label_cache to empty string for user entries on this article.
 
     Source: ttrss/include/labels.php:label_clear_cache (lines 99-103)
     Note: PHP sets label_cache = '' (empty string), NOT NULL. Column is NOT NULL.
+    Note: PHP also lacks owner_uid filter (clears for ALL users on the article).
+    Python improvement: when owner_uid is supplied, restrict to that user's row only,
+    preventing cross-user cache pollution on shared articles.
     """
-    session.execute(
-        update(TtRssUserEntry)
-        .where(TtRssUserEntry.ref_id == article_id)
-        .values(label_cache="")
-    )
+    q = update(TtRssUserEntry).where(TtRssUserEntry.ref_id == article_id)
+    if owner_uid is not None:
+        q = q.where(TtRssUserEntry.owner_uid == owner_uid)
+    session.execute(q.values(label_cache=""))
 
 
 def label_remove_article(
@@ -171,7 +175,7 @@ def label_remove_article(
         .where(TtRssUserLabel2.label_id == label_id)
         .where(TtRssUserLabel2.article_id == article_id)
     )
-    label_clear_cache(session, article_id)
+    label_clear_cache(session, article_id, owner_uid)
 
 
 def label_add_article(
@@ -196,7 +200,7 @@ def label_add_article(
     if existing is None:
         session.add(TtRssUserLabel2(label_id=label_id, article_id=article_id))
 
-    label_clear_cache(session, article_id)
+    label_clear_cache(session, article_id, owner_uid)
 
 
 def label_remove(session: Session, label_id: int, owner_uid: int) -> None:

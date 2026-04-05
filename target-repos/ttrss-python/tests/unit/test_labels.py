@@ -222,7 +222,7 @@ def test_label_remove_article_deletes_and_clears_cache():
         with patch("ttrss.labels.label_clear_cache") as mock_clear:
             label_remove_article(session, article_id=10, caption="Work", owner_uid=1)
     session.execute.assert_called_once()  # DELETE
-    mock_clear.assert_called_once_with(session, 10)
+    mock_clear.assert_called_once_with(session, 10, 1)  # owner_uid now passed
 
 
 # ---------------------------------------------------------------------------
@@ -246,7 +246,7 @@ def test_label_add_article_inserts_when_not_exists():
         with patch("ttrss.labels.label_clear_cache") as mock_clear:
             label_add_article(session, article_id=10, caption="Work", owner_uid=1)
     session.add.assert_called_once()
-    mock_clear.assert_called_once_with(session, 10)
+    mock_clear.assert_called_once_with(session, 10, 1)  # owner_uid now passed
 
 
 def test_label_add_article_idempotent_no_duplicate_insert():

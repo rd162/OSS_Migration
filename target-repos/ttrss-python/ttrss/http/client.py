@@ -37,6 +37,10 @@ FEED_FETCH_TIMEOUT = httpx.Timeout(connect=10.0, read=45.0, write=10.0, pool=5.0
 # New: write=10.0 and pool=5.0 have no PHP cURL equivalent — added for httpx Timeout completeness.
 FEED_FETCH_NO_CACHE_TIMEOUT = httpx.Timeout(connect=10.0, read=15.0, write=10.0, pool=5.0)
 
+# Source: ttrss/include/functions.php line 380-381 — SELF_USER_AGENT constant
+# PHP sends SELF_USER_AGENT when no explicit useragent is supplied.
+SELF_USER_AGENT = "Tiny Tiny RSS/1.12.0 (Python)"
+
 
 async def fetch_file_contents(
     url: str,
@@ -94,9 +98,11 @@ async def fetch_file_contents(
     if type:
         headers["Accept"] = type
 
-    # Source: ttrss/include/functions.php line 423 — CURLOPT_USERAGENT ($useragent parameter)
-    if useragent:
-        headers["User-Agent"] = useragent
+    # Source: ttrss/include/functions.php:380-381 — CURLOPT_USERAGENT ($useragent or SELF_USER_AGENT)
+    # PHP sends SELF_USER_AGENT as default; Python now matches this behaviour.
+    # Source: ttrss/include/functions.php:383 — CURLOPT_REFERER = $url (always sent)
+    headers["User-Agent"] = useragent or SELF_USER_AGENT
+    headers["Referer"] = url
 
     auth = None
     if login and password:

@@ -1442,11 +1442,18 @@ def _handle_getFeedTree(data: dict, seq: int):
             "type": "feed",
             "error": "",
             "icon": has_icon,
+            # Source: pref/feeds.php:feedlist_init_feed line 1521 — always included
+            "updated": "",
+            # Source: pref/feeds.php:makefeedtree — checkbox=false on all feed nodes
+            "checkbox": False,
         }
 
     def _make_real_feed_node(row) -> dict:
         """Source: pref/feeds.php:get_category_items — real feed; PHP hardcodes unread=0 here."""
         has_icon = feed_has_icon(row.id, icons_dir=icons_dir)
+        from datetime import datetime as _dt
+        _upd = getattr(row, "last_updated", None)
+        updated_str = _upd.strftime("%Y-%m-%d %H:%M") if isinstance(_upd, _dt) else ""
         return {
             "id": f"FEED:{row.id}",
             "bare_id": int(row.id),
@@ -1457,6 +1464,10 @@ def _handle_getFeedTree(data: dict, seq: int):
             "type": "feed",
             "error": "",
             "icon": has_icon,
+            # Source: pref/feeds.php:get_category_items line 85 — last_updated timestamp
+            "updated": updated_str,
+            # Source: pref/feeds.php:makefeedtree — checkbox=false on all feed nodes
+            "checkbox": False,
         }
 
     def _cat_node(cat_id: int, title: str, child_items: list, unread: int = -1) -> dict:
@@ -1467,6 +1478,7 @@ def _handle_getFeedTree(data: dict, seq: int):
         Pass unread=0 explicitly for CAT:-1 and real category nodes to match PHP.
         """
         effective_unread = sum(item["unread"] for item in child_items) if unread == -1 else unread
+        feed_count = sum(1 for item in child_items if item.get("type") == "feed")
         return {
             "id": f"CAT:{cat_id}",
             "bare_id": int(cat_id),
@@ -1476,6 +1488,10 @@ def _handle_getFeedTree(data: dict, seq: int):
             "auxcounter": 0,
             "child_unread": 0,
             "type": "category",
+            # Source: pref/feeds.php:makefeedtree — checkbox=false on all category nodes
+            "checkbox": False,
+            # Source: pref/feeds.php:makefeedtree — param = "(N feeds)" text
+            "param": f"({feed_count} feed{'s' if feed_count != 1 else ''})",
         }
 
     def _build_real_cat(cat_id: int, title: str, depth: int, visited: set) -> Optional[dict]:

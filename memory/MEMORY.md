@@ -84,6 +84,23 @@ Next action: Begin Coverage Uplift B1 (utils/colors.py, utils/misc.py, utils/mai
 | [005-semantic-verification](../specs/005-semantic-verification/) | 5/5b | DONE | 14 hooks wired; 40-cat taxonomy; 105+ fixes; 598 tests; 0 gaps |
 | [006-deployment](../specs/006-deployment/) | 6 | ACTIVE | CI, Docker, nginx, pgloader, coverage gate ≥95% |
 
+## Integration Tests (as of 2026-04-05)
+
+**[memory/integration_test_plan.md](integration_test_plan.md)** — ~100 integration tests across 7 files
+
+Files created:
+- `tests/integration/conftest.py` — shared fixtures (seed_prefs, api_user, logged_in_client, test_feed, test_entry_pair)
+- `tests/integration/test_api_login.py` — updated (seed_prefs dependency added)
+- `tests/integration/test_api_meta.py` — getVersion, getApiLevel, isLoggedIn, logout, NOT_LOGGED_IN, seq echo
+- `tests/integration/test_api_counters.py` — getUnread, getCounters, getPref, getConfig, getLabels, API_DISABLED
+- `tests/integration/test_api_feeds.py` — getFeeds, getCategories, subscribeToFeed, unsubscribeFeed, getFeedTree, updateFeed
+- `tests/integration/test_api_articles.py` — getHeadlines, getArticle, updateArticle, catchupFeed, setArticleLabel, shareToPublished
+- `tests/integration/test_models.py` — User/Feed/Entry/UserEntry/Category/Label/PluginStorage CRUD + cascade deletes
+- `tests/integration/test_auth_flow.py` — full auth cycle, session persistence, hash upgrade, base64 fallback
+- `tests/integration/test_security.py` — pwd_hash leak prevention, NOT_LOGGED_IN on all ops, user isolation, no traceback
+
+Run: `just test-int` (requires docker compose services on :5433/:6380)
+
 ## Key Numbers (as of 2026-04-05)
 
 | Metric | Value |

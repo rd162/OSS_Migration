@@ -2,17 +2,26 @@
 Integration tests for /api/ login endpoint (R08, R09, R15).
 Requires real Postgres + Redis (docker-compose.test.yml).
 AR07: no SQLite — app fixture in conftest.py targets TEST_DATABASE_URL.
+
+Note: seed_prefs fixture (integration/conftest.py) is session-scoped autouse=True,
+so ENABLE_API_ACCESS system default is available for all tests here.
 """
 import pytest
 
 from ttrss.auth.password import hash_password
 from ttrss.extensions import db as _db
+from ttrss.models.pref import TtRssUserPref
 from ttrss.models.user import TtRssUser
 
 
 @pytest.fixture()
-def test_user(app, db_session):
-    """Create a test user with argon2id-hashed password."""
+def test_user(app, db_session, seed_prefs):
+    """Create a test user with argon2id-hashed password and API access enabled.
+
+    Source: ttrss/classes/pref/users.php:Pref_Users::save (user creation)
+    Adapted: seed_prefs ensures ENABLE_API_ACCESS system default exists;
+             user_pref row sets it explicitly for this user.
+    """
     with app.app_context():
         user = TtRssUser(
             login="testuser",
@@ -20,6 +29,14 @@ def test_user(app, db_session):
             access_level=0,
         )
         db_session.add(user)
+        db_session.flush()
+        # Explicitly enable API access for this user
+        db_session.add(TtRssUserPref(
+            owner_uid=user.id,
+            pref_name="ENABLE_API_ACCESS",
+            profile=None,
+            value="true",
+        ))
         db_session.commit()
         yield user
         db_session.delete(user)

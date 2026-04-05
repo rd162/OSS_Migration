@@ -141,6 +141,8 @@ OSS_Migration/
 | `10-migration-dimensions.md` | Call graph, entity graph, frontend/backend dimensions, migration flow variants |
 | `11-business-rules.md` | 20 business rules with exact line refs, edge cases, search, digest, OPML, registration |
 | `12-testing-strategy.md` | Parity verification, 5 test categories, fixtures, test matrix for top 20 endpoints |
+| `13-decomposition-map.md` | functions.php / functions2.php decomposition into Python modules by domain |
+| `14-semantic-discrepancies.md` | 40-category discrepancy taxonomy (D01-D40), semantic traps, 8 integration pipeline contracts, model depth checks |
 
 ## Architecture Decisions (docs/decisions/)
 
@@ -161,6 +163,7 @@ OSS_Migration/
 | 0013 | i18n Approach | proposed — P2 |
 | 0014 | Feed Parsing Library | **accepted** — P1, feedparser + lxml sanitization |
 | 0015 | HTTP Client | **accepted** — P1, httpx async in Celery workers only |
+| 0016 | Semantic Verification Methodology | **accepted** — P0, 40-cat taxonomy + pipelines + triage |
 
 See `docs/decisions/README.md` for decision dependencies. ADR format follows [MADR](https://adr.github.io/madr/) convention.
 

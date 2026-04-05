@@ -30,6 +30,7 @@ Each ADR follows the standard template:
 | [0013](0013-i18n-approach.md) | Internationalization Approach | proposed | P2 — blocks i18n migration |
 | [0014](0014-feed-parsing-library.md) | Feed Parsing Library | **accepted** | P1 — feedparser + lxml sanitization |
 | [0015](0015-http-client.md) | HTTP Client for Feed Fetching | **accepted** | P1 — httpx async in Celery workers only |
+| [0016](0016-semantic-verification.md) | Semantic Verification Methodology | **accepted** | P0 — blocks all verification work |
 
 ## Decision Dependencies
 
@@ -84,4 +85,9 @@ Each ADR follows the standard template:
 0015 (HTTP Client)
   ├── depends on: 0011 (worker architecture)
   └── blocks: feed fetching implementation
+
+0016 (Semantic Verification)
+  ├── depends on: all prior ADRs (verification checks decisions)
+  ├── references: spec 14 (discrepancy taxonomy)
+  └── blocks: all semantic verification work (Phase 5d+)
 ```

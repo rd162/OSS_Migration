@@ -92,6 +92,7 @@ The solution space was narrowed from broad options to concrete decisions via ADR
 | i18n | Python gettext with existing .po/.mo files | ADR-0013 | proposed (P2) |
 | Feed parsing | feedparser + lxml sanitization | ADR-0014 | **accepted** (P1) |
 | HTTP client | httpx async in Celery workers only (via asyncio.run()) | ADR-0015 | **accepted** (P1) |
+| Semantic verification | 40-category taxonomy, 8 integration pipelines, complexity-tiered triage | ADR-0016 | **accepted** (P0) |
 
 ---
 
@@ -130,6 +131,7 @@ These are specific to patterns found in the TT-RSS PHP source:
 | C8 (single DB engine) | 02-database | ADR-0003 |
 | Solution Space | 10-migration-dimensions | ADR-0001 through ADR-0015 |
 | Testing strategy | 12-testing-strategy | ADR-0001, ADR-0005 |
+| Semantic verification | 14-semantic-discrepancies | ADR-0016 |
 
 ---
 
@@ -160,5 +162,6 @@ These are specific to patterns found in the TT-RSS PHP source:
 | Test coverage >= 80% | — | — | C13 | 12-testing-strategy | — | **Phase 1a: 33 tests** |
 | Contract tests for all API endpoints | G2 | G2 | C3 | 12-testing-strategy | — | Not started |
 | Source traceability comments on all code | — | — | C7 | AGENTS.md Rule 10 | — | **Phase 1a ✓ (0 violations after verification)** |
+| Semantic equivalence verification | G1 | G1 | C3 | 14-semantic-discrepancies | 0016 | **Phase 5d: plan accepted, execution pending** |
 | Security headers (flask-talisman) | G4 | G4 | — | 06-security | 0002 | **Phase 1a ✓** |
 | CSRF protection (Flask-WTF) | G4 | G4 | — | 06-security | 0002 | **Phase 1a ✓** |

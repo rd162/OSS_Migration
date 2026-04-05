@@ -440,6 +440,7 @@ def rescore_feed_impl(session: Session, feed_id: int, owner_uid: int) -> None:
         get_article_filters,
         load_filters,
     )
+    from ttrss.articles.tags import get_article_tags
 
     filters = load_filters(session, feed_id, owner_uid, action_id=6)
 
@@ -449,6 +450,7 @@ def rescore_feed_impl(session: Session, feed_id: int, owner_uid: int) -> None:
             TtRssEntry.content,
             TtRssEntry.link,
             TtRssUserEntry.ref_id,
+            TtRssUserEntry.tag_cache,
             TtRssEntry.author,
             TtRssEntry.updated,
         )
@@ -458,9 +460,13 @@ def rescore_feed_impl(session: Session, feed_id: int, owner_uid: int) -> None:
 
     scores: dict[int, list[int]] = {}
     for row in rows:
+        # Source: ttrss/classes/pref/feeds.php:1116 — get_article_tags($line["ref_id"])
+        # PHP fetches actual tags before calling get_article_filters; passing [] silently
+        # breaks tag-based filter rules during rescoring.
+        article_tags = get_article_tags(session, row.ref_id, owner_uid, tag_cache=row.tag_cache)
         article_filters = get_article_filters(
             filters, row.title or "", row.content or "", row.link or "",
-            row.updated, row.author or "", [],
+            row.updated, row.author or "", article_tags,
         )
         new_score = calculate_article_score(article_filters)
         scores.setdefault(new_score, []).append(row.ref_id)

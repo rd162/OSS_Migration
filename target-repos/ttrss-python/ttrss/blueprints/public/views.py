@@ -114,6 +114,33 @@ def register():
         )
 
         if result["success"]:
+            # Source: register.php lines 297-314 — send login/password to new user by email
+            # Source: register.php lines 321-331 — send admin notification email
+            try:
+                from ttrss.utils.mail import send_mail
+                _login = result.get("login", login_name)
+                _temp_pw = result.get("temp_password", "")
+                _user_msg = (
+                    "Hi!\n\n"
+                    "You are receiving this message because you (or someone else) have opened\n"
+                    "an account at Tiny Tiny RSS.\n\n"
+                    "Your login information:\n\n"
+                    f"Login:    {_login}\n"
+                    f"Password: {_temp_pw}\n\n"
+                    "Please login at least once within 24 hours or your account will be removed.\n"
+                )
+                if email:
+                    send_mail(email, "", "Registration information for Tiny Tiny RSS", _user_msg)
+                # Source: register.php:321 — REG_NOTIFY_ADDRESS admin notification
+                _admin_addr = current_app.config.get("REG_NOTIFY_ADDRESS", "")
+                if _admin_addr:
+                    _admin_msg = (
+                        f"New user registered at Tiny Tiny RSS.\n\n"
+                        f"Login: {_login}\nEmail: {email}\n"
+                    )
+                    send_mail(_admin_addr, "", "Registration notice for Tiny Tiny RSS", _admin_msg)
+            except Exception:
+                pass  # Email failure is non-fatal — registration still succeeded
             return jsonify({"status": "ok", "message": "Account created successfully"})
         else:
             return jsonify({"error": result["error"]}), 400

@@ -455,8 +455,9 @@ def _handle_getLabels(data: dict, seq: int):
         rv.append({
             "id": label_to_feed_id(row.id),
             "caption": row.caption,
-            "fg_color": row.fg_color or "",
-            "bg_color": row.bg_color or "",
+            # Source: api.php:427-428 — PHP returns raw values (may be null/empty string)
+            "fg_color": row.fg_color if row.fg_color is not None else "",
+            "bg_color": row.bg_color if row.bg_color is not None else "",
             "checked": row.id in checked_label_ids,
         })
 
@@ -959,14 +960,17 @@ def _handle_setArticleLabel(data: dict, seq: int):
         return _ok(seq, {"status": "OK"})
 
     # Source: api.php:467-473 — foreach article_id: label_add_article or label_remove_article
+    num_updated = 0
     for article_id in article_ids:
         if assign:
             label_add_article(db.session, article_id, caption, current_user.id)
         else:
             label_remove_article(db.session, article_id, caption, current_user.id)
+        num_updated += 1
 
     db.session.commit()
-    return _ok(seq, {"status": "OK"})
+    # Source: api.php:474-475 — return {"status":"OK","updated": $num_updated}
+    return _ok(seq, {"status": "OK", "updated": num_updated})
 
 
 def _handle_updateFeed(data: dict, seq: int):

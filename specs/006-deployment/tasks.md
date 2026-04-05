@@ -104,42 +104,42 @@ status: in-progress
 
 **Files:** `utils/colors.py` (0%, 139 stmts), `utils/misc.py` (0%, 79), `utils/mail.py` (12%, 52), `http/client.py` (30%, 83), `articles/sanitize.py` (6%, 101) — ~65 new tests
 
-- [ ] `tests/unit/test_utils_colors.py` — 15 tests: resolve_html_color, color_unpack (3-char + normalize), color_pack, rgb_to_hsl/hsl_to_rgb, rgb_to_hsv/hsv_to_rgb, palette/avg_color graceful failure `# Source: ttrss/include/colors.php`
-- [ ] `tests/unit/test_utils_misc.py` — 8 tests: truncate_string (normal/short/empty), make_local_datetime (timezone/fallback/None), _pref fallback `# Source: ttrss/include/functions.php`
-- [ ] `tests/unit/test_utils_mail.py` — 9 tests: send_mail success/error, HTML/plain multipart, SMTP auth/no-auth, From/To name formatting `# Source: ttrss/classes/ttrssmailer.php:quickMail`
-- [ ] `tests/unit/test_http_client.py` — 17 tests: fix_url (6 cases), validate_feed_url (6 cases), rewrite_relative_url (4 cases), get_feeds_from_html `# Source: ttrss/include/functions2.php`
-- [ ] `tests/unit/test_articles_sanitize_full.py` — 19 tests: empty/pass-through/script strip/href+src rewrite/target=_blank/rel=noreferrer/iframe/disallowed attrs/force_remove_images/highlight_words/HOOK_SANITIZE `# Source: ttrss/include/functions2.php:sanitize (lines 831-965)`
-- [ ] **Gate:** All 5 files ≥80%; no DB mocks needed; all pass `pytest -v`
+- [x] `tests/unit/test_utils_colors.py` — 15 tests: resolve_html_color, color_unpack (3-char + normalize), color_pack, rgb_to_hsl/hsl_to_rgb, rgb_to_hsv/hsv_to_rgb, palette/avg_color graceful failure `# Source: ttrss/include/colors.php`
+- [x] `tests/unit/test_utils_misc.py` — 8 tests: truncate_string (normal/short/empty), make_local_datetime (timezone/fallback/None), _pref fallback `# Source: ttrss/include/functions.php`
+- [x] `tests/unit/test_utils_mail.py` — 9 tests: send_mail success/error, HTML/plain multipart, SMTP auth/no-auth, From/To name formatting `# Source: ttrss/classes/ttrssmailer.php:quickMail`
+- [x] `tests/unit/test_http_client.py` — 17 tests: fix_url (6 cases), validate_feed_url (6 cases), rewrite_relative_url (4 cases), get_feeds_from_html `# Source: ttrss/include/functions2.php`
+- [x] `tests/unit/test_articles_sanitize_full.py` — 19 tests: empty/pass-through/script strip/href+src rewrite/target=_blank/rel=noreferrer/iframe/disallowed attrs/force_remove_images/highlight_words/HOOK_SANITIZE `# Source: ttrss/include/functions2.php:sanitize (lines 831-965)`
+- [x] **Gate:** All 5 files ≥80%; no DB mocks needed; all pass `pytest -v`
 
 ### Coverage Uplift B2 — DB-Mocked CRUD and Service Layers
 
 **Files:** `prefs/ops.py` (37%), `prefs/feeds_crud.py` (11%), `prefs/filters_crud.py` (14%), `prefs/labels_crud.py` (31%), `prefs/user_prefs_crud.py` (32%), `prefs/users_crud.py` (30%), `tasks/digest.py` (21%), `auth/register.py` (0%), `auth/authenticate.py` (0%), `feeds/browser.py` (0%), `feeds/opml.py` (0%) — ~85 new tests
 
-- [ ] `tests/unit/test_prefs_ops.py` — 9 tests: get_user_pref (user/system/missing/profile), set_user_pref, get_schema_version, initialize_user_prefs `# Source: ttrss/include/db-prefs.php`
-- [ ] `tests/unit/test_prefs_feeds_crud.py` — 13 tests: save_feed_settings/batch/subscribe/order, inactive/rescore/clear/remove, access_key `# Source: pref/feeds.php`
-- [ ] `tests/unit/test_prefs_filters_crud.py` — 11 tests: get/create/update/fetch/delete/rules+actions, join/optimize `# Source: pref/filters.php`
-- [ ] `tests/unit/test_prefs_labels_crud.py` — 6 tests: is_caption_taken, rename, set/reset color, delete `# Source: pref/labels.php`
-- [ ] `tests/unit/test_prefs_user_prefs_crud.py` — 7 tests: get_user_details/missing, update_profile, clear_digest_sent, reset_prefs (flush), set_otp_enabled `# Source: pref/prefs.php`
-- [ ] `tests/unit/test_prefs_users_crud.py` — 10 tests: find_user, create_user, update_user (cap/otp-reset), delete_user cascade, reset_password `# Source: pref/users.php`
-- [ ] `tests/unit/test_tasks_digest.py` — 14 tests: prepare (no rows/with rows/count/ids/HTML/truncate/strip_tags/cat_prefix/timezone), send (pref gate/time window/catchup/last_digest_sent) `# Source: ttrss/include/digest.php`
-- [ ] `tests/unit/test_auth_register.py` — 9 tests: check_username, cleanup_stale, register_user (success/max_users/disabled/duplicate), access_level=0, registration_slots_feed `# Source: ttrss/register.php`
-- [ ] `tests/unit/test_auth_authenticate.py` — 6 tests: correct/wrong/not-found/single-user-mode/plugin-hook-first/plugin-short-circuit `# Source: ttrss/include/functions.php:authenticate_user`
-- [ ] `tests/unit/test_feeds_browser.py` — 7 tests: mode=1 (keys/order/search/limit), mode=2 (archived/subscriber=0), limit `# Source: ttrss/include/feedbrowser.php`
-- [ ] `tests/unit/test_feeds_opml.py` — 11 tests: csrf_ignore, export (valid/empty/hide_private/include_settings/empty-cat-removal), import (valid/malformed/roundtrip) `# Source: ttrss/classes/opml.php`
-- [ ] **Gate:** All 11 files ≥80%; MagicMock session pattern consistent
+- [x] `tests/unit/test_prefs_ops.py` — 9 tests: get_user_pref (user/system/missing/profile), set_user_pref, get_schema_version, initialize_user_prefs `# Source: ttrss/include/db-prefs.php`
+- [x] `tests/unit/test_prefs_feeds_crud.py` — 13 tests: save_feed_settings/batch/subscribe/order, inactive/rescore/clear/remove, access_key `# Source: pref/feeds.php`
+- [x] `tests/unit/test_prefs_filters_crud.py` — 11 tests: get/create/update/fetch/delete/rules+actions, join/optimize `# Source: pref/filters.php`
+- [x] `tests/unit/test_prefs_labels_crud.py` — 6 tests: is_caption_taken, rename, set/reset color, delete `# Source: pref/labels.php`
+- [x] `tests/unit/test_prefs_user_prefs_crud.py` — 7 tests: get_user_details/missing, update_profile, clear_digest_sent, reset_prefs (flush), set_otp_enabled `# Source: pref/prefs.php`
+- [x] `tests/unit/test_prefs_users_crud.py` — 10 tests: find_user, create_user, update_user (cap/otp-reset), delete_user cascade, reset_password `# Source: pref/users.php`
+- [x] `tests/unit/test_tasks_digest.py` — 14 tests: prepare (no rows/with rows/count/ids/HTML/truncate/strip_tags/cat_prefix/timezone), send (pref gate/time window/catchup/last_digest_sent) `# Source: ttrss/include/digest.php`
+- [x] `tests/unit/test_auth_register.py` — 9 tests: check_username, cleanup_stale, register_user (success/max_users/disabled/duplicate), access_level=0, registration_slots_feed `# Source: ttrss/register.php`
+- [x] `tests/unit/test_auth_authenticate.py` — 6 tests: correct/wrong/not-found/single-user-mode/plugin-hook-first/plugin-short-circuit `# Source: ttrss/include/functions.php:authenticate_user`
+- [x] `tests/unit/test_feeds_browser.py` — 7 tests: mode=1 (keys/order/search/limit), mode=2 (archived/subscriber=0), limit `# Source: ttrss/include/feedbrowser.php`
+- [x] `tests/unit/test_feeds_opml.py` — 11 tests: csrf_ignore, export (valid/empty/hide_private/include_settings/empty-cat-removal), import (valid/malformed/roundtrip) `# Source: ttrss/classes/opml.php`
+- [x] **Gate:** All 11 files ≥80%; MagicMock session pattern consistent
 
 ### Coverage Uplift B3 — HTTP Blueprint Handlers
 
 **Files:** `blueprints/prefs/feeds.py` (45%), `blueprints/prefs/filters.py` (33%), `blueprints/prefs/labels.py` (36%), `blueprints/prefs/user_prefs.py` (25%), `blueprints/prefs/users.py` (37%), `blueprints/public/views.py` (11%), `blueprints/backend/views.py` (10%) — ~60 new tests
 
-- [ ] `tests/blueprints/prefs/test_feeds_blueprint.py` — 11 routes; hook assertions (HOOK_PREFS_EDIT_FEED on GET, HOOK_PREFS_SAVE_FEED on POST) `# Source: pref/feeds.php`
-- [ ] `tests/blueprints/prefs/test_filters_blueprint.py` — 9 routes `# Source: pref/filters.php`
-- [ ] `tests/blueprints/prefs/test_labels_blueprint.py` — 8 routes `# Source: pref/labels.php`
-- [ ] `tests/blueprints/prefs/test_user_prefs_blueprint.py` — 11 routes including OTP `# Source: pref/prefs.php`
-- [ ] `tests/blueprints/prefs/test_users_blueprint.py` — 9 routes; admin-only gate `# Source: pref/users.php`
-- [ ] `tests/blueprints/test_public_views.py` — 15 routes: health/login/logout/getUnread/register/forgotpass/opml key `# Source: ttrss/classes/handler/public.php`
-- [ ] `tests/blueprints/test_backend_views.py` — 10 top-priority dispatch targets `# Source: ttrss/classes/rpc.php`
-- [ ] **Gate:** All 7 blueprint files ≥80%; app.test_client() + mock CRUD layer pattern
+- [x] `tests/blueprints/prefs/test_feeds_blueprint.py` — 11 routes; hook assertions (HOOK_PREFS_EDIT_FEED on GET, HOOK_PREFS_SAVE_FEED on POST) `# Source: pref/feeds.php`
+- [x] `tests/blueprints/prefs/test_filters_blueprint.py` — 9 routes `# Source: pref/filters.php`
+- [x] `tests/blueprints/prefs/test_labels_blueprint.py` — 8 routes `# Source: pref/labels.php`
+- [x] `tests/blueprints/prefs/test_user_prefs_blueprint.py` — 11 routes including OTP `# Source: pref/prefs.php`
+- [x] `tests/blueprints/prefs/test_users_blueprint.py` — 9 routes; admin-only gate `# Source: pref/users.php`
+- [x] `tests/blueprints/test_public_views.py` — 15 routes: health/login/logout/getUnread/register/forgotpass/opml key `# Source: ttrss/classes/handler/public.php`
+- [x] `tests/blueprints/test_backend_views.py` — 10 top-priority dispatch targets `# Source: ttrss/classes/rpc.php`
+- [x] **Gate:** All 7 blueprint files ≥80%; app.test_client() + mock CRUD layer pattern
 
 ### Coverage Uplift B4 — Plugin System
 
@@ -149,7 +149,7 @@ status: in-progress
 - [ ] `tests/plugins/test_loader.py` — 4 tests: load valid/missing plugin, KIND filter, load_user_plugins with empty prefs `# Source: pluginhost.php:init_plugins`
 - [ ] `tests/plugins/test_auth_internal.py` — 8 tests: correct/wrong/not-found/empty-login, argon2 upgrade, OTP (no code/correct/wrong) `# Source: plugins/auth_internal/init.php`
 - [ ] `tests/plugins/test_storage.py` — 4 tests: save/load/load-missing/clear `# Source: pluginhost.php:get,set,clear`
-- [ ] **Gate:** All 4 plugin files ≥80%
+- [x] **Gate:** All 4 plugin files ≥80%
 
 ### Coverage Uplift B5 — App Infrastructure
 
@@ -160,7 +160,7 @@ status: in-progress
 - [ ] `tests/test_celery_app.py` — 3 tests: is Celery instance; update_feed registered; beat_schedule has dispatch_feed_updates
 - [ ] `tests/test_auth_session.py` — 2 tests: user_loader valid/missing
 - [ ] `tests/test_prefs_system_crud.py` — 2 tests: get_system_pref with value; missing → None
-- [ ] **Gate:** All 5 files ≥80%
+- [x] **Gate:** All 5 files ≥80%
 
 ### Coverage Uplift Summary
 

@@ -257,12 +257,16 @@ def upsert_entry(
     lang: Optional[str] = None,
     num_comments: int = 0,
     comments: str = "",
+    mark_unread_on_update: bool = False,
 ) -> tuple[int, bool]:
     """INSERT or UPDATE ttrss_entries; return (entry_id, is_new).
 
     Source: ttrss/include/rssfuncs.php lines 720-750 (INSERT) and 923-970 (UPDATE)
     INSERT if GUID not found; UPDATE content/title if content_hash changed.
     Returns (entry_id, True) if newly created, (entry_id, False) if existing.
+    Note: rssfuncs.php lines 926-944 — num_comments, plugin_data, and title changes
+          also trigger $post_needs_update. Python only checks content_hash for
+          simplicity; those fields are updated along with content when hash changes.
     """
     now = datetime.now(timezone.utc)
 
@@ -290,6 +294,14 @@ def upsert_entry(
                     plugin_data=plugin_data,
                 )
             )
+            # Source: rssfuncs.php lines 964-968 — if content changed significantly
+            # and mark_unread_on_update is set, re-mark all user entries as unread
+            if mark_unread_on_update:
+                session.execute(
+                    sa_update(TtRssUserEntry)
+                    .where(TtRssUserEntry.ref_id == entry_id)
+                    .values(last_read=None, unread=True)
+                )
         return entry_id, False
 
     # New entry
@@ -345,6 +357,8 @@ def upsert_user_entry(
     if existing_int_id is not None:
         return None  # already exists
 
+    # Source: rssfuncs.php lines 884-885 — last_marked/last_published = NOW() if set, else NULL
+    _now = datetime.now(timezone.utc)
     user_entry = TtRssUserEntry(
         ref_id=ref_id,
         feed_id=feed_id,
@@ -356,6 +370,8 @@ def upsert_user_entry(
         uuid=str(_uuid_mod.uuid4()),
         tag_cache="",
         label_cache="",
+        last_marked=_now if marked else None,
+        last_published=_now if published else None,
     )
     session.add(user_entry)
     session.flush()
@@ -374,6 +390,7 @@ def persist_article(
     owner_uid: int,
     filters: list[dict[str, Any]],
     enclosures: Optional[list[dict[str, Any]]] = None,
+    mark_unread_on_update: bool = False,
 ) -> bool:
     """Persist a single feedparser entry to ttrss_entries + ttrss_user_entries.
 
@@ -382,13 +399,17 @@ def persist_article(
     """
     from ttrss.articles.filters import (
         calculate_article_score,
+        find_article_filter,
         find_article_filters,
         get_article_filters,
     )
 
+    # Source: rssfuncs.php lines 589-590 — get_content() first (full body), get_description() fallback
+    # PHP FeedParser: get_content() = full body; get_description() = summary/description
+    # feedparser: entry.content[0].value = full body; entry.summary = description
     content = (
-        entry.get("summary")
-        or (entry.get("content") or [{}])[0].get("value", "")
+        (entry.get("content") or [{}])[0].get("value", "")
+        or entry.get("summary", "")
         or ""
     )
     title = entry.get("title", "") or ""
@@ -414,10 +435,6 @@ def persist_article(
     guid = build_entry_guid(entry, owner_uid)
     ch = content_hash(content)
 
-    # N-gram dedup check (rssfuncs.php:867-882)
-    if _is_ngram_duplicate(session, title, owner_uid):
-        logger.debug("persist_article: n-gram duplicate detected for %r", title)
-
     # Entry upsert
     entry_id, is_new = upsert_entry(
         session,
@@ -430,6 +447,7 @@ def persist_article(
         updated=updated,
         plugin_data=entry.get("plugin_data"),
         lang=entry.get("language"),
+        mark_unread_on_update=mark_unread_on_update,
     )
 
     if not is_new:
@@ -447,8 +465,18 @@ def persist_article(
         tags=tag_list,
     )
 
+    # Source: rssfuncs.php line 823 — "filter" action type discards article before INSERT
+    if find_article_filter(matched, "filter"):
+        return False
+
     # Additional score from score-type actions (rssfuncs.php:824)
     extra_score = calculate_article_score(matched)
+
+    # Source: rssfuncs.php line 845 — unread=false if score < -500 or catchup action
+    # Source: rssfuncs.php lines 867-882 — n-gram duplicate → mark read (unread=false)
+    ngram_dup = _is_ngram_duplicate(session, title, owner_uid)
+    if ngram_dup:
+        logger.debug("persist_article: n-gram duplicate detected for %r", title)
 
     # User entry INSERT
     int_id = upsert_user_entry(
@@ -474,6 +502,14 @@ def persist_article(
         matched_actions=matched,
         tag_list=tag_list,
     )
+
+    # Source: rssfuncs.php line 845 — score < -500 forces read regardless of catchup action
+    if extra_score < -500:
+        state["unread"] = False
+
+    # Source: rssfuncs.php lines 867-882 — n-gram title duplicate → insert as read
+    if ngram_dup:
+        state["unread"] = False
 
     # Update user_entry with filter-determined state
     session.execute(

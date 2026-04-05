@@ -1,0 +1,161 @@
+# Semantic Verification Report
+
+**Methodology**: ADR-0016 — 40-category taxonomy (D01-D40), 8 integration pipelines, complexity-tiered triage.
+**Spec reference**: `specs/14-semantic-discrepancies.md`
+**Success criteria**: Zero unfixed discrepancies + all baseline pytest tests pass.
+
+---
+
+## Status Summary
+
+| Phase | Scope | Started | Complete |
+|-------|-------|---------|---------|
+| A — Tier 1 deep audit | 52 high-risk functions | 2026-04-05 | In progress |
+| B — Integration pipelines | 8 pipelines | — | Not started |
+| C — Tier 2 standard audit | ~150 functions | — | Not started |
+| D — Tier 3 quick check | ~270 functions | — | Not started |
+| E — Model deep check | 37 ORM classes | — | Not started |
+| F — Cross-workstream sweeps | Systemic patterns | — | Not started |
+
+---
+
+## Phase A — Tier 1 Deep Audit
+
+### WS-06: Feed Update Pipeline
+
+#### `update_rss_feed` / `update_feed` + `persist_article` + `upsert_entry`
+
+PHP source: `ttrss/include/rssfuncs.php:update_rss_feed` (lines 203–1149)
+Python: `ttrss/tasks/feed_tasks.py:update_feed` (lines 226–453) + `ttrss/articles/persist.py`
+Audit date: 2026-04-05
+Auditor: semantic verification Phase A
+
+---
+
+#### Discrepancy Log
+
+| # | D-code | Severity | PHP Location | PHP Behavior | Python Location | Python Behavior | Status |
+|---|--------|----------|-------------|--------------|-----------------|-----------------|--------|
+| 1 | D17 | CRITICAL | rssfuncs.php:589-590 | `get_content()` first (full body); `get_description()` fallback (summary) | feed_tasks.py:382 + persist.py:389 | `summary` first; `content` fallback — **inverted** | **FIXED** (2026-04-05) |
+| 2 | D33 | HIGH | rssfuncs.php:823-826 | "filter" action type → `continue` (article discarded before INSERT) | persist.py | "filter" action not checked — article persisted | **FIXED** (2026-04-05) |
+| 3 | D08 | HIGH | rssfuncs.php:709,973,1001,1022,1066,1099 | 3 `BEGIN/COMMIT` cycles per article (entry INSERT, enclosures, tags) | feed_tasks.py:438 | Single `commit()` after full feed loop — all-or-nothing per feed | **DOCUMENTED** — structural redesign; per-feed commit is intentional for Celery task atomicity |
+| 4 | D30 | MEDIUM | rssfuncs.php:845 | `unread=false` if `score < -500` OR catchup action | persist.py | Score threshold not checked; only catchup action sets unread=False | **FIXED** (2026-04-05) |
+| 5 | D37 | MEDIUM | rssfuncs.php:867-882 | N-gram title duplicate → `$unread = 'false'` (inserted as read) | persist.py:418-419 | N-gram duplicate → log only; unread stays True | **FIXED** (2026-04-05) |
+| 6 | D23 | MEDIUM | rssfuncs.php:658-685 | HOOK_ARTICLE_FILTER article dict includes `"stored"` (prev DB values) + `"feed"` (id/fetch_url/site_url) | feed_tasks.py:388-397 | "stored" and "feed" keys absent — plugins that read them silently fail | **FIXED** (2026-04-05) |
+| 7 | D34 | MEDIUM | rssfuncs.php:884-885 | `last_marked=NOW()` if marked; `last_published=NOW()` if published on user_entry INSERT | persist.py:upsert_user_entry | `last_marked`/`last_published` always NULL on INSERT | **FIXED** (2026-04-05) |
+| 8 | D24 | MEDIUM | rssfuncs.php:964-968 | If content changed significantly AND `mark_unread_on_update` feed pref: `UPDATE user_entries SET unread=true, last_read=NULL` | persist.py:upsert_entry | Not implemented | **FIXED** (2026-04-05) |
+| 9 | D34 | MEDIUM | rssfuncs.php:1121 | `purge_feed($feed, 0)` called after processing all articles | feed_tasks.py | Not called — old articles accumulate indefinitely | **FIXED** (2026-04-05) |
+| 10 | D23 | MEDIUM | rssfuncs.php:697 | Plugin-filtered `$entry_content` (post-HOOK_ARTICLE_FILTER) stored in DB | feed_tasks.py:448 | Raw feedparser entry content stored; plugin modifications lost | **FIXED** (2026-04-05) — `entry_copy["content"]` overwritten with plugin-filtered value |
+| 11 | D11 | LOW | rssfuncs.php:804-808 | `ALLOW_DUPLICATE_POSTS` pref → adds `AND (feed_id='$feed' OR feed_id IS NULL)` to user_entry lookup | persist.py:upsert_user_entry | Always global dedup regardless of preference | **DOCUMENTED** — not yet implemented |
+| 12 | D19 | LOW | rssfuncs.php:623-624 | `$entry_author`, `$entry_comments` truncated to 245 chars | persist.py | author not truncated (GUID correctly truncated in build_entry_guid to 245) | **DOCUMENTED** — SHA1 GUID is always 45 chars; author truncation low risk with pg varchar |
+| 13 | D37 | LOW | rssfuncs.php | `$date_feed_processed = date('Y-m-d H:i')` set once; all articles in batch share same `date_entered` | persist.py:upsert_entry:304 | Each article gets independent `datetime.now()` — microsecond variation within batch | **DOCUMENTED** — behavioral difference, low impact on user-visible behavior |
+| 14 | D29 | LOW | rssfuncs.php:926-933 | `num_comments` OR `plugin_data` changes (not just content_hash) trigger `$post_needs_update` | persist.py:upsert_entry | Only `content_hash` mismatch triggers update | **DOCUMENTED** — rare edge case; content_hash catches main update scenario |
+| 15 | D34 | ACKNOWLEDGED | rssfuncs.php:424-457 | Favicon refresh + average color calculation per feed | feed_tasks.py | Not implemented (Note in code) | ACKNOWLEDGED — feature elimination, Phase 3+ |
+| 16 | D34 | ACKNOWLEDGED | rssfuncs.php:494-541 | PubSubHubbub hub subscription | feed_tasks.py | Not implemented (Note in code) | ACKNOWLEDGED — feature elimination |
+| 17 | D34 | ACKNOWLEDGED | rssfuncs.php:459-474 | Feed title + site_url updated from parsed RSS metadata | feed_tasks.py | Not implemented (Note in code) | ACKNOWLEDGED — deferred |
+| 18 | D34 | ACKNOWLEDGED | rssfuncs.php:380-385 | Language detection (`Text_LanguageDetect`) per article | feed_tasks.py | Not implemented (Note in code) | ACKNOWLEDGED — feature elimination |
+| 19 | D34 | ACKNOWLEDGED | rssfuncs.php:702-703 | `cache_images()` per article | feed_tasks.py | Not implemented (Note in code) | ACKNOWLEDGED — feature elimination |
+| 20 | D38 | DOCUMENTED | rssfuncs.php:296-301 | Conditional GET via `If-Modified-Since` with `$last_article_timestamp` (epoch of most recent article) | feed_tasks.py | ETag/Last-Modified from response headers (ADR-0015 structural redesign) | DOCUMENTED — different mechanism, equivalent intent; ADR-0015 |
+| 21 | D34 | ACKNOWLEDGED | rssfuncs.php:273-341 | XML disk cache (30-second cache for unauthenticated feeds, SHA1 filename) | feed_tasks.py | Not implemented | ACKNOWLEDGED — performance feature; no behavioral impact on correctness |
+
+---
+
+#### Fix Details
+
+**Fix 1 — D17 Content priority** (`persist.py:389-392`, `feed_tasks.py:382-384`):
+```python
+# Before (wrong — summary first):
+content = entry.get("summary") or (entry.get("content") or [{}])[0].get("value", "")
+# After (correct — full content first, summary fallback):
+content = (entry.get("content") or [{}])[0].get("value", "") or entry.get("summary", "")
+```
+Impact: Every article with both `<content>` and `<description>` elements showed wrong content.
+
+**Fix 2 — D33 "filter" action** (`persist.py` after `get_article_filters`):
+```python
+if find_article_filter(matched, "filter"):
+    return False  # discard article — PHP: db_query("COMMIT"); continue
+```
+Impact: Articles matching a "filter" action filter were being inserted when they should be discarded.
+
+**Fix 3 — D30 Score threshold** (`persist.py` after `calculate_article_score`):
+```python
+if extra_score < -500:
+    state["unread"] = False
+```
+Impact: Articles with score < -500 were inserted as unread when they should be inserted as read.
+
+**Fix 4 — D37 N-gram unread** (`persist.py`):
+```python
+ngram_dup = _is_ngram_duplicate(session, title, owner_uid)
+# ... later:
+if ngram_dup:
+    state["unread"] = False
+```
+Impact: N-gram duplicates inserted as unread instead of read.
+
+**Fix 5 — D23 HOOK_ARTICLE_FILTER dict** (`feed_tasks.py`):
+Added `"stored"` (previous DB values) and `"feed"` (id/fetch_url/site_url) keys to article dict. Added pre-entry GUID lookup to populate stored_article from DB.
+
+**Fix 6 — D34 last_marked/last_published** (`persist.py:upsert_user_entry`):
+```python
+last_marked=datetime.now(timezone.utc) if marked else None,
+last_published=datetime.now(timezone.utc) if published else None,
+```
+
+**Fix 7 — D24 mark_unread_on_update** (`persist.py:upsert_entry`):
+When `content_hash` changes and `mark_unread_on_update=True`:
+```python
+session.execute(sa_update(TtRssUserEntry).where(...).values(last_read=None, unread=True))
+```
+Threaded through `persist_article(mark_unread_on_update=feed.mark_unread_on_update)` from `update_feed`.
+
+**Fix 8 — purge_feed** (`feed_tasks.py`):
+```python
+from ttrss.feeds.ops import purge_feed
+purge_feed(db.session, feed_id)
+```
+Called after article loop, before `last_updated` stamp. `purge_feed` already existed in `feeds/ops.py`.
+
+**Fix 9 — Plugin-filtered content propagation** (`feed_tasks.py`):
+```python
+entry_copy["content"] = [{"value": content, "type": "text/html"}]
+```
+Overwrites raw feedparser content structure with plugin-filtered content so `persist_article` stores correct value.
+
+---
+
+#### Test results after fixes
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Unit tests passing | 598 | 598 |
+| Integration tests | Pre-existing failure (login test) | Unchanged |
+| New test failures | — | 0 |
+
+---
+
+## Pending — Phase A Tier 1 (remaining functions)
+
+### Next functions to audit (Pipeline 1 continued):
+
+| Function | File | PHP Source | Priority |
+|----------|------|------------|----------|
+| `dispatch_feed_updates` | tasks/feed_tasks.py:53 | rssfuncs.php:update_daemon_common (60-200) | Tier 1 |
+| `load_filters` | articles/filters.py:41 | functions2.php:load_filters (1491-1563) | Tier 1 |
+| `get_article_filters` | articles/filters.py:164 | rssfuncs.php:get_article_filters (1272-1348) | Tier 1 |
+
+### Pipeline 2 — Article Search:
+
+| Function | File | PHP Source | Priority |
+|----------|------|------------|----------|
+| `queryFeedHeadlines` | blueprints/backend/views.py | classes/feeds.php:Feeds::queryFeedHeadlines | Tier 1 |
+| `search_to_sql` | articles/search.py | include/functions2.php:search_to_sql | Tier 1 |
+
+### Pipeline 3 — API Lifecycle:
+
+| Function | File | PHP Source | Priority |
+|----------|------|------------|----------|
+| `dispatch` | blueprints/api/views.py | classes/rpc.php:RPC::dispatch | Tier 1 |
+| `_handle_getHeadlines` | blueprints/api/views.py | classes/rpc.php:RPC::getHeadlines | Tier 1 |
+| `_handle_login` | blueprints/api/views.py | classes/rpc.php:RPC::login | Tier 1 |

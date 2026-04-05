@@ -375,13 +375,43 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
         feed_filters = load_filters(db.session, feed_id=feed_id, owner_uid=feed.owner_uid)
         sanitized_count = 0
         persisted_count = 0
+        from sqlalchemy import select as sa_select
+        from ttrss.articles.persist import build_entry_guid
+        from ttrss.models.entry import TtRssEntry as _TtRssEntry
+
         for entry in parsed.entries:
-            # Source: ttrss/include/rssfuncs.php lines 580-600 — extract entry content/summary
-            # Adapted: PHP extracts content from SimplePie entry object; feedparser uses dict-like API.
+            # Source: ttrss/include/rssfuncs.php lines 589-590 — get_content() first (full body),
+            # get_description() fallback (summary/description).
+            # feedparser: entry.content[0].value = full body; entry.summary = description.
             content = (
-                entry.get("summary")
-                or (entry.get("content") or [{}])[0].get("value", "")
+                (entry.get("content") or [{}])[0].get("value", "")
+                or entry.get("summary", "")
             )
+
+            # Source: rssfuncs.php lines 658-671 — lookup existing entry for HOOK_ARTICLE_FILTER
+            # "stored" key gives plugins access to the previously stored title/content/link/author;
+            # "feed" key gives plugins access to feed metadata (id, fetch_url, site_url).
+            entry_guid = build_entry_guid(entry, feed.owner_uid)
+            stored_row = db.session.execute(
+                sa_select(
+                    _TtRssEntry.plugin_data,
+                    _TtRssEntry.title,
+                    _TtRssEntry.content,
+                    _TtRssEntry.link,
+                    _TtRssEntry.author,
+                ).where(_TtRssEntry.guid == entry_guid)
+            ).one_or_none()
+            entry_plugin_data = ""
+            stored_article: dict = {}
+            if stored_row is not None:
+                entry_plugin_data = stored_row.plugin_data or ""
+                stored_article = {
+                    "title": stored_row.title or "",
+                    "content": stored_row.content or "",
+                    "link": stored_row.link or "",
+                    "author": stored_row.author or "",
+                    "tags": [],  # tag_cache would need extra query — omitted
+                }
 
             # Source: ttrss/include/rssfuncs.php lines 673-689 — build article dict + HOOK_ARTICLE_FILTER
             # Adapted: PHP builds $article array from local vars; Python builds from feedparser entry.
@@ -392,8 +422,14 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
                 "content": content,  # Source: rssfuncs.php line 676 — "content" => $entry_content
                 "link": entry.get("link", ""),  # Source: rssfuncs.php line 677 — "link" => $entry_link
                 "tags": [],  # Source: rssfuncs.php line 678 — "tags" => $entry_tags
-                "plugin_data": "",  # Source: rssfuncs.php line 679 — "plugin_data" => $entry_plugin_data
+                "plugin_data": entry_plugin_data,  # Source: rssfuncs.php line 679 — "plugin_data" => $entry_plugin_data (DB value if existing)
                 "author": entry.get("author", ""),  # Source: rssfuncs.php line 680 — "author" => $entry_author
+                "stored": stored_article,  # Source: rssfuncs.php line 681 — "stored" => $stored_article
+                "feed": {  # Source: rssfuncs.php lines 682-685 — "feed" => array(...)
+                    "id": feed_id,
+                    "fetch_url": feed.feed_url,
+                    "site_url": feed.site_url,
+                },
             }
 
             # Source: ttrss/include/rssfuncs.php lines 687-689 — HOOK_ARTICLE_FILTER pipeline
@@ -407,9 +443,12 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
             sanitized_count += 1  # New: no PHP equivalent — Python tracks sanitized count for task return value; PHP has no equivalent counter.
 
             # Phase 3: persist entry (rssfuncs.php lines 720-1117)
-            # Propagate plugin_data from HOOK_ARTICLE_FILTER back into feedparser entry dict.
+            # Propagate plugin_data and HOOK_ARTICLE_FILTER-modified content back into entry dict.
+            # Source: rssfuncs.php line 697 — $entry_content = $article["content"] (after hook)
             entry_copy = dict(entry)
             entry_copy["plugin_data"] = article.get("plugin_data", "")
+            # Overwrite content with plugin-filtered value so persist_article stores the correct content.
+            entry_copy["content"] = [{"value": content, "type": "text/html"}]
             # Extract enclosures from feedparser entry (rssfuncs.php lines 982-1020)
             enc_list = [
                 {
@@ -427,9 +466,14 @@ def update_feed(self, feed_id: int) -> dict[str, Any]:
                 owner_uid=feed.owner_uid,
                 filters=feed_filters,
                 enclosures=enc_list,
+                mark_unread_on_update=feed.mark_unread_on_update,
             )
             if is_new:
                 persisted_count += 1
+
+        # Source: rssfuncs.php line 1121 — purge old articles after processing all entries
+        from ttrss.feeds.ops import purge_feed
+        purge_feed(db.session, feed_id)
 
         # Source: rssfuncs.php lines 488-490 — update feed last_updated and clear last_error after successful parse
         feed.last_error = ""

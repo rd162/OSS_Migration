@@ -333,7 +333,8 @@ def test_update_feed_ok_no_entries():
          patch("ttrss.plugins.manager.get_plugin_manager", return_value=pm_mock), \
          patch("ttrss.tasks.feed_tasks.asyncio.run", return_value=(200, b"<rss/>", {})), \
          patch("ttrss.tasks.feed_tasks.feedparser.parse", return_value=parsed), \
-         patch("ttrss.articles.filters.load_filters", return_value=[]):
+         patch("ttrss.articles.filters.load_filters", return_value=[]), \
+         patch("ttrss.feeds.ops.purge_feed"):
         mock_db.session = session
         result = update_feed.run(5)
 
@@ -379,7 +380,9 @@ def test_update_feed_ok_with_entries():
          patch("ttrss.tasks.feed_tasks.feedparser.parse", return_value=parsed), \
          patch("ttrss.articles.filters.load_filters", return_value=[]), \
          patch("ttrss.articles.persist.persist_article", return_value=True), \
-         patch("ttrss.tasks.feed_tasks.sanitize", return_value="clean"):
+         patch("ttrss.articles.persist.build_entry_guid", return_value="SHA1:abc"), \
+         patch("ttrss.tasks.feed_tasks.sanitize", return_value="clean"), \
+         patch("ttrss.feeds.ops.purge_feed"):
         mock_db.session = session
         result = update_feed.run(5)
 
@@ -411,7 +414,8 @@ def test_update_feed_plugin_provides_feed_data():
          patch("ttrss.plugins.manager.get_plugin_manager", return_value=pm_mock), \
          patch("ttrss.tasks.feed_tasks.asyncio") as mock_asyncio, \
          patch("ttrss.tasks.feed_tasks.feedparser.parse", return_value=parsed), \
-         patch("ttrss.articles.filters.load_filters", return_value=[]):
+         patch("ttrss.articles.filters.load_filters", return_value=[]), \
+         patch("ttrss.feeds.ops.purge_feed"):
         mock_db.session = session
         result = update_feed.run(5)
 
@@ -466,7 +470,8 @@ def test_update_feed_stores_etag_and_last_modified():
          patch("ttrss.plugins.manager.get_plugin_manager", return_value=pm_mock), \
          patch("ttrss.tasks.feed_tasks.asyncio.run", return_value=(200, b"<rss/>", resp_headers)), \
          patch("ttrss.tasks.feed_tasks.feedparser.parse", return_value=parsed), \
-         patch("ttrss.articles.filters.load_filters", return_value=[]):
+         patch("ttrss.articles.filters.load_filters", return_value=[]), \
+         patch("ttrss.feeds.ops.purge_feed"):
         mock_db.session = session
         update_feed.run(5)
 

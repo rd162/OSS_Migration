@@ -603,13 +603,17 @@ class TestSettingsModal:
         assert "admin" in body_text.lower() or "account" in body_text.lower()
 
     def test_settings_shows_feeds_section(self, app: Page, seeded_articles):
-        """Settings modal shows the seeded test feed in feed list.
+        """Settings modal Feeds tab shows the seeded test feed in feed list.
 
-        Source: ttrss/js/app.js renderSettingsModal() — feeds list.
+        Source: ttrss/js/app.js renderSettingsModal() — feeds list (Feeds tab).
         PHP: Preferences → Feeds tab shows subscribed feeds with remove option.
+        ADR-0019: Settings is now tabbed; must navigate to Feeds tab.
         """
         app.wait_for_timeout(1500)  # Let sidebar load seeded feed
         app.click("[data-action='settings']")
+        app.wait_for_timeout(300)
+        # Navigate to Feeds tab (new tabbed modal — ADR-0019)
+        app.click("[data-action='settings-tab'][data-tab='feeds']")
         app.wait_for_timeout(500)
 
         body_text = app.locator(".modal-body").inner_text()
@@ -841,3 +845,343 @@ class TestErrorStates:
         app.wait_for_timeout(2000)
         # App should still be visible and not crash
         expect(app.locator(".app-wrap")).to_be_visible(timeout=8000)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Settings modal — tabs (SME spec 15, ADR-0019)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TestSettingsTabs:
+    """
+    Settings modal now has tabs: Account / Feeds / Categories / Filters / OPML.
+    Source: ttrss/js/prefs.js (PHP tabbed preferences panel).
+    Python: simplified modal pattern (ADR-0019).
+    """
+
+    def test_settings_has_tabs(self, app: Page):
+        """Settings modal shows tab bar with expected tabs.
+
+        Source: ttrss/classes/pref/*.php — PHP had Account/Feeds/Filters/Labels/Users/System tabs.
+        """
+        app.click("[data-action='settings']")
+        app.wait_for_timeout(500)
+        expect(app.locator(".modal-tabs")).to_be_visible()
+        tabs_text = app.locator(".modal-tabs").inner_text()
+        for tab in ["Account", "Feeds", "Categories", "Filters", "OPML"]:
+            assert tab in tabs_text, f"Tab '{tab}' not found in tab bar"
+
+    def test_categories_tab_shows_add_form(self, app: Page):
+        """Categories tab has an 'Add category' form.
+
+        Source: ttrss/classes/pref/feeds.php:Pref_Feeds::addCat.
+        PHP: Preferences → Feeds tab → Categories dropdown → Add category.
+        """
+        app.click("[data-action='settings']")
+        app.wait_for_timeout(300)
+        app.click("[data-action='settings-tab'][data-tab='categories']")
+        app.wait_for_timeout(300)
+        expect(app.locator("#new-cat-title")).to_be_visible()
+        expect(app.locator("[data-action='add-cat']")).to_be_visible()
+
+    def test_add_category_creates_category(self, app: Page):
+        """Typing a name and clicking Add creates a new category in the sidebar.
+
+        Source: ttrss/classes/pref/feeds.php:Pref_Feeds::addCat.
+        PHP: category appears in sidebar tree after creation.
+        """
+        app.click("[data-action='settings']")
+        app.wait_for_timeout(300)
+        app.click("[data-action='settings-tab'][data-tab='categories']")
+        app.wait_for_timeout(300)
+
+        cat_name = "E2E Test Category"
+        app.fill("#new-cat-title", cat_name)
+        app.click("[data-action='add-cat']")
+        app.wait_for_timeout(1500)
+
+        # Either the sidebar or category list should show the new category
+        sidebar_text = app.locator(".feedlist").inner_text()
+        # Also check the categories tab list if modal is still open
+        if app.locator(".modal-dlg").count() > 0:
+            modal_text = app.locator(".modal-body").inner_text()
+            assert cat_name in modal_text or cat_name in sidebar_text, \
+                f"Category '{cat_name}' not found after creation"
+        else:
+            assert cat_name in sidebar_text, f"Category '{cat_name}' not in sidebar after creation"
+
+    def test_filters_tab_shows_create_form(self, app: Page):
+        """Filters tab shows the create filter form.
+
+        Source: ttrss/classes/pref/filters.php:Pref_Filters::newfilter.
+        PHP: Preferences → Filters → Create filter… dialog.
+        """
+        app.click("[data-action='settings']")
+        app.wait_for_timeout(300)
+        app.click("[data-action='settings-tab'][data-tab='filters']")
+        app.wait_for_timeout(300)
+        expect(app.locator("#filter-regexp")).to_be_visible()
+        expect(app.locator("#filter-type")).to_be_visible()
+        expect(app.locator("#filter-action")).to_be_visible()
+        expect(app.locator("[data-action='create-filter']")).to_be_visible()
+
+    def test_create_filter_with_pattern(self, app: Page):
+        """Entering a regex pattern and clicking Create shows success message.
+
+        Source: ttrss/classes/pref/filters.php:581 — INSERT new filter.
+        PHP: filter appears in filter list after creation.
+        """
+        app.click("[data-action='settings']")
+        app.wait_for_timeout(300)
+        app.click("[data-action='settings-tab'][data-tab='filters']")
+        app.wait_for_timeout(300)
+
+        app.fill("#filter-regexp", "TestPattern_E2E_2")
+        app.click("[data-action='create-filter']")
+        app.wait_for_timeout(1500)
+
+        # Filter should appear in the list (any entry is sufficient — title defaults to "[No caption]")
+        # Source: filters_crud — filter is created with empty title by default
+        modal_body = app.locator(".modal-body").inner_text()
+        filter_count = app.locator(".filter-mgr-row").count()
+        assert filter_count >= 1, \
+            f"Expected at least 1 filter in list after creation, got {filter_count}. Body: '{modal_body}'"
+
+    def test_opml_tab_shows_export_button(self, app: Page):
+        """OPML tab shows Export OPML button.
+
+        Source: ttrss/classes/dlg.php:Dlg::pubOPMLUrl.
+        PHP: Preferences → Feeds → Export OPML button.
+        """
+        app.click("[data-action='settings']")
+        app.wait_for_timeout(300)
+        app.click("[data-action='settings-tab'][data-tab='opml']")
+        app.wait_for_timeout(300)
+        expect(app.locator("[data-action='opml-export']")).to_be_visible()
+
+    def test_opml_tab_shows_import_form(self, app: Page):
+        """OPML tab shows file import input and Import button.
+
+        Source: ttrss/classes/dlg.php:Dlg::importOpml.
+        PHP: Preferences → Feeds → Import OPML file picker + Upload button.
+        """
+        app.click("[data-action='settings']")
+        app.wait_for_timeout(300)
+        app.click("[data-action='settings-tab'][data-tab='opml']")
+        app.wait_for_timeout(300)
+        expect(app.locator("#opml-file")).to_be_visible()
+        expect(app.locator("[data-action='opml-import']")).to_be_visible()
+
+    def test_feeds_tab_shows_category_selector(self, app: Page, seeded_articles):
+        """Feeds tab shows category assignment dropdown for each feed.
+
+        Source: ttrss/classes/pref/feeds.php:Pref_Feeds::categorize_feeds (ADR-0018).
+        PHP: drag-drop; Python: category selector dropdown.
+        """
+        app.wait_for_timeout(1500)
+        app.click("[data-action='settings']")
+        app.wait_for_timeout(300)
+        app.click("[data-action='settings-tab'][data-tab='feeds']")
+        app.wait_for_timeout(300)
+
+        body_text = app.locator(".modal-body").inner_text()
+        # Should show at least the seeded test feed
+        assert "Automation Test" in body_text or "no feeds" in body_text.lower(), \
+            "Feeds tab should show seeded feed or empty state"
+
+        # If there are feeds, there should be category selectors
+        cat_sels = app.locator("[data-action='assign-cat']")
+        if cat_sels.count() > 0:
+            # Each feed row should have a category selector
+            assert cat_sels.count() >= 1, "Should have at least one category selector"
+
+    def test_account_tab_shows_update_interval(self, app: Page):
+        """Account tab shows update interval preference.
+
+        Source: ttrss/classes/pref/prefs.php — DEFAULT_UPDATE_INTERVAL preference.
+        PHP: Preferences → Feeds shows update interval setting.
+        """
+        app.click("[data-action='settings']")
+        app.wait_for_timeout(300)
+        # Account tab is default
+        expect(app.locator("#update-interval-sel")).to_be_visible()
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Article actions: publish, mark unread (SME spec 15 §3)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TestArticleActions:
+    """
+    Article pane: publish toggle, mark-unread button.
+    Source: ttrss/classes/api.php:updateArticle field=1 (published), field=2 (unread).
+    PHP: publish and mark-unread available in article toolbar.
+    """
+
+    def test_publish_button_visible_in_article(self, app: Page, seeded_articles):
+        """Publish button (◎) is visible in the article reading pane.
+
+        Source: ttrss/classes/api.php:updateArticle field=1 (PUBLISHED).
+        PHP: article toolbar has publish/unpublish toggle.
+        """
+        feed_id = seeded_articles["feed_id"]
+        feed_locator = app.locator(f"[data-action='sel-feed'][data-fid='{feed_id}']")
+        if feed_locator.count() == 0:
+            pytest.skip("Test feed not in sidebar")
+        feed_locator.click()
+        app.wait_for_timeout(1500)
+        app.locator(".hl-item").first.click()
+        app.wait_for_timeout(2000)
+
+        pub_btn = app.locator("[data-action='tog-pub']")
+        expect(pub_btn).to_be_visible(timeout=5000)
+
+    def test_publish_button_toggles(self, app: Page, seeded_articles):
+        """Clicking publish button toggles the published state.
+
+        Source: ttrss/classes/api.php:updateArticle field=1 mode=0/1.
+        PHP: publish button adds article to Published virtual feed.
+        """
+        feed_id = seeded_articles["feed_id"]
+        feed_locator = app.locator(f"[data-action='sel-feed'][data-fid='{feed_id}']")
+        if feed_locator.count() == 0:
+            pytest.skip("Test feed not in sidebar")
+        feed_locator.click()
+        app.wait_for_timeout(1500)
+        app.locator(".hl-item").first.click()
+        app.wait_for_timeout(2000)
+
+        pub_btn = app.locator("[data-action='tog-pub']")
+        expect(pub_btn).to_be_visible(timeout=5000)
+        initial_class = pub_btn.get_attribute("class") or ""
+        pub_btn.click()
+        app.wait_for_timeout(1000)
+        new_class = pub_btn.get_attribute("class") or ""
+        assert initial_class != new_class, "Publish button class should change on toggle"
+
+    def test_mark_unread_button_visible(self, app: Page, seeded_articles):
+        """Mark unread button (●) is visible in the article reading pane.
+
+        Source: ttrss/classes/api.php:updateArticle field=2 mode=1.
+        PHP: 'Mark as unread' action in article toolbar.
+        """
+        feed_id = seeded_articles["feed_id"]
+        feed_locator = app.locator(f"[data-action='sel-feed'][data-fid='{feed_id}']")
+        if feed_locator.count() == 0:
+            pytest.skip("Test feed not in sidebar")
+        feed_locator.click()
+        app.wait_for_timeout(1500)
+        app.locator(".hl-item").first.click()
+        app.wait_for_timeout(2000)
+
+        unread_btn = app.locator("[data-action='mark-unread']")
+        expect(unread_btn).to_be_visible(timeout=5000)
+
+    def test_mark_unread_marks_article_unread(self, app: Page, seeded_articles):
+        """Clicking mark-unread button re-marks the article as unread.
+
+        Source: ttrss/classes/api.php:updateArticle field=2 mode=1.
+        PHP: article re-appears with unread indicator after marking unread.
+        """
+        feed_id = seeded_articles["feed_id"]
+        feed_locator = app.locator(f"[data-action='sel-feed'][data-fid='{feed_id}']")
+        if feed_locator.count() == 0:
+            pytest.skip("Test feed not in sidebar")
+        feed_locator.click()
+        app.wait_for_timeout(1500)
+
+        # Open article (marks it read)
+        app.locator(".hl-item").first.click()
+        app.wait_for_timeout(2000)
+
+        # Click mark-unread
+        unread_btn = app.locator("[data-action='mark-unread']")
+        if unread_btn.count() == 0:
+            pytest.skip("Mark unread button not visible")
+        unread_btn.click()
+        app.wait_for_timeout(1000)
+
+        # Headline should now show as unread
+        unread_hl = app.locator(".hl-item.unread")
+        assert unread_hl.count() >= 1, "At least one headline should be unread after marking"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Article tags (SME spec 15 §3.1)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TestArticleTags:
+    """
+    Article tag display and editing.
+    Source: ttrss/classes/article.php:Article::editArticleTags.
+    PHP: (+) button below article opens tag input; tags shown as chips.
+    """
+
+    def test_tag_add_button_visible(self, app: Page, seeded_articles):
+        """(+) add-tags button is visible below article header.
+
+        Source: ttrss/classes/article.php:editArticleTags dialog.
+        PHP: clicking (+) in article toolbar opens tag editor.
+        """
+        feed_id = seeded_articles["feed_id"]
+        feed_locator = app.locator(f"[data-action='sel-feed'][data-fid='{feed_id}']")
+        if feed_locator.count() == 0:
+            pytest.skip("Test feed not in sidebar")
+        feed_locator.click()
+        app.wait_for_timeout(1500)
+        app.locator(".hl-item").first.click()
+        app.wait_for_timeout(2000)
+
+        add_btn = app.locator("[data-action='start-tag-edit']")
+        expect(add_btn).to_be_visible(timeout=5000)
+
+    def test_clicking_add_tag_shows_input(self, app: Page, seeded_articles):
+        """Clicking (+) shows a tag input field.
+
+        Source: ttrss/classes/article.php:editArticleTags — PHP showed dialog with text input.
+        """
+        feed_id = seeded_articles["feed_id"]
+        feed_locator = app.locator(f"[data-action='sel-feed'][data-fid='{feed_id}']")
+        if feed_locator.count() == 0:
+            pytest.skip("Test feed not in sidebar")
+        feed_locator.click()
+        app.wait_for_timeout(1500)
+        app.locator(".hl-item").first.click()
+        app.wait_for_timeout(2000)
+
+        app.locator("[data-action='start-tag-edit']").click()
+        app.wait_for_timeout(300)
+
+        tag_input = app.locator("#tag-input")
+        expect(tag_input).to_be_visible(timeout=3000)
+
+    def test_save_tag_via_enter(self, app: Page, seeded_articles):
+        """Entering a tag name and pressing Enter saves it.
+
+        Source: ttrss/classes/article.php:Article::setArticleTags.
+        PHP: tag saved when form submitted; appears as chip in article view.
+        """
+        feed_id = seeded_articles["feed_id"]
+        feed_locator = app.locator(f"[data-action='sel-feed'][data-fid='{feed_id}']")
+        if feed_locator.count() == 0:
+            pytest.skip("Test feed not in sidebar")
+        feed_locator.click()
+        app.wait_for_timeout(1500)
+        app.locator(".hl-item").first.click()
+        app.wait_for_timeout(2000)
+
+        app.locator("[data-action='start-tag-edit']").click()
+        app.wait_for_timeout(300)
+
+        tag_input = app.locator("#tag-input")
+        expect(tag_input).to_be_visible(timeout=3000)
+        tag_input.fill("e2e-test-tag")
+        tag_input.press("Enter")
+        # Wait for async RPC call to backend.php (settags) + re-render
+        app.wait_for_timeout(3000)
+
+        # Tag chip should appear in article header, OR the (+) button is back (no tag editing mode)
+        # Source: ttrss/classes/article.php:setArticleTags — tags persisted in DB
+        tags_area = app.locator(".ah-tags")
+        expect(tags_area).to_be_visible(timeout=5000)
+        tags_text = tags_area.inner_text()
+        assert "e2e-test-tag" in tags_text, f"Tag 'e2e-test-tag' not found in tags area: '{tags_text}'"

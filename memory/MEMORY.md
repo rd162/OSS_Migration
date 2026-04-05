@@ -145,6 +145,14 @@ Run: `just test-int` (requires docker compose services on :5433/:6380)
 | [0014](../docs/decisions/0014-feed-parsing-library.md) | Feed parsing library (feedparser) | accepted |
 | [0015](../docs/decisions/0015-http-client.md) | HTTP client (httpx) | accepted |
 | [0016](../docs/decisions/0016-semantic-verification.md) | Semantic verification methodology | accepted |
+| [0017](../docs/decisions/0017-frontend-spa-vanilla-js.md) | Vanilla JS SPA replaces Dojo (ADR-0004 resolved) | accepted |
+| [0018](../docs/decisions/0018-drag-drop-deferred.md) | Drag-drop category assignment deferred; dropdown used | accepted |
+| [0019](../docs/decisions/0019-preferences-modal-pattern.md) | Simplified in-app preferences modal (tabbed) | accepted |
+
+## SME Review Artifacts
+
+- [SME Review 2026-04-06](project/sme-review-2026-04-06.md) — Demo walkthrough (7 areas), test scenario matrix (13 categories), gaps: Aggregation/Display, Plugins/Themes, Preferences, i18n
+- [spec-15 SME Review](../specs/architecture/15-sme-review.md) — Full functional inventory from demo + test spreadsheet; canonical gap list
 
 ## Archive (superseded — kept for audit trail)
 

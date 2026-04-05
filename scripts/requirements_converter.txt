@@ -1,0 +1,32 @@
+# Document Converter Requirements
+# Install with: pip install -r requirements_converter.txt
+
+# Markdown Converters
+markitdown[all]>=0.0.1
+docling>=2.0.0
+
+# Image Processing
+pyvips>=2.2.0
+Pillow>=10.0.0
+
+# Document Processing
+python-pptx>=0.6.21
+openpyxl>=3.1.0
+python-docx>=1.1.0
+
+# DOCX → PDF (macOS/Windows via Word; Linux via LibreOffice)
+docx2pdf>=0.1.8
+
+# PDF Processing (fallback page-count + rendering)
+PyMuPDF>=1.23.0
+
+# Archive support
+py7zr>=0.20.0          # .7z archives (optional — skipped gracefully if absent)
+
+# Video processing (optional — skipped gracefully if absent)
+openai-whisper>=20231117    # Speech-to-text VTT subtitles
+scenedetect[opencv]>=0.6.0  # Scene-change detection for cadre images
+opencv-python-headless>=4.8.0
+
+# Utilities
+tqdm>=4.66.0

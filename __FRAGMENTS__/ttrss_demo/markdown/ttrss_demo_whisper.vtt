@@ -1,0 +1,338 @@
+WEBVTT
+
+00:00.000 --> 00:04.800
+Hello everyone!
+
+00:04.800 --> 00:10.680
+In this video we'll be talking about tiny, tiny RSS.
+
+00:10.680 --> 00:18.800
+It is a self-hosted web application that aggregates RSS or atom feeds, allowing users
+
+00:18.800 --> 00:27.480
+to subscribe to news, blogs and podcasts and read them in one place with filtering and
+
+00:27.480 --> 00:31.440
+tugging.
+
+00:31.440 --> 00:37.580
+For the accessing for the first time, we will use the default admin account and default
+
+00:37.580 --> 00:49.800
+profile.
+
+00:49.800 --> 00:57.140
+Once you are logged in, on the left pane you will find your feed categories and
+
+00:57.140 --> 01:00.620
+subscriptions.
+
+01:00.620 --> 01:13.260
+The main area displays your articles, which you can quickly toggle between red and red posts.
+
+01:13.260 --> 01:21.980
+What actually RSS is, RSS stands for really simple syndication and the current implementation
+
+01:21.980 --> 01:26.380
+version of this stack is 2.0.
+
+01:26.380 --> 01:34.060
+RSS consists of two components, RSS readers and RSS feeds.
+
+01:34.060 --> 01:38.060
+Fits are actually what you will subscribe to.
+
+01:38.060 --> 01:47.060
+They are just XML files, a lot of websites have that can be read by the feed reader.
+
+01:47.060 --> 01:58.460
+It contains all articles, videos, posts, from source and the readages displays them in
+
+01:58.460 --> 02:02.820
+whatever order you choose.
+
+02:02.820 --> 02:10.900
+When a website publishes new articles, the feed updates and if you read it gets a new
+
+02:10.900 --> 02:17.780
+stuff and displays it for the user.
+
+02:17.780 --> 02:33.740
+To add a new feed, just open a website you are interesting in and look for an icon with RSS
+
+02:33.740 --> 02:35.740
+feed.
+
+02:35.740 --> 02:42.980
+It looks like this.
+
+02:42.980 --> 02:57.900
+Copying address of such an icon and in the TTRSS application, click on actions drop down
+
+02:57.900 --> 03:08.860
+menu and select subscribe to feed item.
+
+03:08.860 --> 03:22.620
+Paste copy link address into URL field and click subscribe button.
+
+03:22.620 --> 03:49.060
+Okay, let's add another one feed.
+
+03:49.060 --> 03:57.020
+After some time feeds with articles for the last 24 hours will be displayed in folder
+
+03:57.020 --> 04:04.980
+uncategorized.
+
+04:04.980 --> 04:12.500
+We can organize them into categories and tag them for the fast navigation.
+
+04:12.500 --> 04:18.980
+To create a category, click actions drop down menu and select preferences.
+
+04:18.980 --> 04:36.060
+Then click on feed stop and then click on categories drop down menu to add category.
+
+04:36.060 --> 04:47.260
+Let's add the title tag and click on button.
+
+04:47.260 --> 04:53.580
+category was named tag is created.
+
+04:53.580 --> 05:07.220
+Let's add another category called news.
+
+05:07.220 --> 05:14.300
+We have now two newly added categories.
+
+05:14.300 --> 05:19.980
+The assigned feed to a category, we need to drag and drop it into a desired category
+
+05:19.980 --> 05:36.060
+folder.
+
+05:36.060 --> 05:44.820
+Then click exit preferences.
+
+05:44.820 --> 05:58.580
+Now we can see how our feeds located on the specific category folder, news and tag.
+
+05:58.580 --> 06:15.140
+We need feed, select feed, click actions and select edit this feed.
+
+06:15.140 --> 06:31.540
+We can change any of available fields here, for example feed title.
+
+06:31.540 --> 06:41.580
+Then click save button and changes will apply.
+
+06:41.580 --> 06:58.980
+While viewing articles, we can mark some of them as start by clicking on star icon.
+
+06:58.980 --> 07:07.700
+Same from another feed.
+
+07:07.700 --> 07:28.660
+Then they appear in start articles folder.
+
+07:28.660 --> 07:45.060
+Moving through the articles, they become red automatically.
+
+07:45.060 --> 07:54.420
+We can also mark item as red or unread for simply.
+
+07:54.420 --> 08:09.860
+Select desired articles and choose under adoption from filtering drop down menu.
+
+08:09.860 --> 08:20.740
+The article selected and let's make it under red.
+
+08:20.740 --> 08:25.500
+Click on the article appear to be unread.
+
+08:25.500 --> 08:41.260
+To remove feed, select feed, click on right mouse button and select edit feed from drop
+
+08:41.260 --> 08:47.260
+down context menu.
+
+08:47.260 --> 08:51.580
+Click in alert window.
+
+08:51.580 --> 08:59.260
+The feed will be removed with all its content.
+
+08:59.260 --> 09:06.580
+TTRSS application uses background process to update feeds automatically.
+
+09:06.580 --> 09:09.380
+Add regular intervals.
+
+09:09.420 --> 09:15.140
+Typically it's a Chrome job or diamond.
+
+09:15.140 --> 09:25.300
+By default this interval is set to set in minutes but can be changed.
+
+09:25.380 --> 09:33.060
+Now let's change it to 15 minutes.
+
+09:33.060 --> 09:42.300
+After changes, click save configuration.
+
+09:42.300 --> 09:49.300
+attering mouse pointer on a feed.
+
+09:49.300 --> 09:58.500
+We can see a time of the last feed update.
+
+09:58.500 --> 10:15.900
+We can also force feed update by clicking on feed title.
+
+10:15.900 --> 10:23.540
+All articles from all feeds are collected in all articles folder.
+
+10:23.540 --> 10:30.100
+For the fastest search of articles we can use tags.
+
+10:30.100 --> 10:42.300
+Some articles might already have tags.
+
+10:42.300 --> 10:53.140
+And some of them do not have any tags.
+
+10:53.140 --> 11:09.060
+Click on plus sign button and add tags separated by commas.
+
+11:09.060 --> 11:14.180
+Click save button.
+
+11:14.180 --> 11:44.140
+We can then select articles which should be displayed by clicking on tag name.
+
+11:44.420 --> 12:06.420
+We can also use select by tag option from actions menu.
+
+12:06.420 --> 12:19.820
+For example I selected Linux kernel keyword and I can see an article which contains Linux
+
+12:19.820 --> 12:26.180
+kernel.
+
+12:26.180 --> 12:32.420
+We can also create filters to out-to-tag articles.
+
+12:32.460 --> 12:44.060
+For example create filter to tag all articles with Google as tag.
+
+12:44.060 --> 12:55.300
+Go to preferences, click on filters, top, create filter.
+
+12:55.300 --> 13:14.620
+Let's create filter with caption.
+
+13:14.620 --> 13:42.260
+Add new rule and apply action.
+
+13:42.260 --> 13:49.260
+This is tested.
+
+13:49.260 --> 13:55.940
+We can see that two articles are caged and clicked.
+
+13:55.940 --> 14:01.700
+One filter is created.
+
+14:01.700 --> 14:10.180
+Exit preferences.
+
+14:10.180 --> 14:23.060
+We can also create filters to out-to-mark articles as read or out-to-delete based on keywords.
+
+14:23.060 --> 14:28.540
+We can host the TRS application for multiple users.
+
+14:28.540 --> 14:37.380
+Each with their own feed list, preferences and filters.
+
+14:37.380 --> 14:53.300
+In actions preferences, choose top users and create new user.
+
+15:07.380 --> 15:22.340
+And try to login with another user.
+
+15:37.380 --> 16:01.140
+Log out and login as admin.
+
+16:01.140 --> 16:10.380
+If we need to migrate feeds from another reader or back-the-map, then you can access support
+
+16:10.380 --> 16:26.460
+a HTML, import and export.
+
+16:26.460 --> 16:36.620
+Opemail files are a universal format supported by nearly every RSS reader.
+
+16:36.620 --> 16:40.300
+Steps for export.
+
+16:40.300 --> 16:50.540
+Go to preferences, click on feed, top, click export, opemail.
+
+16:50.540 --> 17:05.180
+Save opemail file locally.
+
+17:05.180 --> 17:31.900
+To import opemail, click import my opemail file by choosing first.
+
+17:31.900 --> 17:52.940
+And everything has imported.
+
+17:52.940 --> 18:03.100
+Exit preferences.
+
+18:03.100 --> 18:14.340
+So tiny tiny RSS is written in PHP and works with Postgres or MySQL database.
+
+18:14.340 --> 18:24.100
+You can deploy it on any Linux based server manually or using Docker.
+
+18:24.100 --> 18:43.100
+In my case, application is running as Docker container.
+
+18:43.100 --> 18:48.140
+Installation of TTRSS application is quite easy.
+
+18:48.140 --> 19:11.820
+This is the clone of GitHub master branch and run Docker ComposeUpCommand.
+
+19:18.140 --> 19:44.500
+OK, let's install it from scratch.
+
+19:48.140 --> 20:02.720
+Then copy copemil.
+
+20:03.000 --> 20:06.640
+And add darker
+
+20:09.040 --> 20:10.800
+一部分
+
+20:32.720 --> 20:56.720
+It will take for a while.
+
+20:56.720 --> 21:06.720
+It will take for a while.
+
+21:27.720 --> 21:41.720
+Now application is up and running.
+
+21:41.720 --> 21:47.720
+Yep.
+
+21:47.720 --> 21:51.720
+And then, did it.
+
+21:51.720 --> 21:57.720
+Thanks for attention.
+

@@ -1388,6 +1388,24 @@ def _article_remove_from_label():
     return jsonify({"status": "OK"})
 
 
+def _article_set_tags():
+    """Replace all tags for an article (called from the SPA article pane).
+
+    Source: ttrss/classes/article.php:Article::editArticleTags (lines 222-284)
+    Adapted: R13 — accepts form params; returns updated tag list.
+    New: exposed as article/settags (no direct PHP RPC equivalent — PHP used form dialog).
+    """
+    from ttrss.articles.tags import setArticleTags
+
+    art_id = int(_param("id", 0))
+    tags_str = _param("tags", "")
+    tags = [t.strip() for t in tags_str.split(",") if t.strip()] if tags_str else []
+    if art_id:
+        setArticleTags(db.session, art_id, current_user.id, tags)
+        db.session.commit()
+    return jsonify({"status": "OK", "tags": tags})
+
+
 # ===========================================================================
 # Dispatch table: (op, method) → handler
 # Source: ttrss/backend.php dispatch pattern
@@ -1440,4 +1458,5 @@ _DISPATCH: dict[tuple[str, str], Any] = {
     ("article", "completetags"):    _article_complete_tags,
     ("article", "assigntolabel"):   _article_assign_to_label,
     ("article", "removefromlabel"): _article_remove_from_label,
+    ("article", "settags"):         _article_set_tags,
 }

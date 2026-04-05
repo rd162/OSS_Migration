@@ -35,14 +35,16 @@ const S = {
   seq:          1,
   user:         null,
   categories:   [],     // [{id, title, unread, order_id}]
-  feeds:        [],     // [{id, title, unread, cat_id, has_icon}]
+  feeds:        [],     // [{id, title, unread, cat_id, has_icon, feed_url}]
   labels:       [],     // [{id, caption, fg_color, bg_color}]
+  filters:      [],     // [{id, title, enabled, rules_summary}]
   catExpanded:  {},     // {cat_id: bool}  default: true
   selectedFeed: null,   // {id, title, unread}
   selectedCat:  null,
   headlines:    [],
   article:      null,
   modal:        null,   // null | 'subscribe' | 'settings'
+  settingsTab:  'account', // 'account' | 'feeds' | 'categories' | 'filters' | 'opml'
   globalUnread: 0,
   loginError:   '',
   viewMode:     VM.ALL, // current headlines filter
@@ -52,6 +54,10 @@ const S = {
   subscribeUrl: '',
   subscribeStatus: '',
   actionsOpen:  false,
+  // Tag editing state
+  tagEditing:   false,
+  tagInput:     '',
+  opmlUrl:      '',
 };
 
 // ── API helper ────────────────────────────────────────────────────────────────
@@ -70,6 +76,31 @@ async function api(op, params = {}) {
     throw Object.assign(new Error(err), { apiError: true });
   }
   return j.content;
+}
+
+// Backend RPC helper — POST /backend.php op=X method=Y (form-encoded)
+// Source: ttrss/backend.php dispatch pattern
+async function rpc(op, method, params = {}) {
+  const fd = new FormData();
+  fd.append('op', op);
+  fd.append('method', method);
+  for (const [k, v] of Object.entries(params)) fd.append(k, String(v));
+  const resp = await fetch('/backend.php', { method: 'POST', credentials: 'include', body: fd });
+  return resp.json();
+}
+
+// Prefs REST helper
+async function prefsRequest(method, path, body = null) {
+  const opts = { method, credentials: 'include' };
+  if (body instanceof FormData) {
+    opts.body = body;
+  } else if (body) {
+    opts.headers = { 'Content-Type': 'application/json' };
+    opts.body = JSON.stringify(body);
+  }
+  const resp = await fetch('/prefs' + path, opts);
+  if (!resp.ok && resp.status !== 200) throw new Error(`HTTP ${resp.status}`);
+  return resp.json();
 }
 
 // ── Hash routing ──────────────────────────────────────────────────────────────
@@ -383,6 +414,17 @@ function renderArticleContent() {
   if (!col || !S.article) return;
   const a = S.article;
   const date = a.updated ? new Date(a.updated * 1000).toLocaleString() : '';
+  const tags = Array.isArray(a.tags) ? a.tags : [];
+
+  // Tags row — Source: ttrss/js/article.js + ttrss/classes/article.php:editArticleTags
+  const tagsHtml = `
+    <div class="ah-tags" id="ah-tags">
+      ${tags.map(t => `<span class="tag-chip" data-action="del-tag" data-tag="${esc(t)}" title="Remove tag">${esc(t)} ✕</span>`).join('')}
+      ${S.tagEditing
+        ? `<input id="tag-input" class="tag-input" placeholder="tag1, tag2…" value="${esc(S.tagInput)}" autofocus>`
+        : `<button class="tag-add-btn" data-action="start-tag-edit" title="Add tags">(+)</button>`
+      }
+    </div>`;
 
   // Source: ttrss/js/article.js — sandboxed iframe for XSS isolation (R08)
   // Use contentDocument.write() instead of srcdoc: avoids attribute-encoding issues
@@ -391,6 +433,8 @@ function renderArticleContent() {
     <div class="article-header">
       <div class="ah-title-row">
         <button class="ah-btn ${a.marked ? 'ah-star-on' : ''}" data-action="tog-star" data-id="${a.id}" title="${a.marked ? 'Unstar' : 'Star'}">★</button>
+        <button class="ah-btn ${a.published ? 'ah-pub-on' : ''}" data-action="tog-pub" data-id="${a.id}" title="${a.published ? 'Unpublish' : 'Publish'}">◎</button>
+        <button class="ah-btn ah-unread-btn" data-action="mark-unread" data-id="${a.id}" title="Mark as unread">●</button>
         <h1 class="ah-title"><a href="${esc(a.link||'#')}" target="_blank" rel="noopener">${esc(a.title||'(no title)')}</a></h1>
       </div>
       <div class="ah-meta">
@@ -399,6 +443,7 @@ function renderArticleContent() {
         ${a.feed_title ? `<span class="ah-feed">${esc(a.feed_title)}</span>` : ''}
         <a class="ah-link" href="${esc(a.link||'#')}" target="_blank" rel="noopener">Open original ↗</a>
       </div>
+      ${tagsHtml}
     </div>
     <iframe class="article-frame" id="article-iframe"
             sandbox="allow-same-origin allow-popups"
@@ -424,6 +469,104 @@ function renderArticleContent() {
       </head><body>${a.content || '<p><em>No content available.</em></p>'}</body></html>`);
       iDoc.close();
     }
+  }
+
+  // Bind tag input events after rendering into article-col (outside #app)
+  _bindArticleColEvents(col);
+}
+
+// Bind events inside article-col (rendered outside #app, so needs separate binding)
+function _bindArticleColEvents(col) {
+  // Tag input — save on Enter or blur
+  const tagInput = col.querySelector('#tag-input');
+  if (tagInput) {
+    tagInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); doSaveTags(); }
+      if (e.key === 'Escape') { S.tagEditing = false; S.tagInput = ''; renderArticleContent(); }
+    });
+    tagInput.addEventListener('blur', () => {
+      // Small delay to allow click on save button
+      setTimeout(() => { if (S.tagEditing) doSaveTags(); }, 200);
+    });
+    tagInput.addEventListener('input', e => { S.tagInput = e.target.value; });
+  }
+
+  // Delegated click for article-col actions
+  col.addEventListener('click', e => {
+    const el = e.target.closest('[data-action]');
+    if (!el) return;
+    const a = el.dataset.action;
+
+    if (a === 'tog-star') {
+      const id = parseInt(el.dataset.id);
+      if (!S.article || S.article.id !== id) return;
+      const starred = !S.article.marked;
+      api('updateArticle', { article_ids: String(id), field: 0, mode: starred ? 1 : 0 })
+        .then(() => {
+          S.article.marked = starred;
+          const h = S.headlines.find(x => x.id === id);
+          if (h) h.marked = starred;
+          renderArticleContent();
+          renderHLOnly();
+        }).catch(console.error);
+    }
+    else if (a === 'tog-pub') {
+      // Source: ttrss/classes/api.php:updateArticle field=1 (PUBLISHED)
+      const id = parseInt(el.dataset.id);
+      if (!S.article || S.article.id !== id) return;
+      const pub = !S.article.published;
+      api('updateArticle', { article_ids: String(id), field: 1, mode: pub ? 1 : 0 })
+        .then(() => {
+          S.article.published = pub;
+          renderArticleContent();
+        }).catch(console.error);
+    }
+    else if (a === 'mark-unread') {
+      // Source: ttrss/classes/api.php:updateArticle field=2 (UNREAD) mode=1
+      const id = parseInt(el.dataset.id);
+      if (!S.article || S.article.id !== id) return;
+      api('updateArticle', { article_ids: String(id), field: 2, mode: 1 })
+        .then(() => {
+          S.article.unread = true;
+          const h = S.headlines.find(x => x.id === id);
+          if (h) { h.unread = true; }
+          S.globalUnread += 1;
+          renderHLOnly();
+          renderArticleContent();
+        }).catch(console.error);
+    }
+    else if (a === 'start-tag-edit') {
+      S.tagEditing = true;
+      S.tagInput = (S.article?.tags || []).join(', ');
+      renderArticleContent();
+    }
+    else if (a === 'del-tag') {
+      const tag = el.dataset.tag;
+      if (!S.article) return;
+      const newTags = (S.article.tags || []).filter(t => t !== tag);
+      doSaveTagList(newTags);
+    }
+  });
+}
+
+async function doSaveTags() {
+  const raw = S.tagInput.trim();
+  const newTags = raw ? raw.split(',').map(t => t.trim()).filter(Boolean) : [];
+  await doSaveTagList(newTags);
+}
+
+async function doSaveTagList(tags) {
+  if (!S.article) return;
+  const id = S.article.id;
+  S.tagEditing = false;
+  S.tagInput = '';
+  try {
+    // Source: ttrss/classes/article.php:Article::editArticleTags
+    await rpc('article', 'settags', { id, tags: tags.join(',') });
+    S.article.tags = tags;
+    renderArticleContent();
+  } catch (e) {
+    alert('Error saving tags: ' + e.message);
   }
 }
 
@@ -458,9 +601,17 @@ function renderSubscribeModal() {
   </div>`;
 }
 
-// Source: ttrss/js/prefs.js — preferences/settings dialog
+// Source: ttrss/js/prefs.js — preferences/settings dialog (ADR-0019: simplified modal pattern)
 function renderSettingsModal() {
-  const realFeeds = S.feeds.filter(f => f.id > 0);
+  const tab = S.settingsTab;
+  const tabs = [
+    ['account',    'Account'],
+    ['feeds',      'Feeds'],
+    ['categories', 'Categories'],
+    ['filters',    'Filters'],
+    ['opml',       'OPML'],
+  ];
+
   return `
   <div class="modal-bg" id="modal-overlay">
     <div class="modal-dlg modal-wide">
@@ -468,30 +619,165 @@ function renderSettingsModal() {
         <span>Preferences</span>
         <button class="modal-close" data-action="close-modal">✕</button>
       </div>
+      <div class="modal-tabs">
+        ${tabs.map(([t, label]) =>
+          `<button class="modal-tab ${tab === t ? 'active' : ''}" data-action="settings-tab" data-tab="${t}">${label}</button>`
+        ).join('')}
+      </div>
       <div class="modal-body">
-        <div class="pref-section">
-          <h3>Account</h3>
-          <p>Logged in as <strong>${esc(S.user||'')}</strong></p>
-        </div>
-        <div class="pref-section">
-          <h3>Subscribed feeds (${realFeeds.length})</h3>
-          ${realFeeds.length ? `
-            <div class="feeds-mgr">
-              ${realFeeds.map(f => `
-                <div class="feed-mgr-row">
-                  <span class="fmr-title">${esc(f.title)}</span>
-                  <span class="fmr-url">${esc(f.feed_url||'')}</span>
-                  <button class="btn-danger-sm" data-action="unsub-feed" data-fid="${f.id}">Remove</button>
-                </div>`).join('')}
-            </div>` : `<p class="muted">No feeds subscribed yet.</p>`}
-          <button class="btn-ok" style="margin-top:10px" data-action="subscribe">+ Subscribe to new feed</button>
-        </div>
+        ${tab === 'account'    ? renderSettingsAccount()    : ''}
+        ${tab === 'feeds'      ? renderSettingsFeeds()      : ''}
+        ${tab === 'categories' ? renderSettingsCategories() : ''}
+        ${tab === 'filters'    ? renderSettingsFilters()    : ''}
+        ${tab === 'opml'       ? renderSettingsOPML()       : ''}
       </div>
       <div class="modal-btns">
         <button class="btn-cancel" data-action="close-modal">Close</button>
       </div>
     </div>
   </div>`;
+}
+
+// ── Settings tabs ─────────────────────────────────────────────────────────────
+
+function renderSettingsAccount() {
+  return `
+    <div class="pref-section">
+      <h3>Account</h3>
+      <p>Logged in as <strong>${esc(S.user||'')}</strong></p>
+    </div>
+    <div class="pref-section">
+      <h3>Feed Update Interval</h3>
+      <p>Default update interval for new feeds:</p>
+      <div class="pref-row">
+        <select id="update-interval-sel" class="pref-select">
+          <option value="15">15 minutes</option>
+          <option value="30" selected>30 minutes</option>
+          <option value="60">60 minutes</option>
+          <option value="120">2 hours</option>
+          <option value="0">Disabled</option>
+        </select>
+        <button class="btn-ok" data-action="save-update-interval">Save</button>
+      </div>
+    </div>`;
+}
+
+function renderSettingsFeeds() {
+  const realFeeds = S.feeds.filter(f => f.id > 0);
+  // Build options for category select
+  const catOptions = [
+    `<option value="0">Uncategorized</option>`,
+    ...S.categories.map(c => `<option value="${c.id}">${esc(c.title)}</option>`),
+  ].join('');
+
+  return `
+    <div class="pref-section">
+      <h3>Subscribed feeds (${realFeeds.length})</h3>
+      ${realFeeds.length ? `
+        <div class="feeds-mgr">
+          ${realFeeds.map(f => `
+            <div class="feed-mgr-row" data-fid="${f.id}">
+              <span class="fmr-title">${esc(f.title)}</span>
+              <select class="fmr-cat-sel pref-select-sm" data-action="assign-cat" data-fid="${f.id}">
+                ${S.categories.map(c =>
+                  `<option value="${c.id}" ${f.cat_id === c.id ? 'selected' : ''}>${esc(c.title)}</option>`
+                ).join('')}
+                <option value="0" ${!f.cat_id || f.cat_id <= 0 ? 'selected' : ''}>Uncategorized</option>
+              </select>
+              <button class="btn-danger-sm" data-action="unsub-feed" data-fid="${f.id}">Remove</button>
+            </div>`).join('')}
+        </div>` : `<p class="muted">No feeds subscribed yet.</p>`}
+      <button class="btn-ok" style="margin-top:10px" data-action="subscribe">+ Subscribe to new feed</button>
+    </div>`;
+}
+
+function renderSettingsCategories() {
+  return `
+    <div class="pref-section">
+      <h3>Categories</h3>
+      ${S.categories.length ? `
+        <div class="cat-mgr">
+          ${S.categories.map(c => `
+            <div class="cat-mgr-row">
+              <span class="cat-mgr-title">${esc(c.title)}</span>
+              <button class="btn-danger-sm" data-action="del-cat" data-cat-id="${c.id}" title="Delete category">✕</button>
+            </div>`).join('')}
+        </div>` : `<p class="muted">No categories yet.</p>`}
+      <div class="add-cat-form">
+        <input id="new-cat-title" class="modal-input-sm" placeholder="New category name…" type="text">
+        <button class="btn-ok" data-action="add-cat">Add category</button>
+      </div>
+    </div>`;
+}
+
+function renderSettingsFilters() {
+  return `
+    <div class="pref-section">
+      <h3>Filters</h3>
+      ${S.filters.length ? `
+        <div class="filter-mgr">
+          ${S.filters.map(f => `
+            <div class="filter-mgr-row">
+              <span class="filter-mgr-title ${f.enabled ? '' : 'filter-disabled'}">${esc(f.title || f.rules_summary || '(untitled)')}</span>
+              <button class="btn-danger-sm" data-action="del-filter" data-filter-id="${f.id}" title="Delete filter">✕</button>
+            </div>`).join('')}
+        </div>` : `<p class="muted">No filters yet.</p>`}
+    </div>
+    <div class="pref-section">
+      <h3>Create filter</h3>
+      <div class="filter-form">
+        <div class="filter-form-row">
+          <label>Match type:</label>
+          <select id="filter-type" class="pref-select-sm">
+            <option value="1">Title</option>
+            <option value="4">Content</option>
+            <option value="8">Title or Content</option>
+            <option value="2">Link</option>
+            <option value="3">Author</option>
+          </select>
+        </div>
+        <div class="filter-form-row">
+          <label>Pattern (regex):</label>
+          <input id="filter-regexp" class="modal-input-sm" placeholder="e.g. Google|Apple" type="text">
+        </div>
+        <div class="filter-form-row">
+          <label>Action:</label>
+          <select id="filter-action" class="pref-select-sm">
+            <option value="7">Add tag</option>
+            <option value="4">Mark as read</option>
+            <option value="6">Delete article</option>
+            <option value="5">Publish article</option>
+          </select>
+        </div>
+        <div class="filter-form-row" id="filter-param-row">
+          <label>Tag name:</label>
+          <input id="filter-param" class="modal-input-sm" placeholder="tag name" type="text">
+        </div>
+        <button class="btn-ok" data-action="create-filter">Create filter</button>
+        <span class="filter-status" id="filter-status"></span>
+      </div>
+    </div>`;
+}
+
+function renderSettingsOPML() {
+  return `
+    <div class="pref-section">
+      <h3>Export OPML</h3>
+      <p>Download all your feed subscriptions as an OPML file.</p>
+      <button class="btn-ok" data-action="opml-export">Export OPML…</button>
+      ${S.opmlUrl ? `<p class="muted" style="margin-top:6px">
+        <a href="${esc(S.opmlUrl)}" target="_blank">Download link</a> (copy and save)
+      </p>` : ''}
+    </div>
+    <div class="pref-section">
+      <h3>Import OPML</h3>
+      <p>Import feed subscriptions from an OPML file.</p>
+      <div class="opml-import-form">
+        <input id="opml-file" type="file" accept=".opml,.xml" class="opml-file-input">
+        <button class="btn-ok" data-action="opml-import">Import</button>
+        <span class="filter-status" id="opml-status"></span>
+      </div>
+    </div>`;
 }
 
 // ── Data loaders ──────────────────────────────────────────────────────────────
@@ -520,6 +806,15 @@ async function loadGlobalUnread() {
     const badge = document.querySelector('.fl-unread');
     if (badge) badge.textContent = S.globalUnread > 0 ? S.globalUnread + ' unread' : '';
   } catch (_) {}
+}
+
+async function loadFilters() {
+  try {
+    const data = await prefsRequest('GET', '/filters');
+    S.filters = data.filters || [];
+  } catch (_) {
+    S.filters = [];
+  }
 }
 
 async function loadHeadlines(feedId, reset = true) {
@@ -560,6 +855,8 @@ async function openArticle(id) {
     const items = await api('getArticle', { article_id: id });
     if (!items?.length) return;
     S.article = items[0];
+    S.tagEditing = false;
+    S.tagInput = '';
     renderArticleOnly();  // open article pane without rebuilding sidebar or list
     // Mark read — Source: api.php:updateArticle field=2 (UNREAD), mode=0
     if (S.article.unread) {
@@ -600,6 +897,144 @@ async function doSubscribe() {
   render();
 }
 
+// ── Settings action helpers ───────────────────────────────────────────────────
+
+async function doAddCategory() {
+  const input = document.getElementById('new-cat-title');
+  const title = input?.value?.trim();
+  if (!title) return;
+  try {
+    // Source: ttrss/classes/pref/feeds.php:Pref_Feeds::addCat
+    const fd = new FormData();
+    fd.append('cat', title);
+    await fetch('/prefs/feeds/categories/add', { method: 'POST', credentials: 'include', body: fd });
+    await loadSidebar();
+    // Keep settings modal open on categories tab
+    S.modal = 'settings';
+    S.settingsTab = 'categories';
+    render();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+async function doDeleteCategory(catId) {
+  if (!confirm('Delete this category? Feeds will move to Uncategorized.')) return;
+  try {
+    // Source: ttrss/classes/pref/feeds.php:Pref_Feeds::removeCat
+    await fetch(`/prefs/feeds/categories/${catId}`, { method: 'DELETE', credentials: 'include' });
+    await loadSidebar();
+    S.modal = 'settings';
+    S.settingsTab = 'categories';
+    render();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+async function doAssignFeedCategory(feedId, catId) {
+  try {
+    // Source: ttrss/classes/pref/feeds.php:Pref_Feeds::categorize_feeds
+    const fd = new FormData();
+    fd.append('feed_ids[]', feedId);
+    fd.append('cat_id', catId);
+    await fetch('/prefs/feeds/categorize', { method: 'POST', credentials: 'include', body: fd });
+    // Update local feed cat_id immediately for responsive UI
+    const f = S.feeds.find(x => x.id === feedId);
+    if (f) f.cat_id = parseInt(catId) || null;
+    await loadSidebar();
+  } catch (e) {
+    console.error('assign cat', e);
+  }
+}
+
+async function doCreateFilter() {
+  const regexp  = document.getElementById('filter-regexp')?.value?.trim();
+  const ftype   = document.getElementById('filter-type')?.value || '1';
+  const action  = document.getElementById('filter-action')?.value || '7';
+  const param   = document.getElementById('filter-param')?.value?.trim() || '';
+  const statusEl = document.getElementById('filter-status');
+
+  if (!regexp) { if (statusEl) statusEl.textContent = 'Pattern required.'; return; }
+
+  try {
+    const fd = new FormData();
+    fd.append('enabled', 'true');
+    fd.append('match_any_rule', 'false');
+    fd.append('inverse', 'false');
+    // Rule JSON — Source: ttrss/classes/pref/filters.php:saveRulesAndActions
+    fd.append('rule', JSON.stringify({ reg_exp: regexp, filter_type: parseInt(ftype), feed_id: '' }));
+    // Action JSON
+    fd.append('action', JSON.stringify({ action_id: parseInt(action), action_param: param }));
+
+    await fetch('/prefs/filters', { method: 'POST', credentials: 'include', body: fd });
+    if (statusEl) statusEl.textContent = '✓ Filter created.';
+    await loadFilters();
+    // Refresh filter list in the same tab
+    const body = document.querySelector('.modal-body');
+    if (body) body.innerHTML = renderSettingsFilters();
+  } catch (e) {
+    if (statusEl) statusEl.textContent = 'Error: ' + e.message;
+  }
+}
+
+async function doDeleteFilter(filterId) {
+  if (!confirm('Delete this filter?')) return;
+  try {
+    await fetch(`/prefs/filters/${filterId}`, { method: 'DELETE', credentials: 'include' });
+    await loadFilters();
+    const body = document.querySelector('.modal-body');
+    if (body) body.innerHTML = renderSettingsFilters();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+async function doOPMLExport() {
+  try {
+    // Source: ttrss/classes/dlg.php:Dlg::pubOPMLUrl
+    const fd = new FormData();
+    fd.append('op', 'dlg');
+    fd.append('method', 'pubopmlurl');
+    const resp = await fetch('/backend.php', { method: 'POST', credentials: 'include', body: fd });
+    const data = await resp.json();
+    if (data.url) {
+      S.opmlUrl = data.url;
+      window.open(data.url, '_blank');
+      // Refresh OPML tab to show the URL
+      const body = document.querySelector('.modal-body');
+      if (body) body.innerHTML = renderSettingsOPML();
+    }
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+async function doOPMLImport() {
+  const fileInput = document.getElementById('opml-file');
+  const statusEl = document.getElementById('opml-status');
+  if (!fileInput?.files?.length) {
+    if (statusEl) statusEl.textContent = 'Please select a file.';
+    return;
+  }
+  const fd = new FormData();
+  fd.append('op', 'dlg');
+  fd.append('method', 'importopml');
+  fd.append('opml_file', fileInput.files[0]);
+  try {
+    const resp = await fetch('/backend.php', { method: 'POST', credentials: 'include', body: fd });
+    const data = await resp.json();
+    if (data.status === 'OK') {
+      if (statusEl) statusEl.textContent = `✓ Imported ${data.imported} feed(s).`;
+      await loadSidebar();
+    } else {
+      if (statusEl) statusEl.textContent = 'Error: ' + (data.error || 'unknown');
+    }
+  } catch (e) {
+    if (statusEl) statusEl.textContent = 'Error: ' + e.message;
+  }
+}
+
 // ── Event binding ─────────────────────────────────────────────────────────────
 // bind() is called once on full render. Delegated click handler on root covers
 // all panels — partial updates to inner panels don't need re-binding.
@@ -623,8 +1058,23 @@ function bind() {
 
   // Modal overlay background click
   root.querySelector('#modal-overlay')?.addEventListener('click', e => {
-    if (e.target === e.currentTarget) { S.modal = null; S.subscribeStatus = ''; render(); }
+    if (e.target === e.currentTarget) { S.modal = null; S.subscribeStatus = ''; S.opmlUrl = ''; render(); }
   });
+
+  // Filter action select → show/hide param row
+  const filterActionSel = root.querySelector('#filter-action');
+  if (filterActionSel) {
+    const updateParamRow = () => {
+      const paramRow = root.querySelector('#filter-param-row');
+      const actionLabel = paramRow?.querySelector('label');
+      if (!paramRow) return;
+      const action = filterActionSel.value;
+      // Only tag action needs a param
+      paramRow.style.display = action === '7' ? '' : 'none';
+    };
+    filterActionSel.addEventListener('change', updateParamRow);
+    updateParamRow();
+  }
 
   // Delegated click handler — attach once; survives partial panel updates
   if (_rootBound) return;
@@ -637,7 +1087,9 @@ function bind() {
     if (a === 'logout') {
       api('logout').catch(()=>{}).finally(()=>{
         Object.assign(S, { view:'login', feeds:[], categories:[], headlines:[], article:null,
-                           globalUnread:0, selectedFeed:null, labels:[], user:null });
+                           globalUnread:0, selectedFeed:null, labels:[], user:null,
+                           filters:[], modal:null, opmlUrl:'' });
+        _rootBound = false;
         render();
       });
     }
@@ -649,20 +1101,26 @@ function bind() {
       S.modal = 'subscribe'; S.subscribeStatus = ''; S.actionsOpen = false; render();
     }
     else if (a === 'settings') {
-      S.modal = 'settings'; S.actionsOpen = false; render();
+      loadFilters().then(() => {
+        S.modal = 'settings'; S.actionsOpen = false; render();
+      });
     }
     else if (a === 'close-modal') {
-      S.modal = null; S.subscribeStatus = ''; render();
+      S.modal = null; S.subscribeStatus = ''; S.opmlUrl = ''; render();
     }
     else if (a === 'do-subscribe') {
       doSubscribe();
+    }
+    else if (a === 'settings-tab') {
+      S.settingsTab = el.dataset.tab;
+      render();
     }
     else if (a === 'unsub-feed') {
       const fid = parseInt(el.dataset.fid);
       api('unsubscribeFeed', { feed_id: fid })
         .then(() => {
           if (S.selectedFeed?.id === fid) { S.selectedFeed = null; S.headlines = []; S.article = null; }
-          loadSidebar();
+          loadSidebar().then(() => { S.modal = 'settings'; S.settingsTab = 'feeds'; render(); });
         }).catch(e => alert('Unsubscribe failed: ' + e.message));
     }
     else if (a === 'unsubscribe-current') {
@@ -674,6 +1132,35 @@ function bind() {
           S.selectedFeed = null; S.headlines = []; S.article = null;
           loadSidebar();
         }).catch(e => alert('Error: ' + e.message));
+    }
+    else if (a === 'assign-cat') {
+      // Handled by change event on select — skip click
+    }
+    else if (a === 'add-cat') {
+      doAddCategory();
+    }
+    else if (a === 'del-cat') {
+      doDeleteCategory(parseInt(el.dataset.catId));
+    }
+    else if (a === 'save-update-interval') {
+      const sel = document.getElementById('update-interval-sel');
+      if (sel) {
+        // Source: ttrss/classes/rpc.php:RPC::setpref
+        rpc('rpc', 'setpref', { key: 'DEFAULT_UPDATE_INTERVAL', value: sel.value })
+          .catch(console.error);
+      }
+    }
+    else if (a === 'create-filter') {
+      doCreateFilter();
+    }
+    else if (a === 'del-filter') {
+      doDeleteFilter(parseInt(el.dataset.filterId));
+    }
+    else if (a === 'opml-export') {
+      doOPMLExport();
+    }
+    else if (a === 'opml-import') {
+      doOPMLImport();
     }
     else if (a === 'toggle-cat') {
       const k = el.dataset.cat;
@@ -694,7 +1181,13 @@ function bind() {
     }
     else if (a === 'reload-feed') {
       S.actionsOpen = false;
-      if (S.selectedFeed) loadHeadlines(S.selectedFeed.id);
+      if (S.selectedFeed) {
+        // Force update then reload headlines
+        if (S.selectedFeed.id > 0) {
+          api('updateFeed', { feed_id: S.selectedFeed.id }).catch(()=>{});
+        }
+        loadHeadlines(S.selectedFeed.id);
+      }
     }
     else if (a === 'catchup') {
       if (!S.selectedFeed) return;
@@ -721,19 +1214,15 @@ function bind() {
     else if (a === 'load-more') {
       if (S.selectedFeed && !S.headlinesEnd) loadHeadlines(S.selectedFeed.id, false);
     }
-    else if (a === 'tog-star') {
-      const id = parseInt(el.dataset.id);
-      if (!S.article || S.article.id !== id) return;
-      const starred = !S.article.marked;
-      // Source: ttrss/classes/api.php:updateArticle field=0 (MARKED)
-      api('updateArticle', { article_ids: String(id), field: 0, mode: starred ? 1 : 0 })
-        .then(() => {
-          S.article.marked = starred;
-          const h = S.headlines.find(x => x.id === id);
-          if (h) h.marked = starred;
-          renderArticleOnly();  // only update star button in article header
-          renderHLOnly();       // update star indicator in headline list
-        }).catch(console.error);
+  });
+
+  // Category select change (assign feed to category) — delegated on root
+  root.addEventListener('change', e => {
+    const el = e.target;
+    if (el.dataset.action === 'assign-cat') {
+      const fid = parseInt(el.dataset.fid);
+      const catId = parseInt(el.value) || 0;
+      doAssignFeedCategory(fid, catId);
     }
   });
 }
@@ -741,7 +1230,8 @@ function bind() {
 // Escape key closes modals / actions menu
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    if (S.modal)        { S.modal = null; S.subscribeStatus = ''; render(); }
+    if (S.tagEditing) { S.tagEditing = false; S.tagInput = ''; renderArticleContent(); }
+    else if (S.modal) { S.modal = null; S.subscribeStatus = ''; S.opmlUrl = ''; render(); }
     else if (S.actionsOpen) { S.actionsOpen = false; render(); }
   }
 });

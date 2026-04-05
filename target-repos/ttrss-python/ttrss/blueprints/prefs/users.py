@@ -22,6 +22,19 @@ def _owner_uid() -> int:
     return getattr(current_user, "id", None) or 0
 
 
+def _require_admin():
+    """Return a 403 response if the current user is not an admin (access_level < 10).
+
+    Source: ttrss/classes/pref/users.php:3-12 — before() checks $_SESSION["access_level"] < 10
+    PHP blocks the entire handler class for non-admins; Python enforces per-endpoint.
+    """
+    access_level = getattr(current_user, "access_level", 0) or 0
+    if access_level < 10:
+        from flask import jsonify as _j
+        return _j({"error": "insufficient_access_level"}), 403
+    return None
+
+
 # ---------------------------------------------------------------------------
 # User list (admin tab content)
 # ---------------------------------------------------------------------------
@@ -37,6 +50,10 @@ def users():
             ttrss/classes/pref/users.php:449 — run_hooks(HOOK_PREFS_TAB)
     Adapted: HTML admin panel replaced by JSON payload.
     """
+    err = _require_admin()
+    if err:
+        return err
+
     from ttrss.plugins.manager import get_plugin_manager
 
     pm = get_plugin_manager()
@@ -71,6 +88,10 @@ def user_details(user_id: int):
 
     Source: ttrss/classes/pref/users.php:20 — userdetails / edit (line 101)
     """
+    err = _require_admin()
+    if err:
+        return err
+
     # Source: ttrss/classes/pref/users.php:24-69 — load user row, feed count, article count, feeds
     details = users_crud.get_user_details(user_id)
     if details is None:
@@ -90,6 +111,10 @@ def add_user():
 
     Source: ttrss/classes/pref/users.php:208 — add
     """
+    err = _require_admin()
+    if err:
+        return err
+
     login_name = request.form.get("login", "").strip()
     if not login_name:
         return jsonify({"error": "login_required"}), 400
@@ -116,8 +141,14 @@ def save_user(user_id: int):
 
     Source: ttrss/classes/pref/users.php:175 — editSave
     """
+    err = _require_admin()
+    if err:
+        return err
+
     login_name = request.form.get("login", "").strip()
-    access_level = int(request.form.get("access_level", 0))
+    # Source: ttrss/classes/pref/users.php — only admins can set access_level; cap at 10
+    # to prevent privilege escalation beyond admin (access_level=10 is the max in TT-RSS).
+    access_level = min(int(request.form.get("access_level", 0)), 10)
     email = request.form.get("email", "").strip()
     password = request.form.get("password", "").strip()
 
@@ -141,6 +172,10 @@ def delete_user(user_id: int):
 
     Source: ttrss/classes/pref/users.php:196 — remove
     """
+    err = _require_admin()
+    if err:
+        return err
+
     owner_uid = _owner_uid()
     if user_id == owner_uid:
         return jsonify({"error": "cannot_delete_self"}), 400
@@ -162,6 +197,10 @@ def reset_user_password(user_id: int):
 
     Source: ttrss/classes/pref/users.php:298 — resetPass / resetUserPassword (line 247)
     """
+    err = _require_admin()
+    if err:
+        return err
+
     # Source: ttrss/classes/pref/users.php:256-261 — generate and store new hash
     result = users_crud.reset_user_password(user_id)
     if result is None:

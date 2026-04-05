@@ -121,13 +121,18 @@ class TestPrefsTabHooks:
         mock_pm.hook.hook_prefs_tab.assert_called()
 
     def test_hook_prefs_tab_fires_users(self, app):
-        """HOOK_PREFS_TAB fires in users handler."""
+        """HOOK_PREFS_TAB fires in users handler (requires admin access_level=10)."""
         mock_pm = MagicMock()
         mock_pm.hook.hook_prefs_tab = MagicMock(return_value=[])
         mock_pm.hook.hook_prefs_tab_section = MagicMock(return_value=[])
 
+        mock_admin = MagicMock()
+        mock_admin.id = 1
+        mock_admin.access_level = 10  # admin
+
         with app.test_request_context():
-            with patch("ttrss.plugins.manager.get_plugin_manager", return_value=mock_pm):
+            with patch("ttrss.plugins.manager.get_plugin_manager", return_value=mock_pm), \
+                 patch("ttrss.blueprints.prefs.users.current_user", mock_admin):
                 from ttrss.blueprints.prefs import users
                 _unwrap(users.users)()
 

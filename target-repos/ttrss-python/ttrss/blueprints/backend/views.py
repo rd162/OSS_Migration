@@ -697,7 +697,9 @@ def _rpc_setpref():
     """Set a preference value.
 
     Source: ttrss/classes/rpc.php:RPC::setpref (lines 121-128)
-    PHP replaces newlines with <br/> for USER_STYLESHEET key.
+    PHP replaces newlines with <br/> unconditionally for ALL keys including USER_STYLESHEET
+    (which is a PHP bug — it would corrupt stored CSS). Python deliberately preserves
+    newlines for USER_STYLESHEET (CSS is valid multi-line); replaces for all other keys.
     """
     from ttrss.prefs.ops import set_user_pref
 
@@ -705,6 +707,7 @@ def _rpc_setpref():
     value = _param("value", "")
 
     if key != "USER_STYLESHEET":
+        # Source: rpc.php:124 — str_replace("\n", "<br/>", $value) — applied to HTML-stored prefs only
         value = value.replace("\n", "<br/>")
 
     set_user_pref(current_user.id, key, value)

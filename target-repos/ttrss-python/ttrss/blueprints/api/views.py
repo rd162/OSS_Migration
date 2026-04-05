@@ -1285,9 +1285,15 @@ def _handle_shareToPublished(data: dict, seq: int):
 
     from sqlalchemy import update as sa_update
 
-    title: str = str(data.get("title") or request.args.get("title", ""))
-    url: str = str(data.get("url") or request.args.get("url", ""))
-    content: str = str(data.get("content") or request.args.get("content", ""))
+    import re as _re
+
+    def _strip_tags(s: str) -> str:
+        """Source: api.php:shareToPublished — strip_tags() on input before INSERT."""
+        return _re.sub(r"<[^>]+>", "", s)
+
+    title: str = _strip_tags(str(data.get("title") or request.args.get("title", "")))
+    url: str = _strip_tags(str(data.get("url") or request.args.get("url", "")))
+    content: str = _strip_tags(str(data.get("content") or request.args.get("content", "")))
 
     # Source: api.php — url is required
     if not url:

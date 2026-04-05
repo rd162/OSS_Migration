@@ -10,7 +10,41 @@ Class graph community [8]: Plugin → AuthInternal (maps PHP is_subclass_of Plug
 """
 from __future__ import annotations
 
+import base64
+import hashlib
+import hmac
+import struct
+import time
+
 from ttrss.plugins.hookspecs import KIND_SYSTEM, hookimpl
+
+
+def _totp_code(b32_secret: str, t: int | None = None, step: int = 30) -> str:
+    """Generate a 6-digit TOTP code for the given base32 secret.
+
+    Source: ttrss/plugins/auth_internal/init.php lines 43-55 (OTP verification).
+    PHP uses the TOTP algorithm (RFC 6238) via an external library.
+    Python implements the same algorithm using stdlib hmac/struct/base64.
+    """
+    if t is None:
+        t = int(time.time())
+    counter = struct.pack(">Q", t // step)
+    # Pad base32 to multiple of 8
+    padding = (-len(b32_secret)) % 8
+    key = base64.b32decode(b32_secret.upper() + "=" * padding)
+    mac = hmac.new(key, counter, hashlib.sha1).digest()
+    offset = mac[-1] & 0x0F
+    code = struct.unpack(">I", mac[offset : offset + 4])[0] & 0x7FFFFFFF
+    return f"{code % 1_000_000:06d}"
+
+
+def _verify_totp(b32_secret: str, code: str, window: int = 1) -> bool:
+    """Verify a TOTP code within ±window steps (default ±30 seconds)."""
+    t = int(time.time())
+    for delta in range(-window, window + 1):
+        if hmac.compare_digest(_totp_code(b32_secret, t + delta * 30), code.strip()):
+            return True
+    return False
 
 
 class AuthInternal:
@@ -60,6 +94,33 @@ class AuthInternal:
         )
         if not ok:  # Source: auth_internal/init.php line 88 — if (!$this->check_password(...)) return false
             return None
+
+        # Source: auth_internal/init.php lines 25-75 — OTP verification (schema >= 96)
+        # If user has OTP enabled, require a valid TOTP code in the request.
+        # PHP derives OTP secret as base32_encode(sha1($salt)).
+        # Python reads OTP from Flask request (form or JSON payload, field "otp").
+        if user.otp_enabled and user.salt:
+            try:
+                from flask import request as _req
+                # Support form POST, JSON body, and query string (matches PHP $_REQUEST)
+                _otp_code = (
+                    _req.form.get("otp")
+                    or (_req.get_json(silent=True, force=True) or {}).get("otp", "")
+                    or _req.args.get("otp", "")
+                )
+            except RuntimeError:
+                # No request context (e.g., CLI / tests) — deny OTP-enabled accounts
+                return None
+
+            if not _otp_code:
+                # OTP required but not provided
+                return None
+
+            # Source: auth_internal/init.php line 43 — OTP secret = base32_encode(sha1($salt))
+            _salt_sha1 = hashlib.sha1(user.salt.encode()).digest()
+            _otp_secret = base64.b32encode(_salt_sha1).decode()
+            if not _verify_totp(_otp_secret, _otp_code):
+                return None
 
         # Source: auth_internal/init.php lines 91-101 — upgrade legacy hash to MODE2 on login
         # Adapted: Python upgrades all the way to argon2id (ADR-0008; MODE2 is intermediate in PHP).

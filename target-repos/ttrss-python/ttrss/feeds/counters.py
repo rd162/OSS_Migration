@@ -265,7 +265,13 @@ def getLabelCounters(
             func.count(TtRssUserEntry.int_id).label("total"),
         )
         .outerjoin(TtRssUserLabel2, TtRssLabel2.id == TtRssUserLabel2.label_id)
-        .outerjoin(TtRssUserEntry, TtRssUserEntry.ref_id == TtRssUserLabel2.article_id)
+        .outerjoin(
+            TtRssUserEntry,
+            # Source: functions.php:1584 — u1.ref_id = article_id
+            # D01 fix: also restrict to owner_uid to prevent cross-user label counts
+            (TtRssUserEntry.ref_id == TtRssUserLabel2.article_id)
+            & (TtRssUserEntry.owner_uid == owner_uid),
+        )
         .where(TtRssLabel2.owner_uid == owner_uid)
         .group_by(TtRssLabel2.id, TtRssLabel2.caption)
     ).all()

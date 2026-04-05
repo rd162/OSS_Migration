@@ -206,9 +206,10 @@ def test_update_feedbrowser_cache_multiple_rows():
 
 def test_cleanup_tags_returns_rowcount():
     session = MagicMock()
-    session.execute.return_value.rowcount = 42
+    # cleanup_tags now runs two DELETE statements (orphaned + old entries)
+    session.execute.return_value.rowcount = 21
     result = cleanup_tags(session)
-    assert result == 42
+    assert result == 42  # 21 + 21
 
 
 def test_cleanup_tags_zero_rows():
@@ -222,7 +223,8 @@ def test_cleanup_tags_executes_delete():
     session = MagicMock()
     session.execute.return_value.rowcount = 1
     cleanup_tags(session)
-    assert session.execute.call_count == 1
+    # Two DELETE statements: orphaned tags + old-entry tags
+    assert session.execute.call_count == 2
 
 
 def test_cleanup_tags_custom_days_and_limit():

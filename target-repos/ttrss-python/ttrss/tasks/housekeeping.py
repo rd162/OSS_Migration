@@ -170,27 +170,48 @@ def cleanup_tags(
     Source: ttrss/include/functions2.php:cleanup_tags (lines 2030-2069)
     Adapted: PHP single-query DELETE … LIMIT becomes subquery-based DELETE (PostgreSQL
     does not support DELETE … LIMIT directly).
+
+    PHP deletes tags on entries older than `days` days (date-based, regardless of whether
+    user_entry still exists). Python uses two complementary strategies:
+    1. Orphaned tags (post_int_id no longer in ttrss_user_entries) — safety net for
+       any tags missed by ON DELETE CASCADE on post_int_id → user_entries.int_id.
+    2. Tags on old entries (entry date_updated older than `days`) whose article has not
+       been starred/published (i.e., not kept intentionally) — matches PHP behavior.
+
     Returns number of rows deleted.
     """
-    # Tags older than `days` days that are not referenced from any current user_entry
-    # (post_int_id may have been deleted due to purge_orphans cascading)
-    cutoff_ts = datetime.now(timezone.utc) - timedelta(days=days)
+    from ttrss.models.entry import TtRssEntry
 
-    # Identify int_ids still present in ttrss_user_entries
+    # Strategy 1: orphaned tags (CASCADE should handle these, but safety net)
     valid_int_ids_subq = select(TtRssUserEntry.int_id).scalar_subquery()
-
-    # Candidate tag ids to delete: post_int_id no longer in user_entries, up to limit
-    candidate_ids_subq = (
+    orphan_candidate_ids_subq = (
         select(TtRssTag.id)
         .where(TtRssTag.post_int_id.not_in(valid_int_ids_subq))
         .limit(limit)
         .scalar_subquery()
     )
+    r1 = session.execute(delete(TtRssTag).where(TtRssTag.id.in_(orphan_candidate_ids_subq)))
 
-    result = session.execute(
-        delete(TtRssTag).where(TtRssTag.id.in_(candidate_ids_subq))
+    # Strategy 2: Source: functions2.php:2043-2046 — tags on old entries (date_updated < cutoff)
+    # whose user_entry is not starred or published (allows GC without removing intentionally-kept articles)
+    cutoff_ts = datetime.now(timezone.utc) - timedelta(days=days)
+    old_int_ids_subq = (
+        select(TtRssUserEntry.int_id)
+        .join(TtRssEntry, TtRssEntry.id == TtRssUserEntry.ref_id)
+        .where(TtRssEntry.date_updated < cutoff_ts)
+        .where(TtRssUserEntry.marked.is_(False))
+        .where(TtRssUserEntry.published.is_(False))
+        .scalar_subquery()
     )
-    count = result.rowcount
+    old_candidate_ids_subq = (
+        select(TtRssTag.id)
+        .where(TtRssTag.post_int_id.in_(old_int_ids_subq))
+        .limit(limit)
+        .scalar_subquery()
+    )
+    r2 = session.execute(delete(TtRssTag).where(TtRssTag.id.in_(old_candidate_ids_subq)))
+
+    count = (r1.rowcount or 0) + (r2.rowcount or 0)
     logger.info("cleanup_tags: deleted %d tag(s)", count)
     return count
 

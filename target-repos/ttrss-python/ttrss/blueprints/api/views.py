@@ -803,7 +803,8 @@ def _handle_updateArticle(data: dict, seq: int):
     Source: ttrss/classes/api.php:API.updateArticle (lines 233-308)
     field: 0=marked, 1=published, 2=unread, 3=note
     mode:  0=false, 1=true, 2=toggle
-    data["data"]: used only when field==3 (note text; HTML tags stripped per PHP strip_tags)
+    data["data"]: used only when field==3 (note text; PHP does NOT strip_tags — Python strips
+    HTML as a security improvement to prevent stored XSS in note field)
     ccache_update fires per distinct feed_id ONLY when field==2 (unread) AND num_updated>0.
     """
     from datetime import datetime, timezone
@@ -841,8 +842,8 @@ def _handle_updateArticle(data: dict, seq: int):
     now = datetime.now(tz=timezone.utc)
 
     if field_raw == 3:
-        # Source: api.php:237 — note content comes from request param "data" (not "note")
-        # Source: api.php:237 — strip_tags applied to prevent HTML storage
+        # Source: api.php:271 — note content from request param "data"; PHP stores raw (no strip_tags)
+        # New: Python strips HTML tags from note to prevent stored XSS (improvement over PHP)
         import re as _re
 
         _raw_note = str(data.get("data") or request.args.get("data", ""))

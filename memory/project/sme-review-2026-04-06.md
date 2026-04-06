@@ -1,18 +1,13 @@
 ---
 name: SME Review — TTRSS Demo (2026-04-06)
-description: SME review artifacts ingested 2026-04-06: demo video transcription, test scenario spreadsheet, 90 scene cadres
+description: SME review of original PHP TTRSS app: demo walkthrough and test scenario matrix
 type: project
 ---
 
 # SME Review Knowledge (2026-04-06)
 
-Ingested three files from SME walkthrough of the original PHP TTRSS app:
-
-## Source Fragments
-
-- `__FRAGMENTS__/ttrss_demo/markdown/ttrss_demo_whisper.vtt` — Whisper-tiny VTT of 22-min demo video (90 scene cadres in `images/`)
-- `__FRAGMENTS__/ttrss/markdown/ttrss_markitdown.md` — Test scenarios spreadsheet (3 sheets, 7 PDF pages)
-- `/Users/rd/Downloads/ttrss_demo_transcription.txt` — Manual transcription of same video (more accurate than Whisper)
+SME walkthrough of the original PHP TTRSS app covering functional behaviour and test scenarios.
+See also: [`docs/reports/demo-walkthrough-transcript.md`](../../docs/reports/demo-walkthrough-transcript.md) and [`docs/reports/acceptance-test-scenarios.md`](../../docs/reports/acceptance-test-scenarios.md).
 
 ## Demo Walkthrough Coverage (7 sections)
 
@@ -23,7 +18,7 @@ Ingested three files from SME walkthrough of the original PHP TTRSS app:
 5. **OPML Import/Export** — Preferences → Feeds → Export OPML (save .opml); Import OPML (choose file, upload); feeds added instantly
 6. **Deployment** — PHP + PostgreSQL/MySQL; Docker via `git clone` + `docker compose up`; demo shows live install from scratch (~8 min)
 
-## Test Scenario Spreadsheet (ttrss.xlsx) — 13 Categories
+## Test Scenario Matrix — 13 Categories
 
 | # | Category | Core Module | Coverage |
 |---|----------|------------|---------|

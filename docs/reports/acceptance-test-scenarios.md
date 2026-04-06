@@ -1,7 +1,5 @@
 # TT-RSS Acceptance Test Scenarios
 
-**Source:** `ttrss.xlsx` (Capgemini internal test planning document)  
-**Extracted:** 2026-04-06 from `__FRAGMENTS__/ttrss/`  
 **Purpose:** Acceptance criteria and test scenarios for the PHP→Python migration.
 
 ---

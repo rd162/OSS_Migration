@@ -1,7 +1,5 @@
 # TT-RSS Demo Video — Walkthrough Transcript
 
-**Source:** `ttrss_demo.mp4` (Capgemini internal demo recording)  
-**Extracted:** 2026-04-06 via Whisper speech-to-text from `__FRAGMENTS__/ttrss_demo/`  
 **Duration:** ~21 minutes 57 seconds  
 **Purpose:** Reference record of the original PHP TT-RSS application behaviour, used as ground truth for migration acceptance.
 

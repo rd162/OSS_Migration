@@ -91,3 +91,24 @@
 - Inherits all constitution constraints (read-only source-repos, traceability, PostgreSQL-only).
 - Phase 1 establishes the schema contract — models defined here must not have breaking changes in later phases without a new Alembic migration.
 - Phase 2 may not start until Phase 1b acceptance tests pass.
+
+---
+
+## Success Criteria
+
+- **SC-001:** Application starts and serves requests without errors within 2 seconds of `flask run`
+- **SC-002:** All 31 database tables are created on a clean PostgreSQL instance without manual intervention
+- **SC-003:** Authentication rejects 100% of invalid credentials and accepts valid ones with no false negatives
+- **SC-004:** The development environment starts all required services with a single `docker-compose up` command
+- **SC-005:** Password storage never exposes plaintext or SHA1 hashes after the upgrade path is triggered
+
+## Assumptions
+
+- PostgreSQL is the only target database; MySQL compatibility is explicitly out of scope
+- All secrets and credentials are supplied via environment variables, never baked into source
+- The PHP schema file (`ttrss_schema_pgsql.sql`) is the authoritative table definition; any deviation is a bug
+- Redis is available as both a session store and a Celery broker in all environments
+
+---
+
+> **Heritage note:** This phase was implemented on `main` before the `speckit-specify` branch workflow was established. Spec content is authoritative; it was not generated via `/speckit-specify`.

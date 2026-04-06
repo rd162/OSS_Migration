@@ -8,7 +8,9 @@ status: done
 
 All tasks DONE. Phase 4 exit gate (17 criteria) passed.
 
-## Batch 1 — Auth gate + counter-only ops
+> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. `[US#]` and `[P]` markers added retroactively for spec-kit compatibility.
+
+## Batch 1 — Auth gate + counter-only ops **[US-001, US-002, US-003]**
 
 - [x] Implement two-guard auth decorator at top of dispatch()
   - Guard 1 (not-logged-in): exempts `{"login", "isloggedin"}` only
@@ -21,14 +23,14 @@ All tasks DONE. Phase 4 exit gate (17 criteria) passed.
 - [x] `getLabels` — get_all_labels() + get_article_labels only when article_id truthy `# Source: api.php:412-447`
 - [x] Batch 1 gate: pytest --cov-fail-under=80 passes
 
-## Batch 2 — Query ops with category/feed deps
+## Batch 2 — Query ops with category/feed deps **[US-001, US-004]**
 
 - [x] `getCategories` — virtual cats [-2,-1,0] + getCategoryTitle + getCategoryChildrenUnread `# Source: api.php:170-231`
 - [x] `getFeeds` — include_nested guard: `if include_nested and cat_id`; getFeedTitle per virtual feed; N+1 accepted with Source comment `# Source: api.php:504-629`
 - [x] `getArticle` — JOIN ttrss_entries+ttrss_user_entries + enclosures + labels + HOOK_RENDER_ARTICLE_API per article `# Source: api.php:310-368`
 - [x] Batch 2 gate passed
 
-## Batch 3 — Write ops
+## Batch 3 — Write ops **[US-001]**
 
 - [x] `updateArticle` — FIELD_MAP {0-3}; ccache_update only on unread (field==2) + num_updated>0 per distinct feed_id `# Source: api.php:233-308`
 - [x] `catchupFeed` — catchup_feed(session, feed_id, is_cat, owner_uid) `# Source: api.php:369-407`
@@ -36,7 +38,7 @@ All tasks DONE. Phase 4 exit gate (17 criteria) passed.
 - [x] `updateFeed` — ownership check + update_feed.delay(feed_id)
 - [x] Batch 3 gate passed
 
-## Batch 4 — Complex chained ops
+## Batch 4 — Complex chained ops **[US-001, US-005]**
 
 - [x] `getHeadlines` — queryFeedHeadlines + HOOK_QUERY_HEADLINES + HOOK_RENDER_ARTICLE_API per row `# Source: api.php:631-720`
 - [x] `subscribeToFeed` — subscribe_to_feed(feed_url, category_id, login, password)
@@ -44,7 +46,7 @@ All tasks DONE. Phase 4 exit gate (17 criteria) passed.
 - [x] `shareToPublished` — TtRssUserEntry(feed_id=None) NOT -2 `# Source: article.php:129-134, 155-159`
 - [x] Batch 4 gate passed
 
-## Batch 5 — getFeedTree
+## Batch 5 — getFeedTree **[US-006]**
 
 - [x] `getFeedTree` — BFS with MAX_CATEGORY_DEPTH=20 + visited set; CAT:/FEED: prefixes; bare_id; auxcounter=0; virtual feeds [-4,-3,-1,-2,0,-6]; envelope {"identifier":"id","label":"name","items":[...]} `# Source: pref/feeds.php:291-292, 123`
 - [x] Batch 5 gate passed

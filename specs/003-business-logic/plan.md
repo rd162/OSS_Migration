@@ -3,8 +3,24 @@
 **Status:** DONE  
 **Completed:** 2026-04-04  
 **Spec ref:** specs/003-business-logic/spec.md  
-**Method:** Adversarial thinking pipeline — 3 candidates, critique+author round, 3-voter Condorcet. Solution A (Strict Dependency Leaves-Up) won 2-0.  
-**Constitution check:** P1 ✓ P2 ✓ P3 ✓ P5 ✓
+**Method:** Adversarial thinking pipeline — 3 candidates, critique+author round, 3-voter Condorcet. Solution A (Strict Dependency Leaves-Up) won 2-0.
+
+> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. Not generated via `/speckit-plan`.
+
+---
+
+## Constitution Check
+
+*Gate: Must pass before implementation begins. Pre-batch model verification is a hard prerequisite.*
+
+| Principle | Requirement | Satisfied |
+|-----------|-------------|-----------|
+| P1 Library-First | Leaf modules (ccache, labels, utils/feeds) are standalone; counters does not import from ccache (circular import prevention) | ✓ — verified at each batch gate |
+| P2 Test-First | Per-batch `pytest --cov-fail-under=80`; no batch committed without passing tests | ✓ — 9 batch gates all passed |
+| P3 Source Traceability | Every callable has `# Source:` comment; pre-batch model verification against DDL | ✓ — Rule 10a per batch |
+| P5 Behavioral Parity | ID conversion functions are strict inverses; ccache_find has no TTL check; format_article returns dict not HTML | ✓ — 18 exit criteria |
+| Law 4 PostgreSQL Only | `grep DB_TYPE = 0`, `grep DATE_SUB = 0` at phase exit | ✓ — exit criterion #16 |
+| Law 5 No Server HTML | `print_feed_cat_select`, `print_feed_select` eliminated | ✓ — AR9 enforced |
 
 ---
 

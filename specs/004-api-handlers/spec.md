@@ -76,6 +76,25 @@ source: memory/phase4_plan_2026-04-04.md
 - [ ] getFeedTree BFS has cycle detection (visited set)
 - [ ] pytest --cov-fail-under=80 passes
 
+## Success Criteria
+
+- **SC-001:** All 17 API operations return responses structurally identical to the PHP implementation for the same inputs
+- **SC-002:** Unauthenticated requests receive `LOGIN_ERROR` for every protected operation with no exceptions
+- **SC-003:** When API access is disabled, all operations except `logout` return `API_DISABLED`
+- **SC-004:** Feed tree traversal completes in bounded time regardless of category nesting depth (max 20 levels)
+- **SC-005:** `shareToPublished` creates an entry visible in the Published feed without requiring a `feed_id`
+
+## Assumptions
+
+- The TT-RSS API contract is fixed; no extensions or deviations are permitted
+- Feed tree uses BFS with a visited-set cycle guard; DFS is not acceptable
+- All API responses are JSON-encoded; no HTML or plain-text responses
+- `cat_id=0` is falsy in PHP and must be treated as falsy in the `getFeeds include_nested` guard
+
+---
+
+> **Heritage note:** This phase was implemented on `main` before the `speckit-specify` branch workflow was established. Spec content is authoritative; it was not generated via `/speckit-specify`.
+
 ## Status
 
 **DONE** — All 17 ops implemented and verified. Phase 4 exit gate (17 criteria) passed.

@@ -2,8 +2,24 @@
 
 **Status:** DONE  
 **Completed:** 2026-04-03 (1a), 2026-04-04 (1b)  
-**Spec ref:** specs/001-foundation/spec.md  
-**Constitution check:** P1 ✓ P2 ✓ P3 ✓ P4 ✓
+**Spec ref:** specs/001-foundation/spec.md
+
+> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. Not generated via `/speckit-plan`.
+
+---
+
+## Constitution Check
+
+*Gate: Must pass before implementation begins. Re-evaluated at each phase exit.*
+
+| Principle | Requirement | Satisfied |
+|-----------|-------------|-----------|
+| P1 Library-First | Each module has a single domain; no god-file monoliths | ✓ — models/, auth/, tasks/ are domain-split |
+| P2 Test-First | ≥33 unit tests at Phase 1a exit; all pass before DONE | ✓ — 33 tests at 1a gate |
+| P3 Source Traceability | Every callable has a `# Source:` comment | ✓ — Rule 10 enforced at commit |
+| P4 Security-by-Default | argon2id, Fernet, Flask-Talisman, Flask-WTF CSRF active | ✓ — all wired in Phase 1a |
+| Law 1 Source Read-Only | `source-repos/` never modified | ✓ |
+| Law 4 PostgreSQL Only | No MySQL compatibility code | ✓ — psycopg2 only |
 
 ---
 

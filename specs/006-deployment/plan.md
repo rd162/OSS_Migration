@@ -1,12 +1,29 @@
 ---
 id: 006
 title: Phase 6 Implementation Plan — CI-First, Gate-Driven Deployment
-status: in-progress
+status: done
 selection: Condorcet winner Candidate C (Continuous-Verification / Gate-Driven) — C beats B beats A. Decisive factor: Phase 5 confirmed DONE with 0 missing hooks.
 date: 2026-04-04
 ---
 
 # Plan 006 — Phase 6: Deployment
+
+> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. Not generated via `/speckit-plan`.
+
+---
+
+## Constitution Check
+
+*Gate: Must pass before B1 begins. Coverage gate (B6) is the final constitution gate.*
+
+| Principle | Requirement | Satisfied |
+|-----------|-------------|-----------|
+| P2 Test-First | CI test job runs pytest on every push; coverage gate is hard ≥95% from B6 | ✓ — B6 removes `continue-on-error` |
+| P4 Security-by-Default | No secrets in Dockerfile ARG or ENV; all config via env_file at runtime | ✓ — AR-10 enforced |
+| Law 4 PostgreSQL Only | pgloader migration eliminates MySQL and moves to PostgreSQL | ✓ — migration target is PostgreSQL only |
+| Law 1 Source Read-Only | `source-repos/` not referenced in any deployment artifact | ✓ — `.dockerignore` excludes source-repos |
+
+---
 
 ## Key Insight
 

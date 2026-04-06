@@ -8,9 +8,11 @@ status: done
 
 All tasks DONE. Phase 5 all-14-hooks gate passed. Phase 5b: 105+ discrepancies fixed, 598 tests, 0 coverage gaps.
 
+> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. `[US#]` markers added retroactively for spec-kit compatibility.
+
 ## Phase 5 — Cross-Cutting Infrastructure
 
-### A0 — Plugin System Foundation + Structlog
+### A0 — Plugin System Foundation + Structlog **[US-001, US-002]**
 
 - [x] Create `ttrss/plugins/auth_internal/__init__.py` — AuthInternal(Plugin), KIND=KIND_SYSTEM, hook_auth_user delegates to verify_password `# Source: plugins/auth_internal/init.php`
 - [x] Create `ttrss/plugins/storage.py` — TtRssPluginStorage accessor: get/set/get_all/clear; JSON serialization `# Source: pluginhost.php:200-240`
@@ -19,20 +21,20 @@ All tasks DONE. Phase 5 all-14-hooks gate passed. Phase 5b: 105+ discrepancies f
 - [x] Add `plugin_manager_with_auth` autouse fixture to `tests/conftest.py`
 - [x] A0 Gate: Plugin → AuthInternal community [8] = 0 missing; 537 tests pass
 
-### A1 — HOOK_UPDATE_TASK (community [2])
+### A1 — HOOK_UPDATE_TASK (community [2]) **[US-001]**
 
 - [x] `ttrss/tasks/feed_tasks.py` — add 2 HOOK_UPDATE_TASK call sites (before + after dispatch loop) `# Source: update.php:161,190`
 - [x] `ttrss/tasks/housekeeping.py` — add 2 HOOK_UPDATE_TASK call sites `# Source: handler/public.php:411,421`
 - [x] Convert logging.getLogger to structlog.get_logger in both task files
 - [x] A1 Gate: HOOK_UPDATE_TASK = 0 missing in validator; 537+ tests pass
 
-### A2 — HOOK_RENDER_ARTICLE_CDM + HOOK_HEADLINE_TOOLBAR_BUTTON (community [0])
+### A2 — HOOK_RENDER_ARTICLE_CDM + HOOK_HEADLINE_TOOLBAR_BUTTON (community [0]) **[US-001]**
 
 - [x] `ttrss/articles/ops.py` — add HOOK_RENDER_ARTICLE_CDM in format_article() CDM branch `# Source: classes/feeds.php:517` (AR-7: not in ui/)
 - [x] `ttrss/articles/ops.py` — add HOOK_HEADLINE_TOOLBAR_BUTTON in format_headlines_list() `# Source: classes/feeds.php:138` (AR-7)
 - [x] A2 Gate: both hooks = 0 missing; CDM hook not called on non-CDM path; 537+ tests pass
 
-### A3 — Flask-Limiter
+### A3 — Flask-Limiter **[US-003]**
 
 - [x] `ttrss/extensions.py` — add Limiter(key_func=get_remote_address) `# New: no PHP equivalent`
 - [x] `ttrss/__init__.py` — limiter.init_app(app)
@@ -40,21 +42,21 @@ All tasks DONE. Phase 5 all-14-hooks gate passed. Phase 5b: 105+ discrepancies f
 - [x] Test config — RATELIMIT_ENABLED=False
 - [x] A3 Gate: all 537 tests pass; 429 on 61st request when RATELIMIT_ENABLED=True
 
-### A4 — ui/init_params.py (communities [0]+[5])
+### A4 — ui/init_params.py (communities [0]+[5]) **[US-001]**
 
 - [x] Create `ttrss/ui/__init__.py`
 - [x] Create `ttrss/ui/init_params.py` — get_hotkeys_info(), get_hotkeys_map(), make_runtime_info(), make_init_params() all return JSON-serializable dicts `# Source: functions2.php:90-200; index.php:180-260`
 - [x] make_init_params fires HOOK_TOOLBAR_BUTTON and HOOK_ACTION_ITEM `# Source: index.php:213,252`
 - [x] A4 Gate: 4 hooks = 0 missing; make_init_params output passes json.dumps(); no HTML in output
 
-### A5 — Celery Beat + Flower + Retry Policies
+### A5 — Celery Beat + Flower + Retry Policies **[US-004]**
 
 - [x] `ttrss/celery_app.py` — beat_schedule: dispatch_feed_updates every 5 min, run_housekeeping every 3600s `# Source: rssfuncs.php (daemon timing); handler/public.php (housekeeping trigger)`
 - [x] `ttrss/celery_app.py` — update_feed: max_retries=3, retry_backoff=True, retry_backoff_max=600, retry_jitter=True `# New: no PHP equivalent — Celery retry policy (ADR-0011)`
 - [x] docker-compose.yml — Flower service added `# New: no PHP equivalent`
 - [x] A5 Gate: beat_schedule entries verified; retry_backoff==True; 537+ tests pass
 
-### A6 — Prefs Blueprints (communities [1]+[6]) — FINAL GATE
+### A6 — Prefs Blueprints (communities [1]+[6]) — FINAL GATE **[US-005]**
 
 - [x] `ttrss/blueprints/prefs/__init__.py` — Blueprint package `# Source: prefs.php`
 - [x] `ttrss/blueprints/prefs/views.py` — GET /prefs fires HOOK_PREFS_TABS `# Source: prefs.php:139`

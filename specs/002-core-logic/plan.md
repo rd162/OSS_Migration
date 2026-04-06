@@ -3,8 +3,23 @@
 **Status:** DONE  
 **Completed:** 2026-04-04  
 **Spec ref:** specs/002-core-logic/spec.md  
-**Method:** Adversarial thinking pipeline — 3 candidates, Condorcet vote. Candidate A (Dependency-First) won 2-0.  
-**Constitution check:** P1 ✓ P2 ✓ P3 ✓ P5 ✓
+**Method:** Adversarial thinking pipeline — 3 candidates, Condorcet vote. Candidate A (Dependency-First) won 2-0.
+
+> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. Not generated via `/speckit-plan`.
+
+---
+
+## Constitution Check
+
+*Gate: Must pass before implementation begins. Re-evaluated at each batch exit.*
+
+| Principle | Requirement | Satisfied |
+|-----------|-------------|-----------|
+| P1 Library-First | Each module has a single domain; no cross-domain coupling | ✓ — utils/misc, plugins/loader, http/client, articles/sanitize, prefs/ops, auth/authenticate are domain-isolated |
+| P2 Test-First | Per-batch `pytest --cov-fail-under=80` gate before next batch | ✓ — gate enforced at each batch |
+| P3 Source Traceability | Every callable has a `# Source:` / `# Inferred from:` comment | ✓ — Rule 10a adversarial check per batch |
+| P5 Behavioral Parity | Hook fire order matches PHP source line numbers exactly | ✓ — HOOK_SANITIZE before strip_harmful_tags verified |
+| Law 4 PostgreSQL Only | No `DB_TYPE`, `DATE_SUB`, MySQL-only syntax | ✓ — grep DB_TYPE = 0 at phase exit |
 
 ---
 

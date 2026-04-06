@@ -82,6 +82,25 @@ See `memory/semantic_verification_plan.md` for full definitions. Categories:
 - [ ] 598 tests passing
 - [ ] 0 coverage gaps
 
+## Success Criteria
+
+- **SC-001:** All 14 deferred hook invocations are wired with zero missing in `validate_coverage.py`
+- **SC-002:** All 8 end-to-end integration pipelines pass verification with no unresolved discrepancies
+- **SC-003:** 105+ discrepancies are identified and fixed; zero are deferred without a documented rationale
+- **SC-004:** Test coverage is ≥80% per module and ≥95% overall after the semantic verification pass
+- **SC-005:** Plugin hook invocations match their PHP source call sites exactly (file + line anchor documented)
+
+## Assumptions
+
+- PHP source is the authoritative specification; any Python deviation is a defect unless explicitly documented
+- Discrepancy categories follow the 40-entry D01–D40 taxonomy defined in `memory/semantic_verification_plan.md`
+- Tier 1 functions (52 high-complexity functions) receive the most thorough verification; Tier 3 spot-checks are acceptable
+- The speckit-analyze skill can be used to cross-check spec completeness against this document
+
+---
+
+> **Heritage note:** This phase was implemented on `main` before the `speckit-specify` branch workflow was established. Spec content is authoritative; it was not generated via `/speckit-specify`.
+
 ## Status
 
 **DONE** — Phase 5: all 14 hooks wired, all 7 batch gates passed, 537+ tests passing.

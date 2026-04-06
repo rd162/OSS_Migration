@@ -8,6 +8,24 @@ date: 2026-04-04
 
 # Plan 005 — Phase 5: Cross-Cutting + Semantic Verification
 
+> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. Not generated via `/speckit-plan`.
+
+---
+
+## Constitution Check
+
+*Gate: Must pass before A0 begins. Re-evaluated at A6 final gate.*
+
+| Principle | Requirement | Satisfied |
+|-----------|-------------|-----------|
+| P1 Library-First | structlog configured once in app factory; rate limiter wired as extension; no logging scattered across modules | ✓ — single configure() call in `__init__.py` |
+| P2 Test-First | 537+ tests pass at every batch gate; no batch committed without full test suite green | ✓ — A0–A6 gates all require 537+ pass |
+| P3 Source Traceability | `# Source:` on all new code; AR-7 hook placement constraint documented | ✓ — Rule 10a per batch |
+| P5 Behavioral Parity | All 14 deferred hook sites match PHP source line anchors exactly | ✓ — A6 final gate: 0 missing |
+| ADR-0012 Logging | structlog stdlib wrapper only; no direct `logging.getLogger` in new modules | ✓ — enforced in A0 |
+
+---
+
 ## Part A — Phase 5: Cross-Cutting Infrastructure
 
 ### Core Principle

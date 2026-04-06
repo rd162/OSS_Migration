@@ -8,14 +8,20 @@ date: 2026-04-04
 
 # Plan 004 — Flask API Blueprint Completion
 
+> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. Not generated via `/speckit-plan`.
+
 ## Constitution Check
 
-| Constraint | Satisfied |
-|------------|-----------|
-| ADR-0006: ORM/Core only, no raw SQL | Yes — all queries use SQLAlchemy |
-| ADR-0003: No DB_TYPE branches | Yes — PostgreSQL only |
-| ADR-0009: Encrypted feed credentials | N/A — read path only |
-| Source traceability on every callable | Yes — `# Source: ttrss/classes/api.php` on all |
+*Gate: Must pass before implementation begins. Re-evaluated at each batch exit.*
+
+| Principle | Requirement | Satisfied |
+|-----------|-------------|-----------|
+| P1 Library-First | All 17 ops live in one blueprint view; no new modules created | ✓ — single `blueprints/api/views.py` |
+| P2 Test-First | `pytest --cov-fail-under=80` per batch before next batch | ✓ — gate enforced per batch |
+| P3 Source Traceability | `# Source: ttrss/classes/api.php` on every callable | ✓ |
+| P5 Behavioral Parity | Guard logic, FIELD_MAP, virtual feed order, BFS cycle detection match PHP exactly | ✓ — 17 exit criteria |
+| ADR-0006 ORM/Core Only | No raw SQL strings anywhere in the blueprint | ✓ |
+| ADR-0003 PostgreSQL Only | No DB_TYPE branches | ✓ |
 
 ## Technical Context
 

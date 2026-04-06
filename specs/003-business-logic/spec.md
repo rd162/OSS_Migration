@@ -114,6 +114,27 @@ All 9 `ccache_update` call sites must be wired (7 in Phase 3, 2 deferred to Phas
 
 ---
 
+## Success Criteria
+
+- **SC-001:** Unread counts are accurate after any read/unread operation, with zero stale cache states observable by users
+- **SC-002:** Article persistence is idempotent — re-importing the same feed entry does not create duplicate rows
+- **SC-003:** Feed category hierarchies with up to 20 levels resolve without infinite recursion or timeout
+- **SC-004:** All 8 filter action types (filter, catchup, mark, publish, score, tag, label, stop) correctly modify article state
+- **SC-005:** No server-rendered HTML is returned by any business logic function; all return dicts or lists
+
+## Assumptions
+
+- Counter cache is the source of truth for unread counts; real-time DB queries are not used for display
+- Category `id=0` represents "uncategorized" (equivalent to PHP NULL), consistently across all functions
+- N-gram deduplication relies on PostgreSQL's built-in `similarity()` function; no external NLP library
+- The PHP label cache format `[[-1026, "caption", "#fg", "#bg"], ...]` is fixed and must not be changed
+
+---
+
+> **Heritage note:** This phase was implemented on `main` before the `speckit-specify` branch workflow was established. Spec content is authoritative; it was not generated via `/speckit-specify`.
+
+---
+
 ## Exit Gate (18 Criteria)
 
 1. [x] All 9 batch Rule 10a CRITIC/AUTHOR cycles passed (0 findings each)

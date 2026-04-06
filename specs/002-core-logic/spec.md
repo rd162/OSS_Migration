@@ -111,3 +111,24 @@
 - Strict topological ordering — no stubs, no shims. Each batch is independently correct at commit time.
 - `_fetch_feed_async` in feed_tasks.py is NOT moved to http/client.py — has ETag-specific logic.
 - MySQL branches eliminated from all modules in this phase (grep `DB_TYPE` = 0).
+
+---
+
+## Success Criteria
+
+- **SC-001:** Feed fetching completes for any well-formed URL without data corruption or silent truncation
+- **SC-002:** HTML sanitization removes all XSS vectors while preserving valid markup and media references
+- **SC-003:** Authentication succeeds for valid credentials and fails for invalid ones across all auth paths (single-user mode, plugin auth, normal)
+- **SC-004:** All plugin hooks fire in the order mandated by their PHP source call sites (measurable by line-number assertions in tests)
+- **SC-005:** Preferences read/write is idempotent — running `initialize_user_prefs` twice produces the same result
+
+## Assumptions
+
+- HTTP fetching is exclusively async and only invoked from Celery workers, never from Flask request handlers
+- Session storage is server-side Redis; client cookies carry only a session ID
+- Plugin hooks follow the pluggy `firstresult` contract only where the PHP hook graph has exactly one REGISTERS edge
+- The PHP `functions.php` line references are stable and used as the authoritative PHP source anchors
+
+---
+
+> **Heritage note:** This phase was implemented on `main` before the `speckit-specify` branch workflow was established. Spec content is authoritative; it was not generated via `/speckit-specify`.

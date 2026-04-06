@@ -5,6 +5,8 @@
 **Spec ref:** specs/003-business-logic/spec.md  
 **Plan ref:** specs/003-business-logic/plan.md
 
+> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. `[US#]` and `[P]` markers added retroactively for spec-kit compatibility.
+
 ---
 
 ## Pre-Batch Gate — Model Verification
@@ -14,9 +16,9 @@
 
 ---
 
-## Batch 0 — Counter Cache + Labels + Feed ID Utilities (L0-L4)
+## Batch 0 — Counter Cache + Labels + Feed ID Utilities (L0-L4) **[US-3a]**
 
-> US-3a: Leaf modules; no upstream dependencies.
+> **Story:** As a developer, I need counter cache management, label operations, and virtual feed ID conversion utilities so that all upstream modules can compute unread counts and manage labels without N+1 queries.
 
 - [x] Implement `ttrss/utils/feeds.py` — LABEL_BASE_INDEX=-1024, PLUGIN_FEED_BASE_INDEX=-128, 6 functions  
   _Source: include/functions.php:5-6, include/functions2.php:2400-2405, classes/pluginhost.php:381-386_
@@ -49,9 +51,9 @@
 
 ---
 
-## Batch 1 — Feed Categories (L2-L3)
+## Batch 1 — Feed Categories (L2-L3) **[US-3b]**
 
-> US-3b (partial): Category hierarchy traversal.
+> **Story (partial):** As a developer, I need category hierarchy traversal and feed CRUD operations so that the application can subscribe to feeds and compute category trees with correct NULL/uncategorized handling.
 
 - [x] Implement `ttrss/feeds/categories.py` — 8 category functions  
   _Source: include/functions.php:1300-1320, include/functions2.php:1100-1190_
@@ -76,9 +78,9 @@
 
 ---
 
-## Batch 2 — Feed Operations (L1-L7)
+## Batch 2 — Feed Operations (L1-L7) **[US-3b]**
 
-> US-3b (complete): Feed CRUD operations.
+> **Story (complete):** Feed subscribe, purge, favicon, and CRUD operations.
 
 - [x] Implement `ttrss/feeds/ops.py` — 10 feed operation functions  
   _Source: include/functions.php:1673-1738, 400-590; include/functions2.php:900-960_
@@ -99,9 +101,9 @@
 
 ---
 
-## Batch 3 — Counters (L2-L6)
+## Batch 3 — Counters (L2-L6) **[US-3c]**
 
-> US-3c: Counter aggregation for all feed/category/label types.
+> **Story:** As a developer, I need all counter aggregation functions so that the API can return accurate unread counts for feeds, categories, virtual feeds, labels, and global state.
 
 - [x] Implement `ttrss/feeds/counters.py` — 12 counter aggregation functions  
   _Source: include/functions.php:641-1493_
@@ -124,9 +126,9 @@
 
 ---
 
-## Batch 4 — Article Operations + Tag Cache (L0-L5)
+## Batch 4 — Article Operations + Tag Cache (L0-L5) **[US-3d]**
 
-> US-3d: Article formatting, catchup, tag cache.
+> **Story:** As a developer, I need article formatting, catchup operations, and tag cache management so that articles can be marked read, tagged, and rendered as dicts (not HTML).
 
 - [x] Implement `ttrss/articles/tags.py` — 5 tag cache functions  
   _Source: include/functions2.php:1055-1098, classes/article.php:222-284_
@@ -173,9 +175,9 @@
 
 ---
 
-## Batch 5 — Article Filters (L0-L3)
+## Batch 5 — Article Filters (L0-L3) **[US-3e]**
 
-> US-3e (partial): Shared filter infrastructure for search and feed ingestion.
+> **Story (partial):** As a developer, I need filter evaluation and shared filter infrastructure so that feed ingestion can apply all 8 filter action types.
 
 - [x] Implement `ttrss/articles/filters.py` — 8 filter functions  
   _Source: include/functions2.php:1491-2160, include/rssfuncs.php:1272-1399_
@@ -196,9 +198,9 @@
 
 ---
 
-## Batch 6 — Article Search (L2-L5)
+## Batch 6 — Article Search (L2-L5) **[US-3e]**
 
-> US-3e (partial): queryFeedHeadlines with 16 parameters and 6 JOIN strategies.
+> **Story (partial):** Headline query with 16 parameters and 6 JOIN strategies.
 
 - [x] Implement `ttrss/articles/search.py` — search_to_sql + queryFeedHeadlines  
   _Source: include/functions2.php:260-830_
@@ -223,9 +225,9 @@
 
 ---
 
-## Batch 7 — Housekeeping (L1-L3)
+## Batch 7 — Housekeeping (L1-L3) **[US-3e]**
 
-> US-3e (partial): Celery periodic housekeeping task.
+> **Story (partial):** Celery periodic housekeeping — expire old data, update caches.
 
 - [x] Implement `ttrss/tasks/housekeeping.py` — 5 sub-functions ported, 1 eliminated  
   _Source: include/rssfuncs.php:1415-1430_
@@ -258,9 +260,9 @@
 
 ---
 
-## Batch 8 — Feed Task Article Persistence (L0-L10)
+## Batch 8 — Feed Task Article Persistence (L0-L10) **[US-3f]**
 
-> US-3f: Complete article persistence pipeline.
+> **Story:** As a developer, I need the complete article persistence pipeline so that ingested feed entries are stored with correct GUID construction, content hashing, filter actions, tags, labels, enclosures, and N-gram deduplication.
 
 - [x] Implement full GUID construction: get_id() → get_link() → make_guid_from_title() → owner-scoped → SHA1 → truncate 245  
   _Source: include/rssfuncs.php:550-560, 621_

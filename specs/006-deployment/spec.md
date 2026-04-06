@@ -86,6 +86,25 @@ source: memory/phase6_plan_2026-04-04.md
 - [ ] pgloader dry-run clean
 - [ ] convert_php_serialized.py exits 0 on sample data
 
+## Success Criteria
+
+- **SC-001:** CI pipeline runs on every commit with no manual intervention; all jobs report pass/fail within 5 minutes
+- **SC-002:** The Docker image deploys to production using only environment variables — no config file edits required
+- **SC-003:** MySQL-to-PostgreSQL migration completes for a standard TT-RSS installation without data loss or sequence misalignment
+- **SC-004:** The coverage gate blocks merges when coverage drops below 95%; no `continue-on-error` bypass remains
+- **SC-005:** All three service roles (web, worker, beat) start from the same Docker image with role determined by the command
+
+## Assumptions
+
+- The production environment uses nginx as a TLS-terminating reverse proxy fronting the Flask app on port 5000
+- The MySQL source database is a standard TT-RSS installation; custom table names are not supported
+- GitHub Actions is the CI/CD platform; no other CI runners are targeted
+- PHP `serialize()` blobs in `ttrss_plugin_storage` must be converted before the application starts
+
+---
+
+> **Heritage note:** This phase was implemented on `main` before the `speckit-specify` branch workflow was established. Spec content is authoritative; it was not generated via `/speckit-specify`.
+
 ## Status
 
 **IN PROGRESS** — B1 done, B2 coverage gate DONE (0 gaps), B3-B6 pending. Test coverage uplift active (32 files, ~250 tests, 5 batches).

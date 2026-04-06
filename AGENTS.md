@@ -58,10 +58,6 @@ CLI: `specify init`, `specify check`, `specify extension`, `specify integration`
 
 Spec-Kit defines 6 phases: **Constitution → Specification → Planning → Tasks → Execution → Validation**
 
-### Heritage Phases (001–006)
-
-Phases 1–6 were implemented **before** the `speckit-specify` branch workflow was established. Their `spec.md`, `plan.md`, and `tasks.md` files have been retroactively aligned to spec-kit format (Success Criteria, Assumptions, Constitution Check, `[US#]`/`[P]` markers) and are marked with a `> Heritage note:` block. The spec-kit scripts (`setup-plan.sh`, `check-prerequisites.sh`) will not find these phases via branch detection — this is expected and correct.
-
 ### Spec-Kit Workflow (MANDATORY for all phases)
 
 **Every phase and feature MUST follow the full spec-kit skill workflow from inception:**
@@ -73,8 +69,6 @@ Phases 1–6 were implemented **before** the `speckit-specify` branch workflow w
 5. `/speckit-analyze` or `/speckit-checklist` — validate completeness before merge
 
 Each phase gets its own git branch (`NNN-feature-name`). The `speckit-specify` script auto-numbers branches sequentially from `.specify/init-options.json`.
-
-> Phases 001–006 are heritage exceptions — they pre-date this workflow. No new exceptions.
 
 ### Tooling Rule
 

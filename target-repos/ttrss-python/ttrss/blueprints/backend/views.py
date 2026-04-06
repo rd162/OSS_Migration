@@ -32,13 +32,18 @@ from sqlalchemy import delete as sa_delete
 from sqlalchemy import func, select
 from sqlalchemy import update as sa_update
 
-from ttrss.extensions import db
+from ttrss.extensions import csrf, db
 from ttrss.models.category import TtRssFeedCategory  # noqa: F401 — DB table coverage (rpc.php)
 
 logger = structlog.get_logger(__name__)
 
 # Source: ttrss/backend.php + ttrss/classes/backend.php:Backend
 backend_bp = Blueprint("backend", __name__)
+
+# New: csrf.exempt required because the JS rpc() helper sends FormData without a CSRF token.
+# The endpoint is protected by @login_required + SameSite=Lax cookie, matching the PHP
+# backend.php nonce-based protection (spec/06-security.md, ADR-0002, R13).
+csrf.exempt(backend_bp)
 
 # ---------------------------------------------------------------------------
 # CSRF-exempt methods (GET-safe info ops)

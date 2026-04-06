@@ -751,6 +751,7 @@ def _handle_getArticle(data: dict, seq: int):
             TtRssUserEntry.published,
             TtRssUserEntry.score,
             TtRssUserEntry.note,
+            TtRssUserEntry.tag_cache,
             TtRssFeed.title.label("feed_title"),
         )
         .join(TtRssUserEntry, TtRssUserEntry.ref_id == TtRssEntry.id)
@@ -792,6 +793,8 @@ def _handle_getArticle(data: dict, seq: int):
             "feed_title": feed_title,
             "note": row.note or "",
             "lang": row.lang or "",
+            # Source: api.php:336-338 — tags from tag_cache, comma-separated
+            "tags": [t.strip() for t in (row.tag_cache or "").split(",") if t.strip()],
         }
 
         # Source: api.php:354-356 — HOOK_RENDER_ARTICLE_API fires per article

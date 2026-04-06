@@ -9,9 +9,15 @@ import structlog
 from flask import Blueprint, jsonify
 from flask_login import login_required
 
+from ttrss.extensions import csrf
+
 logger = structlog.get_logger(__name__)
 
 prefs_bp = Blueprint("prefs", __name__, url_prefix="/prefs")
+
+# New: csrf.exempt required because the JS prefsRequest() helper does not send a CSRF token.
+# The endpoint is protected by @login_required + SameSite=Lax cookie (spec/06-security.md, R13).
+csrf.exempt(prefs_bp)
 
 # Import sub-handler routes to register them on prefs_bp
 import ttrss.blueprints.prefs.feeds  # noqa: F401, E402

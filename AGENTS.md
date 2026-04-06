@@ -23,7 +23,7 @@ OSS_Migration/
 │   ├── 003-business-logic/      ← Phase 3  [DONE]  spec.md · plan.md · tasks.md
 │   ├── 004-api-handlers/        ← Phase 4  [DONE]  spec.md · plan.md · tasks.md
 │   ├── 005-semantic-verification/ ← Phase 5 [DONE]  spec.md · plan.md · tasks.md
-│   └── 006-deployment/          ← Phase 6  [ACTIVE] spec.md · plan.md · tasks.md
+│   └── 006-deployment/          ← Phase 6  [DONE]   spec.md · plan.md · tasks.md
 │
 ├── docs/
 │   ├── decisions/               ← ADRs 0001-0016 (MADR 4.0)
@@ -42,7 +42,7 @@ OSS_Migration/
 │   │   └── spec-consultation.md
 │   ├── project/                 ← Project-level context
 │   │   └── setup.md
-│   ├── test_coverage_uplift_plan.md  ← ACTIVE: 32 files → 80% coverage
+│   ├── test_coverage_uplift_plan.md  ← DONE: coverage uplift to ≥95%
 │   └── archive/                 ← Superseded plans (audit trail)
 │
 ├── rules/                       ← Supplementary verification rules
@@ -245,7 +245,7 @@ No test without PHP source citation may be committed.
 | `specs/003-business-logic/` | DONE | Prefs CRUD, digests, OPML, backend blueprint |
 | `specs/004-api-handlers/` | DONE | 17 API ops, 2-guard auth, getFeedTree BFS |
 | `specs/005-semantic-verification/` | DONE | 40-cat taxonomy, 8 pipelines, 105+ fixes, 598 tests, 0 gaps |
-| `specs/006-deployment/` | **ACTIVE** | CI (done), coverage gate (done), Docker, nginx, pgloader |
+| `specs/006-deployment/` | DONE | CI, coverage gate ≥95%, Docker, nginx, pgloader, deploy.yml |
 
 ## Architecture Reference Index
 
@@ -289,12 +289,28 @@ All under `specs/architecture/` — stable, read-only reference:
 | 0014 | Feed Parsing Library | **accepted** — P1, feedparser + lxml sanitization |
 | 0015 | HTTP Client | **accepted** — P1, httpx async in Celery workers only |
 | 0016 | Semantic Verification Methodology | **accepted** — P0, 40-cat taxonomy + pipelines + triage |
+| 0017 | Frontend: Vanilla JS SPA | **accepted** — P1, replaces Dojo toolkit (ADR-0004 resolved) |
+| 0018 | Drag-Drop Category Assignment | **accepted** — P2, deferred; dropdown used instead |
+| 0019 | Preferences Modal Pattern | **accepted** — P1, simplified tabbed in-app modal |
 
 See `docs/decisions/README.md` for decision dependencies. ADR format follows [MADR](https://adr.github.io/madr/) convention.
 
-## Recommended Skills
+## Skills (`.claude/skills/`)
 
-Skills that should be installed in `.claude/skills/` for this project:
+**Spec-Kit skills** (installed via `specify init --ai claude`, ready to use):
+
+| Skill | Slash command | Purpose |
+|-------|--------------|---------|
+| speckit-constitution | `/speckit-constitution` | Establish / review project principles |
+| speckit-specify | `/speckit-specify` | Create a new feature specification |
+| speckit-plan | `/speckit-plan` | Generate implementation plan from spec |
+| speckit-tasks | `/speckit-tasks` | Break plan into actionable tasks |
+| speckit-implement | `/speckit-implement` | Execute implementation from tasks |
+| speckit-clarify | `/speckit-clarify` | De-risk ambiguous areas before planning |
+| speckit-analyze | `/speckit-analyze` | Cross-artifact consistency report |
+| speckit-checklist | `/speckit-checklist` | Validate requirements completeness |
+
+**Additional recommended skills** (install manually if needed):
 
 - **inferring-requirements** — requirements discovery before each migration phase
 - **deep-research-t1** — research Python equivalents for PHP patterns

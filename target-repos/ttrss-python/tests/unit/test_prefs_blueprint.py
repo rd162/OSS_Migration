@@ -162,9 +162,7 @@ class TestPrefsTabHooks:
         Source: Phase 5 plan AR-2 — pref handlers delegate to Phase 3 functions.
         """
         import pathlib
-        prefs_dir = pathlib.Path(
-            "/Users/rd/devel/Capgemini/Capgemini_Internal/OSS_Migration/target-repos/ttrss-python/ttrss/blueprints/prefs"
-        )
+        prefs_dir = pathlib.Path(__file__).parent.parent.parent / "ttrss" / "blueprints" / "prefs"
         for py_file in prefs_dir.glob("*.py"):
             source = py_file.read_text()
             assert "db.session" not in source, f"{py_file}: direct db.session call"

@@ -254,32 +254,32 @@ def save_rules_and_actions(filter_id: int, rules_json_list: list[str], actions_j
             except _re.error:
                 continue  # skip invalid regex silently (matches PHP @preg_match pattern)
 
-        inverse = rule.get("inverse", False)
-        filter_type = int(rule.get("filter_type", 1))
-        feed_id_val = str(rule.get("feed_id", "")).strip()
+            inverse = rule.get("inverse", False)
+            filter_type = int(rule.get("filter_type", 1))
+            feed_id_val = str(rule.get("feed_id", "")).strip()
 
-        cat_filter = False
-        cat_id = None
-        feed_id = None
+            cat_filter = False
+            cat_id = None
+            feed_id = None
 
-        # Source: ttrss/classes/pref/filters.php:515-528
-        if feed_id_val.startswith("CAT:"):
-            cat_filter = True
-            cat_id_raw = int(feed_id_val[4:]) if feed_id_val[4:] else None
-            cat_id = cat_id_raw if cat_id_raw else None
-        else:
-            feed_id_int = int(feed_id_val) if feed_id_val and feed_id_val.lstrip("-").isdigit() else None
-            feed_id = feed_id_int if feed_id_int else None
+            # Source: ttrss/classes/pref/filters.php:515-528
+            if feed_id_val.startswith("CAT:"):
+                cat_filter = True
+                cat_id_raw = int(feed_id_val[4:]) if feed_id_val[4:] else None
+                cat_id = cat_id_raw if cat_id_raw else None
+            else:
+                feed_id_int = int(feed_id_val) if feed_id_val and feed_id_val.lstrip("-").isdigit() else None
+                feed_id = feed_id_int if feed_id_int else None
 
-        db.session.add(TtRssFilter2Rule(
-            filter_id=filter_id,
-            reg_exp=reg_exp,
-            filter_type=filter_type,
-            feed_id=feed_id,
-            cat_id=cat_id,
-            cat_filter=cat_filter,
-            inverse=bool(inverse),
-        ))
+            db.session.add(TtRssFilter2Rule(
+                filter_id=filter_id,
+                reg_exp=reg_exp,
+                filter_type=filter_type,
+                feed_id=feed_id,
+                cat_id=cat_id,
+                cat_filter=cat_filter,
+                inverse=bool(inverse),
+            ))
 
         # Source: ttrss/classes/pref/filters.php:538-560 — insert actions
         seen_actions: list = []

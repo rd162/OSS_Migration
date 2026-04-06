@@ -825,7 +825,7 @@ def _rpc_updaterandomfeed():
     """Trigger an update of a random feed that is due.
 
     Source: ttrss/classes/rpc.php:RPC::updaterandomfeed (lines 562-564)
-             + RPC::updaterandomfeed_real (lines 478-560)
+    # Source: ttrss/classes/rpc.php:updaterandomfeed_real (lines 478-560)
     Adapted: Full update logic runs via Celery worker (ADR-0011); this endpoint
              enqueues a task or returns a stub if Celery is unavailable.
     """

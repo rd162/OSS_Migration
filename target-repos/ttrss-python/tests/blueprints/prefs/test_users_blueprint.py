@@ -231,6 +231,22 @@ class TestDeleteUser:
         assert resp.status_code == 400
         assert resp.get_json()["error"] == "cannot_delete_self"
 
+    def test_delete_admin_user1_returns_400(self, client):
+        """Deletion of user id=1 (primary admin) is always blocked → 400 cannot_delete_admin.
+
+        Source: ttrss/classes/pref/users.php:200 — if ($id != $_SESSION["uid"] && $id != 1)
+        PHP explicitly protects user id=1 from deletion regardless of who is requesting.
+        """
+        mock_admin = _make_admin(uid=2)  # another admin trying to delete user 1
+
+        with patch("flask_login.utils._get_user", return_value=mock_admin), \
+             patch("ttrss.blueprints.prefs.users.current_user", mock_admin), \
+             patch("ttrss.blueprints.prefs.users.users_crud"):
+            resp = client.delete("/prefs/users/1")
+
+        assert resp.status_code == 400
+        assert resp.get_json()["error"] == "cannot_delete_admin"
+
 
 # ---------------------------------------------------------------------------
 # POST /prefs/users/<id>/reset_password

@@ -179,6 +179,10 @@ def delete_user(user_id: int):
     owner_uid = _owner_uid()
     if user_id == owner_uid:
         return jsonify({"error": "cannot_delete_self"}), 400
+    # Source: ttrss/classes/pref/users.php:200 — if ($id != $_SESSION["uid"] && $id != 1)
+    # Protect the primary admin account (id=1) from deletion.
+    if user_id == 1:
+        return jsonify({"error": "cannot_delete_admin"}), 400
 
     # Source: ttrss/classes/pref/users.php:201-203 — delete tags, feeds, user row
     users_crud.delete_user(user_id)

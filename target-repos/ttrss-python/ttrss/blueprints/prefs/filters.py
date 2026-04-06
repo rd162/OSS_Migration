@@ -274,6 +274,10 @@ def test_filter():
 
     owner_uid = _owner_uid()
 
+    # Source: ttrss/classes/pref/filters.php:51-54 — match_any_rule + inverse from request
+    match_any_rule = request.form.get("match_any_rule") in ("1", "true", "on")
+    inverse = request.form.get("inverse") in ("1", "true", "on")
+
     # Source: ttrss/classes/pref/filters.php:56-84 — load filter type map
     type_map = filters_crud.fetch_filter_type_map()
 
@@ -281,27 +285,54 @@ def test_filter():
     articles = filters_crud.fetch_recent_articles_for_test(owner_uid)
 
     rules_json = request.form.getlist("rule")
+
+    # Parse and validate rules upfront (PHP: lines 66-84)
+    parsed_rules = []
+    for r_json in rules_json:
+        try:
+            rule = _json.loads(r_json)
+        except (_json.JSONDecodeError, TypeError):
+            continue
+        if not rule:
+            continue
+        reg_exp = (rule.get("reg_exp") or "").strip()
+        if not reg_exp:
+            continue
+        try:
+            re.compile(reg_exp)
+        except re.error:
+            continue
+        parsed_rules.append((int(rule.get("filter_type", 1)), reg_exp))
+
     matched = []
     for row in articles:
-        for r_json in rules_json:
-            try:
-                rule = _json.loads(r_json)
-            except (_json.JSONDecodeError, TypeError):
-                continue
-            filter_type = int(rule.get("filter_type", 1))
-            reg_exp = (rule.get("reg_exp") or "").strip()
-            if not reg_exp:
-                continue
+        # Source: ttrss/classes/pref/filters.php:86-148 — apply match_any_rule + inverse
+        # match_any_rule=True → article matches if ANY rule matches (OR logic)
+        # match_any_rule=False → article matches only if ALL rules match (AND logic)
+        rule_results = []
+        for filter_type, reg_exp in parsed_rules:
             field_name = type_map.get(filter_type, "title")
             field_value = getattr(row, field_name, "") or ""
             try:
-                if re.search(reg_exp, field_value, re.IGNORECASE):
-                    matched.append({
-                        "title": row.title,
-                        "feed_title": row.feed_title,
-                    })
-                    break
+                rule_results.append(bool(re.search(reg_exp, field_value, re.IGNORECASE)))
             except re.error:
-                pass
+                rule_results.append(False)
+
+        if not rule_results:
+            continue
+
+        if match_any_rule:
+            article_matched = any(rule_results)
+        else:
+            article_matched = all(rule_results)
+
+        if inverse:
+            article_matched = not article_matched
+
+        if article_matched:
+            matched.append({
+                "title": row.title,
+                "feed_title": row.feed_title,
+            })
 
     return jsonify({"matched": matched, "total": len(articles)})

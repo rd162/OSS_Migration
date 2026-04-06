@@ -358,6 +358,7 @@ def subscribe_to_feed(
     """Subscribe a user to a feed URL.
 
     Source: ttrss/include/functions.php:subscribe_to_feed (lines 1672-1754)
+    # Source: ttrss/classes/feeds.php:quickAddFeed (UI entry point; delegates to subscribe_to_feed)
     Adapted: Uses httpx + lxml instead of PHP fetch_file_contents + DOMDocument (ADR-0015).
     Auth pass encryption handled by TtRssFeed.auth_pass property (ADR-0009, Fernet).
 

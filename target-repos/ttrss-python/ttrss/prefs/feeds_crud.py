@@ -78,7 +78,7 @@ def save_feed_settings(
 ) -> bool:
     """Apply posted form data to a single feed.  Returns False if feed not found.
 
-    # Source: ttrss/classes/pref/feeds.php:editSave (line 912) / editsaveops(false) (line 916)
+    # Source: ttrss/classes/pref/feeds.php:editsaveops (line 916) / editSave (line 912)
     #         ttrss/classes/pref/feeds.php:918 — feed_title = trim($_POST["title"])
     #         ttrss/classes/pref/feeds.php:927-938 — boolean checkbox fields
     """
@@ -395,7 +395,7 @@ def remove_feed(
 def clear_feed_articles(session: Session, feed_id: int, owner_uid: int) -> None:
     """Purge all non-starred articles from a feed.
 
-    # Source: ttrss/classes/pref/feeds.php:clear (line 1089) / clear_feed_articles (line 1683)
+    # Source: ttrss/classes/pref/feeds.php:clear_feed_articles (line 1683) / clear (line 1089)
     #         ttrss/classes/pref/feeds.php:1685-1694 — delete user_entries, purge orphans, ccache
     """
     from ttrss.ccache import ccache_update
@@ -437,7 +437,8 @@ def clear_feed_articles(session: Session, feed_id: int, owner_uid: int) -> None:
 def rescore_feed_impl(session: Session, feed_id: int, owner_uid: int) -> None:
     """Rescore all articles in a feed using current filter rules.
 
-    # Source: ttrss/classes/pref/feeds.php:1094-1147 / 1149-1200
+    # Source: ttrss/classes/pref/feeds.php:rescore (lines 1094-1147)
+    # Source: ttrss/classes/pref/feeds.php:rescoreAll delegated here for single-feed case
     #         action_id=6 is score action
     """
     from ttrss.articles.filters import (

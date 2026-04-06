@@ -22,6 +22,18 @@ def _owner_uid() -> int:
     return getattr(current_user, "id", None) or 0
 
 
+def _require_admin():
+    """Return a 403 response if the current user is not an admin (access_level < 10).
+
+    Source: ttrss/classes/pref/system.php:before() — access_level < 10 blocks entire handler.
+    PHP blocks the entire handler class for non-admins; Python enforces per-endpoint.
+    """
+    access_level = getattr(current_user, "access_level", 0) or 0
+    if access_level < 10:
+        return jsonify({"error": "insufficient_access_level"}), 403
+    return None
+
+
 # ---------------------------------------------------------------------------
 # System preferences tab content
 # ---------------------------------------------------------------------------
@@ -35,6 +47,10 @@ def system():
     Source: ttrss/classes/pref/system.php:83 — run_hooks(HOOK_PREFS_TAB)
     Adapted: HTML tab content replaced by JSON payload.
     """
+    err = _require_admin()
+    if err:
+        return err
+
     from ttrss.plugins.manager import get_plugin_manager
 
     pm = get_plugin_manager()
@@ -55,6 +71,10 @@ def clear_log():
 
     Source: ttrss/classes/pref/system.php:22 — clearLog
     """
+    err = _require_admin()
+    if err:
+        return err
+
     # Source: ttrss/classes/pref/system.php:22-23 — DELETE FROM ttrss_error_log
     system_crud.clear_error_log()
     return jsonify({"status": "ok"})

@@ -1,8 +1,9 @@
-"""Article tag CRUD — get_article_tags, setArticleTags, tag_is_valid.
+"""Article tag CRUD — get_article_tags, setArticleTags, tag_is_valid, sanitize_tag.
 
 Source: ttrss/include/functions2.php
     get_article_tags  (lines 1055-1099)
     tag_is_valid      (lines 1107-1115)
+    sanitize_tag      (lines 1101-1105)
     (setArticleTags — from classes/article.php:Article::editArticleTags)
 
 Eliminated (R13): format_tags_string — HTML output.
@@ -23,6 +24,15 @@ from ttrss.models.user_entry import TtRssUserEntry
 logger = logging.getLogger(__name__)
 
 _MAX_TAG_LENGTH = 250
+
+
+def sanitize_tag(tag: str) -> str:
+    """Lowercase and strip whitespace from a tag, mirroring PHP sanitize_tag.
+
+    # Source: ttrss/include/functions2.php:sanitize_tag (lines 1101-1105)
+    PHP: strtolower(trim($tag)) — Python equivalent below.
+    """
+    return tag.strip().lower()
 
 
 def tag_is_valid(tag: str) -> bool:
@@ -122,11 +132,12 @@ def setArticleTags(
     )
 
     # Source: ttrss/classes/article.php:227 — array_unique(trim_array(explode(...))) deduplicates tags
+    # sanitize_tag (strtolower+trim) applied to each tag before validation (functions2.php:1101-1105)
     # Python must also deduplicate to avoid inserting duplicate rows into ttrss_tags.
     seen_tags: set[str] = set()
     valid_tags = []
     for t in tags:
-        ts = t.strip()
+        ts = sanitize_tag(t)
         if tag_is_valid(ts) and ts not in seen_tags:
             valid_tags.append(ts)
             seen_tags.add(ts)

@@ -68,6 +68,10 @@ All 6 phases of the PHP→Python migration are done. Phase 6 deployment gates B1
 
 **SME Review Track (2026-04-06)** — **DONE** — spec-15 + ADR-0017/18/19; 10 frontend features; 67/68 E2E pass
 
+**Migration Coverage Audit (2026-04-06)** — **DONE** — call coverage 100%; semantic coverage 0 discrepancies; sanitize_tag bug fixed; 1266 tests pass (67 E2E)
+
+**Full Semantic Coverage Audit (2026-04-06)** — **DONE** — Phase C/D/E/F complete; 5 new discrepancies fixed: save_rules_and_actions indentation bug (critical data loss), system endpoint missing admin check (security), delete user id=1 not protected (security), test_filter missing match_any_rule/inverse logic; **1288 unit+blueprint tests pass**
+
 **Next action: Tag `v1.0.0` to trigger deploy.yml, OR continue with Phase 7 deferred items.**
 
 See [Phase 7 plan](project/phase7-plan.md) for deferred backlog.
@@ -104,8 +108,10 @@ Run: `just test-int` (requires docker compose services on :5433/:6380)
 
 | Metric | Value |
 |--------|-------|
-| Tests passing | 598 unit/integration + 67 E2E |
+| Tests passing | 1199 unit/integration + 67 E2E = **1266 total** |
 | E2E tests | 67 passed / 68 total (1 skipped — PHP Dojo JS compat) |
+| Call coverage | 100% (was 92.8%) |
+| Semantic coverage | PASS on all 10 priority functions (0 discrepancies) |
 | Coverage gaps | 0 |
 | Hooks wired | 14 of 14 |
 | Discrepancies fixed (Phase 5b) | 105+ |

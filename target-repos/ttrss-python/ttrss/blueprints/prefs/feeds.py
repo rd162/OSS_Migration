@@ -42,6 +42,7 @@ def _s():
 def edit_feed(feed_id: int):
     """Return feed data and plugin-provided extra fields for the feed edit dialog.
 
+    # Source: ttrss/classes/pref/feeds.php:editfeeds (route entry point, line 534)
     Source: ttrss/classes/pref/feeds.php:748 — run_hooks(HOOK_PREFS_EDIT_FEED, $feed_id)
             ttrss/classes/pref/feeds.php:1434 — run_hooks(HOOK_PREFS_TAB_SECTION)
             ttrss/classes/pref/feeds.php:1475 — run_hooks(HOOK_PREFS_TAB_SECTION)
@@ -200,7 +201,8 @@ def remove_feed(feed_id: int):
 def clear_feed(feed_id: int):
     """Purge all non-starred articles from a feed.
 
-    Source: ttrss/classes/pref/feeds.php:1089 — clear / clear_feed_articles (line 1683)
+    # Source: ttrss/classes/pref/feeds.php:clear (line 1089, route entry point)
+    # Source: ttrss/classes/pref/feeds.php:clear_feed_articles (line 1683, helper)
     """
     owner_uid = _owner_uid()
     feeds_crud.clear_feed_articles(_s(), feed_id, owner_uid)
@@ -217,7 +219,7 @@ def clear_feed(feed_id: int):
 def rescore_feed(feed_id: int):
     """Rescore all articles in a feed using current filter rules.
 
-    Source: ttrss/classes/pref/feeds.php:1094-1147 — rescore
+    # Source: ttrss/classes/pref/feeds.php:rescore (lines 1094-1147)
     """
     owner_uid = _owner_uid()
     feeds_crud.rescore_feed_impl(_s(), feed_id, owner_uid)
@@ -229,7 +231,7 @@ def rescore_feed(feed_id: int):
 def rescore_all_feeds():
     """Rescore all feeds for the current user.
 
-    Source: ttrss/classes/pref/feeds.php:1149-1200 — rescoreAll
+    # Source: ttrss/classes/pref/feeds.php:rescoreAll (lines 1149-1200)
     """
     owner_uid = _owner_uid()
     feed_ids = feeds_crud.get_all_feed_ids(_s(), owner_uid)

@@ -15,14 +15,14 @@ PLUGIN_FEED_BASE_INDEX: int = -128
 
 def label_to_feed_id(label_id: int) -> int:
     """Convert label database ID to virtual feed ID.
-    Source: ttrss/include/functions2.php:2400-2401
+    # Source: ttrss/include/functions2.php:label_to_feed_id (lines 2400-2401)
     """
     return LABEL_BASE_INDEX - 1 - abs(label_id)
 
 
 def feed_to_label_id(feed_id: int) -> int:
     """Convert virtual label feed ID back to label database ID.
-    Source: ttrss/include/functions2.php:2404-2405
+    # Source: ttrss/include/functions2.php:feed_to_label_id (lines 2404-2405)
     """
     return LABEL_BASE_INDEX - 1 + abs(feed_id)
 

@@ -289,6 +289,100 @@ class TestFilterTest:
         assert len(data["matched"]) == 1
         assert data["matched"][0]["title"] == "Breaking News"
 
+    def test_filter_test_match_any_rule_false_requires_all(self, app):
+        """match_any_rule=false → ALL rules must match (AND logic).
+
+        Source: ttrss/classes/pref/filters.php:51 — $filter["match_any_rule"]
+        PHP passes this to queryFeedHeadlines which applies AND/OR logic accordingly.
+        """
+        mock_user = _mock_user()
+
+        article = MagicMock()
+        article.title = "Breaking News Today"
+        article.content = "Nothing special"
+        article.feed_title = "CNN"
+
+        import json as _json
+        # Rule 1 matches title, Rule 2 does not match title — AND logic → no match
+        rule1 = _json.dumps({"filter_type": 1, "reg_exp": "Breaking"})
+        rule2 = _json.dumps({"filter_type": 1, "reg_exp": "Politics"})
+
+        with app.test_request_context(
+            method="POST",
+            data={"rule": [rule1, rule2], "match_any_rule": ""},  # unchecked = false
+        ):
+            with patch("ttrss.blueprints.prefs.filters.current_user", mock_user), \
+                 patch("ttrss.blueprints.prefs.filters.filters_crud") as mock_crud:
+                mock_crud.fetch_filter_type_map.return_value = {1: "title", 2: "content"}
+                mock_crud.fetch_recent_articles_for_test.return_value = [article]
+                from ttrss.blueprints.prefs import filters
+                resp = _unwrap(filters.test_filter)()
+
+        data = resp.get_json()
+        # Both rules must match for AND logic — second rule fails → no match
+        assert len(data["matched"]) == 0
+
+    def test_filter_test_match_any_rule_true_requires_one(self, app):
+        """match_any_rule=true → ANY rule match is sufficient (OR logic).
+
+        Source: ttrss/classes/pref/filters.php:51 — $filter["match_any_rule"]
+        """
+        mock_user = _mock_user()
+
+        article = MagicMock()
+        article.title = "Breaking News Today"
+        article.content = "Nothing special"
+        article.feed_title = "CNN"
+
+        import json as _json
+        rule1 = _json.dumps({"filter_type": 1, "reg_exp": "Breaking"})   # matches
+        rule2 = _json.dumps({"filter_type": 1, "reg_exp": "Politics"})   # no match
+
+        with app.test_request_context(
+            method="POST",
+            data={"rule": [rule1, rule2], "match_any_rule": "1"},
+        ):
+            with patch("ttrss.blueprints.prefs.filters.current_user", mock_user), \
+                 patch("ttrss.blueprints.prefs.filters.filters_crud") as mock_crud:
+                mock_crud.fetch_filter_type_map.return_value = {1: "title", 2: "content"}
+                mock_crud.fetch_recent_articles_for_test.return_value = [article]
+                from ttrss.blueprints.prefs import filters
+                resp = _unwrap(filters.test_filter)()
+
+        data = resp.get_json()
+        # OR logic — first rule matches → article included
+        assert len(data["matched"]) == 1
+
+    def test_filter_test_inverse_flips_result(self, app):
+        """inverse=true flips the match result.
+
+        Source: ttrss/classes/pref/filters.php:53 — $filter["inverse"]
+        PHP passes inverse to queryFeedHeadlines which inverts the final match.
+        """
+        mock_user = _mock_user()
+
+        article = MagicMock()
+        article.title = "Breaking News"
+        article.feed_title = "CNN"
+
+        import json as _json
+        rule_json = _json.dumps({"filter_type": 1, "reg_exp": "Breaking"})
+
+        with app.test_request_context(
+            method="POST",
+            data={"rule": [rule_json], "inverse": "1"},
+        ):
+            with patch("ttrss.blueprints.prefs.filters.current_user", mock_user), \
+                 patch("ttrss.blueprints.prefs.filters.filters_crud") as mock_crud:
+                mock_crud.fetch_filter_type_map.return_value = {1: "title"}
+                mock_crud.fetch_recent_articles_for_test.return_value = [article]
+                from ttrss.blueprints.prefs import filters
+                resp = _unwrap(filters.test_filter)()
+
+        data = resp.get_json()
+        # Without inverse the article would match; with inverse it should NOT match
+        assert len(data["matched"]) == 0
+
 
 # ---------------------------------------------------------------------------
 # POST /prefs/filters/join

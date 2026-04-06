@@ -239,7 +239,7 @@ def otp_enable():
 def otp_disable():
     """Disable OTP for the current user after verifying password.
 
-    Source: ttrss/classes/pref/prefs.php:933-949 — otpdisable
+    # Source: ttrss/classes/pref/prefs.php:otpdisable (lines 933-949)
     PHP requires correct password before disabling OTP.
     """
     owner_uid = _owner_uid()

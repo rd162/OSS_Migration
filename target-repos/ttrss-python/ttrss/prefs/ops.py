@@ -52,6 +52,7 @@ def get_user_pref(
     system default if no user override exists.
 
     Source: ttrss/include/db-prefs.php:get_pref (full function)
+    # Source: ttrss/classes/db/prefs.php:read (Db_Prefs class method; thin wrapper around get_pref)
     Adapted: PHP uses global PDO; Python uses SQLAlchemy session.
              PHP returns false on missing pref_name; Python returns None.
     Note: ttrss/include/db-prefs.php:get_pref — PHP coerces the value to bool/int/string
@@ -103,6 +104,7 @@ def set_user_pref(
     Write (upsert) a preference value for the given user.
 
     Source: ttrss/include/db-prefs.php:set_pref (full function)
+    # Source: ttrss/classes/db/prefs.php:write (Db_Prefs class method; thin wrapper around set_pref)
     Adapted: PHP uses INSERT … ON CONFLICT DO UPDATE (or equivalent two-step
              DELETE+INSERT in older TT-RSS versions); Python uses SQLAlchemy merge
              (session.merge) which achieves the same upsert semantics via the ORM.

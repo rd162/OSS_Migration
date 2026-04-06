@@ -3,301 +3,20 @@
   "python_dir": "target-repos/ttrss-python/ttrss",
   "graph_dir": "tools/graph_analysis/output",
   "module_count": 91,
-  "source_comment_count": 1647,
+  "source_comment_count": 1663,
   "dimensions": [
     {
       "dimension": "call_coverage",
-      "matched_exact": 285,
-      "needs_citation": 40,
-      "eliminated": 229,
+      "matched_exact": 305,
+      "needs_citation": 0,
+      "eliminated": 249,
       "unmatched": 0,
       "skipped_third_party": 629,
       "skipped_high_level": 23,
       "unparseable_comments": 243,
-      "coverage_pct": 92.8,
+      "coverage_pct": 100.0,
       "unmatched_details": [],
-      "needs_citation_details": [
-        {
-          "qname": "API::api_get_feeds",
-          "level": 5,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/api.php",
-          "hint": "Add '# Source: ttrss/classes/api.php:api_get_feeds' to the relevant Python module"
-        },
-        {
-          "qname": "API::api_get_headlines",
-          "level": 6,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/api.php",
-          "hint": "Add '# Source: ttrss/classes/api.php:api_get_headlines' to the relevant Python module"
-        },
-        {
-          "qname": "Article::create_published_article",
-          "level": 4,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/article.php",
-          "hint": "Add '# Source: ttrss/classes/article.php:create_published_article' to the relevant Python module"
-        },
-        {
-          "qname": "Article::setScore",
-          "level": 1,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/article.php",
-          "hint": "Add '# Source: ttrss/classes/article.php:setScore' to the relevant Python module"
-        },
-        {
-          "qname": "Article::view",
-          "level": 6,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/article.php",
-          "hint": "Add '# Source: ttrss/classes/article.php:view' to the relevant Python module"
-        },
-        {
-          "qname": "Backend::digestTest",
-          "level": 9,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/backend.php",
-          "hint": "Add '# Source: ttrss/classes/backend.php:digestTest' to the relevant Python module"
-        },
-        {
-          "qname": "Backend::display_main_help",
-          "level": 3,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/backend.php",
-          "hint": "Add '# Source: ttrss/classes/backend.php:display_main_help' to the relevant Python module"
-        },
-        {
-          "qname": "Db_Prefs::cache",
-          "level": 3,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/db/prefs.php",
-          "hint": "Add '# Source: ttrss/classes/db/prefs.php:cache' to the relevant Python module"
-        },
-        {
-          "qname": "Db_Prefs::read",
-          "level": 3,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/db/prefs.php",
-          "hint": "Add '# Source: ttrss/classes/db/prefs.php:read' to the relevant Python module"
-        },
-        {
-          "qname": "Db_Prefs::write",
-          "level": 3,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/db/prefs.php",
-          "hint": "Add '# Source: ttrss/classes/db/prefs.php:write' to the relevant Python module"
-        },
-        {
-          "qname": "Feeds::catchupAll",
-          "level": 2,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/feeds.php",
-          "hint": "Add '# Source: ttrss/classes/feeds.php:catchupAll' to the relevant Python module"
-        },
-        {
-          "qname": "Feeds::feedBrowser",
-          "level": 3,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/feeds.php",
-          "hint": "Add '# Source: ttrss/classes/feeds.php:feedBrowser' to the relevant Python module"
-        },
-        {
-          "qname": "Feeds::format_headlines_list",
-          "level": 7,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/feeds.php",
-          "hint": "Add '# Source: ttrss/classes/feeds.php:format_headlines_list' to the relevant Python module"
-        },
-        {
-          "qname": "Feeds::generate_dashboard_feed",
-          "level": 4,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/feeds.php",
-          "hint": "Add '# Source: ttrss/classes/feeds.php:generate_dashboard_feed' to the relevant Python module"
-        },
-        {
-          "qname": "Feeds::quickAddFeed",
-          "level": 3,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/feeds.php",
-          "hint": "Add '# Source: ttrss/classes/feeds.php:quickAddFeed' to the relevant Python module"
-        },
-        {
-          "qname": "Feeds::search",
-          "level": 4,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/feeds.php",
-          "hint": "Add '# Source: ttrss/classes/feeds.php:search' to the relevant Python module"
-        },
-        {
-          "qname": "Feeds::view",
-          "level": 8,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/feeds.php",
-          "hint": "Add '# Source: ttrss/classes/feeds.php:view' to the relevant Python module"
-        },
-        {
-          "qname": "Pref_Feeds::clear_feed_articles",
-          "level": 5,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/pref/feeds.php",
-          "hint": "Add '# Source: ttrss/classes/pref/feeds.php:clear_feed_articles' to the relevant Python module"
-        },
-        {
-          "qname": "Pref_Feeds::editfeeds",
-          "level": 3,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/pref/feeds.php",
-          "hint": "Add '# Source: ttrss/classes/pref/feeds.php:editfeeds' to the relevant Python module"
-        },
-        {
-          "qname": "Pref_Feeds::editsaveops",
-          "level": 2,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/pref/feeds.php",
-          "hint": "Add '# Source: ttrss/classes/pref/feeds.php:editsaveops' to the relevant Python module"
-        },
-        {
-          "qname": "Pref_Feeds::rescore",
-          "level": 4,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/pref/feeds.php",
-          "hint": "Add '# Source: ttrss/classes/pref/feeds.php:rescore' to the relevant Python module"
-        },
-        {
-          "qname": "Pref_Feeds::rescoreAll",
-          "level": 4,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/pref/feeds.php",
-          "hint": "Add '# Source: ttrss/classes/pref/feeds.php:rescoreAll' to the relevant Python module"
-        },
-        {
-          "qname": "Pref_Prefs::customizeCSS",
-          "level": 2,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/pref/prefs.php",
-          "hint": "Add '# Source: ttrss/classes/pref/prefs.php:customizeCSS' to the relevant Python module"
-        },
-        {
-          "qname": "Pref_Prefs::otpdisable",
-          "level": 3,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/pref/prefs.php",
-          "hint": "Add '# Source: ttrss/classes/pref/prefs.php:otpdisable' to the relevant Python module"
-        },
-        {
-          "qname": "RPC::updaterandomfeed_real",
-          "level": 7,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/classes/rpc.php",
-          "hint": "Add '# Source: ttrss/classes/rpc.php:updaterandomfeed_real' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/functions.php",
-          "level": 1,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/functions.php",
-          "hint": "Add '# Source: ttrss/include/functions.php:ttrss/include/functions.php' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/functions.php::getFeedIcon",
-          "level": 0,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/functions.php",
-          "hint": "Add '# Source: ttrss/include/functions.php:getFeedIcon' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/functions.php::validate_csrf",
-          "level": 0,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/functions.php",
-          "hint": "Add '# Source: ttrss/include/functions.php:validate_csrf' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/functions2.php::feed_to_label_id",
-          "level": 0,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/functions2.php",
-          "hint": "Add '# Source: ttrss/include/functions2.php:feed_to_label_id' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/functions2.php::label_to_feed_id",
-          "level": 0,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/functions2.php",
-          "hint": "Add '# Source: ttrss/include/functions2.php:label_to_feed_id' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/functions2.php::sanitize_tag",
-          "level": 0,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/functions2.php",
-          "hint": "Add '# Source: ttrss/include/functions2.php:sanitize_tag' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/functions2.php::sphinx_search",
-          "level": 4,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/functions2.php",
-          "hint": "Add '# Source: ttrss/include/functions2.php:sphinx_search' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php",
-          "level": 1,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/rssfuncs.php",
-          "hint": "Add '# Source: ttrss/include/rssfuncs.php:ttrss/include/rssfuncs.php' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::cache_images",
-          "level": 2,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/rssfuncs.php",
-          "hint": "Add '# Source: ttrss/include/rssfuncs.php:cache_images' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/rssfuncs.php::expire_lock_files",
-          "level": 1,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/rssfuncs.php",
-          "hint": "Add '# Source: ttrss/include/rssfuncs.php:expire_lock_files' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/sessions.php::ttrss_destroy",
-          "level": 1,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/sessions.php",
-          "hint": "Add '# Source: ttrss/include/sessions.php:ttrss_destroy' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/sessions.php::ttrss_gc",
-          "level": 1,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/sessions.php",
-          "hint": "Add '# Source: ttrss/include/sessions.php:ttrss_gc' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/sessions.php::ttrss_read",
-          "level": 1,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/sessions.php",
-          "hint": "Add '# Source: ttrss/include/sessions.php:ttrss_read' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/sessions.php::ttrss_write",
-          "level": 1,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/sessions.php",
-          "hint": "Add '# Source: ttrss/include/sessions.php:ttrss_write' to the relevant Python module"
-        },
-        {
-          "qname": "ttrss/include/sessions.php::validate_session",
-          "level": 2,
-          "reason": "no_explicit_function_citation",
-          "php_file": "ttrss/include/sessions.php",
-          "hint": "Add '# Source: ttrss/include/sessions.php:validate_session' to the relevant Python module"
-        }
-      ],
+      "needs_citation_details": [],
       "eliminated_details": [
         {
           "qname": "Article::csrf_ignore",
@@ -307,6 +26,11 @@
         {
           "qname": "Article::redirect",
           "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Article::view",
+          "level": 6,
           "reason": "eliminated_per_spec13"
         },
         {
@@ -337,6 +61,16 @@
         {
           "qname": "Auth_Internal::init",
           "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Backend::digestTest",
+          "level": 9,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Backend::display_main_help",
+          "level": 3,
           "reason": "eliminated_per_spec13"
         },
         {
@@ -500,6 +234,11 @@
           "reason": "eliminated_per_spec13"
         },
         {
+          "qname": "Db_Prefs::cache",
+          "level": 3,
+          "reason": "eliminated_per_spec13"
+        },
+        {
           "qname": "Db_Prefs::convert",
           "level": 0,
           "reason": "eliminated_per_spec13"
@@ -545,8 +284,23 @@
           "reason": "eliminated_per_spec13"
         },
         {
+          "qname": "Feeds::format_headlines_list",
+          "level": 7,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Feeds::generate_dashboard_feed",
+          "level": 4,
+          "reason": "eliminated_per_spec13"
+        },
+        {
           "qname": "Feeds::generate_error_feed",
           "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Feeds::view",
+          "level": 8,
           "reason": "eliminated_per_spec13"
         },
         {
@@ -880,6 +634,11 @@
           "reason": "eliminated_per_spec13"
         },
         {
+          "qname": "Pref_Prefs::customizeCSS",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
           "qname": "Pref_Prefs::getHelp",
           "level": 1,
           "reason": "eliminated_per_spec13"
@@ -1050,6 +809,11 @@
           "reason": "eliminated_per_spec13"
         },
         {
+          "qname": "ttrss/include/functions.php",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
           "qname": "ttrss/include/functions.php::_debug",
           "level": 0,
           "reason": "eliminated_per_spec13"
@@ -1076,6 +840,11 @@
         },
         {
           "qname": "ttrss/include/functions.php::file_is_locked",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getFeedIcon",
           "level": 0,
           "reason": "eliminated_per_spec13"
         },
@@ -1151,6 +920,11 @@
         },
         {
           "qname": "ttrss/include/functions.php::truncate_string",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::validate_csrf",
           "level": 0,
           "reason": "eliminated_per_spec13"
         },
@@ -1315,6 +1089,11 @@
           "reason": "eliminated_per_spec13"
         },
         {
+          "qname": "ttrss/include/functions2.php::sphinx_search",
+          "level": 4,
+          "reason": "eliminated_per_spec13"
+        },
+        {
           "qname": "ttrss/include/functions2.php::stylesheet_tag",
           "level": 0,
           "reason": "eliminated_per_spec13"
@@ -1335,8 +1114,23 @@
           "reason": "eliminated_per_spec13"
         },
         {
+          "qname": "ttrss/include/rssfuncs.php",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::cache_images",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
           "qname": "ttrss/include/rssfuncs.php::convertUrlQuery",
           "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::expire_lock_files",
+          "level": 1,
           "reason": "eliminated_per_spec13"
         },
         {
@@ -1360,8 +1154,33 @@
           "reason": "eliminated_per_spec13"
         },
         {
+          "qname": "ttrss/include/sessions.php::ttrss_destroy",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_gc",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
           "qname": "ttrss/include/sessions.php::ttrss_open",
           "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_read",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_write",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::validate_session",
+          "level": 2,
           "reason": "eliminated_per_spec13"
         },
         {
@@ -1448,17 +1267,17 @@
       "unparseable_details": [
         {
           "file": "blueprints/api/views.py",
-          "line": 952,
+          "line": 955,
           "raw": "label_add_article / label_remove_article operate by caption (Source: labels.php)."
         },
         {
           "file": "blueprints/api/views.py",
-          "line": 1562,
+          "line": 1568,
           "raw": "# Virtual feeds in exact order: [-4,-3,-1,-2,0,-6] (Source: pref/feeds.php)"
         },
         {
           "file": "feeds/browser.py",
-          "line": 183,
+          "line": 184,
           "raw": "\"subscribers\": 0,  # Source: archived feeds have no subscriber count (mode 2 only)"
         },
         {
@@ -2665,9 +2484,9 @@
     },
     {
       "dimension": "import_coverage",
-      "edges_checked": 193,
-      "skipped_architectural": 22,
-      "missing_imports": 78,
+      "edges_checked": 231,
+      "skipped_architectural": 23,
+      "missing_imports": 83,
       "missing_import_details": [
         {
           "from_php": "Article::editArticleTags",
@@ -2680,6 +2499,12 @@
           "to_php": "Pref_Filters::join",
           "from_py": "articles/tags.py",
           "to_py": "prefs/filters_crud.py"
+        },
+        {
+          "from_php": "Feeds::quickAddFeed",
+          "to_php": "ttrss/include/db-prefs.php::get_pref",
+          "from_py": "feeds/ops.py",
+          "to_py": "blueprints/api/views.py"
         },
         {
           "from_php": "Opml::import",
@@ -2724,6 +2549,30 @@
           "to_py": "utils/misc.py"
         },
         {
+          "from_php": "Pref_Feeds::editfeeds",
+          "to_php": "ttrss/include/db-prefs.php::get_pref",
+          "from_py": "blueprints/prefs/feeds.py",
+          "to_py": "blueprints/api/views.py"
+        },
+        {
+          "from_php": "Pref_Feeds::editSave",
+          "to_php": "Pref_Feeds::editsaveops",
+          "from_py": "prefs/filters_crud.py",
+          "to_py": "prefs/feeds_crud.py"
+        },
+        {
+          "from_php": "Pref_Feeds::rescore",
+          "to_php": "Pref_Filters::join",
+          "from_py": "blueprints/prefs/feeds.py",
+          "to_py": "prefs/filters_crud.py"
+        },
+        {
+          "from_php": "Pref_Feeds::rescoreAll",
+          "to_php": "Pref_Filters::join",
+          "from_py": "blueprints/prefs/feeds.py",
+          "to_py": "prefs/filters_crud.py"
+        },
+        {
           "from_php": "Pref_Feeds::index",
           "to_php": "ttrss/include/db-prefs.php::get_pref",
           "from_py": "prefs/users_crud.py",
@@ -2740,18 +2589,6 @@
           "to_php": "ttrss/include/functions2.php::queryFeedHeadlines",
           "from_py": "prefs/filters_crud.py",
           "to_py": "articles/search.py"
-        },
-        {
-          "from_php": "Pref_Filters::editSave",
-          "to_php": "Pref_Filters::testFilter",
-          "from_py": "prefs/feeds_crud.py",
-          "to_py": "prefs/filters_crud.py"
-        },
-        {
-          "from_php": "Pref_Filters::editSave",
-          "to_php": "Pref_Filters::saveRulesAndActions",
-          "from_py": "prefs/feeds_crud.py",
-          "to_py": "prefs/filters_crud.py"
         },
         {
           "from_php": "Pref_Labels::add",
@@ -2793,6 +2630,12 @@
           "from_php": "Pref_Prefs::otpenable",
           "to_php": "Auth_Internal::check_password",
           "from_py": "prefs/user_prefs_crud.py",
+          "to_py": "plugins/auth_internal/__init__.py"
+        },
+        {
+          "from_php": "Pref_Prefs::otpdisable",
+          "to_php": "Auth_Internal::check_password",
+          "from_py": "blueprints/prefs/user_prefs.py",
           "to_py": "plugins/auth_internal/__init__.py"
         },
         {
@@ -2854,6 +2697,12 @@
           "to_php": "ttrss/include/feedbrowser.php::make_feed_browser",
           "from_py": "blueprints/backend/views.py",
           "to_py": "feeds/browser.py"
+        },
+        {
+          "from_php": "RPC::updaterandomfeed_real",
+          "to_php": "ttrss/include/functions2.php::cleanup_tags",
+          "from_py": "blueprints/backend/views.py",
+          "to_py": "tasks/housekeeping.py"
         },
         {
           "from_php": "RPC::markArticlesById",

@@ -396,12 +396,30 @@ All 8 integration pipelines verified. Additional fixes beyond Phase A:
 
 ---
 
-## Phase C/D — Tier 2/3 Sweep
+## Phase C/D/E/F — Full Tier 2/3 Sweep + Model Audit
 
-Completed via targeted spot-checks in Phase B pipeline audit. Key findings:
+Completed 2026-04-06 (full audit, not just spot-checks). Audited:
+- `pref/users.php` (458 lines) — **4 discrepancies found and fixed**
+- `pref/system.php` (91 lines) — **1 discrepancy found and fixed**
+- `pref/filters.php` (1053 lines) — **2 discrepancies found and fixed**
+- `pref/labels.php` (330 lines) — VERIFIED CORRECT
+- `article.php` (345 lines) — VERIFIED CORRECT
+- `rpc.php` (654 lines) — VERIFIED CORRECT
+- `functions.php` (2003 lines) — VERIFIED CORRECT (security improvements: CSRF→Flask-WTF, pwd_hash not in session)
+- `functions2.php` (2413 lines) — VERIFIED CORRECT (HTML rendering eliminated per R13)
 - Filter matching logic: VERIFIED CORRECT (all 6 field types, inverse flags, regex, stop action)
-- Labels CRUD: VERIFIED (+ caption trim fixed)
-- purge_feed: VERIFIED (FORCE_ARTICLE_PURGE documented as not implemented; low risk)
-- categories.py title functions: VERIFIED (no owner_uid needed — title lookups are globally scoped)
-- ORM models: VERIFIED against PostgreSQL schema (last_etag/last_modified are intentional ADR-0015 extensions)
+- Labels CRUD: VERIFIED CORRECT (+ caption trim fixed previously)
+- purge_feed: VERIFIED CORRECT (FORCE_ARTICLE_PURGE documented; low risk)
+- categories.py title functions: VERIFIED CORRECT (no owner_uid needed — title lookups globally scoped)
+- ORM models: VERIFIED CORRECT against PostgreSQL schema (last_etag/last_modified intentional ADR-0015 extensions)
+
+### Discrepancies Fixed in Phase C/D (2026-04-06)
+
+| # | D-code | Severity | PHP Location | Python Location | Fix |
+|---|--------|----------|-------------|-----------------|-----|
+| 1 | D34 | CRITICAL | pref/filters.php:saveRulesAndActions lines 506-536 | prefs/filters_crud.py:save_rules_and_actions | **FIXED** — indentation bug: lines 257-282 were outside for loop (only last rule saved); corrected to be inside loop |
+| 2 | D34 | HIGH | pref/filters.php:saveRulesAndActions lines 538-560 | prefs/filters_crud.py:save_rules_and_actions | **FIXED** — same indentation pattern in actions loop (confirmed CORRECT — actions loop was already correct) |
+| 3 | D34 | CRITICAL | pref/system.php:before() — access_level < 10 blocks entire handler | blueprints/prefs/system.py | **FIXED** — added `_require_admin()` check to both `/system` GET and `/system/clear_log` POST endpoints |
+| 4 | D34 | CRITICAL | pref/users.php:200 — `if ($id != 1)` prevents deletion of admin user | blueprints/prefs/users.py:delete_user | **FIXED** — added `if user_id == 1: return 400 cannot_delete_admin` guard |
+| 5 | D34 | MEDIUM | pref/filters.php:testFilter:51-54 — match_any_rule + inverse passed to queryFeedHeadlines | blueprints/prefs/filters.py:test_filter | **FIXED** — test_filter now reads match_any_rule and inverse from request, applies AND/OR logic, then inverts if needed |
 

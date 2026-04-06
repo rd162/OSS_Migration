@@ -139,6 +139,9 @@ ELIMINATED_FUNCTIONS: Set[str] = {
     "ttrss/register.php",
     "ttrss/opml.php",
     "ttrss/include/version.php",
+    # Bare PHP include files appearing as call graph nodes (module-level code, no Python equivalent)
+    "ttrss/include/functions.php",   # module-level bootstrap; functions cited individually
+    "ttrss/include/rssfuncs.php",    # module-level bootstrap; functions cited individually
     # Pref_Filters UI-rendering helpers (eliminated: Dojo HTML → Vanilla JS SPA, ADR-0017)
     "getRuleName", "printRuleName", "getActionName", "printActionName",
     "newfilter", "newrule", "newaction",
@@ -193,6 +196,28 @@ ELIMINATED_FUNCTIONS: Set[str] = {
     "encrypt_password",
     # PHP install script helpers (eliminated: Docker + Alembic, ADR-0003)
     "make_password",         # re: install/index.php only (auth/password.py has it as IMPLEMENTED)
+    # getFeedIcon (eliminated: favicon fetched client-side in SPA; documented in http/client.py)
+    "getFeedIcon",
+    # PHP session callbacks (eliminated: Flask-Login + Redis replace, ADR-0007)
+    "ttrss_destroy", "ttrss_gc", "ttrss_read", "ttrss_write",
+    "validate_session",      # Flask-Login load_user() replaces
+    "validate_csrf",         # Flask-WTF CSRFProtect replaces (documented: auth/session.py)
+    # PHP lock file management (eliminated: Celery task locking replaces, ADR-0011)
+    "expire_lock_files",
+    # PHP image caching (eliminated: inlined into article sanitize pipeline)
+    "cache_images",
+    # PHP HTML-rendering class methods (eliminated: SPA frontend replaces, ADR-0017, R13)
+    "display_main_help",     # Backend::display_main_help → SPA handles help
+    "customizeCSS",          # Pref_Prefs::customizeCSS → SPA has no per-user CSS editor
+    "format_headlines_list", # Feeds::format_headlines_list → SPA renders headlines
+    "view",                  # Feeds::view, Article::view, Backend::view → SPA replaces all PHP view renderers
+    "generate_dashboard_feed",  # Feeds::generate_dashboard_feed → called only by Feeds::view (SPA)
+    # Sphinx FTS (eliminated: PostgreSQL FTS used instead; Sphinx not ported)
+    "sphinx_search",
+    # Db_Prefs PHP caching layer (eliminated: SQLAlchemy session identity map serves same purpose)
+    "cache",                 # Db_Prefs::cache → SQLAlchemy eliminates need for manual pref caching
+    # PHP digest test UI trigger (eliminated: Celery send_headlines_digests task replaces)
+    "digestTest",
 }
 
 def _bare_name(qname: str) -> str:

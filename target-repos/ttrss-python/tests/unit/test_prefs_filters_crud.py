@@ -240,15 +240,10 @@ class TestSaveRulesAndActions:
 
     def test_invalid_regex_skipped(self):
         """Source: ttrss/classes/pref/filters.php:509 — validate regex before saving (@preg_match)
-        Adapted: Python uses re.compile(); the `continue` inside the for-loop body is intended
-        to skip invalid regexes.  However, the db.session.add(TtRssFilter2Rule(...)) block at
-        lines 274-282 of filters_crud.py sits *outside* the for-loop body (indentation bug in
-        the source), so it executes unconditionally after the loop using the last value of
-        `rule`/`reg_exp` — even when the only rule had an invalid regex.
 
-        This test documents the *actual* current behaviour: add() is called once (with the
-        stale `reg_exp` value from the bad rule) because the insertion block is not inside
-        the loop.  This is a known source-level bug, not a test error.
+        Rules with invalid regexes must be silently skipped (PHP: @preg_match returns
+        false/0 for bad patterns).  No TtRssFilter2Rule should be added for a rule
+        whose reg_exp fails re.compile().
         """
         db = _make_db_mock()
         ctx = MagicMock()
@@ -260,14 +255,12 @@ class TestSaveRulesAndActions:
             from ttrss.prefs.filters_crud import save_rules_and_actions
             save_rules_and_actions(filter_id=5, rules_json_list=[bad_rule_json], actions_json_list=[])
 
-        # Because the add() block is outside the for-loop (source bug), it runs once after the
-        # loop regardless of the continue triggered by the bad regex.  Document that here:
         rule_adds = [
             c for c in db.session.add.call_args_list
             if hasattr(c[0][0], "reg_exp")
         ]
-        # Source bug: add() is called once even though the regex '[' is invalid.
-        assert len(rule_adds) == 1
+        # Invalid regex must be skipped — no rule added.
+        assert len(rule_adds) == 0
 
 
 # ---------------------------------------------------------------------------

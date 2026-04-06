@@ -109,12 +109,20 @@ class TestPrefsTabHooks:
         mock_pm.hook.hook_prefs_tab.assert_called()
 
     def test_hook_prefs_tab_fires_system(self, app):
-        """HOOK_PREFS_TAB fires in system handler."""
+        """HOOK_PREFS_TAB fires in system handler (requires admin access_level=10).
+
+        Source: ttrss/classes/pref/system.php:before() — admin-only handler.
+        """
         mock_pm = MagicMock()
         mock_pm.hook.hook_prefs_tab = MagicMock(return_value=[])
 
+        mock_admin = MagicMock()
+        mock_admin.id = 1
+        mock_admin.access_level = 10  # admin
+
         with app.test_request_context():
-            with patch("ttrss.plugins.manager.get_plugin_manager", return_value=mock_pm):
+            with patch("ttrss.plugins.manager.get_plugin_manager", return_value=mock_pm), \
+                 patch("ttrss.blueprints.prefs.system.current_user", mock_admin):
                 from ttrss.blueprints.prefs import system
                 _unwrap(system.system)()
 

@@ -26,6 +26,7 @@ def make_feed_browser(
 ) -> list[dict]:
     """
     # Source: ttrss/include/feedbrowser.php:make_feed_browser
+    # Source: ttrss/classes/feeds.php:feedBrowser (PHP UI entry point; delegates to make_feed_browser)
     Mode 1: global feed browser (from ttrss_feedbrowser_cache, sorted by subscribers desc).
     Mode 2: user's archived feeds (from ttrss_archived_feeds).
     Returns list of {"feed_url": str, "title": str, "subscribers": int} dicts.

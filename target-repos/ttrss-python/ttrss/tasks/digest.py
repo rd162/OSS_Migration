@@ -203,6 +203,7 @@ def prepare_headlines_digest(
 def send_headlines_digests(app=None) -> int:
     """
     # Source: ttrss/include/digest.php:send_headlines_digests
+    # Source: ttrss/classes/backend.php:digestTest (PHP test trigger; Celery task replaces)
     For each user with DIGEST_ENABLE=true and digest time reached,
     call prepare_headlines_digest + send via send_mail().
     Returns count of digests sent.

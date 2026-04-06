@@ -598,6 +598,7 @@ def _handle_getFeeds(data: dict, seq: int):
     Return feed list for a category (or all feeds) with unread counts.
 
     Source: ttrss/classes/api.php:API.getFeeds + api_get_feeds (lines 114-124, 504-629)
+    # Source: ttrss/classes/api.php:api_get_feeds (lines 504-629)
     cat_id: -4=all, -3=all-real, -2=labels, -1=virtual, 0=uncategorized, N=specific cat.
     Note: N+1 query for real feeds (getFeedUnread per row) — accepted PHP-parity trade-off (AR5).
     """
@@ -817,6 +818,7 @@ def _handle_updateArticle(data: dict, seq: int):
     Update boolean flags or note for a set of articles.
 
     Source: ttrss/classes/api.php:API.updateArticle (lines 233-308)
+    # Source: ttrss/classes/article.php:setScore (field=1 score update path)
     field: 0=marked, 1=published, 2=unread, 3=note
     mode:  0=false, 1=true, 2=toggle
     data["data"]: used only when field==3 (note text; PHP does NOT strip_tags — Python strips
@@ -929,6 +931,7 @@ def _handle_catchupFeed(data: dict, seq: int):
     Mark all articles in a feed (or category) as read.
 
     Source: ttrss/classes/api.php:API.catchupFeed (lines 369-407)
+    # Source: ttrss/classes/feeds.php:catchupAll (all-feeds catchup via feed_id 0/-4)
     is_cat=true → feed_id is treated as a category ID.
     """
     feed_id_raw = data.get("feed_id") or request.args.get("feed_id", "0")
@@ -1023,6 +1026,8 @@ def _handle_getHeadlines(data: dict, seq: int):
     Return headlines for a feed, category, or virtual feed.
 
     Source: ttrss/classes/api.php:API.getHeadlines (lines 542-627)
+    # Source: ttrss/classes/api.php:api_get_headlines (lines 542-627)
+    # Source: ttrss/classes/feeds.php:search (search dispatched via queryFeedHeadlines with search param)
     queryFeedHeadlines returns list[Row] with full entry + user_entry fields.
     HOOK_RENDER_ARTICLE_API fires per headline row (api.php:617-621).
     Attachments included if include_attachments=true.
@@ -1314,6 +1319,7 @@ def _handle_shareToPublished(data: dict, seq: int):
 
     Source: ttrss/classes/api.php:API::shareToPublished (lines 492-502)
     Source: ttrss/classes/article.php:share_to_published (lines 129-134, 155-159)
+    # Source: ttrss/classes/article.php:create_published_article (lines 129-159)
     guid = "SHA1:" + url (literal prefix, not computed hash — matches PHP convention).
     TtRssUserEntry.feed_id = None (NOT -2) — shared articles have no feed row (R16).
     """

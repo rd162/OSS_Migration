@@ -84,7 +84,7 @@ Stable, read-only specifications used across all phases:
 
 ## Coverage validation
 
-The `tools/graph_analysis/` toolchain builds a PHP call graph and validates that every in-scope PHP function has a Python counterpart.
+The `tools/graph_analysis/` toolchain builds a PHP call graph and verifies that every in-scope PHP function's **behaviour** is covered by the Python codebase — this is **not** a 1-to-1 function translation check. A single PHP function may be split across multiple Python modules, merged with related logic, replaced by a library call, or restructured entirely; what matters is that no behaviour is dropped. The validator tracks semantic coverage, not syntactic correspondence.
 
 ```bash
 # Build call graphs from PHP source (run once, or after PHP source changes)

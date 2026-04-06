@@ -973,9 +973,9 @@ def _handle_setArticleLabel(data: dict, seq: int):
     real_label_id = _feed_to_label_id(label_id)
     # Source: api.php:462 — SELECT caption FROM ttrss_labels2 WHERE id = real_label_id AND owner_uid
     caption = label_find_caption(db.session, real_label_id, current_user.id)
-    # Source: api.php:462-474 — PHP silently returns OK when label not found; no error
+    # Source: api.php:460-474 — PHP returns {"status":"OK","updated":0} when label not found
     if not caption:
-        return _ok(seq, {"status": "OK"})
+        return _ok(seq, {"status": "OK", "updated": 0})
 
     # Source: api.php:467-473 — foreach article_id: label_add_article or label_remove_article
     num_updated = 0

@@ -537,12 +537,16 @@ def remove_category(session: Session, cat_id: int, owner_uid: int) -> None:
 
     Source: ttrss/classes/pref/feeds.php:remove_feed_category (lines 1699-1705)
     Source: ttrss/classes/pref/feeds.php:removeCat (line 1226)
-    PHP: DELETE FROM ttrss_feed_categories WHERE id AND owner_uid.
+    PHP line 1702: DELETE FROM ttrss_feed_categories WHERE id AND owner_uid.
+    PHP line 1704: ccache_remove($id, $owner_uid, true) — invalidate category cache entry.
     """
+    from ttrss.ccache import ccache_remove
+
     session.execute(
         sa_delete(TtRssFeedCategory)
         .where(TtRssFeedCategory.id == cat_id, TtRssFeedCategory.owner_uid == owner_uid)
     )
+    ccache_remove(session, cat_id, owner_uid, is_cat=True)
     session.commit()
 
 

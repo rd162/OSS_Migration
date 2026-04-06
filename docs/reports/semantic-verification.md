@@ -1,8 +1,23 @@
 # Semantic Verification Report
 
 **Methodology**: ADR-0016 — 40-category taxonomy (D01-D40), 8 integration pipelines, complexity-tiered triage.
-**Spec reference**: `specs/14-semantic-discrepancies.md`
+**Spec reference**: `specs/architecture/14-semantic-discrepancies.md`
 **Success criteria**: Zero unfixed discrepancies + all baseline pytest tests pass.
+
+---
+
+## Audit Procedure — Mandatory Rules (updated 2026-04-06)
+
+> **Why this section exists:** The 2026-04-06 Phase C/D sweep missed the `save_rules_and_actions` indentation bug because the agent summarised the function's intent without reading the raw indentation. A loop-body block was dedented outside its `for` loop; semantically the function sounded correct (it "saves rules and actions") but structurally it only ever saved the last rule. This is the canonical example of why summaries are prohibited.
+
+### Rules that apply to EVERY function at EVERY tier
+
+1. **Read raw source — both files.** Open the PHP file and the Python file. Quote key lines (loop heads, SQL, returns) verbatim. Never paraphrase.
+2. **Verify loop body boundaries explicitly.** For every `for`/`while`/`foreach`: state "loop starts line N, body is lines N+1–M". If any operation belonging inside the loop sits at or before the loop's indentation level, file a discrepancy immediately.
+3. **SQL column-by-column.** List every PHP SELECT column and confirm it is present in Python. List every PHP WHERE clause condition and confirm Python has it.
+4. **owner_uid guard on every data query.** Confirm the filter is in the query itself, not just at the call site.
+5. **Quote before VERIFIED.** A function is not VERIFIED until the auditor has written the PHP excerpt AND Python excerpt into the audit record. "Logic looks equivalent" with no line numbers is not verification.
+6. **No summary substitution.** An agent that produces a summary without quoting line numbers from both files has not verified anything. Re-run with the explicit line-quote requirement.
 
 ---
 

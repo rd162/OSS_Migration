@@ -1393,6 +1393,49 @@ def _article_remove_from_label():
     return jsonify({"status": "OK"})
 
 
+def _article_set_score():
+    """Set article score.
+
+    Source: ttrss/classes/article.php:Article::setScore (lines 210-219)
+    PHP:
+        $ids = $_REQUEST['id']  (comma-separated ref_ids)
+        $score = (int)$_REQUEST['score']
+        UPDATE ttrss_user_entries SET score = '$score'
+            WHERE ref_id IN ($ids) AND owner_uid = $_SESSION["uid"]
+        return {"id": $ids, "score_pic": get_score_pic($score)}
+    """
+    from sqlalchemy import update as sa_update
+    from ttrss.models.user_entry import TtRssUserEntry as _UserEntry
+
+    ids_str = _param("id", "")
+    score_raw = _param("score", "0")
+    score = int(score_raw) if score_raw.lstrip("-").isdigit() else 0
+    ids = [int(x.strip()) for x in ids_str.split(",") if x.strip().lstrip("-").isdigit()]
+
+    if ids:
+        db.session.execute(
+            sa_update(_UserEntry)
+            .where(_UserEntry.ref_id.in_(ids))
+            .where(_UserEntry.owner_uid == current_user.id)
+            .values(score=score)
+        )
+        db.session.commit()
+
+    # Source: functions2.php:get_score_pic (lines 1565-1577)
+    if score > 100:
+        score_pic = "score_high.png"
+    elif score > 0:
+        score_pic = "score_half_high.png"
+    elif score < -100:
+        score_pic = "score_low.png"
+    elif score < 0:
+        score_pic = "score_half_low.png"
+    else:
+        score_pic = "score_neutral.png"
+
+    return jsonify({"id": ids_str, "score_pic": score_pic})
+
+
 def _article_set_tags():
     """Replace all tags for an article (called from the SPA article pane).
 
@@ -1464,4 +1507,5 @@ _DISPATCH: dict[tuple[str, str], Any] = {
     ("article", "assigntolabel"):   _article_assign_to_label,
     ("article", "removefromlabel"): _article_remove_from_label,
     ("article", "settags"):         _article_set_tags,
+    ("article", "setscore"):        _article_set_score,
 }

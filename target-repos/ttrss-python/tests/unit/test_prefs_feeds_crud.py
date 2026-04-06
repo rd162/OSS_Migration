@@ -591,16 +591,17 @@ class TestFeedOrderManagement:
 
     def test_remove_category_executes_delete_and_commits(self):
         """Source: ttrss/classes/pref/feeds.php:remove_feed_category (lines 1699-1705)
-        PHP: DELETE FROM ttrss_feed_categories WHERE id AND owner_uid.
+        PHP line 1702: DELETE FROM ttrss_feed_categories WHERE id AND owner_uid.
+        PHP line 1704: ccache_remove($id, $owner_uid, true) — invalidate category cache.
 
-        remove_category() should issue one DELETE execute() call and then commit.
+        remove_category() should issue two execute() calls (DELETE + ccache DELETE) and commit.
         """
         session = _mock_session()
 
         from ttrss.prefs.feeds_crud import remove_category
         remove_category(session, cat_id=3, owner_uid=10)
 
-        session.execute.assert_called_once()
+        assert session.execute.call_count == 2
         session.commit.assert_called_once()
 
     def test_rename_category_executes_update_and_commits(self):

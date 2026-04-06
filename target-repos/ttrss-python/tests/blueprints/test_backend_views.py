@@ -1420,3 +1420,40 @@ class TestEdgeCaseHandlers:
             resp = _dispatch_post(client, "article", "completetags")
         assert resp.status_code == 200
         assert "tags" in resp.get_json()
+
+    # ------------------------------------------------------------------ article setscore
+    def test_article_setscore_updates_and_returns_score_pic(self, client):
+        """POST op=article method=setscore → updates score and returns score_pic.
+
+        Source: ttrss/classes/article.php:Article::setScore (lines 210-219)
+        PHP: UPDATE ttrss_user_entries SET score = '$score'
+                 WHERE ref_id IN ($ids) AND owner_uid = uid
+             return {"id": $ids, "score_pic": get_score_pic($score)}
+        """
+        mock_user = _make_user()
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("ttrss.blueprints.backend.views.current_user", mock_user), \
+             patch("ttrss.blueprints.backend.views.db") as mock_db:
+            mock_db.session.execute.return_value = MagicMock()
+            resp = _dispatch_post(client, "article", "setscore",
+                                  id="5,10", score="150")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data["id"] == "5,10"
+        assert data["score_pic"] == "score_high.png"  # score=150 > 100
+
+    def test_article_setscore_neutral(self, client):
+        """score=0 → score_pic is score_neutral.png.
+
+        Source: ttrss/include/functions2.php:get_score_pic (lines 1565-1577)
+        """
+        mock_user = _make_user()
+        with patch("flask_login.utils._get_user", return_value=mock_user), \
+             patch("ttrss.blueprints.backend.views.current_user", mock_user), \
+             patch("ttrss.blueprints.backend.views.db") as mock_db:
+            mock_db.session.execute.return_value = MagicMock()
+            resp = _dispatch_post(client, "article", "setscore",
+                                  id="7", score="0")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data["score_pic"] == "score_neutral.png"

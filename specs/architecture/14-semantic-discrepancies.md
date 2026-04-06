@@ -303,27 +303,65 @@ Beyond "columns match DDL" — full schema equivalence checklist:
 
 ---
 
-## 5. Complexity Tiers
+## 5. Audit Procedure (MANDATORY)
 
-Not all functions need equal verification depth.
+> **Root cause of 2026-04-06 regression:** The `save_rules_and_actions` indentation bug (rules insertion block outside its for-loop) was missed because the Tier 2 sweep used a summarising agent instead of reading raw source. Summaries hide structural bugs. **The tier system below is a prioritisation guide only — the physical reading requirement applies to ALL tiers.**
 
-### Tier 1: DEEP AUDIT — 52 functions
+### Non-negotiable reading rule
 
->50 lines, complex SQL, multiple branches, session/config access, or security-critical. Read every PHP line, compare line-by-line against Python, check all 40 D-codes.
+**For every function audited, at every tier:**
+
+1. **Open the PHP file and read the raw source.** Quote at least the key lines (loop heads, SQL, conditionals, return statements) verbatim. Do not paraphrase.
+2. **Open the Python file and read the raw source.** Quote the corresponding lines verbatim.
+3. **Compare structure, not intent.** Check:
+   - Loop body boundaries: count indentation levels. Every statement that belongs inside a `for`/`while` must be indented further than the loop keyword. One wrong dedent = bug.
+   - SQL `SELECT` columns, `WHERE` clauses, `JOIN` conditions, `ORDER BY` — column by column.
+   - Return value shape — keys, types, nesting.
+   - `owner_uid` / access-level guards present on every DB query.
+4. **Never accept "logic is equivalent" from a summarising agent.** Require the agent to output the actual line numbers and quoted code from both files before declaring VERIFIED.
+
+### Tier 1: DEEP AUDIT — 52 functions (≥50 lines, complex SQL, security-critical)
+
+Read every PHP line. Compare line-by-line against Python. Check all 40 D-codes.
 
 Key functions: `update_feed`, `queryFeedHeadlines`, `sanitize`, `catchup_feed`, `_handle_getHeadlines`, `_handle_login`, `persist_article`, `dispatch_feed_updates`, `get_feed_tree`, `opml_export_full`, `opml_import_category`, `prepare_headlines_digest`, `make_init_params`, `get_article_filters`.
 
-### Tier 2: STANDARD AUDIT — ~150 functions
+### Tier 2: STANDARD AUDIT — ~150 functions (20–50 lines, moderate SQL, branching)
 
-20–50 lines, moderate SQL, some branching. Read both sides, check SQL correctness, return shape, session/config access, spot-check branches for PHP falsy issues.
+Same raw-reading requirement as Tier 1. Additionally check:
+- Every `for`/`while` loop: confirm all operations that depend on the loop variable are **inside** the loop body (correct indentation).
+- SQL correctness: column list, WHERE conditions, JOIN topology, ORDER BY.
+- Return shape: same keys/fields as PHP.
+- Session/config access: each PHP `$_SESSION["x"]` and `get_pref()` call has a Python equivalent.
+- PHP falsy traps: `empty()`, `isset()`, `(int)$x` at each branch.
 
-### Tier 3: QUICK CHECK — ~270 functions
+### Tier 3: QUICK CHECK — ~270 functions (<20 lines, simple logic)
 
-<20 lines, simple logic. Verify return type, SQL table/columns, traceability comment accuracy, no obvious PHP falsy / intval trap.
+Read both sides. Verify:
+- Return type matches.
+- SQL table names and WHERE owner_uid filter present.
+- No loop body dedented outside its loop.
+- Traceability `# Source:` comment names the PHP function (not just the file).
+- No obvious `intval`/`empty` trap.
 
 ### Tier 4: MODEL DEEP CHECK — 37 classes
 
-Per-model checklist from Section 4.
+Per-model checklist from Section 4. Read the DDL (`ttrss_schema_pgsql.sql`) and the ORM class side-by-side.
+
+---
+
+## 6. Audit Execution Rules
+
+These rules govern how the audit is run, not just what is checked.
+
+| Rule | Requirement |
+|------|-------------|
+| **No summary substitution** | An agent that says "logic is equivalent" without quoting line numbers from both files has NOT verified the function. Re-run with explicit line-quote requirement. |
+| **Loop body verification** | For every `for`/`while`/`foreach` loop, explicitly state: "Loop starts at line N, body runs lines N+1–M, loop ends at line M+1." If Python indentation puts any operation after M+1, it is outside the loop — file a discrepancy. |
+| **SQL column-by-column** | List each column in the PHP SELECT and confirm it is present in the Python query. List each WHERE condition in PHP and confirm Python has it. Missing = discrepancy. |
+| **Security guard check** | Every function that touches user data: confirm `owner_uid` filter is in the query, not just checked at call-site. |
+| **Quote before VERIFIED** | A function may only be marked VERIFIED after the auditor has written both the PHP excerpt and the Python excerpt into the audit record. |
+| **Deployment config out of scope** | Runtime environment issues (wrong port, missing env var, wrong DB URL) are NOT semantic discrepancies. They must be caught by deployment runbooks and smoke tests, not by code comparison. |
 
 ---
 

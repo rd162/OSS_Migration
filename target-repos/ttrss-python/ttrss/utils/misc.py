@@ -1,7 +1,8 @@
 """
 Miscellaneous utility functions — datetime conversion, random bytes, email helpers.
 
-Source: ttrss/include/functions.php:convert_timestamp (lines 891-907)
+Source: ttrss/include/functions.php:truncate_string (lines 883-889)
+        ttrss/include/functions.php:convert_timestamp (lines 891-907)
         ttrss/include/functions.php:make_local_datetime (lines 909-953)
         ttrss/include/functions.php:smart_date_time (lines 955-967)
         ttrss/include/functions2.php:get_random_bytes (lines 2174-2185)
@@ -20,6 +21,18 @@ from flask import session
 from ttrss.models.pref import TtRssPref, TtRssUserPref  # noqa: F401
 from ttrss.models.tag import TtRssTag  # noqa: F401
 from ttrss.models.version import TtRssVersion  # noqa: F401
+
+
+def truncate_string(s: str, max_len: int, suffix: str = "\u2026") -> str:
+    """
+    Truncate a UTF-8 string to max_len characters, appending suffix if truncated.
+
+    Source: ttrss/include/functions.php:truncate_string (lines 883-889)
+    PHP: if (mb_strlen($str, "utf-8") > $max_len) return mb_substr($str, 0, $max_len) . $suffix
+    """
+    if len(s) > max_len:
+        return s[:max_len] + suffix
+    return s
 
 
 def convert_timestamp(timestamp: float, source_tz: str, dest_tz: str) -> float:

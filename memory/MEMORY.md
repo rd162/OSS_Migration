@@ -125,6 +125,7 @@ Run: `just test-int` (requires docker compose services on :5433/:6380)
 
 - [Consistency Rule](feedback/consistency-rule.md) — Update ALL referencing locations on any status/decision change
 - [Spec Consultation](feedback/spec-consultation.md) — Read relevant specs/ before planning any phase
+- [No-Skip Rule](feedback/no-skip-rule.md) — NEVER skip a test; fix the code or implement the missing feature
 
 ## ADR Index
 

@@ -28,5 +28,9 @@ def post_fork(server, worker):
 
     New: no PHP equivalent — PHP used Apache/FPM process isolation automatically.
     """
-    from ttrss.extensions import db
-    db.engine.dispose()
+    try:
+        from ttrss.extensions import db
+        db.engine.dispose()
+    except RuntimeError:
+        # If we're outside app context, skip disposal — the next request will create it
+        pass

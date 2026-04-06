@@ -2,7 +2,7 @@ services:
   app:
     build: .
     ports:
-      - "5000:5000"
+      - "8080:5000"
     environment:
       DATABASE_URL: postgresql://ttrss:ttrss@db:5432/ttrss
       REDIS_URL: redis://redis:6379/0

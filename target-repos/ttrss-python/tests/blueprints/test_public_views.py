@@ -78,7 +78,7 @@ class TestLogin:
         mock_user = _make_user()
 
         with patch("ttrss.auth.authenticate.authenticate_user", return_value=mock_user), \
-             patch("flask_login.login_user"):
+             patch("ttrss.blueprints.public.views.login_user"):
             resp = client.post(
                 "/login",
                 data={"login": "admin", "password": "correct"},
@@ -117,7 +117,7 @@ class TestLogout:
         Source: ttrss/classes/handler/public.php:logout lines 343-346 —
                 logout_user() then redirect to index.
         """
-        with patch("flask_login.logout_user"):
+        with patch("ttrss.blueprints.public.views.logout_user"):
             resp = client.get("/logout")
 
         assert resp.status_code in (200, 302)
@@ -830,7 +830,7 @@ class TestMorePublicRoutes:
         mock_profile.id = 3
 
         with patch("ttrss.auth.authenticate.authenticate_user", return_value=mock_user), \
-             patch("flask_login.login_user"), \
+             patch("ttrss.blueprints.public.views.login_user"), \
              patch("ttrss.extensions.db") as mock_db:
             mock_db.session.query.return_value.filter_by.return_value.first.return_value = mock_profile
             resp = client.post(

@@ -233,6 +233,23 @@ No test without PHP source citation may be committed.
 14. Fix known security issues during migration (SHA1→argon2id, prepared statements, etc.) — document deviations in specs
 15. Maintain spec-to-code traceability throughout the migration
 
+### No-Skip Rule (HARD PROHIBITION)
+16. **NEVER skip a test, and NEVER write a workaround that causes a test to skip.** This is a hard constraint with zero exceptions.
+
+    **Prohibited patterns:**
+    - `@pytest.mark.skip` / `@pytest.mark.skipif`
+    - `pytest.skip()` calls inside test bodies or fixtures (except infrastructure fast-fail: DB/Redis unreachable)
+    - `unittest.skip` decorators
+    - `MISSING_PORT`, `TODO`, or any other rationale — not acceptable
+    - Patching in the wrong namespace so the test passes silently (e.g. `patch("flask_login.login_user")` instead of `patch("ttrss.blueprints.public.views.login_user")`)
+
+    **Required instead:**
+    - If a function is missing from the Python codebase → implement it, then write the test.
+    - If a test relies on infrastructure (DB, Redis) → fix the environment, not the test.
+    - If a test is failing due to a real bug → fix the bug.
+
+    **Gate:** `pytest` must exit with 0 skips. Any skip in CI is a build failure.
+
 ### Consistency Rule (MANDATORY)
 16. **When any status, decision, or phase changes**, update ALL locations that reference it in the same commit. This is a hard constraint — partial status updates create contradictions that compound across sessions.
 

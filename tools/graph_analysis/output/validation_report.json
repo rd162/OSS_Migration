@@ -1,0 +1,3457 @@
+{
+  "tool": "validate_coverage.py",
+  "python_dir": "target-repos/ttrss-python/ttrss",
+  "graph_dir": "tools/graph_analysis/output",
+  "module_count": 91,
+  "source_comment_count": 1142,
+  "dimensions": [
+    {
+      "dimension": "call_coverage",
+      "matched_exact": 91,
+      "matched_by_file": 316,
+      "eliminated": 147,
+      "unmatched": 0,
+      "skipped_third_party": 629,
+      "skipped_high_level": 23,
+      "unparseable_comments": 217,
+      "coverage_pct": 100.0,
+      "unmatched_details": [],
+      "matched_by_file_details": [
+        {
+          "qname": "API::api_get_feeds",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::api_get_headlines",
+          "level": 6,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::catchupFeed",
+          "level": 6,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::getArticle",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::getCategories",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::getConfig",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::getCounters",
+          "level": 7,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::getFeedTree",
+          "level": 7,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::getFeeds",
+          "level": 6,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::getLabels",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::getPref",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::isCategoryEmpty",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::setArticleLabel",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::shareToPublished",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::subscribeToFeed",
+          "level": 8,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::unsubscribeFeed",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::updateArticle",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "API::updateFeed",
+          "level": 7,
+          "match": "file_level"
+        },
+        {
+          "qname": "Article::assigntolabel",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "Article::catchupArticleById",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "Article::completeTags",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Article::create_published_article",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Article::editArticleTags",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Article::labelops",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Article::redirect",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Article::removefromlabel",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "Article::setArticleTags",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Article::setScore",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Article::view",
+          "level": 6,
+          "match": "file_level"
+        },
+        {
+          "qname": "Auth_Internal::change_password",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Backend::digestTest",
+          "level": 9,
+          "match": "file_level"
+        },
+        {
+          "qname": "Backend::display_main_help",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Backend::help",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Backend::loading",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Db::quote",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Db_Prefs::cache",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Db_Prefs::convert",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Db_Prefs::read",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Db_Prefs::write",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Dlg::explainError",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Dlg::generatedFeed",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Dlg::importOpml",
+          "level": 8,
+          "match": "file_level"
+        },
+        {
+          "qname": "Dlg::newVersion",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Dlg::printTagCloud",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Dlg::printTagSelect",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Dlg::pubOPMLUrl",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Feeds::catchupAll",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "Feeds::feedBrowser",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Feeds::format_headline_subtoolbar",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Feeds::format_headlines_list",
+          "level": 7,
+          "match": "file_level"
+        },
+        {
+          "qname": "Feeds::generate_dashboard_feed",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Feeds::generate_error_feed",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Feeds::quickAddFeed",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Feeds::search",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Feeds::view",
+          "level": 8,
+          "match": "file_level"
+        },
+        {
+          "qname": "Handler_Public::globalUpdateFeeds",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Handler_Public::housekeepingTask",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Handler_Public::updateTask",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Opml::export",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "Opml::import",
+          "level": 8,
+          "match": "file_level"
+        },
+        {
+          "qname": "Opml::opml_export",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Opml::opml_export_category",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Opml::opml_import",
+          "level": 7,
+          "match": "file_level"
+        },
+        {
+          "qname": "Opml::opml_import_category",
+          "level": 6,
+          "match": "file_level"
+        },
+        {
+          "qname": "Opml::opml_import_feed",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Opml::opml_import_filter",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "Opml::opml_import_label",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Opml::opml_import_preference",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "Opml::opml_notice",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Opml::opml_publish_url",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::add_api_method",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::add_command",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::add_feed",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::add_handler",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::clear_data",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::del_command",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::del_handler",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::del_hook",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::feed_to_pfeed_id",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::getInstance",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::get_all",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::get_api_method",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::get_commands",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::get_dbh",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::get_debug",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::get_feed_handler",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::get_feeds",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::get_hooks",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::get_link",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::get_plugin",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::get_plugin_names",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::get_plugins",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::load",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::load_all",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::load_data",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::lookup_command",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::lookup_handler",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::pfeed_to_feed_id",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::register_plugin",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::run_commands",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::run_hooks",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::save_data",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::set",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "PluginHost::set_debug",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::addCat",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::batchAddFeeds",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::batchSubscribe",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::batch_edit_cbox",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::clearKeys",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::clear_feed_articles",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::editfeeds",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::editsaveops",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::regenFeedKey",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::regenOPMLKey",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::removeCat",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::remove_feed_category",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::removeicon",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::rescore",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::rescoreAll",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Feeds::resetPubSub",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::add",
+          "level": 7,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::edit",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::filtersortreset",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::getActionName",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::getRuleName",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::getfiltertree",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::join",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::newaction",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::newfilter",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::newrule",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::optimizeFilter",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::printActionName",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::printRuleName",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::saveRulesAndActions",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::savefilterorder",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Filters::testFilter",
+          "level": 6,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Labels::add",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Labels::colorreset",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Labels::colorset",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Labels::edit",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Labels::getlabeltree",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Labels::save",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::changeemail",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::changepassword",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::clearplugindata",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::customizeCSS",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::editPrefProfiles",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::getHelp",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::getHelpText",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::getSectionName",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::getShortDesc",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::otpdisable",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::resetconfig",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::saveconfig",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::setplugins",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Prefs::toggleAdvanced",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_System::clearLog",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Users::add",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Users::edit",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Users::resetPass",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "Pref_Users::userdetails",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::addfeed",
+          "level": 8,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::addprofile",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::archive",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::archive_article",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::catchupFeed",
+          "level": 6,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::catchupSelected",
+          "level": 6,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::completeLabels",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::delete",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::getlinktitlebyid",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::mark",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::markArticlesById",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::markSelected",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::massSubscribe",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::publ",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::publishArticlesById",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::publishSelected",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::purge",
+          "level": 6,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::quickAddCat",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::remarchive",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::remprofiles",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::sanityCheck",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::saveprofile",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::setpanelmode",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::setpref",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::setprofile",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::togglepref",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::unarchive",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::updateFeedBrowser",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::updaterandomfeed",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "RPC::updaterandomfeed_real",
+          "level": 7,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/api/index.php",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/ccache.php::ccache_find",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/ccache.php::ccache_remove",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/ccache.php::ccache_update",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/ccache.php::ccache_update_all",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/ccache.php::ccache_zero_all",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_affected_rows",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_fetch_assoc",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_fetch_result",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_last_error",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_num_rows",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_query",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_quote",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::check_feed_favicon",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::convert_timestamp",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::feed_purge_interval",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getCategoryChildrenUnread",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getCategoryCounters",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getCategoryTitle",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getFeedArticles",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getFeedCatTitle",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getFeedCounters",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getFeedIcon",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getFeedTitle",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getGlobalCounters",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getLabelCounters",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getLabelUnread",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::getVirtCounters",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::get_favicon_url",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::get_feed_update_interval",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::get_schema_version",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::get_ssl_certificate_id",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::get_translations",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::load_user_plugins",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::logout_user",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::make_local_datetime",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::make_password",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::purge_feed",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::purge_orphans",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::smart_date_time",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions.php::validate_csrf",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::add_feed_category",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::add_feed_url",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::build_url",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::catchupArticlesById",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::cleanup_tags",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::encrypt_password",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::feed_has_icon",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::feed_to_label_id",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::filter_to_sql",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::fix_url",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_article",
+          "level": 5,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_article_enclosures",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_article_labels",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_article_note",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_inline_player",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_libxml_error",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_tags_string",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::getArticleFeed",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::getChildCategories",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::getFeedCategory",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::getParentCategories",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_article_enclosures",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_article_tags",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_feed_category",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_feeds_from_html",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_hotkeys_info",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_hotkeys_map",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_self_url_prefix",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::geturl",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::init_plugins",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::is_html",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::label_to_feed_id",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::load_filters",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::make_init_params",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::make_runtime_info",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::read_stdin",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::rewrite_relative_url",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::sanitize_tag",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::save_email_address",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::search_to_sql",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::sphinx_search",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::strip_harmful_tags",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::tag_is_valid",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::tmpdirname",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::url_is_html",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::validate_feed_url",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::get_all_labels",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::get_article_labels",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_add_article",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_clear_cache",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_create",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_find_caption",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_find_id",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_remove",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_remove_article",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/labels.php::label_update_cache",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::assign_article_to_label_filters",
+          "level": 4,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::cache_images",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::calculate_article_score",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::convertUrlQuery",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::expire_cached_files",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::expire_error_log",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::expire_lock_files",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::find_article_filter",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::find_article_filters",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::get_article_filters",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::housekeeping_common",
+          "level": 3,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::labels_contains_caption",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::make_guid_from_title",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/rssfuncs.php::update_feedbrowser_cache",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::session_get_schema_version",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_destroy",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_gc",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_read",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_write",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::validate_session",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/install/index.php",
+          "level": 2,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/install/index.php::db_connect",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/install/index.php::db_query",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/install/index.php::make_config",
+          "level": 1,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/install/index.php::make_password",
+          "level": 0,
+          "match": "file_level"
+        },
+        {
+          "qname": "ttrss/public.php",
+          "level": 5,
+          "match": "file_level"
+        }
+      ],
+      "eliminated_details": [
+        {
+          "qname": "Article::csrf_ignore",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Auth_Base::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Auth_Base::auto_create_user",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Auth_Base::find_user_by_login",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Auth_Internal::about",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Auth_Internal::api_version",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Auth_Internal::init",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::__clone",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::__construct",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::affected_rows",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::close",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::connect",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::escape_string",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::fetch_assoc",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::fetch_result",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::get",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::last_error",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::num_rows",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::query",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db::reconnect",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "DbUpdater::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "DbUpdater::getSchemaLines",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "DbUpdater::getSchemaVersion",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "DbUpdater::isUpdateRequired",
+          "level": 3,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "DbUpdater::performUpdateTo",
+          "level": 3,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::affected_rows",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::close",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::connect",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::escape_string",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::fetch_assoc",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::fetch_result",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::init",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::last_error",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::num_rows",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_PDO::query",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_Prefs::__clone",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_Prefs::__construct",
+          "level": 4,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_Prefs::get",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_Stmt::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_Stmt::fetch",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_Stmt::fetch_result",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Db_Stmt::rowCount",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Feeds::csrf_ignore",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Handler::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Handler::after",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Handler::csrf_ignore",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Logger::__clone",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Logger::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Logger::get",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Logger::log",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Logger::log_error",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Logger_SQL::log_error",
+          "level": 3,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Logger_Syslog::log_error",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Opml::csrf_ignore",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Plugin::about",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Plugin::api_version",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Plugin::get_js",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Plugin::get_prefs_js",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Plugin::init",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "PluginHandler::catchall",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "PluginHandler::csrf_ignore",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "PluginHost::__clone",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "PluginHost::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "PluginHost::get",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Pref_Feeds::csrf_ignore",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Pref_Filters::csrf_ignore",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Pref_Labels::csrf_ignore",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Pref_Prefs::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Pref_Prefs::csrf_ignore",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Pref_System::csrf_ignore",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "Pref_Users::csrf_ignore",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "RPC::csrf_ignore",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "RPC::log",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::__construct",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::affected_rows",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::after",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::close",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::connect",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::csrf_ignore",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::escape_string",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::fetch_assoc",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::fetch_result",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::last_error",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::num_rows",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "__global__::query",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/backend.php::stripslashes_deep",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/autoload.php::__autoload",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/db.php::db_escape_string",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/errorhandler.php::ttrss_error_handler",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/errorhandler.php::ttrss_fatal_handler",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::_debug",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::_debug_suppress",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::bool_to_sql_bool",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::checkbox_to_sql_bool",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::define_default",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::file_is_locked",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::get_pgsql_version",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::make_lockfile",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::make_stampfile",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::print_feed_cat_select",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::print_feed_select",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::print_radio",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::print_select",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::print_select_hash",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::sql_bool_to_bool",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::sql_random_function",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::startup_gettext",
+          "level": 3,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions.php::truncate_string",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::T_js_decl",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::T_sprintf",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::calculate_dep_timestamp",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::check_for_update",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_error",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_notice",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::format_warning",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_minified_js",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_random_bytes",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::get_score_pic",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::gzdecode",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::implements_interface",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::init_js_translations",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::javascript_tag",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::print_checkpoint",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::print_error",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::print_label_select",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::print_notice",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::print_user_stylesheet",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::print_warning",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::render_login_form",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::stylesheet_tag",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/functions2.php::trim_array",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/login_form.php",
+          "level": 4,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/sanity_check.php",
+          "level": 3,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/sanity_check.php::initial_sanity_check",
+          "level": 2,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/sanity_check.php::make_self_url_path",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_close",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/sessions.php::ttrss_open",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/include/version.php",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/install/index.php::define_default",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/install/index.php::make_self_url_path",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/install/index.php::print_error",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/install/index.php::print_notice",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/opml.php",
+          "level": 5,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/public.php::stripslashes_deep",
+          "level": 0,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrss/register.php",
+          "level": 4,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrssMailer::__construct",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        },
+        {
+          "qname": "ttrssMailer::quickMail",
+          "level": 1,
+          "reason": "eliminated_per_spec13"
+        }
+      ],
+      "unparseable_details": [
+        {
+          "file": "feeds/browser.py",
+          "line": 183,
+          "raw": "\"subscribers\": 0,  # Source: archived feeds have no subscriber count (mode 2 only)"
+        },
+        {
+          "file": "feeds/ops.py",
+          "line": 77,
+          "raw": "# Source: ttrss/schema/ttrss_schema_pgsql.sql — DEFAULT_UPDATE_INTERVAL def_value = '30'"
+        },
+        {
+          "file": "models/access_key.py",
+          "line": 32,
+          "raw": "# Source: schema line 401 — id serial not null primary key"
+        },
+        {
+          "file": "models/access_key.py",
+          "line": 34,
+          "raw": "# Source: schema line 402 — access_key varchar(250) not null"
+        },
+        {
+          "file": "models/access_key.py",
+          "line": 36,
+          "raw": "# Source: schema line 403 — feed_id varchar(250) not null"
+        },
+        {
+          "file": "models/access_key.py",
+          "line": 39,
+          "raw": "# Source: schema line 404 — is_cat boolean not null default false"
+        },
+        {
+          "file": "models/access_key.py",
+          "line": 41,
+          "raw": "# Source: schema line 405 — owner_uid integer not null references ttrss_users(id) on delete cascade"
+        },
+        {
+          "file": "models/archived_feed.py",
+          "line": 32,
+          "raw": "# Source: schema line 110 — id integer not null primary key (NOT serial — explicit insert)"
+        },
+        {
+          "file": "models/archived_feed.py",
+          "line": 34,
+          "raw": "# Source: schema line 111 — owner_uid integer not null references ttrss_users(id) on delete cascade"
+        },
+        {
+          "file": "models/archived_feed.py",
+          "line": 38,
+          "raw": "# Source: schema line 112 — title varchar(200) not null"
+        },
+        {
+          "file": "models/archived_feed.py",
+          "line": 40,
+          "raw": "# Source: schema line 113 — feed_url text not null"
+        },
+        {
+          "file": "models/archived_feed.py",
+          "line": 42,
+          "raw": "# Source: schema line 114 — site_url varchar(250) not null default ''"
+        },
+        {
+          "file": "models/category.py",
+          "line": 25,
+          "raw": "# Source: schema line 58 — id serial not null primary key"
+        },
+        {
+          "file": "models/category.py",
+          "line": 27,
+          "raw": "# Source: schema line 59 — owner_uid integer not null references ttrss_users(id) on delete cascade"
+        },
+        {
+          "file": "models/category.py",
+          "line": 31,
+          "raw": "# Source: schema line 60 — collapsed boolean not null default false"
+        },
+        {
+          "file": "models/category.py",
+          "line": 34,
+          "raw": "# Source: schema line 61 — order_id integer not null default 0"
+        },
+        {
+          "file": "models/category.py",
+          "line": 36,
+          "raw": "# Source: schema line 62 — view_settings varchar(250) not null default ''"
+        },
+        {
+          "file": "models/category.py",
+          "line": 38,
+          "raw": "# Source: schema line 63 — parent_cat integer references ttrss_feed_categories(id) on delete set null"
+        },
+        {
+          "file": "models/category.py",
+          "line": 42,
+          "raw": "# Source: schema line 64 — title varchar(200) not null"
+        },
+        {
+          "file": "models/counters_cache.py",
+          "line": 43,
+          "raw": "# Source: schema line 122 — ttrss_counters_cache_feed_id_idx"
+        },
+        {
+          "file": "models/counters_cache.py",
+          "line": 45,
+          "raw": "# Source: schema line 123 — ttrss_counters_cache_owner_uid_idx"
+        },
+        {
+          "file": "models/counters_cache.py",
+          "line": 47,
+          "raw": "# Source: schema line 124 — ttrss_counters_cache_value_idx"
+        },
+        {
+          "file": "models/counters_cache.py",
+          "line": 51,
+          "raw": "# Source: schema line 116 — feed_id integer not null (NO FK — see module docstring)"
+        },
+        {
+          "file": "models/counters_cache.py",
+          "line": 55,
+          "raw": "# Source: schema line 117 — owner_uid integer not null references ttrss_users(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/counters_cache.py",
+          "line": 62,
+          "raw": "# Source: schema line 118 — updated timestamp not null"
+        },
+        {
+          "file": "models/counters_cache.py",
+          "line": 64,
+          "raw": "# Source: schema line 119 — value integer not null default 0"
+        },
+        {
+          "file": "models/counters_cache.py",
+          "line": 80,
+          "raw": "# Source: schema line 132 — ttrss_cat_counters_cache_owner_uid_idx"
+        },
+        {
+          "file": "models/counters_cache.py",
+          "line": 84,
+          "raw": "# Source: schema line 126 — feed_id integer not null (NO FK — see TtRssCountersCache note)"
+        },
+        {
+          "file": "models/counters_cache.py",
+          "line": 87,
+          "raw": "# Source: schema line 127 — owner_uid integer not null references ttrss_users(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/counters_cache.py",
+          "line": 94,
+          "raw": "# Source: schema line 128 — updated timestamp not null"
+        },
+        {
+          "file": "models/counters_cache.py",
+          "line": 96,
+          "raw": "# Source: schema line 129 — value integer not null default 0"
+        },
+        {
+          "file": "models/enclosure.py",
+          "line": 22,
+          "raw": "# Source: schema line 266 — id serial not null primary key"
+        },
+        {
+          "file": "models/enclosure.py",
+          "line": 24,
+          "raw": "# Source: schema line 267 — content_url text not null"
+        },
+        {
+          "file": "models/enclosure.py",
+          "line": 26,
+          "raw": "# Source: schema line 268 — content_type varchar(250) not null"
+        },
+        {
+          "file": "models/enclosure.py",
+          "line": 28,
+          "raw": "# Source: schema line 269 — title text not null"
+        },
+        {
+          "file": "models/enclosure.py",
+          "line": 30,
+          "raw": "# Source: schema line 270 — duration text not null"
+        },
+        {
+          "file": "models/enclosure.py",
+          "line": 32,
+          "raw": "# Source: schema line 271 — post_id integer references ttrss_entries(id) ON DELETE cascade NOT NULL"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 28,
+          "raw": "# Source: schema line 134 — id serial not null primary key"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 30,
+          "raw": "# Source: schema line 135 — title text not null"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 32,
+          "raw": "# Source: schema line 136 — guid text not null unique"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 35,
+          "raw": "# Source: schema line 137 — link text not null"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 37,
+          "raw": "# Source: schema line 138 — updated timestamp not null"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 39,
+          "raw": "# Source: schema line 139 — content text not null"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 41,
+          "raw": "# Source: schema line 140 — content_hash varchar(250) not null"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 44,
+          "raw": "# Source: schema line 141 — cached_content text (nullable)"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 46,
+          "raw": "# Source: schema line 142 — no_orig_date boolean not null default false"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 49,
+          "raw": "# Source: schema line 143 — date_entered timestamp not null"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 52,
+          "raw": "# Source: schema line 144 — date_updated timestamp not null"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 54,
+          "raw": "# Source: schema line 145 — num_comments integer not null default 0"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 56,
+          "raw": "# Source: schema line 146 — comments varchar(250) not null default ''"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 58,
+          "raw": "# Source: schema line 147 — plugin_data text (nullable)"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 61,
+          "raw": "# Source: schema line 148 — lang varchar(2) (nullable)"
+        },
+        {
+          "file": "models/entry.py",
+          "line": 64,
+          "raw": "# Source: schema line 149 — author varchar(250) not null default ''"
+        },
+        {
+          "file": "models/entry_comment.py",
+          "line": 34,
+          "raw": "# Source: schema line 186 — ttrss_entry_comments_ref_id_index"
+        },
+        {
+          "file": "models/entry_comment.py",
+          "line": 39,
+          "raw": "# Source: schema line 180 — id serial not null primary key"
+        },
+        {
+          "file": "models/entry_comment.py",
+          "line": 41,
+          "raw": "# Source: schema line 181 — ref_id integer not null references ttrss_entries(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/entry_comment.py",
+          "line": 45,
+          "raw": "# Source: schema line 182 — owner_uid integer not null references ttrss_users(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/entry_comment.py",
+          "line": 49,
+          "raw": "# Source: schema line 183 — private boolean not null default false"
+        },
+        {
+          "file": "models/entry_comment.py",
+          "line": 51,
+          "raw": "# Source: schema line 184 — date_entered timestamp not null"
+        },
+        {
+          "file": "models/error_log.py",
+          "line": 31,
+          "raw": "# Source: schema line 428 — id serial not null primary key"
+        },
+        {
+          "file": "models/error_log.py",
+          "line": 33,
+          "raw": "# Source: schema line 429 — owner_uid integer references ttrss_users(id) ON DELETE SET NULL"
+        },
+        {
+          "file": "models/error_log.py",
+          "line": 37,
+          "raw": "# Source: schema line 430 — errno integer not null"
+        },
+        {
+          "file": "models/error_log.py",
+          "line": 39,
+          "raw": "# Source: schema line 431 — errstr text not null"
+        },
+        {
+          "file": "models/error_log.py",
+          "line": 41,
+          "raw": "# Source: schema line 432 — filename text not null"
+        },
+        {
+          "file": "models/error_log.py",
+          "line": 43,
+          "raw": "# Source: schema line 433 — lineno integer not null"
+        },
+        {
+          "file": "models/error_log.py",
+          "line": 45,
+          "raw": "# Source: schema line 434 — context text not null"
+        },
+        {
+          "file": "models/error_log.py",
+          "line": 47,
+          "raw": "# Source: schema line 435 — created_at timestamp not null"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 39,
+          "raw": "# Source: schema line 66 — id serial not null primary key"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 41,
+          "raw": "# Source: schema line 67 — owner_uid integer not null references ttrss_users(id) on delete cascade"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 45,
+          "raw": "# Source: schema line 68 — title varchar(200) not null"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 47,
+          "raw": "# Source: schema line 69 — cat_id integer default null references ttrss_feed_categories(id)"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 51,
+          "raw": "# Source: schema line 70 — feed_url text not null"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 53,
+          "raw": "# Source: schema line 71 — icon_url varchar(250) not null default ''"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 55,
+          "raw": "# Source: schema line 72 — update_interval integer not null default 0"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 57,
+          "raw": "# Source: schema line 73 — purge_interval integer not null default 0"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 59,
+          "raw": "# Source: schema line 74 — last_updated timestamp default null"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 61,
+          "raw": "# Source: schema line 75 — last_error text not null default ''"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 63,
+          "raw": "# Source: schema line 76 — favicon_avg_color varchar(11) default null"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 65,
+          "raw": "# Source: schema line 77 — site_url varchar(250) not null default ''"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 67,
+          "raw": "# Source: schema line 78 — auth_login varchar(250) not null default ''"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 69,
+          "raw": "# Source: schema line 79 — parent_feed integer default null references ttrss_feeds(id)"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 73,
+          "raw": "# Source: schema line 80 — private boolean not null default false"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 75,
+          "raw": "# Source: schema line 81 — auth_pass varchar(250) not null default ''"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 79,
+          "raw": "# Source: schema line 82 — hidden boolean not null default false"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 81,
+          "raw": "# Source: schema line 83 — include_in_digest boolean not null default true"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 83,
+          "raw": "# Source: schema line 84 — rtl_content boolean not null default false"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 85,
+          "raw": "# Source: schema line 85 — cache_images boolean not null default false"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 87,
+          "raw": "# Source: schema line 86 — hide_images boolean not null default false"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 89,
+          "raw": "# Source: schema line 87 — cache_content boolean not null default false"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 91,
+          "raw": "# Source: schema line 88 — last_viewed timestamp default null"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 93,
+          "raw": "# Source: schema line 89 — last_update_started timestamp default null"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 95,
+          "raw": "# Source: schema line 90 — update_method integer not null default 0"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 97,
+          "raw": "# Source: schema line 91 — always_display_enclosures boolean not null default false"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 99,
+          "raw": "# Source: schema line 92 — order_id integer not null default 0"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 101,
+          "raw": "# Source: schema line 93 — mark_unread_on_update boolean not null default false"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 103,
+          "raw": "# Source: schema line 94 — update_on_checksum_change boolean not null default false"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 105,
+          "raw": "# Source: schema line 95 — strip_images boolean not null default false"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 107,
+          "raw": "# Source: schema line 96 — view_settings varchar(250) not null default ''"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 109,
+          "raw": "# Source: schema line 97 — pubsub_state integer not null default 0"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 111,
+          "raw": "# Source: schema line 98 — favicon_last_checked timestamp default null"
+        },
+        {
+          "file": "models/feed.py",
+          "line": 113,
+          "raw": "# Source: schema line 99 — auth_pass_encrypted boolean not null default false"
+        },
+        {
+          "file": "models/feedbrowser_cache.py",
+          "line": 29,
+          "raw": "# Source: schema line 383 — feed_url text not null primary key"
+        },
+        {
+          "file": "models/feedbrowser_cache.py",
+          "line": 31,
+          "raw": "# Source: schema line 384 — title text not null"
+        },
+        {
+          "file": "models/feedbrowser_cache.py",
+          "line": 33,
+          "raw": "# Source: schema line 385 — site_url text not null"
+        },
+        {
+          "file": "models/feedbrowser_cache.py",
+          "line": 35,
+          "raw": "# Source: schema line 386 — subscribers integer not null"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 38,
+          "raw": "# Source: schema line 188 — id integer not null primary key"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 40,
+          "raw": "# Source: schema line 189 — name varchar(120) unique not null"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 42,
+          "raw": "# Source: schema line 190 — description varchar(250) not null unique"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 56,
+          "raw": "# Source: schema line 204 — id integer not null primary key"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 58,
+          "raw": "# Source: schema line 205 — name varchar(120) unique not null"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 60,
+          "raw": "# Source: schema line 206 — description varchar(250) not null unique"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 76,
+          "raw": "# Source: schema line 232 — id serial not null primary key"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 78,
+          "raw": "# Source: schema line 233 — owner_uid integer not null references ttrss_users(id) on delete cascade"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 82,
+          "raw": "# Source: schema line 234 — match_any_rule boolean not null default false"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 84,
+          "raw": "# Source: schema line 235 — inverse boolean not null default false"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 86,
+          "raw": "# Source: schema line 236 — title varchar(250) not null default ''"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 88,
+          "raw": "# Source: schema line 237 — order_id integer not null default 0"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 90,
+          "raw": "# Source: schema line 238 — enabled boolean not null default true"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 104,
+          "raw": "# Source: schema line 240 — id serial not null primary key"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 106,
+          "raw": "# Source: schema line 241 — filter_id integer not null references ttrss_filters2(id) on delete cascade"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 110,
+          "raw": "# Source: schema line 242 — reg_exp varchar(250) not null"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 112,
+          "raw": "# Source: schema line 243 — inverse boolean not null default false"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 114,
+          "raw": "# Source: schema line 244 — filter_type integer not null references ttrss_filter_types(id)"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 118,
+          "raw": "# Source: schema line 245 — feed_id integer references ttrss_feeds(id) on delete cascade default null"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 122,
+          "raw": "# Source: schema line 246 — cat_id integer references ttrss_feed_categories(id) on delete cascade default null"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 126,
+          "raw": "# Source: schema line 247 — cat_filter boolean not null default false"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 140,
+          "raw": "# Source: schema line 249 — id serial not null primary key"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 142,
+          "raw": "# Source: schema line 250 — filter_id integer not null references ttrss_filters2(id) on delete cascade"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 146,
+          "raw": "# Source: schema line 251 — action_id integer not null default 1 references ttrss_filter_actions(id) on delete cascade"
+        },
+        {
+          "file": "models/filter.py",
+          "line": 153,
+          "raw": "# Source: schema line 252 — action_param varchar(250) not null default ''"
+        },
+        {
+          "file": "models/label.py",
+          "line": 28,
+          "raw": "# Source: schema line 389 — id serial not null primary key"
+        },
+        {
+          "file": "models/label.py",
+          "line": 30,
+          "raw": "# Source: schema line 390 — owner_uid integer not null references ttrss_users(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/label.py",
+          "line": 34,
+          "raw": "# Source: schema line 391 — fg_color varchar(15) not null default ''"
+        },
+        {
+          "file": "models/label.py",
+          "line": 36,
+          "raw": "# Source: schema line 392 — bg_color varchar(15) not null default ''"
+        },
+        {
+          "file": "models/label.py",
+          "line": 38,
+          "raw": "# Source: schema line 393 — caption varchar(250) not null"
+        },
+        {
+          "file": "models/label.py",
+          "line": 48,
+          "raw": "# Source: schema line 397 — label_id integer not null references ttrss_labels2(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/label.py",
+          "line": 52,
+          "raw": "# Source: schema line 398 — article_id integer not null references ttrss_entries(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/linked.py",
+          "line": 31,
+          "raw": "# Source: schema line 407 — id serial not null primary key"
+        },
+        {
+          "file": "models/linked.py",
+          "line": 33,
+          "raw": "# Source: schema line 408 — last_connected timestamp not null"
+        },
+        {
+          "file": "models/linked.py",
+          "line": 35,
+          "raw": "# Source: schema line 409 — last_status_in integer not null"
+        },
+        {
+          "file": "models/linked.py",
+          "line": 37,
+          "raw": "# Source: schema line 410 — last_status_out integer not null"
+        },
+        {
+          "file": "models/linked.py",
+          "line": 39,
+          "raw": "# Source: schema line 411 — access_key varchar(250) not null unique"
+        },
+        {
+          "file": "models/linked.py",
+          "line": 41,
+          "raw": "# Source: schema line 412 — access_url text not null"
+        },
+        {
+          "file": "models/linked.py",
+          "line": 54,
+          "raw": "# Source: schema line 415 — feed_url text not null"
+        },
+        {
+          "file": "models/linked.py",
+          "line": 57,
+          "raw": "# Source: schema line 416 — site_url text not null"
+        },
+        {
+          "file": "models/linked.py",
+          "line": 59,
+          "raw": "# Source: schema line 417 — title text not null"
+        },
+        {
+          "file": "models/linked.py",
+          "line": 61,
+          "raw": "# Source: schema line 418 — created timestamp not null"
+        },
+        {
+          "file": "models/linked.py",
+          "line": 63,
+          "raw": "# Source: schema line 419 — updated timestamp not null"
+        },
+        {
+          "file": "models/linked.py",
+          "line": 65,
+          "raw": "# Source: schema line 420 — instance_id integer not null references ttrss_linked_instances(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/linked.py",
+          "line": 72,
+          "raw": "# Source: schema line 421 — subscribers integer not null"
+        },
+        {
+          "file": "models/plugin_storage.py",
+          "line": 28,
+          "raw": "# Source: schema line 423 — id serial not null primary key"
+        },
+        {
+          "file": "models/plugin_storage.py",
+          "line": 30,
+          "raw": "# Source: schema line 424 — name varchar(100) not null"
+        },
+        {
+          "file": "models/plugin_storage.py",
+          "line": 32,
+          "raw": "# Source: schema line 425 — owner_uid integer not null references ttrss_users(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/plugin_storage.py",
+          "line": 36,
+          "raw": "# Source: schema line 426 — content text not null"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 42,
+          "raw": "# Source: schema line 280 — id integer not null primary key"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 44,
+          "raw": "# Source: schema line 281 — type_name varchar(100) not null"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 58,
+          "raw": "# Source: schema line 287 — id integer not null primary key"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 60,
+          "raw": "# Source: schema line 288 — order_id integer not null"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 62,
+          "raw": "# Source: schema line 289 — section_name varchar(100) not null"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 79,
+          "raw": "# Source: schema line 301 — ttrss_prefs_pref_name_idx (redundant with PK but present in DDL)"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 83,
+          "raw": "# Source: schema line 296 — pref_name varchar(250) not null primary key"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 85,
+          "raw": "# Source: schema line 297 — type_id integer not null references ttrss_prefs_types(id)"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 89,
+          "raw": "# Source: schema line 298 — section_id integer not null default 1 references ttrss_prefs_sections(id)"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 93,
+          "raw": "# Source: schema line 299 — access_level integer not null default 0"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 96,
+          "raw": "# Source: schema line 300 — def_value text not null"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 109,
+          "raw": "# Source: schema line 275 — id serial not null primary key"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 111,
+          "raw": "# Source: schema line 276 — title varchar(250) not null"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 113,
+          "raw": "# Source: schema line 277 — owner_uid integer not null references ttrss_users(id) on delete cascade"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 137,
+          "raw": "# Source: schema line 369 — ttrss_user_prefs_owner_uid_index"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 139,
+          "raw": "# Source: schema line 370 — ttrss_user_prefs_pref_name_idx"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 143,
+          "raw": "# Source: schema line 364 — owner_uid integer not null references ttrss_users(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 150,
+          "raw": "# Source: schema line 365 — pref_name varchar(250) not null references ttrss_prefs(pref_name) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 157,
+          "raw": "# Source: schema line 366 — profile integer references ttrss_settings_profiles(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/pref.py",
+          "line": 166,
+          "raw": "# Source: schema line 367 — value text not null"
+        },
+        {
+          "file": "models/session.py",
+          "line": 37,
+          "raw": "# Source: schema line 379 — ttrss_sessions_expire_index"
+        },
+        {
+          "file": "models/session.py",
+          "line": 41,
+          "raw": "# Source: schema line 375 — id varchar(250) unique not null primary key"
+        },
+        {
+          "file": "models/session.py",
+          "line": 43,
+          "raw": "# Source: schema line 376 — data text"
+        },
+        {
+          "file": "models/session.py",
+          "line": 45,
+          "raw": "# Source: schema line 377 — expire integer not null"
+        },
+        {
+          "file": "models/tag.py",
+          "line": 23,
+          "raw": "# Source: schema line 254 — id serial not null primary key"
+        },
+        {
+          "file": "models/tag.py",
+          "line": 25,
+          "raw": "# Source: schema line 255 — tag_name varchar(250) not null"
+        },
+        {
+          "file": "models/tag.py",
+          "line": 27,
+          "raw": "# Source: schema line 256 — owner_uid integer not null references ttrss_users(id) on delete cascade"
+        },
+        {
+          "file": "models/tag.py",
+          "line": 31,
+          "raw": "# Source: schema line 257 — post_int_id integer references ttrss_user_entries(int_id) ON DELETE CASCADE not null"
+        },
+        {
+          "file": "models/user.py",
+          "line": 41,
+          "raw": "# Source: schema line 40 — id serial not null primary key"
+        },
+        {
+          "file": "models/user.py",
+          "line": 43,
+          "raw": "# Source: schema line 41 — login varchar(120) not null unique"
+        },
+        {
+          "file": "models/user.py",
+          "line": 45,
+          "raw": "# Source: schema line 42 — pwd_hash varchar(250) not null"
+        },
+        {
+          "file": "models/user.py",
+          "line": 48,
+          "raw": "# Source: schema line 43 — last_login timestamp default null"
+        },
+        {
+          "file": "models/user.py",
+          "line": 50,
+          "raw": "# Source: schema line 44 — access_level integer not null default 0"
+        },
+        {
+          "file": "models/user.py",
+          "line": 53,
+          "raw": "# Source: schema line 45 — email varchar(250) not null default ''"
+        },
+        {
+          "file": "models/user.py",
+          "line": 55,
+          "raw": "# Source: schema line 46 — full_name varchar(250) not null default ''"
+        },
+        {
+          "file": "models/user.py",
+          "line": 57,
+          "raw": "# Source: schema line 47 — email_digest boolean not null default false"
+        },
+        {
+          "file": "models/user.py",
+          "line": 59,
+          "raw": "# Source: schema line 48 — last_digest_sent timestamp default null"
+        },
+        {
+          "file": "models/user.py",
+          "line": 61,
+          "raw": "# Source: schema line 49 — salt varchar(250) not null default ''"
+        },
+        {
+          "file": "models/user.py",
+          "line": 65,
+          "raw": "# Source: schema line 50 — twitter_oauth text default null"
+        },
+        {
+          "file": "models/user.py",
+          "line": 67,
+          "raw": "# Source: schema line 51 — otp_enabled boolean not null default false"
+        },
+        {
+          "file": "models/user.py",
+          "line": 69,
+          "raw": "# Source: schema line 52 — resetpass_token varchar(250) default null"
+        },
+        {
+          "file": "models/user.py",
+          "line": 71,
+          "raw": "# Source: schema line 53 — created timestamp default null"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 31,
+          "raw": "# Source: schema line 157 — int_id serial not null primary key"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 33,
+          "raw": "# Source: schema line 158 — ref_id integer not null references ttrss_entries(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 37,
+          "raw": "# Source: schema line 159 — uuid varchar(200) not null"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 40,
+          "raw": "# Source: schema line 160 — feed_id int references ttrss_feeds(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 44,
+          "raw": "# Source: schema line 161 — orig_feed_id integer references ttrss_archived_feeds(id) ON DELETE SET NULL"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 48,
+          "raw": "# Source: schema line 162 — owner_uid integer not null references ttrss_users(id) ON DELETE CASCADE"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 52,
+          "raw": "# Source: schema line 163 — marked boolean not null default false"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 55,
+          "raw": "# Source: schema line 164 — published boolean not null default false"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 57,
+          "raw": "# Source: schema line 165 — tag_cache text not null"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 61,
+          "raw": "# Source: schema line 166 — label_cache text not null"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 65,
+          "raw": "# Source: schema line 167 — last_read timestamp (nullable)"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 67,
+          "raw": "# Source: schema line 168 — score int not null default 0"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 70,
+          "raw": "# Source: schema line 169 — last_marked timestamp (nullable)"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 72,
+          "raw": "# Source: schema line 170 — last_published timestamp (nullable)"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 74,
+          "raw": "# Source: schema line 171 — note text (nullable)"
+        },
+        {
+          "file": "models/user_entry.py",
+          "line": 77,
+          "raw": "# Source: schema line 172 — unread boolean not null default true"
+        },
+        {
+          "file": "models/version.py",
+          "line": 37,
+          "raw": "# Source: schema line 262 — schema_version int not null"
+        },
+        {
+          "file": "plugins/loader.py",
+          "line": 21,
+          "raw": "# Source: ttrss/config.php-dist line 200 — define('PLUGINS', 'auth_internal, note, updater')"
+        },
+        {
+          "file": "plugins/loader.py",
+          "line": 24,
+          "raw": "_DEFAULT_PLUGINS = os.environ.get(\"TTRSS_PLUGINS\", \"auth_internal\")  # Source: ttrss/config.php-dist line 200. Adapted: env var replaces PHP define; only 'auth_internal' by default."
+        },
+        {
+          "file": "prefs/feeds_crud.py",
+          "line": 11,
+          "raw": "- carries a ``# Source:`` traceability comment"
+        },
+        {
+          "file": "prefs/user_prefs_crud.py",
+          "line": 43,
+          "raw": "user.otp_enabled = False  # Source: changing password disables OTP"
+        }
+      ]
+    },
+    {
+      "dimension": "import_coverage",
+      "edges_checked": 13,
+      "skipped_architectural": 22,
+      "missing_imports": 0,
+      "missing_import_details": []
+    },
+    {
+      "dimension": "db_table_coverage",
+      "edges_checked": 109,
+      "skipped_no_mapping": 17,
+      "skipped_deprecated": 0,
+      "missing_model_imports": 0,
+      "missing_model_import_details": []
+    },
+    {
+      "dimension": "hook_invocation_coverage",
+      "edges_checked": 31,
+      "skipped_no_mapping": 7,
+      "missing_hook_calls": 0,
+      "missing_hook_call_details": []
+    },
+    {
+      "dimension": "class_hierarchy_coverage",
+      "edges_checked": 17,
+      "skipped_third_party": 10,
+      "eliminated_architectural": 17,
+      "missing_class_hierarchy": 0,
+      "missing_class_hierarchy_details": []
+    }
+  ]
+}

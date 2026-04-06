@@ -55,74 +55,47 @@ def misc_app():
 
 
 # ---------------------------------------------------------------------------
-# truncate_string — NOT YET PORTED
+# truncate_string
 # ---------------------------------------------------------------------------
-# PHP source: ttrss/include/functions.php:truncate_string lines 883-889
-#
-#   function truncate_string($str, $max_len, $suffix = '&hellip;') {
-#       if (mb_strlen($str, "utf-8") > $max_len) {
-#           return mb_substr($str, 0, $max_len, "utf-8") . $suffix;
-#       } else {
-#           return $str;
-#       }
-#   }
-#
-# These tests are skipped with MISSING_PORT until ttrss.utils.misc exports
-# a truncate_string() function.  They define the contract to implement.
 
-_truncate_string = pytest.importorskip(
-    "ttrss.utils.misc",
-    reason="ttrss.utils.misc not importable",
-).get if False else None  # sentinel — skips are managed per-test below
+from ttrss.utils.misc import truncate_string  # noqa: E402
 
 
-@pytest.mark.skip(reason="MISSING_PORT: truncate_string not yet ported from PHP")
 def test_truncate_string_long_input():
     """
     Source: ttrss/include/functions.php:truncate_string line 883
     PHP: mb_strlen($str) > $max_len → mb_substr($str, 0, $max_len) . $suffix
     Assert: 'hello world' truncated to 5 chars yields 'hello' + default suffix
     """
-    from ttrss.utils.misc import truncate_string  # noqa: PLC0415
-
     result = truncate_string("hello world", 5)
     assert result.startswith("hello")
     assert len(result) > 5  # suffix appended
 
 
-@pytest.mark.skip(reason="MISSING_PORT: truncate_string not yet ported from PHP")
 def test_truncate_string_short_input_no_truncation():
     """
     Source: ttrss/include/functions.php:truncate_string line 883
     PHP: mb_strlen($str) <= $max_len → return $str unchanged
     Assert: 'hi' with max_len=100 is returned unchanged (no suffix)
     """
-    from ttrss.utils.misc import truncate_string  # noqa: PLC0415
-
     assert truncate_string("hi", 100) == "hi"
 
 
-@pytest.mark.skip(reason="MISSING_PORT: truncate_string not yet ported from PHP")
 def test_truncate_string_empty_input():
     """
     Source: ttrss/include/functions.php:truncate_string line 883
     PHP: mb_strlen('') == 0, which is not > max_len → return ''
     Assert: empty string is returned unchanged for any max_len >= 0
     """
-    from ttrss.utils.misc import truncate_string  # noqa: PLC0415
-
     assert truncate_string("", 10) == ""
 
 
-@pytest.mark.skip(reason="MISSING_PORT: truncate_string not yet ported from PHP")
 def test_truncate_string_custom_suffix():
     """
     Source: ttrss/include/functions.php:truncate_string line 883
     PHP: optional $suffix parameter (default '&hellip;') is appended after truncation
     Assert: custom suffix '...' is appended when string exceeds max_len
     """
-    from ttrss.utils.misc import truncate_string  # noqa: PLC0415
-
     result = truncate_string("abcdef", 3, suffix="...")
     assert result == "abc..."
 

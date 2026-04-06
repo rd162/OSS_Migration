@@ -132,12 +132,67 @@ ELIMINATED_FUNCTIONS: Set[str] = {
     "quickMail",
     # Plugin base init method (replaced by pluggy hookimpl)
     "init",
-    # PHP-specific entry-point files (no Python equivalent — Flask handles routing)
+    # PHP entry-point files (no Python equivalent — Flask handles routing)
+    "ttrss/public.php",
     "ttrss/include/login_form.php",
     "ttrss/include/sanity_check.php",
     "ttrss/register.php",
     "ttrss/opml.php",
     "ttrss/include/version.php",
+    # Pref_Filters UI-rendering helpers (eliminated: Dojo HTML → Vanilla JS SPA, ADR-0017)
+    "getRuleName", "printRuleName", "getActionName", "printActionName",
+    "newfilter", "newrule", "newaction",
+    # Low-level PHP DB wrapper functions (eliminated: replaced by SQLAlchemy, ADR-0006)
+    "db_affected_rows", "db_fetch_assoc", "db_fetch_result", "db_last_error",
+    "db_num_rows", "db_query", "db_quote",
+    # PHP install script (eliminated: Alembic + Docker handle DB init, ADR-0003)
+    "ttrss/install/index.php", "db_connect", "make_config",
+    # PHP API entry-point (eliminated: replaced by Flask routing)
+    "ttrss/api/index.php",
+    # PluginHost accessors/mutators (eliminated: pluggy framework replaces, ADR-0010)
+    # The Python PluginManager has equivalent functionality under different API.
+    "add_command", "del_command", "get_commands", "lookup_command", "run_commands",
+    "add_feed", "get_feeds", "get_feed_handler",
+    "get_all", "get_api_method", "get_dbh", "get_debug", "set_debug",
+    "get_hooks", "del_hook", "get_link", "get_plugin", "get_plugin_names", "get_plugins",
+    "lookup_handler", "add_handler", "del_handler", "pfeed_to_feed_id", "feed_to_pfeed_id",
+    "register_plugin", "run_hooks", "set",
+    # Handler_Public scheduled-update entry points (eliminated: Celery tasks replace)
+    "globalUpdateFeeds", "housekeepingTask", "updateTask",
+    # Dlg HTML-rendering helpers (eliminated: SPA frontend replaces PHP dialog rendering)
+    "explainError", "opml_notice", "opml_publish_url",
+    # Backend::loading is a stub spinner (eliminated: SPA handles loading state client-side)
+    "loading",
+    # Db::quote (eliminated: SQLAlchemy parameterized queries replace manual quoting)
+    "quote",
+    # Db_Prefs::convert (eliminated: SQLAlchemy type coercion replaces PHP manual conversion)
+    "convert",
+    # Feeds::generate_error_feed (eliminated: SPA renders error state client-side)
+    "generate_error_feed",
+    # format_* HTML rendering functions (eliminated R13: HTML output → JSON for SPA, ADR-0017)
+    "format_article_labels", "format_article_note", "format_inline_player",
+    "format_tags_string", "format_article_enclosures", "format_headline_subtoolbar",
+    # PHP UI helper methods in pref/prefs.php (eliminated: Dojo dialogs → SPA)
+    "getHelpText", "getSectionName", "getShortDesc", "toggleAdvanced", "getHelp",
+    # Pref_Feeds HTML helper (eliminated: PHP checkbox rendering → SPA)
+    "batch_edit_cbox",
+    # PHP utility functions not applicable to Python (eliminated)
+    "get_self_url_prefix",   # Flask url_for() replaces
+    "geturl",                # PHP curl wrapper; httpx replaces (ADR-0015)
+    "read_stdin",            # PHP CLI utility; not applicable
+    "tmpdirname",            # PHP temp dir; tempfile replaces
+    "get_ssl_certificate_id", # PHP OpenSSL binding; not applicable in Python
+    "get_translations",      # PHP gettext init; i18n deferred (ADR-0013)
+    "convertUrlQuery",       # PHP URL query builder; urllib.parse replaces
+    "format_libxml_error",   # PHP libxml error formatter; lxml handles natively
+    "add_feed_url",          # Dojo autodetect helper; SPA handles client-side
+    # Article HTML handlers (eliminated: SPA handles redirect + score UI)
+    "redirect",              # PHP article redirect helper
+    "Article::redirect",
+    # encrypt_password (eliminated: legacy salted-hash PHP; argon2id replaces, ADR-0008)
+    "encrypt_password",
+    # PHP install script helpers (eliminated: Docker + Alembic, ADR-0003)
+    "make_password",         # re: install/index.php only (auth/password.py has it as IMPLEMENTED)
 }
 
 def _bare_name(qname: str) -> str:
@@ -191,10 +246,13 @@ PHP_TO_PYTHON_MAP: Dict[str, List[str]] = {
     "ttrss/classes/backend.php": ["blueprints/backend/views.py"],
     "ttrss/classes/db.php": ["extensions.py"],
     "ttrss/classes/db/prefs.php": ["prefs/ops.py"],
-    "ttrss/classes/pref/feeds.php": ["feeds/ops.py"],
-    "ttrss/classes/pref/prefs.php": ["prefs/ops.py"],
-    "ttrss/classes/pref/labels.php": ["labels.py"],
-    "ttrss/classes/pref/users.php": ["auth/authenticate.py"],
+    "ttrss/classes/pref/feeds.php": ["feeds/ops.py", "prefs/feeds_crud.py", "blueprints/prefs/feeds.py"],
+    "ttrss/classes/pref/prefs.php": ["prefs/ops.py", "prefs/user_prefs_crud.py", "blueprints/prefs/user_prefs.py"],
+    "ttrss/classes/pref/labels.php": ["labels.py", "blueprints/prefs/labels.py"],
+    "ttrss/classes/pref/users.php": ["auth/authenticate.py", "prefs/users_crud.py", "blueprints/prefs/users.py"],
+    "ttrss/classes/pref/filters.php": ["prefs/filters_crud.py", "blueprints/prefs/filters.py"],
+    "ttrss/classes/pref/system.php": ["blueprints/prefs/system.py"],
+    "ttrss/include/db.php": ["extensions.py"],
     "ttrss/classes/rpc.php": ["blueprints/backend/views.py"],
     "ttrss/classes/rpc2.php": ["blueprints/backend/views.py"],
     "ttrss/classes/dlg.php": ["blueprints/backend/views.py"],
@@ -333,13 +391,13 @@ SOURCE_PATTERNS: List[re.Pattern] = [
     # Format 1: # Source: ttrss/path/file.php:FuncOrClass::method (lines N-M)
     re.compile(
         r"#\s*Source:\s*(?P<path>ttrss/\S+\.php)"
-        r":(?P<qname>[A-Za-z_]\w*(?:[.:][A-Za-z_]\w*)?)"
+        r":(?P<qname>[A-Za-z_]\w*(?:(?:::|[.:])[A-Za-z_]\w*)?)"
         r"\s*\(lines?\s*\d+"
     ),
     # Format 2: # Source: ttrss/path/file.php:func_name — description
     re.compile(
         r"#\s*Source:\s*(?P<path>ttrss/\S+\.php)"
-        r":(?P<qname>[A-Za-z_]\w*(?:[.:][A-Za-z_]\w*)?)"
+        r":(?P<qname>[A-Za-z_]\w*(?:(?:::|[.:])[A-Za-z_]\w*)?)"
         r"\s*[\u2014—-]"
     ),
     # Format 3: # Source: ttrss/path/file.php:func_name (no trailing info)
@@ -360,7 +418,7 @@ SOURCE_PATTERNS: List[re.Pattern] = [
     # Format 5b: # Source: file.php:func_name (short form, function name after colon)
     re.compile(
         r"#\s*Source:\s*(?P<path>[\w/.-]*\.php)"
-        r":(?P<qname>[A-Za-z_]\w*(?:[.:][A-Za-z_]\w*)?)"
+        r":(?P<qname>[A-Za-z_]\w*(?:(?:::|[.:])[A-Za-z_]\w*)?)"
     ),
     # Format 6: # Source: ttrss/path/file.php (file-level, no function)
     re.compile(
@@ -390,19 +448,47 @@ SOURCE_PATTERNS: List[re.Pattern] = [
         r"(?:ttrss/)?(?P<path>[\w./]+\.php)",
         re.IGNORECASE,
     ),
+    # ── Docstring variants (no # prefix) ─────────────────────────────────────
+    # Format 10: bare "Source: ttrss/path/file.php:Class::method (lines N-M)"
+    re.compile(
+        r"(?<![#\w])Source:\s*(?P<path>ttrss/\S+\.php)"
+        r":(?P<qname>[A-Za-z_]\w*(?:(?:::|[.:])[A-Za-z_]\w*)?)"
+        r"\s*\(lines?\s*\d+"
+    ),
+    # Format 11: bare "Source: ttrss/path/file.php:func — description"
+    re.compile(
+        r"(?<![#\w])Source:\s*(?P<path>ttrss/\S+\.php)"
+        r":(?P<qname>[A-Za-z_]\w*(?:(?:::|[.:])[A-Za-z_]\w*)?)"
+        r"\s*[\u2014—-]"
+    ),
+    # Format 12: bare "Source: ttrss/path/file.php:func" (end of line)
+    re.compile(
+        r"(?<![#\w])Source:\s*(?P<path>ttrss/\S+\.php)"
+        r":(?P<qname>[A-Za-z_]\w*(?:[.:][A-Za-z_]\w*)?)\s*$"
+    ),
+    # Format 13: bare "Source: file.php:func" (short form, no ttrss/ prefix)
+    re.compile(
+        r"(?<![#\w])Source:\s*(?P<path>[\w/.-]+\.php)"
+        r":(?P<qname>[A-Za-z_]\w*(?:(?:::|[.:])[A-Za-z_]\w*)?)"
+        r"(?:\s|\(|$)"
+    ),
+    # Format 14: bare "Source: ttrss/path/file.php" (file-level in docstring)
+    re.compile(
+        r"(?<![#\w])Source:\s*(?P<path>ttrss/\S+\.php)\s*(?:\(|$)"
+    ),
 ]
 
-# Broad catch-all: any traceability comment keyword pointing to a .php file (B2: Fix 1)
-# Used to detect lines that have valid intent but don't match specific SOURCE_PATTERNS.
+# Broad catch-all: any traceability keyword pointing to a .php file.
+# Now also matches bare "Source:" in docstrings (no # prefix).
 SOURCE_COMMENT_RE = re.compile(
-    r"#\s*(?:Source|Adapted from|New|PHP source|Migrated from|Based on|Inferred from):\s*"
+    r"(?:#\s*)?(?:Source|Adapted from|New|PHP source|Migrated from|Based on|Inferred from):\s*"
     r"(?:ttrss/)?(?P<file>[\w./]+\.php)"
     r"(?:[:\s].*)?\s*$",
     re.IGNORECASE,
 )
 
-# Catch-all for any # Source: comment (to detect unparseable ones)
-SOURCE_ANY = re.compile(r"#\s*Source:\s*\S")
+# Catch-all for any Source: traceability line (# comment or docstring)
+SOURCE_ANY = re.compile(r"(?:#\s*)?Source:\s*\S")
 
 
 # ---------------------------------------------------------------------------
@@ -443,9 +529,12 @@ class PythonModule:
 
     def _extract_source_comments(self) -> None:
         # B2 Fix 1: expanded traceability keywords (was only "# Source:" + "# Inferred from:")
+        # Also match bare "Source:" in docstrings (indented, no # prefix).
         _TRACEABILITY_KEYWORDS = (
             "# Source:", "# Inferred from:", "# Adapted from:",
             "# New:", "# PHP source:", "# Migrated from:", "# Based on:",
+            # Docstring variants (indented without # prefix):
+            "Source:", "Inferred from:", "Adapted from:", "Based on:",
         )
         for lineno, line in enumerate(self.source_lines, 1):
             if not any(kw in line for kw in _TRACEABILITY_KEYWORDS):
@@ -536,13 +625,19 @@ def validate_call_coverage(
     function_levels: Dict[str, int],
     modules: Dict[str, PythonModule],
 ) -> Dict[str, Any]:
-    """Check that each PHP function at levels 0-10 has a Python # Source: match."""
+    """Check that each PHP function at levels 0-10 has an explicit Python Source: citation.
 
-    # Build a lookup: bare_func_name -> set of qnames in source comments
+    A function is covered only if:
+      (a) its name appears in a Source: traceability comment (# comment or docstring), OR
+      (b) it is in ELIMINATED_FUNCTIONS (intentionally not ported).
+
+    File-level matching (old: "any Source: pointing to the same PHP file") is NOT accepted.
+    Every PHP function must be cited individually.
+    """
+
+    # Build lookup: bare_func_name -> set of PHP paths that cite it
     source_qnames: Set[str] = set()
     source_bare_names: Set[str] = set()
-    # Also build: php_path -> set of bare_names traced from that path
-    traced_by_path: Dict[str, Set[str]] = defaultdict(set)
 
     for mod in modules.values():
         for sc in mod.source_comments:
@@ -554,25 +649,13 @@ def validate_call_coverage(
                 source_qnames.add(qn)
                 bare = _bare_name(qn)
                 source_bare_names.add(bare)
-                # Also handle dot-separated names (API.login -> login)
+                # Dot-separated form (API.login → login)
                 if "." in qn:
                     source_bare_names.add(qn.rsplit(".", 1)[1])
-                    source_bare_names.add(qn.replace(".", "::"))  # normalize to graph format
-                if php_path:
-                    traced_by_path[php_path].add(bare)
-            if php_path:
-                # File-level source comment — register the path itself
-                traced_by_path[php_path].add("")
-
-    # Build set of PHP file basenames that have ANY source coverage
-    traced_files: Set[str] = set()
-    for php_path in traced_by_path:
-        # Normalize: "ttrss/include/functions.php" → "functions.php"
-        traced_files.add(php_path.rsplit("/", 1)[-1])
-        traced_files.add(php_path)  # also keep full path
+                    source_bare_names.add(qn.replace(".", "::"))
 
     matched = []
-    matched_by_file = []  # file-level match (Source comment points to same PHP file)
+    needs_citation = []  # was "file-level matched" — need explicit function citation
     eliminated = []
     unmatched = []
     skipped_third_party = 0
@@ -593,20 +676,25 @@ def validate_call_coverage(
             eliminated.append({"qname": qname, "level": level, "reason": "eliminated_per_spec13"})
             continue
 
-        # Check if matched via source comment (exact qname or bare name)
+        # Function must be explicitly cited by name in a Source: comment/docstring
         if qname in source_qnames or bare in source_bare_names:
             matched.append({"qname": qname, "level": level})
         else:
-            # File-level fallback: check if ANY Source comment points to the PHP file
-            # containing this function (e.g., functions.php::foo → any "# Source: functions.php:NNN")
+            # Determine if the PHP file for this function has at least one Python
+            # module mapped to it (structural coverage), to distinguish:
+            #   needs_citation: function's PHP file IS mapped but function not cited
+            #   unmatched:      function's PHP file has NO mapping at all
             php_file = qname.split("::")[0] if "::" in qname else qname
-            # B2 Fix 2: resolve handler class names to their PHP file paths
-            # so "API::login" resolves to "ttrss/classes/api.php" (not bare "API")
             if "/" not in php_file and php_file in HANDLER_CLASS_PHP_FILE:
                 php_file = HANDLER_CLASS_PHP_FILE[php_file]
-            php_basename = php_file.rsplit("/", 1)[-1]
-            if php_basename in traced_files or php_file in traced_files:
-                matched_by_file.append({"qname": qname, "level": level, "match": "file_level"})
+            if php_file in PHP_TO_PYTHON_MAP:
+                needs_citation.append({
+                    "qname": qname,
+                    "level": level,
+                    "reason": "no_explicit_function_citation",
+                    "php_file": php_file,
+                    "hint": f"Add '# Source: {php_file}:{bare}' to the relevant Python module",
+                })
             else:
                 unmatched.append({"qname": qname, "level": level})
 
@@ -621,22 +709,24 @@ def validate_call_coverage(
                     "raw": sc["raw"],
                 })
 
-    total_non_thirdparty = len(matched) + len(matched_by_file) + len(eliminated) + len(unmatched)
-    covered = len(matched) + len(matched_by_file) + len(eliminated)
+    total_non_thirdparty = (
+        len(matched) + len(needs_citation) + len(eliminated) + len(unmatched)
+    )
+    covered = len(matched) + len(eliminated)
     pct = (covered / total_non_thirdparty * 100) if total_non_thirdparty > 0 else 0
 
     return {
         "dimension": "call_coverage",
         "matched_exact": len(matched),
-        "matched_by_file": len(matched_by_file),
+        "needs_citation": len(needs_citation),   # explicit gap: mapped but not cited
         "eliminated": len(eliminated),
-        "unmatched": len(unmatched),
+        "unmatched": len(unmatched),             # no Python mapping at all
         "skipped_third_party": skipped_third_party,
         "skipped_high_level": skipped_high_level,
         "unparseable_comments": len(unparseable),
         "coverage_pct": round(pct, 1),
         "unmatched_details": unmatched,
-        "matched_by_file_details": matched_by_file,
+        "needs_citation_details": needs_citation,
         "eliminated_details": eliminated,
         "unparseable_details": unparseable,
     }
@@ -1047,30 +1137,40 @@ def print_report(results: List[Dict[str, Any]]) -> int:
         print(f"--- {name} ---")
 
         if dim["dimension"] == "call_coverage":
-            total = dim.get("matched_exact", dim.get("matched", 0)) + dim.get("matched_by_file", 0) + dim["eliminated"] + dim["unmatched"]
+            needs_cit = dim.get("needs_citation", 0)
             exact = dim.get("matched_exact", dim.get("matched", 0))
-            by_file = dim.get("matched_by_file", 0)
+            total = exact + needs_cit + dim["eliminated"] + dim["unmatched"]
             pct = dim.get("coverage_pct", 0)
-            print(f"  Functions (levels 0-10):  {total}")
-            print(f"    Matched (exact name):  {exact}")
-            print(f"    Matched (file-level):  {by_file}")
-            print(f"    Eliminated (spec 13):  {dim['eliminated']}")
-            print(f"    Unmatched:             {dim['unmatched']}")
-            print(f"    Skipped (3rd party):   {dim['skipped_third_party']}")
-            print(f"    Skipped (level > 10):  {dim['skipped_high_level']}")
-            print(f"    Unparseable comments:  {dim['unparseable_comments']}")
-            print(f"    Coverage:              {pct}% (exact + file-level + eliminated)")
-            if dim["unmatched"] > 0:
+            print(f"  Functions (levels 0-10):      {total}")
+            print(f"    Matched (explicit cite):    {exact}")
+            print(f"    Needs explicit citation:    {needs_cit}  ← gaps")
+            print(f"    Eliminated (spec 13):       {dim['eliminated']}")
+            print(f"    Unmatched (no mapping):     {dim['unmatched']}")
+            print(f"    Skipped (3rd party):        {dim['skipped_third_party']}")
+            print(f"    Skipped (level > 10):       {dim['skipped_high_level']}")
+            print(f"    Unparseable comments:       {dim['unparseable_comments']}")
+            print(f"    Coverage (cite+elim/total): {pct}%")
+            if needs_cit > 0 or dim["unmatched"] > 0:
                 has_gaps = True
+            if needs_cit > 0:
                 print()
-                print("  Unmatched functions (no Python Source: comment points to their PHP file):")
+                print("  Functions needing explicit Source: citation (sorted by call level):")
+                items = sorted(dim.get("needs_citation_details", []), key=lambda x: x["level"])
+                for item in items[:40]:
+                    print(f"    L{item['level']:2d}  {item['qname']}")
+                    print(f"          {item['hint']}")
+                if len(items) > 40:
+                    print(f"    ... and {len(items) - 40} more")
+            if dim["unmatched"] > 0:
+                print()
+                print("  Unmatched (no Python mapping for their PHP file):")
                 for item in dim["unmatched_details"][:20]:
                     print(f"    L{item['level']:2d}  {item['qname']}")
                 if len(dim["unmatched_details"]) > 20:
                     print(f"    ... and {len(dim['unmatched_details']) - 20} more")
             if dim["unparseable_comments"] > 0:
                 print()
-                print("  Unparseable # Source: comments:")
+                print("  Unparseable Source: comments:")
                 for item in dim["unparseable_details"][:10]:
                     print(f"    {item['file']}:{item['line']}")
                     print(f"      {item['raw'][:80]}")
@@ -1139,6 +1239,7 @@ def print_report(results: List[Dict[str, Any]]) -> int:
     print("=" * width)
     gap_count = sum(
         dim.get("unmatched", 0) +
+        dim.get("needs_citation", 0) +
         dim.get("missing_imports", 0) +
         dim.get("missing_model_imports", 0) +
         dim.get("missing_hook_calls", 0) +
@@ -1147,7 +1248,7 @@ def print_report(results: List[Dict[str, Any]]) -> int:
     )
     if has_gaps:
         print(f"  RESULT: {gap_count} gap(s) found across 5 dimensions.")
-        print("  Action required: address unmatched items above.")
+        print("  Action required: address items above (add Source: citations or ELIMINATED_FUNCTIONS entries).")
     else:
         print("  RESULT: All 5 dimensions validated. No gaps found.")
     print("=" * width)

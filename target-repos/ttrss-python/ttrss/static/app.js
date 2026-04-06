@@ -57,6 +57,9 @@ const S = {
   // Tag editing state
   tagEditing:   false,
   tagInput:     '',
+  // Note editing state — Source: ttrss/include/functions2.php:format_article_note
+  noteEditing:  false,
+  noteInput:    '',
   opmlUrl:      '',
 };
 
@@ -426,6 +429,35 @@ function renderArticleContent() {
       }
     </div>`;
 
+  // Labels row — Source: ttrss/include/functions2.php:format_article_labels (lines 1608-1622)
+  // a.labels = [[virtual_feed_id, caption, fg_color, bg_color], ...]
+  const labels = Array.isArray(a.labels) ? a.labels : [];
+  const labelsHtml = labels.length ? `
+    <div class="ah-labels">
+      ${labels.map(l => `<span class="ah-label-chip" style="color:${esc(l[2]||'#fff')};background:${esc(l[3]||'#888')}">${esc(l[1])}</span>`).join('')}
+    </div>` : '';
+
+  // Note row — Source: ttrss/include/functions2.php:format_article_note (lines 1624-1634)
+  // updateArticle field=3 sets note text (API spec: data param)
+  const noteHtml = S.noteEditing ? `
+    <div class="ah-note ah-note-editing">
+      <textarea id="note-input" class="note-textarea" rows="3" placeholder="Note…">${esc(S.noteInput)}</textarea>
+      <div class="note-btns">
+        <button class="ah-btn ah-note-save" data-action="save-note">Save</button>
+        <button class="ah-btn ah-note-cancel" data-action="cancel-note">Cancel</button>
+      </div>
+    </div>` : (a.note ? `
+    <div class="ah-note">
+      <span class="ah-note-text">${esc(a.note)}</span>
+      <button class="ah-btn ah-note-edit-btn" data-action="edit-note" title="Edit note">✎</button>
+    </div>` : `
+    <div class="ah-note ah-note-empty">
+      <button class="ah-btn ah-note-add-btn" data-action="edit-note" title="Add note">+ note</button>
+    </div>`);
+
+  // Score — Source: ttrss/include/functions2.php:get_score_pic (eliminated HTML, data preserved)
+  const scoreHtml = a.score ? `<span class="ah-score ${a.score > 0 ? 'score-pos' : 'score-neg'}" title="Article score">${a.score > 0 ? '+' : ''}${a.score}</span>` : '';
+
   // Source: ttrss/js/article.js — sandboxed iframe for XSS isolation (R08)
   // Use contentDocument.write() instead of srcdoc: avoids attribute-encoding issues
   // with large/complex HTML and is more reliable across browsers.
@@ -441,13 +473,17 @@ function renderArticleContent() {
         ${a.author ? `<span class="ah-author">${esc(a.author)}</span>` : ''}
         ${date ? `<span class="ah-date">${date}</span>` : ''}
         ${a.feed_title ? `<span class="ah-feed">${esc(a.feed_title)}</span>` : ''}
+        ${scoreHtml}
         <a class="ah-link" href="${esc(a.link||'#')}" target="_blank" rel="noopener">Open original ↗</a>
       </div>
+      ${labelsHtml}
       ${tagsHtml}
+      ${noteHtml}
     </div>
     <iframe class="article-frame" id="article-iframe"
             sandbox="allow-same-origin allow-popups"
-            title="Article content"></iframe>`;
+            title="Article content"></iframe>
+    ${_renderEnclosures(a)}`;
 
   // Write article content via contentDocument.write() — no escaping needed,
   // works for arbitrarily large content, sandbox still applies.
@@ -471,8 +507,44 @@ function renderArticleContent() {
     }
   }
 
-  // Bind tag input events after rendering into article-col (outside #app)
+  // Bind tag + note input events after rendering into article-col (outside #app)
   _bindArticleColEvents(col);
+}
+
+// Enclosures renderer — Source: ttrss/include/functions2.php:format_article_enclosures (lines 1847-1941)
+// a.enclosures = [{content_url, content_type, title, duration}, ...]
+function _renderEnclosures(a) {
+  const encs = Array.isArray(a.enclosures) ? a.enclosures : [];
+  if (!encs.length) return '';
+  const items = encs.map(e => {
+    const ctype  = e.content_type || '';
+    const url    = e.content_url  || '';
+    const rawName = url.split('/').pop().split('?')[0] || 'attachment';
+    const label  = e.title || rawName;
+    if (ctype.startsWith('audio/')) {
+      // Source: ttrss/include/functions2.php:format_inline_player — <audio> element for audio/* types
+      return `<div class="ah-enc-item">
+        <audio controls preload="none" class="ah-audio">
+          <source src="${esc(url)}" type="${esc(ctype)}">
+        </audio>
+        <a href="${esc(url)}" target="_blank" rel="noopener" class="ah-enc-link">${esc(label)}</a>
+      </div>`;
+    }
+    if (ctype.startsWith('image/')) {
+      return `<div class="ah-enc-item">
+        <img src="${esc(url)}" alt="${esc(label)}" class="ah-enc-img">
+        <a href="${esc(url)}" target="_blank" rel="noopener" class="ah-enc-link">${esc(label)}</a>
+      </div>`;
+    }
+    return `<div class="ah-enc-item">
+      <a href="${esc(url)}" target="_blank" rel="noopener" class="ah-enc-link">📎 ${esc(label)}</a>
+      <span class="ah-enc-type">${esc(ctype || 'unknown type')}</span>
+    </div>`;
+  });
+  return `<div class="ah-enclosures">
+    <div class="ah-enc-header">Attachments (${encs.length})</div>
+    ${items.join('')}
+  </div>`;
 }
 
 // Bind events inside article-col (rendered outside #app, so needs separate binding)
@@ -546,7 +618,30 @@ function _bindArticleColEvents(col) {
       const newTags = (S.article.tags || []).filter(t => t !== tag);
       doSaveTagList(newTags);
     }
+    else if (a === 'edit-note') {
+      // Source: ttrss/include/functions2.php:format_article_note — onclick="editArticleNote(id)"
+      S.noteEditing = true;
+      S.noteInput = S.article?.note || '';
+      renderArticleContent();
+    }
+    else if (a === 'save-note') {
+      doSaveNote();
+    }
+    else if (a === 'cancel-note') {
+      S.noteEditing = false;
+      S.noteInput = '';
+      renderArticleContent();
+    }
   });
+
+  // Note textarea — sync input state
+  const noteInput = col.querySelector('#note-input');
+  if (noteInput) {
+    noteInput.addEventListener('input', e => { S.noteInput = e.target.value; });
+    noteInput.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { S.noteEditing = false; S.noteInput = ''; renderArticleContent(); }
+    });
+  }
 }
 
 async function doSaveTags() {
@@ -567,6 +662,22 @@ async function doSaveTagList(tags) {
     renderArticleContent();
   } catch (e) {
     alert('Error saving tags: ' + e.message);
+  }
+}
+
+async function doSaveNote() {
+  if (!S.article) return;
+  const id   = S.article.id;
+  const text = S.noteInput.trim();
+  S.noteEditing = false;
+  S.noteInput   = '';
+  try {
+    // Source: ttrss/classes/api.php:API.updateArticle field=3 (NOTE), data=text
+    await api('updateArticle', { article_ids: String(id), field: 3, mode: 0, data: text });
+    S.article.note = text;
+    renderArticleContent();
+  } catch (e) {
+    alert('Error saving note: ' + e.message);
   }
 }
 
@@ -857,6 +968,8 @@ async function openArticle(id) {
     S.article = items[0];
     S.tagEditing = false;
     S.tagInput = '';
+    S.noteEditing = false;
+    S.noteInput = '';
     renderArticleOnly();  // open article pane without rebuilding sidebar or list
     // Mark read — Source: api.php:updateArticle field=2 (UNREAD), mode=0
     if (S.article.unread) {

@@ -172,6 +172,10 @@ Run: `just test-int` (requires docker compose services on :5433/:6380)
 
 **Release gate before Phase 7:** `git tag v1.0.0 && git push origin v1.0.0` → triggers deploy.yml
 
+## Coverage Verification
+
+- [Coverage Verification Guide](../docs/reports/coverage-verification-guide.md) — Two modes: (1) Migration coverage check (function-by-function, not file-level); (2) Semantic coverage check (PHP vs Python logic review). Run `python tools/graph_analysis/validate_coverage.py` for mode 1.
+
 ## SME Review Artifacts
 
 - [SME Review 2026-04-06](project/sme-review-2026-04-06.md) — Demo walkthrough (7 areas), test scenario matrix (13 categories), gaps: Aggregation/Display, Plugins/Themes, Preferences, i18n

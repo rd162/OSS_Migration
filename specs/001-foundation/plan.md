@@ -4,8 +4,6 @@
 **Completed:** 2026-04-03 (1a), 2026-04-04 (1b)  
 **Spec ref:** specs/001-foundation/spec.md
 
-> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. Not generated via `/speckit-plan`.
-
 ---
 
 ## Constitution Check

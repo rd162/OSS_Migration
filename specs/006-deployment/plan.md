@@ -8,8 +8,6 @@ date: 2026-04-04
 
 # Plan 006 — Phase 6: Deployment
 
-> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. Not generated via `/speckit-plan`.
-
 ---
 
 ## Constitution Check

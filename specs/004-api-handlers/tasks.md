@@ -8,8 +8,6 @@ status: done
 
 All tasks DONE. Phase 4 exit gate (17 criteria) passed.
 
-> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. `[US#]` and `[P]` markers added retroactively for spec-kit compatibility.
-
 ## Batch 1 — Auth gate + counter-only ops **[US-001, US-002, US-003]**
 
 - [x] Implement two-guard auth decorator at top of dispatch()

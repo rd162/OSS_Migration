@@ -93,8 +93,6 @@ source: memory/phase4_plan_2026-04-04.md
 
 ---
 
-> **Heritage note:** This phase was implemented on `main` before the `speckit-specify` branch workflow was established. Spec content is authoritative; it was not generated via `/speckit-specify`.
-
 ## Status
 
 **DONE** — All 17 ops implemented and verified. Phase 4 exit gate (17 criteria) passed.

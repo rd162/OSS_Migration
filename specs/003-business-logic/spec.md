@@ -131,8 +131,6 @@ All 9 `ccache_update` call sites must be wired (7 in Phase 3, 2 deferred to Phas
 
 ---
 
-> **Heritage note:** This phase was implemented on `main` before the `speckit-specify` branch workflow was established. Spec content is authoritative; it was not generated via `/speckit-specify`.
-
 ---
 
 ## Exit Gate (18 Criteria)

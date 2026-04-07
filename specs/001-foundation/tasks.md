@@ -5,8 +5,6 @@
 **Spec ref:** specs/001-foundation/spec.md  
 **Plan ref:** specs/001-foundation/plan.md
 
-> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. `[US#]` and `[P]` markers added retroactively for spec-kit compatibility.
-
 ---
 
 ## Phase 1a — Walking Skeleton **[US-1a]**

@@ -5,8 +5,6 @@
 **Spec ref:** specs/003-business-logic/spec.md  
 **Plan ref:** specs/003-business-logic/plan.md
 
-> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. `[US#]` and `[P]` markers added retroactively for spec-kit compatibility.
-
 ---
 
 ## Pre-Batch Gate — Model Verification

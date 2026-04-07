@@ -6,8 +6,6 @@ status: done
 
 # Tasks 006 — Phase 6: Deployment + Test Coverage Uplift
 
-> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. `[US#]` markers added retroactively for spec-kit compatibility.
-
 ## Deployment Batches
 
 ### B1 — CI Foundation + Coverage Baseline **[US-001]**

@@ -99,8 +99,6 @@ See `memory/semantic_verification_plan.md` for full definitions. Categories:
 
 ---
 
-> **Heritage note:** This phase was implemented on `main` before the `speckit-specify` branch workflow was established. Spec content is authoritative; it was not generated via `/speckit-specify`.
-
 ## Status
 
 **DONE** — Phase 5: all 14 hooks wired, all 7 batch gates passed, 537+ tests passing.

@@ -5,8 +5,6 @@
 **Spec ref:** specs/002-core-logic/spec.md  
 **Plan ref:** specs/002-core-logic/plan.md
 
-> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. `[US#]` and `[P]` markers added retroactively for spec-kit compatibility.
-
 ---
 
 ## Batch 1 — Utils + Plugin Loader (L0-L3) **[US-2a]**

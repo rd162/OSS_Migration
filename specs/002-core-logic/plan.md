@@ -5,8 +5,6 @@
 **Spec ref:** specs/002-core-logic/spec.md  
 **Method:** Adversarial thinking pipeline — 3 candidates, Condorcet vote. Candidate A (Dependency-First) won 2-0.
 
-> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. Not generated via `/speckit-plan`.
-
 ---
 
 ## Constitution Check

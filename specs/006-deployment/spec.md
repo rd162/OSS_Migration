@@ -103,8 +103,6 @@ source: memory/phase6_plan_2026-04-04.md
 
 ---
 
-> **Heritage note:** This phase was implemented on `main` before the `speckit-specify` branch workflow was established. Spec content is authoritative; it was not generated via `/speckit-specify`.
-
 ## Status
 
 **IN PROGRESS** — B1 done, B2 coverage gate DONE (0 gaps), B3-B6 pending. Test coverage uplift active (32 files, ~250 tests, 5 batches).

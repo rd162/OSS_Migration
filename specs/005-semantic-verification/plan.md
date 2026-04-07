@@ -8,8 +8,6 @@ date: 2026-04-04
 
 # Plan 005 — Phase 5: Cross-Cutting + Semantic Verification
 
-> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. Not generated via `/speckit-plan`.
-
 ---
 
 ## Constitution Check

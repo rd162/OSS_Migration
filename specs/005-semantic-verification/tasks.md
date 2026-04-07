@@ -8,8 +8,6 @@ status: done
 
 All tasks DONE. Phase 5 all-14-hooks gate passed. Phase 5b: 105+ discrepancies fixed, 598 tests, 0 coverage gaps.
 
-> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. `[US#]` markers added retroactively for spec-kit compatibility.
-
 ## Phase 5 — Cross-Cutting Infrastructure
 
 ### A0 — Plugin System Foundation + Structlog **[US-001, US-002]**

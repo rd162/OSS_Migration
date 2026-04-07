@@ -5,8 +5,6 @@
 **Spec ref:** specs/003-business-logic/spec.md  
 **Method:** Adversarial thinking pipeline — 3 candidates, critique+author round, 3-voter Condorcet. Solution A (Strict Dependency Leaves-Up) won 2-0.
 
-> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. Not generated via `/speckit-plan`.
-
 ---
 
 ## Constitution Check

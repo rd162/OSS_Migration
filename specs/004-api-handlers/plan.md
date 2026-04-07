@@ -8,8 +8,6 @@ date: 2026-04-04
 
 # Plan 004 — Flask API Blueprint Completion
 
-> **Heritage note:** Implemented on `main` before the `speckit-specify` branch workflow. Not generated via `/speckit-plan`.
-
 ## Constitution Check
 
 *Gate: Must pass before implementation begins. Re-evaluated at each batch exit.*

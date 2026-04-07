@@ -159,3 +159,4 @@ def setArticleTags(
         .where(TtRssUserEntry.owner_uid == owner_uid)
         .values(tag_cache=",".join(valid_tags))
     )
+    session.flush()

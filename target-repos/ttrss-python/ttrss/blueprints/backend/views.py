@@ -1443,14 +1443,18 @@ def _article_set_tags():
     Adapted: R13 — accepts form params; returns updated tag list.
     New: exposed as article/settags (no direct PHP RPC equivalent — PHP used form dialog).
     """
-    from ttrss.articles.tags import setArticleTags
+    from ttrss.articles.tags import get_article_tags, setArticleTags
 
     art_id = int(_param("id", 0))
     tags_str = _param("tags", "")
     tags = [t.strip() for t in tags_str.split(",") if t.strip()] if tags_str else []
     if art_id:
-        setArticleTags(db.session, art_id, current_user.id, tags)
+        # Merge new tags with existing tags (avoid duplicates)
+        existing_tags = get_article_tags(db.session, art_id, current_user.id)
+        merged = list(dict.fromkeys(existing_tags + tags))  # Preserve order, deduplicate
+        setArticleTags(db.session, art_id, current_user.id, merged)
         db.session.commit()
+        tags = merged
     return jsonify({"status": "OK", "tags": tags})
 
 

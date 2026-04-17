@@ -1,642 +1,788 @@
 # AI-Assisted Software Migration Architecture
 
-**A Dimension-Driven Framework for Migrating Arbitrary Software Systems**
+**A Dimension-Driven, Traceability-First Framework for Migrating Software Systems Across Technology Stacks**
 
 ---
 
-## Pipeline Overview
+## 1. Abstract
 
-This migration framework follows a five-stage pipeline. Each stage produces concrete artifacts that feed the next. The stages ensure that knowledge is extracted before decisions are made, decisions are made before plans are created, and plans are verified continuously during execution.
+This document describes a architecture for large-scale, AI-assisted software migration.
+It was derived empirically from a complete PHP-to-Python migration of a non-trivial web application
+(~18,600 LOC, 138 source files, 35 database tables, 24 plugin hooks, 19 working sessions).
+The framework is technology-agnostic: the same pipeline applies to language migrations,
+framework shifts, monolith-to-microservices decompositions, data pipeline rewrites,
+and protocol library ports.
 
-| Pipeline Stage | What It Produces | Stakeholder Gate |
-|---|---|---|
-| **Knowledge Extraction** | Source inventory, inferred dimensions (stored as MD files), dependency maps, technology research | Architect review |
-| **Functionality Adjustment with Product Team** | Feature scope matrix, deprecated feature list, enhancement requests, SME recordings | Product team sign-off |
-| **Migration Strategy and Architecture Decisions** | Governing principles, architecture decisions with trade-off analysis, constraints | Architecture board approval |
-| **Migration Plan and Roadmap** | Phase specs, plans, task lists, data migration and transformation strategy | Project management review |
-| **Execution with Continuous Verification** | Target code (with traceability), tests, coverage reports, behavioral verification reports | Dev lead + QA |
-
-### Key Artifacts
-
-The framework produces a structured set of migration-specific artifacts. Examples from the reference PHP-to-Python migration:
-
-**Architecture decision** -- captures each non-trivial choice with trade-off analysis:
-
-```markdown
-# 0002 -- Select Python Web Framework
-## Considered Options
-1. Flask -- closest match to source handler dispatch; native session/CSRF
-2. FastAPI -- modern async; but no built-in sessions, CSRF requires JS changes
-3. Django -- full-featured but over-engineered for this codebase
-## Decision: Flask
-Rationale: reduces translation distance; zero frontend changes needed
-```
-
-**Dimension specs** -- each structural dimension inferred from source analysis is stored as an MD file. Excerpts from the actual project specs:
-
-```
-# Dimension 1: Call Graph Dependencies (specs/architecture/10-migration-dimensions.md)
-
-Entry Points → Bootstrap → Handlers → Business Logic → Database
-                                    → Plugin System
-                                    → Feed Processing
-
-Core bootstrap chain (must be migrated first in any flow):
-  autoload.php → config.php → db.php → functions.php → db-prefs.php
-Handler dependency chain:
-  Handler (base) → Handler_Protected → {RPC, Feeds, Article, Pref_*}
-                 → Handler_Public
-                 → API
-```
-
-```
-# Dimension 2: Entity / Database Relationships (specs/architecture/10-migration-dimensions.md)
-
-| Cluster          | Tables                                       | Operating Code              |
-| User Core        | ttrss_users, ttrss_sessions, ttrss_access_keys | sessions.php, auth_internal |
-| Feed Management  | ttrss_feeds, ttrss_feed_categories           | pref/feeds.php, rssfuncs.php |
-| Article Content  | ttrss_entries, ttrss_user_entries, ttrss_enclosures | rssfuncs.php, article.php |
-| Filtering        | ttrss_filters2, ttrss_filters2_rules/actions | pref/filters.php, rssfuncs.php |
-```
-
-```
-# Dimension 3: Frontend / Backend Coupling (specs/architecture/10-migration-dimensions.md)
-
-| Frontend Component | Backend Handler(s)                | Coupling Level           |
-| Feed sidebar tree  | Pref_Feeds::getfeedtree, RPC::getAllCounters | HIGH — custom Dojo store |
-| Headlines panel    | Feeds::view (server-rendered HTML) | HIGH — HTML fragments   |
-| Article view       | Article::view                     | MEDIUM — JSON data       |
-| API (external)     | API class                         | LOW — pure JSON          |
-```
-
-**Migration traceability** -- links every target code element to its source origin. This can be implemented as inline comments, separate index files, or any other mechanism that allows programmatic validation. Examples of different match levels:
-
-```python
-# Direct match: source function maps 1:1 to target function
-# Source: ttrss/include/functions.php:authenticate_user (lines 706-771)
-def authenticate_user(login: str, password: str) -> Optional[User]:
-    ...
-
-# Multi-source: target function combines logic from multiple source files
-# Source: ttrss/classes/feeds.php:Feeds::view (lines 45-120)
-# + ttrss/include/functions2.php:queryFeedHeadlines (lines 200-450)
-def view_feed(feed_id: int, view_mode: str) -> dict:
-    ...
-
-# Inferred: source pattern adapted for different target framework
-# Inferred from: ttrss/include/sessions.php (session validation pattern)
-# Adapted for Flask-Login; no direct PHP equivalent exists
-def validate_session(session_id: str) -> bool:
-    ...
-
-# New: genuinely new code with no source equivalent
-# New: no source equivalent (Alembic migration infrastructure)
-def run_migrations():
-    ...
-
-# Eliminated: source code intentionally not ported
-# Eliminated: ttrss/classes/db/mysql.php (MySQL adapter -- PostgreSQL-only per ADR-0003)
-```
-
-### Pipeline Flow
-
-```
-  SOURCE SYSTEM
-       |
-       v
-  KNOWLEDGE EXTRACTION
-  Infer dimensions from source code analysis and technology research
-  Store each dimension as structured MD file
-       |
-       v
-  FUNCTIONALITY ADJUSTMENT
-  Product team reviews source inventory
-  Confirm scope: keep / deprecate / enhance per feature
-  Ingest SME knowledge (video, transcriptions, spreadsheets)
-       |
-       v
-  MIGRATION STRATEGY & DECISIONS
-  Define governing principles
-  Infer and evaluate architecture decisions covering:
-    - migration approach and flow
-    - target technology stack
-    - data migration and transformations
-  Accept decisions via structured review with trade-off analysis
-       |
-       v
-  MIGRATION PLAN / ROADMAP
-  Select migration flow variant based on dimension analysis
-  Create phase specs with entry/exit criteria
-  Define data migrations: schema mapping, transformations, subset strategy
-       |
-       v
-  EXECUTION WITH CONTINUOUS VERIFICATION
-  Per phase: implement --> build/lint/test --> validate coverage --> verify behavior
-  Traceability: every target element linked to source origin
-  Coverage: programmatic validation that nothing was missed
-  Behavioral check: source vs target comparison using platform knowledge catalog
-```
+The central contribution is a three-part mechanism — **Traceability**, **Coverage Validation**,
+and **Blind-Zone Detection** — that turns AI-assisted migration from a probabilistic,
+best-effort activity into an auditable, measurable process.
+Without this mechanism, AI-assisted migration reliably covers only 20–40% of a codebase
+regardless of model context window size.
 
 ---
 
-## Migration Traceability and Coverage Verification
+## 2. Pipeline Overview
 
-This is the core mechanism that makes complete migration achievable. Without it, AI-assisted migration reliably covers only 20-40% of a codebase, regardless of model context size.
+The framework is a linear pipeline of five stages executed once at project inception,
+followed by a per-phase execution loop that repeats until the migration is complete.
 
-### The Problem: Why AI Models Miss Code
+```
+  ┌───────────────────────────────────────────────────────────────────┐
+  │                      INCEPTION (once per project)                 │
+  │                                                                   │
+  │   Stage 1. Deep Research & Knowledge Extraction                   │
+  │       ↓                                                           │
+  │   Stage 2. Architecture Documentation (per dimension)             │
+  │       ↓                                                           │
+  │   Stage 3. Architecture Decisions (ADRs, P0 → P1 → P2)            │
+  │       ↓                                                           │
+  │   Stage 4. Phase Breakdown (specs + plans + task lists)           │
+  └───────────────────────────────────────────────────────────────────┘
+                                    ↓
+  ┌───────────────────────────────────────────────────────────────────┐
+  │          Stage 5. PER-PHASE EXECUTION LOOP (one phase per session)│
+  │                                                                   │
+  │     5.1  Read phase spec + plan + tasks                           │
+  │     5.2  Implement batch of target code with traceability links   │
+  │     5.3  Mid-phase COVERAGE CHECK (blind-zone detection)  ← core  │
+  │     5.4  Resolve blind zones (may restructure 5.2 output)         │
+  │     5.5  Mid-phase SEMANTIC CHECK (behavioral parity)             │
+  │     5.6  Run build / lint / tests                                 │
+  │     5.7  Phase exit gate: coverage + tests + decision records     │
+  │     5.8  Session handoff (next phase begins in a new session)     │
+  └───────────────────────────────────────────────────────────────────┘
+```
 
-Even with large-context models that can load entire repositories, code elements are systematically missed during migration:
+**Critical sequencing rule.** Coverage and semantic checks are executed *within* each phase loop,
+not at the end of the project. Deferring verification to the end of the project
+is the single most damaging anti-pattern in AI-assisted migration:
+defects compound across sessions, traceability comments drift from the code they describe,
+and the signal-to-noise ratio of late-stage verification falls below the threshold
+at which errors can be corrected efficiently.
 
-- **Attention dilution**: Long files (2000+ lines) cause attention to concentrate on prominent functions while skipping less prominent ones
-- **False coverage**: File-level traceability claims coverage of an entire file while actually covering only a few functions
-- **Name collision**: Functions with common names may be "covered" by false matches from unrelated files
-- **Cross-session drift**: Work done in session 5 may conflict with assumptions from session 2
+The reference project violated this rule. Coverage verification was added only after all phases
+were implemented; as a result, multiple defect classes (false-positive traceability,
+semantic divergence, missing features discovered only via SME review) required
+retroactive rework across every phase. The rule is stated explicitly here
+so that future applications of the framework avoid the same cost.
 
-In the reference project, initial coverage appeared to be 100%. When re-analyzed with strict function-level matching, true coverage was **41.2%** -- 320 of 554 functions were only surface-level matches (claimed but not actually migrated). Only after iterative gap resolution did coverage reach 100%.
+---
 
-### How It Works: Blind Zone Detection, Not Transpilation
+## 3. Stage 1 — Deep Research and Knowledge Extraction
 
-A common misconception is that traceability-based migration works like a transpiler -- feeding source code line-by-line into an AI model and getting target code back. **This is not how it works.** The approach works for any migration, including full architectural redesigns (monolith to microservices, server-rendered to SPA, SQL triggers to stream processing).
+**Goal.** Produce a complete, evidence-based model of the source system
+before any target-side decision is made.
 
-The key insight: **traceability is used to detect what was missed, not to constrain how migration is done.** The AI model is free to redesign, restructure, and re-architect the target system in any way the architecture decisions prescribe. Traceability only tracks which source elements have been accounted for.
+**Inputs.** Source repository (read-only), domain documentation, SME interviews,
+video walkthroughs, production configuration samples.
+
+**Outputs.**
+
+- Full source inventory (every file annotated with language, role, and dependencies)
+- A set of **dimension specifications**, one per structural axis discovered in the source
+- A technology-research dossier describing idioms of the source and candidate target stacks
+
+**Dimensions are discovered, not prescribed.** Every software system exposes
+its own set of structural axes. The framework does not fix a list;
+instead, each axis that materially affects migration order is captured as a separate spec.
+See Appendix A for the set of dimensions discovered in the reference project
+and a broader catalogue of dimensions observed in other system types.
+
+**Why deep research comes first.** The target architecture cannot be chosen rationally
+without quantitative evidence of what the source actually contains:
+dependency depth, complexity hotspots, coupling clusters, implicit contracts,
+deprecated surfaces, security posture. Skipping or compressing this stage
+leads to ADRs made under uncertainty and phases that must be replanned mid-execution.
+
+---
+
+## 4. Stage 2 — Architecture Documentation
+
+**Goal.** Characterize the source system as a durable reference
+that all subsequent stages (decisions, phase plans, verification) can cite without re-reading the source.
+
+The output of this stage is a stable, read-only set of documents organized by dimension.
+Each document is self-contained and cross-links to the source by relative path and line number
+rather than duplicating source content.
+
+The reference project produced fifteen such documents (project charter plus fourteen
+per-dimension architecture specs); the exact set is project-specific.
+See Appendix B for the reference inventory.
+
+A **project charter** sits above the per-dimension specs and captures:
+
+- Mission, goals, governing principles
+- Premises (assumptions that must hold)
+- Hard and soft constraints
+- A requirements traceability matrix linking every requirement
+  to the spec and decision records where it is satisfied
+
+---
+
+## 5. Stage 3 — Architecture Decisions
+
+**Goal.** Record every non-trivial migration choice with full trade-off analysis
+before any target code is written.
+
+Each decision is captured as a formal record (the reference project used MADR 4.0 format)
+with the following shape: context, considered options, trade-off analysis,
+decision, consequences, confirmation.
+
+**Priority classes.**
+
+| Priority | Scope | Must be accepted before |
+|----------|-------|-------------------------|
+| P0       | Blocks all work (migration flow, target language/framework, database engine) | Stage 4 begins |
+| P1       | Blocks specific phases (ORM, auth, background workers, etc.)                 | The phase it blocks   |
+| P2       | Deferrable, no blocking dependencies (logging, i18n, plugin details)         | Before the final release |
+
+**How decisions are generated.** Each decision begins with at least two evaluated options.
+Options can be sourced from human architects, vendor proposals, prior art research,
+or iterative LLM-driven candidate generation (see Appendix D for the iterative variant
+used in the reference project).
+
+**Trade-off transparency.** Every decision explicitly documents the trade-offs it accepts.
+This is where business value is captured and where decisions become reviewable
+by non-specialist stakeholders.
+
+**Consistency constraint.** When a decision's status changes (proposed → accepted, deprecated, superseded),
+every document that references that decision must be updated atomically.
+Partial status updates are a leading source of multi-session contradictions
+and must be treated as a build-breaking defect.
+
+---
+
+## 6. Stage 4 — Phase Breakdown
+
+**Goal.** Convert the accepted decisions and dimension specs into a dependency-ordered
+sequence of executable phases, each small enough to fit in a single working session.
+
+**Artifacts per phase.** The reference project used three files per phase,
+aligned with the Spec-Driven Development convention
+(see Appendix C for the spec-kit workflow used):
+
+- `spec.md` — user stories, functional requirements, acceptance criteria, success criteria
+- `plan.md` — technical context, constitution-check gate, dependency-ordered batches, risk assessment
+- `tasks.md` — checkboxed steps with parallel markers and source file cross-references
+
+**Flow variant.** The overall order of phases is itself an architecture decision,
+because the dimension chosen as primary driver determines the entire project structure.
+See Appendix E for a catalogue of flow variants and the factors
+that favour one variant over another.
+
+**Exit gates.** Every phase has an explicit exit gate listing the concrete conditions
+that must hold before the next phase can begin: tests passing, coverage thresholds,
+traceability verification clean, any required ADRs accepted.
+The gate is a machine-checkable checklist, not a narrative.
+
+---
+
+## 7. Stage 5 — Per-Phase Execution Loop
+
+Each phase is executed in a fresh working session so that context is clean
+and the session handoff artifact is the only carrier of cross-phase state.
+
+**The mid-phase verification checkpoint is the decisive innovation** of this framework.
+After an initial batch of target code is produced, the pipeline does not proceed to the next batch
+until coverage and semantic checks are clean. This catches defects while context is hot,
+not weeks later during integration.
+
+```
+  For each batch in the phase:
+    (a) Implement target code with traceability links to source origins
+    (b) Run coverage validator  →  produces blind-zone report
+    (c) Resolve blind zones      →  may restructure (a) output
+    (d) Run semantic checks on Tier 1 functions
+    (e) Build / lint / unit / integration tests
+    (f) If any step fails → loop back to (a) with a narrower scope
+    (g) Otherwise → next batch
+
+  Phase exit:
+    - Coverage validator reports zero unmatched in-scope elements
+    - All tests green
+    - All referenced ADRs in 'accepted' status
+    - Session handoff note written for the next phase
+```
+
+The three core mechanisms that make this loop auditable — Traceability,
+Coverage Validation, and Blind-Zone Detection — are described in the next section.
+
+---
+
+## 8. Core Mechanism: Traceability, Coverage, and Blind Zones
+
+### 8.1 Why AI models miss code
+
+Even with large-context models capable of loading an entire repository,
+code elements are systematically missed during migration:
+
+- **Attention dilution.** Long files (2000+ lines) cause attention to concentrate on prominent
+  functions while skipping less prominent ones.
+- **False coverage.** File-level traceability claims coverage of an entire file
+  while actually covering only a few functions.
+- **Name collision.** Functions with common names are "covered" by false matches
+  from unrelated files (global-name fallback in naive validators).
+- **Cross-session drift.** Work done in session *N* may conflict with assumptions from session *N − k*.
+
+The reference project measured this directly. Initial reported coverage was 100%;
+strict tree-sitter-based re-analysis with file-specific matching showed true coverage of **41.2%**
+(320 of 554 functions were false-positive matches).
+Only after iterative blind-zone resolution did coverage reach 100%.
+
+### 8.2 Traceability is detection, not transpilation
+
+A common misconception is that a traceability-driven pipeline works like a transpiler —
+feeding source code line-by-line into an AI model and receiving target code back.
+**It does not.** The pipeline works for any migration style,
+including full architectural redesigns (monolith → microservices, server-rendered → SPA,
+SQL triggers → stream processing).
+
+The key insight:
+**traceability is used to detect what was missed, not to constrain how migration is done.**
+The AI model is free to redesign, restructure, and re-architect the target system
+in whatever way the accepted ADRs prescribe. Traceability only tracks
+which source elements have been accounted for.
 
 ```
                     SOURCE CODEBASE
-                    (all functions inventoried)
-                           |
-                    +------v-------+
-                    | COVERAGE     |
-                    | VALIDATOR    |
-                    | Compares     |
-                    | source       |
-                    | inventory    |
-                    | against      |
-                    | target       |
-                    | traceability |
-                    +------+-------+
-                           |
-              +------------+------------+
-              |                         |
-     COVERED (72%)              BLIND ZONES (28%)
-     Already processed          Not yet accounted for
-              |                         |
-              |                    +----v-----+
-              |                    | AI MODEL |
-              |                    | receives |
-              |                    | blind    |
-              |                    | zone     |
-              |                    | report   |
-              |                    +----+-----+
-              |                         |
-              |                    MODEL DETERMINES:
-              |                    - What business function
-              |                      this source code serves
-              |                    - Where in the TARGET
-              |                      architecture it belongs
-              |                    - Whether it maps to an
-              |                      existing target module
-              |                      or needs a new one
-              |                         |
-              |                    +----v-----+
-              |                    | GENERATE |
-              |                    | or UPDATE|
-              |                    | target   |
-              |                    | code     |
-              |                    +----+-----+
-              |                         |
-              +------------+------------+
-                           |
-                    +------v-------+
-                    | RE-VALIDATE  |
-                    | Coverage     |
-                    | improves     |
-                    | 72% → 85%   |
-                    | → 93% → 100%|
-                    +--------------+
+                    (all elements inventoried by AST parser)
+                           │
+                    ┌──────▼───────┐
+                    │  COVERAGE    │
+                    │  VALIDATOR   │
+                    │              │
+                    │  compares    │
+                    │  source      │
+                    │  inventory   │
+                    │  against     │
+                    │  target      │
+                    │  traceability│
+                    └──────┬───────┘
+                           │
+          ┌────────────────┴────────────────┐
+          │                                 │
+     COVERED                         BLIND ZONES
+     (accounted for)                 (not yet accounted for)
+          │                                 │
+          │                           ┌─────▼─────┐
+          │                           │ AI MODEL  │
+          │                           │  reads    │
+          │                           │  source,  │
+          │                           │  reasons  │
+          │                           │  about    │
+          │                           │  target   │
+          │                           │  placement│
+          │                           └─────┬─────┘
+          │                                 │
+          │                           generate OR update
+          │                           target code +
+          │                           add traceability link
+          │                                 │
+          └────────────────┬────────────────┘
+                           │
+                    ┌──────▼───────┐
+                    │ RE-VALIDATE  │
+                    │ coverage     │
+                    │ monotonically│
+                    │ increases    │
+                    │ until 100%   │
+                    └──────────────┘
 ```
 
-**Example**: Suppose the source is a monolith and the target is microservices. The coverage validator detects that `functions.php:authenticate_user` (lines 706-771) has not been accounted for in any target service. It does NOT tell the AI "translate these 65 lines." Instead, the AI:
+**Example.** Suppose the source is a monolith and the target is microservices.
+The validator detects that a source function has not been accounted for.
+It does *not* instruct the AI to translate those lines.
+Instead the AI:
+(1) reads the source function to understand its business role;
+(2) locates the correct target service per the accepted architecture;
+(3) checks which of the service's responsibilities are already present;
+(4) implements the missing responsibility in the target's idiom;
+(5) adds a traceability link so the validator treats the source element as accounted for.
 
-1. Reads the source function to understand what it does (user authentication with SHA1 + session creation)
-2. Looks at the target architecture to determine where authentication belongs (the `auth-service` microservice)
-3. Checks what the `auth-service` already has and what's missing
-4. Implements the missing functionality in the target's idiom (argon2id, JWT tokens, whatever the architecture decisions prescribe)
-5. Adds a traceability link so the validator knows this source element is now accounted for
+This is why the mechanism applies equally to:
 
-The traceability link does NOT mean the target code is a line-by-line translation. It means "this source functionality has been considered and its business intent is preserved in the target."
+- **Near-identical translations** (Java 8 → Java 17): most functions map 1:1.
+- **Framework migrations** (PHP monolith → Python Flask): structure changes, functions mostly map.
+- **Full redesigns** (monolith → microservices): source functions scatter across services;
+  traceability tracks which ones have been accounted for.
+- **Technology shifts** (SQL triggers → Spark): source triggers become streaming jobs;
+  traceability ensures no trigger is forgotten.
 
-This is why the approach works equally well for:
-- **Near-identical translations** (Java 8 -> Java 17): most functions map 1:1
-- **Framework migrations** (PHP monolith -> Python Flask): structure changes but functions mostly map
-- **Full redesigns** (monolith -> microservices): source functions scatter across multiple services; traceability tracks which ones have been accounted for
-- **Technology shifts** (SQL triggers -> Spark): source triggers become streaming jobs; traceability ensures no trigger is forgotten
+### 8.3 Traceability link shape
 
-### Traceability Levels
+Every meaningful target element (function, class, method, model, route, constant)
+carries a link that states its relationship to source. Link types,
+in order of specificity:
 
-Every meaningful code element in the target carries a traceability link to its source origin:
+| Type          | Meaning |
+|---------------|---------|
+| Direct        | Source function maps to target function |
+| Method-level  | `Class::method` maps to target method   |
+| File-level    | Target module aggregates one source file |
+| Multi-source  | Target function combines logic from multiple source files |
+| Schema-level  | Target model derived from a schema definition |
+| Inferred      | Target code adapted from source patterns; no direct equivalent |
+| New           | Genuinely new code; no source equivalent |
+| Eliminated    | Source intentionally not ported (dead, deprecated, or superseded) |
 
-- **Direct**: source function maps to target function
-- **Method-level**: source `Class::method` maps to target method
-- **File-level**: target module aggregates logic from a single source file
-- **Multi-source**: target function combines logic from multiple source files
-- **Schema-level**: target models derived from database schema definitions
-- **Inferred**: target code adapted from source patterns with no direct equivalent
-- **New**: genuinely new code with no source equivalent
-- **Eliminated**: source code intentionally not ported (documented as dead, deprecated, or superseded)
+Each traceability link is programmatically parseable so the coverage validator
+can build the source→target correspondence automatically.
 
-### The Coverage Validator
+### 8.4 The coverage validator
 
-A programmatic validator checks coverage across all dimensions:
+A source-agnostic validator performs four steps:
 
-1. **Source inventory**: Parse every source file to extract function boundaries
-2. **Target scanning**: Parse every target file for traceability links back to source
-3. **Strict matching**: A function is "covered" only if the target's traceability references the SAME source file -- no global name fallback
-4. **Dimension cross-check**: Verify that dependency edges, entity references, and integration points are present in the target
+1. **Source inventory.** Parse every source file with a proper AST (e.g. tree-sitter)
+   to capture exact start *and* end lines for every function/method/class/table.
+2. **Target scanning.** Parse every target file for traceability links.
+3. **Strict matching.** A source element is "covered" only if the target's
+   traceability link references the *same source file*. There is no global-name fallback;
+   a Python function named `edit` with a link to `pref/users.php` does not cover
+   a PHP function `edit` in `pref/labels.php`.
+4. **Dimension cross-check.** Verify that dependency edges, entity references,
+   and integration points from the dimension specs are present in the target.
 
-Every source function falls into one of three categories:
+Each source element falls into exactly one of three categories:
+**Covered**, **Eliminated**, or **Unmatched**.
+Unmatched elements are the blind zones that must be resolved before the phase can exit.
 
-| Category | Definition |
-|---|---|
-| **Covered** | Target code with traceability link pointing to this source function |
-| **Eliminated** | Documented as dead code, deprecated, or source-technology-specific infrastructure |
-| **Unmatched** | No target equivalent -- a blind zone that must be resolved |
+### 8.5 Semantic (behavioural) verification
 
-### Behavioral Verification
+Structural coverage proves that every source element has been considered.
+It does not prove that the target behaves correctly.
+A function can be structurally covered but semantically wrong.
 
-A function can be structurally "covered" but semantically wrong. During the reference project, SME review of sampled function pairs revealed that **all reviewed functions had behavioral discrepancies** despite 100% structural coverage.
+In the reference project, SME review of sampled function pairs
+revealed that **all reviewed functions had at least one behavioural discrepancy**
+despite 100% structural coverage. The root causes fall into a small, enumerable taxonomy:
+in the reference project, 40 categories spanning SQL semantics, type coercion,
+data flow, session state, return shape, and feature completeness. See Appendix F for the full list.
 
-The behavioral verification process compares source and target function pairs:
-
-1. Read source function with exact boundaries
-2. Read target function with its traceability link
-3. Compare control flow (every branch, loop, return)
-4. Compare data flow (assignments, arguments, return values)
-5. Check against the platform knowledge catalog (see below)
-6. Verify integration boundaries (data shape between cooperating functions)
-
-Verification depth is tiered by complexity:
+Semantic verification compares source/target function pairs according to a depth tier:
 
 | Tier | Criteria | Depth |
-|---|---|---|
-| **Tier 1** | Complex logic, many branches, cross-cutting callers | Line-by-line |
-| **Tier 2** | Moderate complexity | Block-level with spot checks |
-| **Tier 3** | Simple getters/setters/wrappers | Signature + return type |
-| **Tier 4** | Data models / schemas | Column-by-column |
+|------|----------|-------|
+| 1    | Complex logic, many branches, cross-cutting callers | Line-by-line with raw-source quoting |
+| 2    | Moderate complexity                                 | Block-level with spot checks |
+| 3    | Simple wrappers / getters / setters                 | Signature and return type |
+| 4    | Data models / schemas                               | Column-by-column |
 
-### Platform Knowledge Catalog
+**Mandatory audit rule.** Tier 1 reviews must quote raw source lines from both files.
+Summarized reviews without line-number quotes systematically miss structural defects
+such as misindented loop bodies. The reference project encountered exactly this failure mode
+and made line-number quoting a non-negotiable rule for Tier 1.
 
-During migration, the team discovers patterns where the source and target platforms behave differently despite superficially similar code. These are cataloged as a project-specific reference.
+### 8.6 Platform knowledge catalogue
 
-The catalog is organized by domain: type system, string handling, date/time, database interaction, HTTP/session, architecture patterns. Each entry documents: the source platform pattern, how the target platform differs, and estimated frequency in the codebase.
+During migration, the team accumulates a catalogue of patterns where source and target
+platforms diverge despite superficially similar code. Each entry documents:
+the source pattern, how the target differs, and estimated frequency.
+The catalogue is the reference used during semantic verification
+and prevents the same class of error from recurring across phases.
 
-In the reference project, 40 such patterns were discovered and 600+ call sites were affected. This catalog becomes the checklist that prevents the same class of error from recurring across migration phases.
+The reference project catalogued 40 such patterns affecting 600+ call sites.
 
-### Continuous Verification During Execution
+### 8.7 Integration-pipeline verification
 
-Every batch of migrated code goes through:
+Per-function verification catches per-function defects.
+It does not catch defects that emerge when data flows through multiple functions
+with incompatible assumptions — for example, an identifier constructed one way in `f()`
+but looked up a different way in `g()`.
 
-1. **Build and lint** -- target code compiles and passes static analysis
-2. **Unit and integration tests** -- generated from source analysis even when the source had no tests
-3. **Coverage validation** -- programmatic check that all in-scope source functions are accounted for
-4. **Behavioral spot-checks** -- Tier 1 functions verified against the platform knowledge catalog
-
-This incremental verification is a fundamental benefit of the approach: errors are caught within the same session they are introduced, not discovered weeks later during integration testing.
-
----
-
-## Knowledge Extraction
-
-**Goal**: Understand the source system deeply enough to make informed migration decisions.
-
-### Dimensions Are Inferred During Analysis
-
-The framework does not prescribe a fixed set of dimensions. Instead, dimensions are **inferred** during source code analysis and technology research. Every software system has its own structural characteristics, and the analysis discovers which dimensions are most relevant for the specific project.
-
-### Commonly Occurring Dimensions
-
-Three dimensions appear in nearly every migration, though their relative importance varies:
-
-| Dimension | What It Captures | Migration Impact |
-|---|---|---|
-| **Call Graph** | Which functions/methods call which others | Determines migration order: dependencies must exist before dependents |
-| **Data Model / Entity Graph** | Tables, schemas, relationships, entity clusters | Determines what models/types must exist before business logic |
-| **Module Dependency Graph** | Import/include chains between files/packages | Determines build order and circular dependency risks |
-
-At higher levels of abstraction, similar structural dimensions appear:
-
-| Dimension | What It Captures | Applicable When |
-|---|---|---|
-| **Service Dependency Graph** | Which microservices call which others; upstream/downstream relationships | Distributed systems, SOA |
-| **Data Mesh Domain Boundaries** | Which data domains own which datasets; cross-domain contracts | Data platform migrations |
-| **Event/Message Flow Graph** | Which producers emit which events; which consumers subscribe | Event-driven architectures |
-| **Infrastructure Dependency Map** | Which services depend on which infrastructure (databases, caches, queues) | Cloud migrations, platform shifts |
-
-### Domain-Specific Dimensions
-
-Beyond the common ones, each project type reveals its own dimensions. The table below shows a few examples -- real projects frequently surface dimensions not listed here, such as regulatory compliance boundaries, shared library version constraints, hardware abstraction layers, multi-tenant isolation boundaries, or build system dependency chains:
-
-| Dimension | Example Projects |
-|---|---|
-| Frontend/Backend Coupling | Web apps with server-rendered HTML or API-driven SPAs |
-| Plugin/Extension System | Applications with hook points and extension APIs |
-| Protocol State Machine | Network protocol implementations (BFD, BGP, MQTT) |
-| Data Pipeline Topology | ETL systems, stream processors, SQL trigger chains |
-| Configuration Surface | Systems with extensive config constants or feature flags |
-| Security Surface | Applications with auth flows, encryption, session management |
-| Concurrency Model | Multi-threaded, async, or event-driven systems |
-| API Contract Surface | Systems with external API consumers requiring backward compatibility |
-
-### How Dimensions Are Discovered
-
-1. **Inventory** all source files with language and purpose annotation
-2. **Analyze dependencies** across the source code to build structural maps for each discovered dimension
-3. **Identify natural groupings** -- clusters of tightly-coupled code that form natural migration units
-4. **Rank dimensions** by migration impact: the highest-coupling dimension drives primary migration order
-5. **Research** source and target technology patterns, best practices, and known migration pitfalls for the specific technology pair
-
-### Storage
-
-Each dimension is stored as a structured markdown file: `specs/architecture/NN-dimension-name.md` with dependency structure, natural groupings, and dependency levels. New dimensions can be defined at any point during the migration.
+The framework defines a small number of end-to-end integration pipelines
+(the reference project used eight) and verifies each as an ordered contract:
+boundary-by-boundary, the data shape produced at step *k* must match
+the shape consumed at step *k + 1*. This catches the class of defects
+missed by per-function audits.
 
 ---
 
-## Functionality Adjustment with Product Team
+## 9. Functionality Adjustment
 
-**Goal**: Align migration scope with business needs before any code is written.
+**Goal.** Align migration scope with business needs *before and during* implementation.
 
-The framework provides natural integration points for product team review:
+The pipeline provides three natural integration points for product and SME input:
 
-1. **Feature scope review**: Product team reviews the source inventory and confirms which features are in scope, which are deprecated, and which need enhancement
-2. **Trade-off participation**: Product team evaluates decision trade-off analysis tables (designed for non-technical stakeholders)
-3. **Phase acceptance criteria**: Product team reviews each phase spec before implementation begins
-4. **SME knowledge ingestion**: Product team provides recordings, screenshots, and transcriptions of the working source application -- used to generate E2E test scenarios and verify behavioral parity
-5. **Behavioral verification sampling**: SME review of selected source-vs-target function pairs catches divergences that automated checks miss
+1. **Feature scope review** (during Stage 1). Product confirms which features are kept as-is,
+   enhanced, deprecated, or eliminated. Output: a feature scope matrix referenced by all later stages.
+2. **SME knowledge ingestion** (any time). Recordings, screenshots, spreadsheets, and walkthroughs
+   of the working source application are ingested, transcribed, and used to generate
+   end-to-end test scenarios and to discover features missed by pure code analysis.
+3. **Sampled SME verification** (during each phase). SMEs review randomly sampled
+   source/target function pairs. This catches divergences that no automated check can detect
+   (domain-specific behaviour, undocumented business rules, cosmetic expectations).
 
-**Key artifact**: A feature scope matrix documenting for each source feature: keep as-is, enhance during migration, deprecate, or eliminate.
-
----
-
-## Migration Strategy and Architecture Decisions
-
-**Goal**: Lock in all blocking decisions before implementation begins.
-
-### Governing Principles
-
-Project-level principles, ordered by priority:
-
-- **Behavioral Parity**: The target system must preserve the business functionality of the source. This does not mean identical I/O at the API level -- APIs, protocols, and interfaces may change as documented in architecture decisions. It means the same business operations produce equivalent business outcomes. For example, in the reference project: PHP's server-rendered HTML was replaced by a completely new vanilla JS SPA; SHA1 password hashing was replaced by argon2id; MySQL support was entirely dropped in favor of PostgreSQL-only. Each deviation was a deliberate, documented decision -- not an accident.
-- **Source Traceability**: Every target code element must link to its source origin. This is what makes coverage validation possible and prevents code from "appearing from nowhere" during migration.
-- **Incremental Verification**: Every small batch of migrated code is built, linted, tested, and coverage-checked before proceeding to the next. This catches errors within the same session, not weeks later.
-
-### Architecture Decisions
-
-Every non-trivial migration choice is documented as a formal decision record. This includes target architecture decisions, migration process decisions, AND data migration decisions. Decisions are prioritized:
-
-- **P0 (blocks all work)**: Migration flow variant, target framework/language, database engine
-- **P1 (blocks specific phases)**: ORM strategy, auth mechanism, background worker architecture
-- **P2 (deferrable)**: Logging, i18n, plugin details, monitoring
-
-#### The Decision Process
-
-```
-  Infer what decisions are needed
-  (from dimension analysis + technology research)
-         |
-         v
-  Draft decision record with 2-5 variants
-  (each variant includes trade-off analysis)
-         |
-         v
-  Propose recommended variant
-         |
-         v
-  SME / product team / architect review
-         |
-         v
-  Accept decision --> update ALL referencing artifacts
-```
-
-Decisions cover three categories:
-
-1. **Migration approach**: Which dimensions drive the migration order? What flow variant? What phase structure? (Example from the reference project: the "start with a minimal runnable app, then expand" approach was chosen over "one dimension at a time" because the small team size made multi-dimension coordination overhead prohibitive)
-
-2. **Target architecture**: What framework, database, ORM, auth mechanism? (Example: Flask was chosen over FastAPI because Flask's session/CSRF/template model more closely matched the PHP source architecture, reducing translation distance -- even though FastAPI is "more modern")
-
-3. **Boundary decisions**: How to handle cases where source and target have no direct equivalent? (Example: PHP server-rendered HTML had no direct Python equivalent. The decision was to build a new vanilla JS SPA rather than port the legacy Dojo/Prototype frontend -- a complete architectural change justified by the dead state of both legacy JS libraries)
-
-#### Trade-off Transparency
-
-Every decision explicitly documents trade-offs. This is where business value is captured:
-
-- **Time to market vs. technical excellence**: Choosing a framework that better matches source architecture reduces translation distance, even if it's "less modern"
-- **Stability vs. innovation**: Using a proven ORM over a newer but less battle-tested one
-- **Fidelity vs. improvement**: Fixing security vulnerabilities during migration (SHA1 -> argon2id) while maintaining behavioral parity for everything else
-- **Simplification vs. compatibility**: Dropping MySQL support entirely eliminated dual-database testing burden and Sphinx dependency, at the cost of MySQL users needing to migrate data
+The reference project used this mechanism to discover features
+(drag-drop category assignment, keyboard shortcuts, multi-rule filter builder)
+that were not visible from source code analysis alone.
 
 ---
 
-## Migration Plan and Roadmap
+## 10. Hybrid Deployment and Coexistence
 
-**Goal**: Produce a dependency-ordered, phase-gated migration plan with data migration and transformation strategy.
+For large systems a big-bang cutover is prohibitively risky;
+source and target must coexist for some period.
+The coexistence architecture is itself an ADR and varies by system type:
 
-### Migration Flow Variants
+- **Web applications** — shared database, API gateway for traffic routing, compatibility shim
+- **Microservices** — service-by-service migration, inter-service contracts preserved at each step
+- **Protocol libraries** — linked side-by-side, conformance tests against both implementations
+- **Data pipelines** — parallel runs on the same data subset, output equivalence check before cutover
+- **Event-driven systems** — dual consumers during transition, producer-by-producer switchover
 
-Dimension analysis reveals natural migration ordering strategies. The choice of flow variant is itself an architecture decision, because it determines the entire project structure.
-
-Each project discovers its own optimal flow based on its dimensions. For instance, a network protocol library migration (e.g., BFD implementation) would have protocol-data-structure-driven flow; a microservices migration would have service-dependency-graph-driven flow; a data pipeline migration (SQL triggers to Spark) would have DAG-topology-driven flow. The common thread is that **dimensions drive the flow**, not a fixed template.
-
-Some commonly used flow patterns (these are illustrative -- real projects often combine or adapt them):
-
-| Variant | Strategy | Typical Scenario | Risk |
-|---|---|---|---|
-| **Entity-First** | Models/schemas first, then logic, then handlers | Database-heavy apps, stable data model | Long time before any runnable code |
-| **Call-Graph-First** | Entry points first, then fill in dependencies | API-heavy systems, microservices | Stub accumulation |
-| **Vertical Slice** | Complete end-to-end slices, one feature at a time | Large team with parallel workstreams | Cross-cutting concerns need early extraction |
-| **Minimal Runnable First** | Start with smallest working app, then expand phase by phase | Small team, layered architecture | More upfront planning |
-| **One-Dimension-Per-Pass** | Each pass addresses one structural dimension | Large team with specialists per area | High coordination overhead |
-| **Protocol-Structure-Driven** | Packet structures and state machines first | Network protocol libraries | |
-| **Service-Graph-Driven** | Leaf services first, work inward along dependency graph | Microservice decomposition | |
-| **DAG-Topology-Driven** | Sinks first, then transforms, then sources | Data pipeline migrations | |
-| **Contract-First** | API contracts first, implementation second | Systems with external consumers | |
-| **Message-Topic-Driven** | By event type / topic clusters | Event-driven architectures | |
-
-Business factors influence variant selection:
-
-| Factor | Favors |
-|---|---|
-| Small team | Minimal runnable first (fast feedback, low risk) |
-| Large team | Vertical slices (parallel work) or one-dimension-per-pass (specialists) |
-| External API consumers | Contract-first (preserve compatibility) |
-| Time-to-market pressure | Minimal runnable first (working app in days) |
-| Regulatory constraints | Entity-first (data model stability) |
-
-### Data Migration and Transformations
-
-Data migration covers all forms of persistent and streaming state -- not just relational databases. The approach depends on the type of data being migrated.
-
-#### Database Migrations
-
-1. **Schema mapping**: Source schema analyzed dimension-by-dimension; target models generated and reviewed
-2. **Transformation rules**: When schemas differ, transformations documented as architecture decisions with rollback plans
-3. **Subset migration** for development/testing: seed data per entity cluster, FK-ordered insertion, PII anonymization
-4. **Verification**: Post-migration row counts, FK integrity checks, spot-check queries
-
-Example from the reference project: MySQL-to-PostgreSQL migration via pgloader, including data type mapping, character set conversion, and index recreation. Password hashes were not batch-converted; instead, a dual-verification path upgraded each user to argon2id on their next login. Feed credentials encrypted with deprecated mcrypt were re-encrypted with Fernet on first access.
-
-#### Other Data Migration Scenarios
-
-The same dimension-driven approach applies to non-database data. The examples below are illustrative -- each real project will have its own combination of data types requiring migration:
-
-| Data Type | Migration Considerations |
-|---|---|
-| **Message schemas** | Schema versioning; consumer/producer compatibility during transition; dead-letter queue handling |
-| **ETL pipelines / stored procedures** | Topology preservation; checkpoint/restart semantics; idempotency guarantees; backfill strategy |
-| **Data warehouse / OLAP cubes** | Materialized view recreation; aggregation logic equivalence; historical data backfill |
-| **File-based state** | Format conversion; directory structure mapping; permission model translation |
-| **Search indexes** | Index schema mapping; re-indexing strategy; relevance tuning validation |
-| **Object storage** | Key namespace mapping; metadata preservation; access policy translation |
-
-Each data migration type is documented as an architecture decision with transformation rules, rollback plan, and verification criteria.
+Every shim or dual-path component is tracked as a removal item with a documented sunset.
 
 ---
 
-## Hybrid Deployment and Coexistence
+## 11. Applicability Across System Types
 
-During migration, source and target systems often need to coexist. This is especially important for large systems where a "big bang" cutover is too risky.
+The pipeline is technology-agnostic. What changes between applications is
+the set of dimensions discovered in Stage 1, the decisions taken in Stage 3,
+and the flow variant chosen in Stage 4.
+Appendix A catalogues dimensions observed across system types;
+Appendix E catalogues flow variants.
 
-The coexistence architecture is different for every project and should be accepted through architecture decisions. Some common patterns:
-
-- **Web applications**: Share a database between old and new backends, or use an API gateway to route traffic, or keep the old frontend with a compatibility shim on top of the new backend
-- **Microservices**: Migrate service by service, with inter-service contracts preserved at each step; route traffic via service mesh or API gateway
-- **Network protocol libraries**: Link old and new library versions together during transition; run conformance tests against both implementations
-- **Data pipelines**: Run old and new pipelines in parallel on the same data subset; compare outputs for equivalence before switching over
-- **Event-driven systems**: Run dual consumers during transition; compare event handling results; switch producer-by-producer
-
-The key principle is that the hybrid architecture is temporary and has a documented sunset plan. Every compatibility shim, dual-path, or bridge component should be tracked as a future removal item.
-
----
-
-## Applicability to Different System Types
-
-The framework adapts its dimension priorities and flow variants to the application type. The table below shows typical patterns -- each real project discovers its own dimensions during the knowledge extraction stage. These are illustrative, not exhaustive:
-
-| System Type | Typical Primary Dimension | Common Secondary Dimensions | Example Adjustments |
-|---|---|---|---|
-| **Web Application (MVC)** | Entity Graph | Call Graph, Frontend/Backend Coupling | Minimal runnable first; API contract tests |
-| **Server-Side Rendered App** | Frontend/Backend Coupling | Entity Graph, Template System | Template migration as a phase; JS coupling analysis |
-| **Desktop Application** | UI Event Model | Call Graph, Data Persistence | Widget tree migration; event binding preservation |
-| **CLI Tool** | Call Graph | Argument Parsing, I/O Model | Argument/flag parity tests; exit code preservation |
-| **Data Processing Pipeline** | Pipeline Topology | Data Model, Checkpoint Semantics | DAG preservation; idempotency guarantees |
-| **Network Protocol Implementation** | Protocol State Machine | Timer Semantics, Packet Encoding | State machine equivalence proofs; packet capture replay |
-| **Microservices** | Service Dependency Graph | API Contracts, Message Bus Topics | Contract-first; service-by-service vertical slices |
-| **SQL Trigger/Stored Proc System** | Data Pipeline Topology | Entity Graph, Transaction Boundaries | Trigger-to-application-code extraction |
-| **Event-Driven Architecture** | Message Bus Topics | Service Graph, Event Schema | Topic-cluster migration; schema registry preservation |
-| **Embedded / IoT** | Hardware Abstraction Layer | Call Graph, Memory Model | HAL compatibility layer; resource constraint testing |
+The three core mechanisms (traceability, coverage validation, blind-zone detection)
+apply unchanged to: language migrations, framework shifts, monolith decompositions,
+CLI ports, desktop-to-web moves, network protocol library ports, data pipeline rewrites,
+stored-procedure extractions, and embedded/IoT codebase modernizations.
 
 ---
 
-## Benefits
+## 12. Benefits
 
-### Explicit Trade-offs via Architecture Decisions
-
-Every decision is documented with trade-off analysis. Stakeholders can see exactly why Flask was chosen over FastAPI, why MySQL support was dropped, or why a new SPA was built instead of porting legacy JavaScript. Decisions can be revisited with full context if business needs change.
-
-### Complete Migration via Coverage Validation
-
-Without programmatic coverage validation, AI-assisted migration reliably covers only 20-40% of a codebase. The coverage validator turns migration completeness into a measurable metric checked at every phase gate. In the reference project, this mechanism caught 320 functions that appeared covered but were not.
-
-### Incremental Verification
-
-Every small batch of migrated code is built, linted, tested, and coverage-checked before proceeding. Errors are caught within the same session they are introduced -- not weeks later during integration testing. This is a fundamental advantage over batch migration approaches where errors accumulate undetected.
-
-### Test Generation for Legacy Systems
-
-The framework generates comprehensive test suites even when the source has zero tests: unit tests from source analysis, integration tests from API contracts, E2E tests from SME recordings. The target ends up with better test coverage than the source ever had, turning migration from a risk event into a quality improvement event.
-
-### Behavioral Correctness via Platform Knowledge
-
-The platform knowledge catalog (40 patterns in the reference project, 600+ affected call sites) prevents systematic translation errors. Without it, every function in the target is a potential silent behavioral divergence.
+- **Explicit trade-offs.** Every non-trivial choice is recorded as a decision with analysis.
+- **Measurable completeness.** Coverage is a programmatic metric checked at every phase gate,
+  not a claim.
+- **Early error detection.** Errors are caught within the same session they are introduced,
+  not during final integration.
+- **Test generation for legacy systems.** The target ends up with better test coverage
+  than the source ever had, turning migration from a risk event into a quality event.
+- **Behavioural correctness.** The platform knowledge catalogue prevents systematic
+  translation errors from recurring.
+- **Stakeholder-friendly decision records.** Trade-off analysis tables can be reviewed
+  by non-specialists.
 
 ---
 
-## Appendix A: Reference Project Statistics
+# Appendices
+
+All appendices are illustrative. Each real project will instantiate its own versions
+of the tables and examples below; nothing here is prescriptive.
+
+---
+
+## Appendix A — Dimension Catalogue
+
+Dimensions commonly discovered during Stage 1.
+Every real project should infer its own set.
+
+### Structural dimensions (common to most systems)
+
+| Dimension | What it captures | Why it matters |
+|-----------|------------------|----------------|
+| Call graph                 | Which functions call which others                 | Dependency order for migration |
+| Data model / entity graph  | Tables, schemas, relationships, clusters          | What models must exist before business logic |
+| Module dependency graph    | Import/include chains between files/packages      | Build order and circular-dependency risk |
+| Service dependency graph   | Which services call which others                  | Distributed-system migration order |
+| Event/message flow graph   | Producers, topics, subscribers                    | Event-driven migration order |
+| Infrastructure dependency  | Services ↔ infrastructure (DB, cache, queue)      | Cloud / platform migration |
+
+### Domain-specific dimensions (examples)
+
+| Dimension | Example system types |
+|-----------|---------------------|
+| Frontend/backend coupling         | Web apps with server-rendered HTML or SPAs |
+| Plugin/extension system           | Applications with hook points and extension APIs |
+| Protocol state machine            | Network-protocol implementations |
+| Data pipeline topology            | ETL, stream processors, trigger chains |
+| Configuration surface             | Systems with extensive config constants / feature flags |
+| Security surface                  | Auth flows, encryption, session management |
+| Concurrency model                 | Multi-threaded, async, event-driven |
+| API contract surface              | Systems with external consumers |
+| Regulatory compliance boundaries  | Regulated industries |
+| Hardware abstraction layer        | Embedded / IoT |
+
+### Applicability matrix
+
+| System type                   | Typical primary dimension   | Typical secondary dimensions |
+|-------------------------------|-----------------------------|------------------------------|
+| Web application (MVC)         | Entity graph                | Call graph, frontend coupling |
+| Server-rendered app           | Frontend/backend coupling   | Entity graph, template system |
+| Desktop application           | UI event model              | Call graph, persistence |
+| CLI tool                      | Call graph                  | Argument parsing, I/O model |
+| Data processing pipeline      | Pipeline topology           | Data model, checkpoint semantics |
+| Network protocol library      | Protocol state machine      | Timer semantics, packet encoding |
+| Microservices                 | Service dependency graph    | API contracts, message topics |
+| Stored-procedure system       | Data pipeline topology      | Entity graph, transaction boundaries |
+| Event-driven architecture     | Message topics              | Service graph, event schema |
+| Embedded / IoT                | Hardware abstraction        | Call graph, memory model |
+
+---
+
+## Appendix B — Reference Project Statistics
+
+Reference project: full PHP-to-Python migration of a medium-sized self-hosted web application.
 
 | Metric | Value |
-|---|---|
-| Source LOC | ~18,600 PHP |
-| Source files | 138 |
-| Database tables | 35 (31 active, 4 deprecated/eliminated) |
-| Plugin hooks | 24 |
-| API endpoints | 17+ REST, 40+ RPC |
-| Sessions to complete | 19 |
-| Specs generated | 14 architecture + 6 phase specs |
-| Architecture decisions created | 19 |
-| Tests at completion | 1,474 (unit + integration + E2E) |
-| Platform knowledge patterns | 40 categories, 600+ affected call sites |
-| Integration pipelines verified | 8 |
-| Final structural coverage | 100% (458/458 in-scope functions) |
-| Eliminated functions (dead/deprecated) | 27+ |
-| Security improvements | SHA1->argon2id, mcrypt->Fernet, prepared statements, CSRF, security headers |
+|--------|-------|
+| Source LOC                              | ~18,600 PHP |
+| Source files                            | 138 |
+| Database tables                         | 35 (31 active, 4 deprecated/eliminated) |
+| Plugin hooks                            | 24 |
+| API endpoints                           | 17 REST, 40+ RPC |
+| Working sessions to complete            | 19 |
+| Architecture specs generated            | 14 (plus project charter) |
+| Phase specs generated                   | 6 |
+| Architecture decisions recorded         | 19 |
+| Tests at completion                     | 1,474 (unit + integration + E2E) |
+| Platform-knowledge patterns catalogued  | 40 categories, 600+ call sites |
+| Integration pipelines verified          | 8 |
+| Final structural coverage               | 100% (458 / 458 in-scope functions) |
+| Eliminated source elements              | 27+ |
+| Security improvements                   | SHA1 → argon2id, mcrypt → Fernet, prepared statements, CSRF, security headers |
 
 ### Legacy elimination examples
 
-| Item | Action Taken |
-|---|---|
-| MySQL/DB_TYPE conditional SQL branches | Eliminated -- PostgreSQL-only per architecture decision |
-| 4 deprecated tables (themes, labels v1, filters v1, scheduled_updates) | Not ported -- absent from source schema v124 |
-| SHA1 dual-hash verification | Gradual upgrade to argon2id on login; SHA1 code has documented sunset |
-| Sphinx full-text search dependency | Eliminated -- replaced by PostgreSQL tsvector |
-| `deprecated.js` backward-compat shim layer | Eliminated -- replaced by vanilla JS SPA |
-| Dojo/Prototype legacy JS libraries | Replaced with zero-dependency vanilla JS SPA |
+| Item | Action |
+|------|--------|
+| MySQL / DB-type conditional branches              | Eliminated — PostgreSQL-only per ADR |
+| 4 deprecated tables (themes, labels v1, filters v1, scheduled_updates) | Not ported — absent from schema v124 |
+| SHA1 dual-hash verification                       | Gradual upgrade to argon2id on login; SHA1 sunset documented |
+| Sphinx full-text search dependency                | Eliminated — replaced by PostgreSQL tsvector |
+| Legacy JavaScript compatibility shim              | Eliminated — replaced by vanilla-JS SPA |
+| Dojo / Prototype legacy JS libraries              | Replaced with zero-dependency vanilla JS |
 | mcrypt encryption (deprecated in source platform) | Replaced with Fernet symmetric encryption |
 
-## Appendix B: Spec-Driven Development Workflow
+### Artifact shapes (illustrative)
 
-Each migration phase follows a spec-driven lifecycle:
+**Architecture decision record** (MADR 4.0 format):
+
+```markdown
+# 0002 — Select Python Web Framework
+
+## Considered Options
+1. Flask — closest match to source handler dispatch; native session/CSRF
+2. FastAPI — modern async; no built-in sessions; CSRF requires JS changes
+3. Django — full-featured but over-engineered for this codebase
+
+## Decision: Flask
+Rationale: reduces translation distance; zero frontend changes needed.
+```
+
+**Traceability link examples** (Python):
+
+```python
+# Direct match
+# Source: ttrss/include/functions.php:authenticate_user (lines 706-771)
+def authenticate_user(login: str, password: str) -> Optional[User]: ...
+
+# Multi-source
+# Source: ttrss/classes/feeds.php:Feeds::view (lines 45-120)
+#       + ttrss/include/functions2.php:queryFeedHeadlines (lines 200-450)
+def view_feed(feed_id: int, view_mode: str) -> dict: ...
+
+# Inferred
+# Inferred from: ttrss/include/sessions.php (session validation pattern)
+# Adapted for Flask-Login; no direct PHP equivalent.
+def validate_session(session_id: str) -> bool: ...
+
+# New (no source equivalent)
+# New: no source equivalent — Alembic migration infrastructure.
+def run_migrations() -> None: ...
+
+# Eliminated (documented non-port)
+# Eliminated: ttrss/classes/db/mysql.php — PostgreSQL-only per ADR-0003.
+```
+
+---
+
+## Appendix C — Spec-Driven Development Workflow
+
+Each phase follows a spec-driven lifecycle:
 
 ```
-Principles --> Specification --> Planning --> Tasks --> Execution --> Validation
+Principles → Specification → Planning → Tasks → Execution → Validation
 ```
 
-- **Principles**: Project-level governing rules ordered by priority
-- **Specification**: User stories, functional requirements, acceptance criteria
-- **Planning**: Technical context from dimension analysis, dependency-ordered batches, risk assessment
-- **Tasks**: Checkboxed steps with parallel markers and source file cross-references
-- **Execution**: Implementation with traceability and continuous testing
-- **Validation**: Phase exit gate (tests green, coverage validated, behavioral verification passed)
+| Stage | Artifact | Contents |
+|-------|----------|----------|
+| Principles     | `constitution.md` / charter | Ordered governing principles |
+| Specification  | `spec.md`                   | User stories, functional requirements, acceptance criteria, success criteria |
+| Planning       | `plan.md`                   | Technical context, dependency-ordered batches, risk assessment, constitution-check gate |
+| Tasks          | `tasks.md`                  | Checkboxed steps, parallel markers, source file cross-references |
+| Execution      | (code)                      | Implementation with traceability and continuous testing |
+| Validation     | exit-gate checklist         | Tests green, coverage validated, semantic verification passed |
 
-Each phase produces three files:
-- `specs/NNN-phase-name/spec.md` -- what to build
-- `specs/NNN-phase-name/plan.md` -- how to build it
-- `specs/NNN-phase-name/tasks.md` -- checkboxed steps
+### Consistency rule
 
-### Consistency Rule
+When any status, decision, or phase changes, all referencing locations must be updated
+atomically: decision record, decision index, charter, dimension specs, session memory.
+Partial updates create contradictions that compound across sessions.
 
-When any status, decision, or phase changes, ALL referencing locations must be updated atomically: the decision record, decision index, project charter, dimension specs, and session memory. Partial updates create contradictions that compound across sessions.
+---
 
-## Appendix C: Iterative Decision Evaluation
+## Appendix D — Iterative Decision Evaluation
 
-For critical decisions, the framework can generate multiple solution candidates and iteratively refine them through structured comparison.
+For critical decisions, the framework can generate multiple solution candidates
+and refine them through structured comparison.
 
-The process works in rounds:
-1. Generate 3 initial candidates, each optimizing for a different trade-off axis (e.g., time-to-market, technical excellence, behavioral fidelity)
-2. Each candidate is reviewed independently, looking for fatal flaws and unaddressed constraints
-3. In each round, the weakest candidate (receiving fewest favorable comparisons) is eliminated and replaced by a new candidate that addresses the flaws identified in prior rounds
-4. The process repeats with the 2 surviving candidates plus 1 new challenger -- each round requires exactly 3 candidates and 3 pairwise comparisons, making it constant-cost per iteration
-5. Iterations continue until candidates converge on the same answer, or until a candidate is strong enough that further iteration shows diminishing returns
+1. Generate three initial candidates, each optimising for a different trade-off axis
+   (time-to-market, technical excellence, behavioural fidelity).
+2. Review each candidate independently, looking for fatal flaws and unaddressed constraints.
+3. In each round, eliminate the weakest candidate (fewest favourable pairwise comparisons)
+   and replace it with a new candidate addressing flaws identified in prior rounds.
+4. Repeat with two survivors plus one new challenger. Each round is constant cost:
+   exactly three candidates and three pairwise comparisons.
+5. Iterate until candidates converge or diminishing returns are observed.
 
-This iterative elimination-and-replacement approach avoids anchoring on early candidates while keeping computational cost bounded. It is one approach to generating decision variants. In other cases, variants may come from human architects, vendor proposals, or prior art research. The framework is agnostic to how variants are generated -- only that each decision contains at least 2 evaluated options with trade-off analysis.
+This is one way to generate decision variants. Variants can also come from human architects,
+vendor proposals, or prior-art research. The framework is agnostic to how variants are generated —
+only that each decision contains at least two evaluated options with trade-off analysis.
 
-## Appendix D: Iterative Code Refinement
+---
 
-After generating migrated code, the framework runs iterative review cycles where an independent reviewer examines the output against the platform knowledge catalog. The implementer fixes identified issues. This cycle continues until no new issues are found.
+## Appendix E — Flow Variants
 
-This is particularly effective for catching platform-specific behavioral differences that are easy to miss on first pass. In the reference project, this process discovered 105+ fixes across 40 discrepancy categories.
+The overall order of phases is itself an architecture decision.
+Each project discovers its own optimal flow based on its dimensions.
+The table below is illustrative — real projects often combine or adapt entries.
 
-## Appendix E: Multi-Session Continuity
+| Variant | Strategy | Typical scenario | Primary risk |
+|---------|----------|------------------|--------------|
+| Entity-First             | Models/schemas → logic → handlers        | Database-heavy, stable data model     | Long time to first runnable code |
+| Call-Graph-First         | Entry points → fill in dependencies      | API-heavy systems, microservices      | Stub accumulation |
+| Vertical Slice           | End-to-end features, one at a time       | Large team, parallel workstreams      | Cross-cutting concerns extracted too late |
+| Minimal Runnable First   | Smallest working app, then expand        | Small team, layered architecture      | More upfront planning |
+| One-Dimension-Per-Pass   | Each pass addresses one dimension        | Large team with specialists           | High coordination overhead |
+| Protocol-Structure-Driven| Packet structures, state machines first  | Network protocol libraries            | — |
+| Service-Graph-Driven     | Leaf services first, work inward         | Microservice decomposition            | — |
+| DAG-Topology-Driven      | Sinks first, then transforms, then sources | Data pipeline migrations            | — |
+| Contract-First           | API contracts first, implementation second | Systems with external consumers     | — |
+| Message-Topic-Driven     | By event type / topic cluster            | Event-driven architectures            | — |
 
-Complex migrations span many sessions. Continuity is maintained through:
+### Factors that favour each variant
 
-- **Session memory**: Each session ends with a structured file capturing what was completed, what remains, decisions made, and blockers discovered
-- **Feedback persistence**: Corrections from reviewers create persistent rules that guide all future sessions
-- **Specs as source of truth**: Specs, decisions, and governing principles are durable artifacts. Session memories are ephemeral context. When conflict exists, specs win.
+| Factor | Favours |
+|--------|---------|
+| Small team                      | Minimal-runnable-first (fast feedback) |
+| Large team                      | Vertical slices or one-dimension-per-pass |
+| External API consumers          | Contract-first |
+| Time-to-market pressure         | Minimal-runnable-first |
+| Regulatory constraints          | Entity-first (data-model stability) |
+
+---
+
+## Appendix F — Semantic Discrepancy Taxonomy
+
+The reference project catalogued 40 categories of behavioural discrepancy
+observed during semantic verification. They fall into six domains:
+
+| Domain | Example categories |
+|--------|--------------------|
+| SQL semantics          | Missing JOIN, wrong WHERE, missing ORDER BY, wrong LIMIT/OFFSET, missing owner-scope guard |
+| Type system            | Language-specific truthiness, coercion rules, null vs empty |
+| Data flow              | Identifier construction mismatch, field truncation, timestamp validation |
+| Session / state        | Missing session keys, wrong cookie attributes, wrong state machine |
+| Return values          | Wrong shape, wrong field names, wrong status semantics |
+| Features / behaviour   | Missing hook call, missing cache invalidation, missing branch, missing pagination |
+
+Each project will discover its own taxonomy. The pattern is that discrepancies
+cluster into a small number of categories (fewer than 50 in most systems),
+so a per-project catalogue pays for itself quickly.
+
+---
+
+## Appendix G — Integration Pipeline Contracts
+
+Per-function verification is insufficient because defects emerge at function boundaries.
+The framework defines a small set of end-to-end integration pipelines
+and verifies each as an ordered contract: data produced at step *k*
+must match data consumed at step *k + 1*.
+
+The reference project used eight pipelines:
+
+| Pipeline | Steps |
+|----------|-------|
+| Feed update          | Schedule → fetch → parse → sanitize → dedup → persist → counters → hooks |
+| Article search       | Query build → SQL → pagination → hydrate → permissions → response |
+| API request          | Auth → dispatch → validate → handle → shape response → seq echo |
+| Authentication       | Credential → hash verify → session create → cookie → state hydrate |
+| Counter cache        | Event → invalidate → recompute → publish |
+| OPML roundtrip       | Import parse → validate → persist ↔ export query → serialize |
+| Digest generation    | Query due → render → send → mark sent |
+| Plugin lifecycle     | Discover → load → init → hook register → hook invoke |
+
+Each pipeline's contract is a table of boundary shapes.
+Verification walks the pipeline end-to-end, checking that neighbouring steps agree.
+
+---
+
+## Appendix H — Multi-Session Continuity
+
+Complex migrations span many working sessions.
+Continuity is maintained through three mechanisms:
+
+1. **Session memory.** Each session ends with a structured handoff file capturing
+   what was completed, what remains, decisions made, and blockers discovered.
+2. **Feedback persistence.** Corrections from reviewers become persistent rules
+   that guide all future sessions.
+3. **Specs as source of truth.** Specs, decisions, and governing principles
+   are durable artifacts. Session memories are ephemeral context.
+   When conflict exists, specs win.
+
+---
+
+## Appendix I — Data Migration and Transformations
+
+Data migration covers all forms of persistent and streaming state —
+not just relational databases. The approach depends on the data type.
+
+### Database migration
+
+1. **Schema mapping.** Source schema analysed dimension-by-dimension;
+   target models generated and reviewed.
+2. **Transformation rules.** When schemas differ, transformations are documented
+   as decisions with rollback plans.
+3. **Subset migration** (dev / test). Seed data per entity cluster,
+   FK-ordered insertion, PII anonymization.
+4. **Verification.** Post-migration row counts, FK integrity, spot-check queries.
+
+### Other data types
+
+| Data type | Considerations |
+|-----------|----------------|
+| Message schemas              | Schema versioning, consumer/producer compatibility, dead-letter handling |
+| ETL pipelines / stored procs | Topology preservation, checkpoint/restart, idempotency, backfill |
+| Data warehouse / OLAP cubes  | Materialized-view recreation, aggregation equivalence, historical backfill |
+| File-based state             | Format conversion, directory structure, permission model |
+| Search indexes               | Index schema, re-indexing, relevance tuning |
+| Object storage               | Key namespace, metadata preservation, access policy |
+
+Each data-migration type is documented as a decision with transformation rules,
+rollback plan, and verification criteria.
+
+---
+
+## Appendix J — The Mid-Phase Verification Anti-Pattern (Lessons Learned)
+
+The reference project deferred coverage and semantic verification
+to the end of the project rather than running them mid-phase.
+The consequences were:
+
+- False-positive 100% coverage (grep-based validator missed 320 functions)
+- Retroactive tree-sitter-based re-audit required
+- SME review found all sampled functions had behavioural discrepancies
+  despite 100% structural coverage
+- 40-category discrepancy taxonomy had to be derived after the fact
+  rather than being available during implementation
+- UI functional defects (filter rules silently losing data due to a misindented loop body)
+  reached end-user testing
+
+Every one of these costs would have been avoided by running the verification loop
+at the mid-phase checkpoint rather than at the end of the project.
+
+**This is the single most important operational lesson of the framework:**
+verification belongs inside the per-phase loop, not after it.
+The pipeline diagrammed in Section 2 reflects this lesson;
+the reference project arrived at it through experience rather than design.

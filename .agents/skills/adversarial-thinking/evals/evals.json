@@ -1,0 +1,48 @@
+{
+  "skill_name": "adversarial-thinking",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "What's the best approach to rate-limiting an API? Give me your best answer.",
+      "expected_output": "A well-researched answer recommending one approach with a runner-up alternative, supported by adversarial stress-testing across multiple candidates. Output must NOT be DEGRADED (real sub-agents, not self-play).",
+      "files": [],
+      "assertions": [
+        {
+          "id": "pipeline_not_inline",
+          "text": "Output is not marked DEGRADED — execution used real sub-agents, not inline self-play",
+          "type": "objective"
+        },
+        {
+          "id": "phase2_agents_spawned",
+          "text": "Process log confirms Phase 2 critique agent and 3 author agents were actually spawned",
+          "type": "objective"
+        },
+        {
+          "id": "phase3_condorcet_spawned",
+          "text": "Process log confirms 3 Condorcet pairwise comparison sub-agents were actually spawned",
+          "type": "objective"
+        },
+        {
+          "id": "winner_plus_runnerup",
+          "text": "Output contains both a recommended solution AND a distinct runner-up alternative",
+          "type": "objective"
+        },
+        {
+          "id": "three_candidates_generated",
+          "text": "Evidence of 3 divergent candidates generated in Phase 1 (A/B/C labeling or equivalent)",
+          "type": "objective"
+        },
+        {
+          "id": "domain_research_present",
+          "text": "Output reflects domain research — references established rate-limiting patterns (e.g., token bucket, sliding window, leaky bucket, fixed window) rather than only generic advice",
+          "type": "qualitative"
+        },
+        {
+          "id": "recommendations_actionable",
+          "text": "Winner recommendation includes concrete implementation guidance beyond just naming a pattern",
+          "type": "qualitative"
+        }
+      ]
+    }
+  ]
+}

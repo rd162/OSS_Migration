@@ -1,0 +1,45 @@
+{
+  "skill_name": "deep-research-t1",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm building a new web app with Next.js and need to add authentication. What's the current recommended approach for auth in Next.js in 2025? I've heard things about Auth.js, Clerk, and others but not sure which to pick or how they compare. Want to understand the real-world trade-offs before committing.",
+      "expected_output": "A well-sourced comparison of Next.js auth options (Auth.js/NextAuth v5, Clerk, Lucia, etc.) with at least 3 web searches executed, sources cited with T1-T4 tier annotations, current date used (not hardcoded), and contradictions/trade-offs surfaced. No hallucinated version numbers.",
+      "files": [],
+      "assertions": [
+        "At least 3 distinct web searches are executed",
+        "Sources are cited with tier annotations (T1, T2, T3, or T4)",
+        "The current date is obtained dynamically (not hardcoded)",
+        "At least 3 source URLs are referenced",
+        "Trade-offs or contradictions between approaches are explicitly noted"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Our team is evaluating Bun vs Deno for a greenfield TypeScript backend service. We care about: runtime performance, npm ecosystem compatibility, tooling maturity, and production readiness in 2025. Can you research this thoroughly and tell us which one is actually better for this use case?",
+      "expected_output": "A thorough comparison of Bun and Deno across the specified dimensions, with searches covering both runtimes, sources tiered T1-T4, contradictions between sources surfaced explicitly, and a clear recommendation grounded in evidence.",
+      "files": [],
+      "assertions": [
+        "Both Bun and Deno are researched (not just one)",
+        "Sources are annotated with T1-T4 tiers",
+        "At least 3 searches are executed",
+        "Contradictions or uncertainties between sources are explicitly mentioned",
+        "A recommendation or comparative conclusion is provided"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "My elderly mother (78) has been told by a friend that taking 10,000 IU of vitamin D3 daily is good for immune health and bone density. Is this accurate? What does the current evidence say about high-dose vitamin D supplementation for older adults?",
+      "expected_output": "High-stakes medical domain detected. Deep research protocol invoked (5+ searches, T1 sources prioritized). Forward-consequence CoK applied (contraindications, interactions, overdose risks). Safety disclaimer included ('consult a qualified healthcare professional'). Contradictions between sources explicitly exposed. No silently-resolved claims.",
+      "files": [],
+      "assertions": [
+        "High-stakes medical domain is detected and flagged",
+        "A safety disclaimer advising consultation with a healthcare professional is included",
+        "At least 5 searches are executed (high-stakes protocol requirement)",
+        "Contraindications or risks of high-dose vitamin D are discussed (forward-consequence CoK)",
+        "Sources include at least one T1 source (peer-reviewed journal, clinical guideline, or regulatory body)",
+        "Contradictions between sources are explicitly exposed rather than silently resolved"
+      ]
+    }
+  ]
+}

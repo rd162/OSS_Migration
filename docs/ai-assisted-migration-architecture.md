@@ -25,14 +25,14 @@ See the [Phase 1](#phase-1--knowledge-extraction) section for how
 dimensions are inferred and the full catalogue in
 [Appendix A](#appendix-a--dimension-catalogue).
 
-**Supporting artifact — Pattern & Pitfall Catalogue.**
+**Supporting artifact — Platform-Divergence Catalogue.**
 Alongside the dimension specifications, Phase 1 produces a project-specific
-catalogue of migration pitfalls and platform-specific patterns mined from
+catalogue of platform-specific behavioural divergences mined from
 deep research on the source and target technologies (for example,
 "source-platform falsy-value semantics differ from target-platform",
 "source-platform implicit transaction nesting is not portable",
 "source-platform HTTP header handling requires explicit retention in target").
-The catalogue grows through every later phase as new pitfalls surface during
+The catalogue grows through every later phase as new divergences surface during
 semantic verification, and it feeds back into Gap Resolution and audit checklists.
 See [Appendix F](#appendix-f--semantic-discrepancy-taxonomy) for a representative
 40-category catalogue from one reference application of the framework.
@@ -72,12 +72,12 @@ Phase 5 begins once enough of the target is ready to run alongside the source.
   +--------------------------------------------------------------------+
   | PHASE 1. Knowledge Extraction                                      |
   |   Deep analysis of the source system across all relevant           |
-  |   dimensions; mining of migration pitfalls and platform patterns.  |
+  |   dimensions; mining of platform-divergence patterns.         |
   |   -> Source architecture specifications (one per dimension)        |
   |   -> Requirements document (Mission / Goals / Premises /           |
   |      Constraints) + Requirements Traceability Matrix               |
-  |   -> Pattern / pitfall catalogue (platform-specific migration      |
-  |      hazards discovered during research; grows through Phases 2-4) |
+  |   -> Platform-divergence catalogue (platform-specific behavioural          |
+  |      divergences discovered during research; grows through Phases 2-4) |
   +--------------------------------------------------------------------+
                               v
   +--------------------------------------------------------------------+
@@ -105,7 +105,7 @@ Phase 5 begins once enough of the target is ready to run alongside the source.
   |   artifacts, reports, and a handoff note.                          |
   |   -> Target artifacts (code, schema, IaC, CI/CD, manifests)        |
   |   -> Coverage and semantic verification reports                    |
-  |   -> Updates to the pattern catalogue as new pitfalls surface      |
+  |   -> Updates to the platform-divergence catalogue as new divergences surface      |
   +--------------------------------------------------------------------+
                               v
   +--------------------------------------------------------------------+
@@ -141,8 +141,8 @@ operational logs, and any external specifications or contracts the system implem
    (see the dimension sub-sections below).
 2. **Requirements document** — Mission / Goals / Premises / Constraints
    plus a Requirements Traceability Matrix (RTM).
-3. **Pattern & pitfall catalogue** — mined migration hazards and platform-specific
-   patterns (40+ categories in the reference application; see
+3. **Platform-divergence catalogue** — behavioural divergences between the source and target platforms
+   (40+ categories in the reference application; see
    [Appendix F](#appendix-f--semantic-discrepancy-taxonomy)).
    The catalogue starts in Phase 1 and grows through every later phase.
 
@@ -195,9 +195,11 @@ specification among others, produced by the same inventory and analysis step.
 
 ### 1.2 Requirements document
 
-The requirements document has four mandatory components. They are **abstract and generic**;
-the concrete name of the containing artifact depends on the governance model adopted
-(Agile, Waterfall, PRINCE2, PMBOK, SAFe, RUP, or bespoke) — see the sub-section below.
+The requirements document has four mandatory components. They are **abstract and generic**:
+the concrete name of the containing artifact depends on the governance model adopted.
+Most current agent tooling (including the widely-adopted spec-kit) defaults to
+Agile-flavoured containers; the framework is neutral over the choice — see
+[Appendix B.1](#appendix-b--artifacts--lifecycle) for a short list of equivalents.
 
 | Component       | Definition                                                             |
 | --------------- | ---------------------------------------------------------------------- |
@@ -207,14 +209,11 @@ the concrete name of the containing artifact depends on the governance model ado
 | **Constraints** | Hard (violation = rejection) and soft (violation = penalty) boundaries |
 
 The four components are produced by combining bottom-up knowledge expansion
-(which surfaces implicit Premises and Constraints from the source inventory
-and the discovered dimensions) with top-down intent inference
-(which identifies the Mission and freezes the Goals).
-The concrete prompt-engineering method used to run this procedure —
-how knowledge is saturated, how the Mission is derived, how termination is detected —
-lives in the [`requirements-extractor`](.agents/skills/requirements-extractor/) skill.
-Projects may substitute any equivalent method; the framework cares only about the
-four-component output, not the procedure that produced it.
+(which surfaces implicit Premises and Constraints) with top-down intent inference
+(which identifies the Mission and freezes the Goals). The concrete prompt-engineering
+method is documented in the [`requirements-extractor`](.agents/skills/requirements-extractor/)
+skill; the framework cares only about the four-component output, not the procedure
+that produced it.
 
 Phase 1 also produces a **requirements traceability matrix** linking every requirement
 to the dimension specification where it was discovered, the decision record(s)
@@ -225,9 +224,12 @@ that keeps every later phase mutually consistent.
 #### The requirements framework is itself replaceable
 
 The four-component shape (Mission / Goals / Premises / Constraints) is the
-framework default because it maps cleanly onto most governance containers.
+framework default because it fits nearly every established governance framework.
 Projects with strong prior art in a different tradition may substitute any
-equivalent quadruple.
+equivalent quadruple. In practice even less-structured inputs work — a free-form
+narrative inferred by the LLM directly from source, docs, and SME input can
+stand in for the four-component document, as long as Phase 2 can still cite
+stable "why?", "what?", "assumes?" and "must hold?" elements.
 
 | Tradition               | **Terminal value**    | **Frozen objectives** | **Assumptions**       | **Constraints**        |
 | ----------------------- | --------------------- | --------------------- | --------------------- | ---------------------- |
@@ -266,7 +268,7 @@ Different models use different artifact containers for the four components:
 The framework is neutral over the container; the four components are mandatory;
 the container name and the surrounding governance artifacts are project-specific.
 
-### 1.3 Pattern & pitfall catalogue
+### 1.3 Platform-divergence catalogue
 
 Deep research on the source and target platforms invariably surfaces patterns
 where the two behave differently despite superficially similar code.
@@ -287,7 +289,7 @@ Each catalogue entry records, at minimum:
 - the recommended remediation.
 
 The catalogue is a living artifact. It is seeded in Phase 1 from research
-and SME input, grows in Phase 4 as new pitfalls surface during semantic verification,
+and SME input, grows in Phase 4 as new divergences surface during semantic verification,
 and feeds every audit checklist thereafter.
 
 ---
@@ -373,8 +375,22 @@ in what order, under which decisions, with which exit gates.
 
 The framework does not separate "target architecture specs" from
 "migration plan specs" — they are the same set of documents. Each migration
-phase is described by three artifacts; together they answer both
-"what should this part of the target look like?" and "how do we migrate to it?"
+phase is described by three artifacts that together answer every question
+a developer or reviewer needs:
+
+- **What should this part of the target look like?** — target structure, interfaces, data contracts
+- **What must this part preserve from the source?** — behavioural parity, invariants, edge cases
+- **How do we get there?** — order of batches, dependencies, scope boundaries
+- **When is it done?** — acceptance criteria, exit-gate checklist, coverage thresholds
+
+> _Example (from the reference application): the Phase-4 migration-phase spec for
+> authentication answered all four questions in a single document — target
+> structure (Flask-Login + Redis), preserved behaviour (session-cookie compatibility
+> with existing clients), order of batches (models → verifier → endpoints → tests),
+> and exit gate (argon2id upgrade path verified, zero coverage gaps in the `auth/`
+> dimension)._
+
+The three artifact types are:
 
 - a **migration-phase specification** — user-visible behaviour, functional requirements,
   acceptance criteria, success criteria, explicit scope and anti-scope
@@ -392,21 +408,50 @@ flow variants and the factors that favour each is given in
 
 Phase 3 is **not** a single big-bang planning exercise.
 Migration-phase specifications are generated iteratively, starting with the
-phases that are fully unblocked by already-accepted decisions:
+phases that are fully unblocked by already-accepted decisions, and looping
+back to Phase 2 whenever a deferred decision becomes needed:
 
-1. Generate the migration-phase spec set for the first unblocked phase (often
-   a walking skeleton or foundational slice).
+```text
+                                         + -----------------------------+
+                                         |   accepted deferred decision |
+                                         +-----^-----------------------++
+                                               |                       |
+                                               |                       v
+  +-------------+   +---------------+   +-------------+   +------------------+
+  |  Phase 1    |-->|  Phase 2      |-->|  Phase 3    |-->|   Phase 4        |
+  |  knowledge  |   |  decisions    |   |  generate   |   |   execute spec   |
+  |  +          |   |  (P0 now;     |   |  next spec  |   |   + coverage     |
+  |  platform-  |   |  P1/P2 may    |   |  set for    |   |   + semantic     |
+  |  divergence |   |  be deferred) |   |  first      |   |   + integration  |
+  |  catalogue  |   |               |   |  unblocked  |   |   + e2e tests    |
+  +-------------+   +-------^-------+   |  phase      |   +---------+--------+
+                            |           +------+------+             |
+                            |                  |                    |
+                            |                  v                    |
+                            |           +-------------+             |
+                            |           | next phase  |             |
+                            +-----------+ needs       |<------------+
+                                        | decision    |
+                                        | not yet     |
+                                        | accepted?   |
+                                        +-------------+
+```
+
+The loop terminates when the accepted-decisions set plus the already-generated
+migration-phase specs cover every requirement in the RTM.
+
+**Illustrative order** (from the reference application, P0/P1 only):
+
+1. Generate the spec set for the first unblocked phase (often a walking skeleton
+   or foundational slice).
 2. Execute that phase through Phase 4.
 3. Return to Phase 3 to generate the next phase's specs — at this point
    previously deferred decisions may become needed; that triggers a short
    loop back into Phase 2 to accept them.
-4. Continue until all phases are complete.
+4. Continue until every migration phase is complete.
 
-This interleaving is how the framework supports deferred decisions:
-a later migration phase can defer on decisions whose trade-off space
-is not yet well understood, and a spec for it is generated only once the
-necessary decisions are accepted. Every spec cites the decisions it depends on
-so that the dependency is explicit and auditable.
+Every spec cites the decisions it depends on so that the dependency is
+explicit and auditable.
 
 ### 3.3 Exit gates
 
@@ -430,13 +475,13 @@ live in [Appendix B — Artifacts & Lifecycle](#appendix-b--artifacts--lifecycle
                  +  Requirements document
                     (Mission / Goals / Premises / Constraints)
                  +  Requirements Traceability Matrix (RTM)
-                 +  Pattern & pitfall catalogue (grows through Phases 2-5)
+                 +  Platform-divergence catalogue (grows through Phases 2-5)
                  +  SME knowledge capture (recordings, transcripts, sheets)
 
   PHASE 2: Decisions
       consumes  <-  Source architecture specifications
                  <- Requirements document
-                 <- Pattern catalogue
+                 <- Platform-divergence catalogue
       produces  ->  Decision records (one per non-trivial choice)
                  +  Decision index / dependency graph
 
@@ -455,12 +500,18 @@ live in [Appendix B — Artifacts & Lifecycle](#appendix-b--artifacts--lifecycle
                  <- Requirements document (RTM lookups)
                  <- Decision records
                  <- Source architecture specifications (per-dimension coverage)
-                 <- Pattern catalogue (for semantic-verification checklists)
+                 <- Platform-divergence catalogue (semantic-verification checklists)
+      inner loop (per batch):
+                    produce target code with traceability
+                 -> coverage analysis (per dimension)
+                 -> GAP RESOLUTION (generate new OR enhance existing)
+                 -> SEMANTIC VERIFICATION (line-by-line on high-risk elements)
+                 -> integration + end-to-end tests
       produces  ->  Target artifacts
                     (code, schema, IaC, CI/CD, deployment manifests)
                  +  Traceability links (source + specs + decisions)
                  +  Coverage report + semantic-verification report
-                 +  New entries appended to the pattern catalogue
+                 +  New entries appended to the platform-divergence catalogue
                  +  Session handoff note (-> next Phase-4 session)
 
   PHASE 5: Hybrid Deployment & Cutover
@@ -478,38 +529,30 @@ live in [Appendix B — Artifacts & Lifecycle](#appendix-b--artifacts--lifecycle
 
 ### Where each kind of artifact lives
 
-| Artifact kind                         | Produced in | Consumed by         | Concrete location (see [Appendix B](#appendix-b--artifacts--lifecycle)) |
-| ------------------------------------- | ----------- | ------------------- | ----------------------------------------------------------------------- |
-| Source architecture specifications    | Phase 1     | Phases 2, 3, 4      | Project-specific; typically a `specs/architecture/` tree                |
-| Requirements document                 | Phase 1     | Phases 2, 3, 4      | Project-specific container (charter, vision, PID, etc.)                 |
-| Requirements Traceability Matrix      | Phase 1     | Phases 2, 3, 4      | A table inside or beside the requirements document                      |
-| Pattern & pitfall catalogue           | Phase 1+    | Phases 2, 3, 4      | Project-specific; typically beside the source architecture specs        |
-| SME knowledge capture                 | Phase 1     | Phases 2, 4, 5      | Project-specific; often under `docs/` or a media library                |
-| Decision records                      | Phase 2     | Phases 3, 4, 5      | Project-specific; typically a `docs/decisions/` tree                    |
-| Migration-phase specs / plans / tasks | Phase 3     | Phase 4             | Project-specific; typically a `specs/NNN-<phase>/` tree                 |
-| Target artifacts + traceability       | Phase 4     | Phase 5             | Target repositories — one or many, per the accepted topology            |
-| Coverage and semantic reports         | Phase 4     | Phase exit gates    | Project-specific; emitted as CI/CD artifacts                            |
-| Coexistence / cutover plan            | Phase 5     | Operations          | Project-specific; alongside deployment manifests                        |
-| Governing principles                  | Once        | Every phase         | In AGENTS.md or a separate principles document                          |
-| AGENTS.md                             | Once        | Every agent session | Repository root (OSS standard)                                          |
+| Artifact kind                         | Produced in | Consumed by      | Concrete location (see [Appendix B](#appendix-b--artifacts--lifecycle)) |
+| ------------------------------------- | ----------- | ---------------- | ----------------------------------------------------------------------- |
+| Source architecture specifications    | Phase 1     | Phases 2, 3, 4   | Project-specific; typically a `specs/architecture/` tree                |
+| Requirements document                 | Phase 1     | Phases 2, 3, 4   | Project-specific container (charter, vision, PID, etc.)                 |
+| Requirements Traceability Matrix      | Phase 1     | Phases 2, 3, 4   | A table inside or beside the requirements document                      |
+| Platform-divergence catalogue         | Phase 1+    | Phases 2, 3, 4   | Project-specific; typically beside the source architecture specs        |
+| SME knowledge capture                 | Phase 1     | Phases 2, 4, 5   | Project-specific; often under `docs/` or a media library                |
+| Decision records                      | Phase 2     | Phases 3, 4, 5   | Project-specific; typically a `docs/decisions/` tree                    |
+| Migration-phase specs / plans / tasks | Phase 3     | Phase 4          | Project-specific; typically a `specs/NNN-<phase>/` tree                 |
+| Target artifacts + traceability       | Phase 4     | Phase 5          | Target repositories — one or many, per the accepted topology            |
+| Coverage and semantic reports         | Phase 4     | Phase exit gates | Project-specific; emitted as CI/CD artifacts                            |
+| Coexistence / cutover plan            | Phase 5     | Operations       | Project-specific; alongside deployment manifests                        |
+| AGENTS.md (+ governing principles)    | Once        | Every phase      | Repository root (cross-tool OSS standard)                               |
 
-### A note on governance files: AGENTS.md and governing principles
+### Governance file
 
-**AGENTS.md** is the cross-tool open-source standard for AI-agent instructions
-(stewarded by the Linux Foundation's Agentic AI Foundation). It is the
-canonical container for agent-consumable instructions at the repository root
-and is honoured by most modern AI coding agents.
-
-**Governing principles** are the project-level "rules of the road" —
-ordered principles such as _behavioural parity_, _source traceability_,
-_incremental verification_. They can live either inside AGENTS.md
-(as a "Principles" section) or as a separate document (for example,
-a `PRINCIPLES.md` at the repository root or an explicit governance container
-such as the spec-kit `constitution.md` convention). The framework is neutral
-over the physical location — it cares only that the principles are version-controlled,
-ordered, and cited from every stage that depends on them.
-For most projects, keeping the principles inside AGENTS.md (one file, one source
-of truth for agents) is the simplest and most portable choice.
+The framework requires one file at the repository root that declares agent
+instructions and ordered project principles. The cross-tool open-source standard
+for this file is **AGENTS.md**. All governing principles referenced throughout
+this document — _behavioural parity_, _source traceability_, _incremental
+verification_, and so on — live inside AGENTS.md unless the project chooses a
+different container. Alternative containers (separate principles documents,
+framework-specific conventions) are listed in
+[Appendix I](#appendix-i--agent-integration).
 
 ---
 
@@ -856,7 +899,7 @@ For every non-trivial output topology, the pipeline also produces:
 - per-repository CI/CD configuration
 - infrastructure-as-code modules (Terraform, CloudFormation, Pulumi, Kubernetes manifests, or equivalents)
 - service-mesh / gateway configuration when applicable
-- data-migration scripts with rollback plans
+- data-migration scripts with rollback plans (see [Appendix H](#appendix-h--data-migration-and-transformations))
 - observability configuration (logs, metrics, traces) consistent across repositories
 
 ### Representative coexistence patterns
@@ -891,26 +934,69 @@ data pipeline rewrites, stored-procedure extractions, and embedded / IoT moderni
 
 ## Benefits
 
-- **Explicit trade-offs.** Every non-trivial choice is recorded as a decision with analysis.
-- **Measurable completeness.** Coverage is a programmatic metric checked at every phase gate,
-  not a claim.
-- **Generate-or-enhance.** Coverage signals support _correcting and enhancing_ already-generated
-  target code as the source analysis deepens — not only adding new code.
+The framework combines several established practices (decision records, requirements
+traceability, spec-driven development) with a small number of fundamental contributions
+that change what AI-assisted migration can do.
+
+### Fundamental contributions
+
+- **Completeness is a measurable property, not a claim.**
+  Traditional AI-assisted migration reports progress as "N% done" with no independent
+  check. Here, every source element is in exactly one of three states
+  (covered / eliminated / unmatched), and the phase exit gate rejects the migration
+  phase until the count of unmatched in-scope elements is zero.
+  "Done" becomes a programmatically verifiable predicate.
+
+- **Dimensional coverage, not file coverage.**
+  Coverage is reported _per dimension_ — one report for the call graph, one for the
+  entity graph, one for the event flow, and so on. A target that covers 95% of
+  source functions but misses 40% of hook sites is flagged immediately, rather than
+  shipping with a silent feature gap. This replaces single-number coverage metrics
+  with a vector that reflects actual structural risk.
+
+- **Generate-or-enhance, driven by coverage signals.**
+  Unmatched or low-confidence coverage on an already-implemented target element
+  triggers _correction or enhancement of that element_, not only generation of new
+  code. This breaks the one-shot ceiling of transpiler-style migration (where an
+  element once produced cannot be improved without re-running the whole translation)
+  and the "no categorical signal" failure mode of purely agentic approaches
+  (where nothing tells the agent _which_ element to revisit).
+  The same cycle gracefully absorbs late-breaking source discoveries and
+  newly-accepted decisions.
+
+- **Unified target-architecture and migration-strategy specification.**
+  Phase 3 produces one spec set, not two. The question "what should this look like?"
+  and the question "how do we migrate to it?" are answered in the same document,
+  which eliminates the drift that accumulates when architecture and migration plans
+  are maintained separately.
+
+- **Platform-divergence catalogue as a living artifact.**
+  A project-specific catalogue of source/target behavioural divergences is seeded in
+  Phase 1 and grown in every later phase. It transforms semantic verification from
+  ad-hoc review into a checklist-driven audit with falsifiable entries, and
+  prevents the same class of error from recurring across migration phases.
+
+- **Iterative, deferrable decisions bound to migration phases.**
+  P1/P2 decisions can be accepted just-in-time, or in parallel with implementation,
+  without blocking progress on unrelated phases. The RTM and the decision index
+  keep the dependency graph explicit; a Phase-4 discovery can legitimately re-open
+  a Phase-2 decision without invalidating already-completed migration phases.
+
+### Standard benefits (delivered as side effects of the contributions above)
+
+- **Explicit trade-offs.** Every non-trivial choice is recorded as a decision with analysis,
+  reviewable by non-specialist stakeholders and re-openable when business needs change.
 - **Early error detection.** Errors are caught within the same session they are introduced,
   not during final integration.
-- **Test generation for legacy systems.** The target ends with richer automated test coverage
-  than the source ever had, turning migration from a risk event into a quality event.
-- **Behavioural correctness.** The platform-knowledge catalogue prevents systematic
-  translation errors from recurring.
-- **Stakeholder-friendly decision records.** Trade-off analysis tables can be reviewed
-  by non-specialist stakeholders and revisited when business needs change.
+- **Test-coverage uplift for legacy systems.** The target ends with richer automated test
+  coverage than the source ever had — migration becomes a quality event, not a risk event.
 - **Flexible output topology.** The pipeline produces whatever set of repositories,
-  CI / CD pipelines, infrastructure-as-code, and deployment manifests the accepted
-  architecture prescribes.
+  CI/CD pipelines, infrastructure-as-code, and deployment manifests the accepted
+  architecture prescribes — single-repo, one-to-many, many-to-one, or many-to-many.
 
 ---
 
-# Appendices
+## Appendices
 
 All appendices are either catalogues, illustrative examples, or implementation notes.
 Each real project will instantiate its own versions of these tables.
@@ -918,7 +1004,7 @@ Nothing in the appendices is prescriptive.
 
 ---
 
-## Appendix A — Dimension Catalogue
+### Appendix A — Dimension Catalogue
 
 Dimensions commonly discovered during Phase 1.
 Every real project should infer its own set.
@@ -977,7 +1063,7 @@ Every real project should infer its own set.
 
 ---
 
-## Appendix B — Artifacts & Lifecycle
+### Appendix B — Artifacts & Lifecycle
 
 This appendix gathers everything about the artifacts the framework produces:
 the per-phase lifecycle they follow, a concrete inventory from one reference project,
@@ -1152,7 +1238,7 @@ Rationale: minimises translation distance; preserves client-server contract.
 
 ---
 
-## Appendix C — Flow Variants
+### Appendix C — Flow Variants
 
 The overall order of phases is itself an architecture decision.
 Each project discovers its own optimal flow based on its dimensions.
@@ -1188,7 +1274,7 @@ The list below is illustrative — real projects frequently combine or adapt ent
 
 ---
 
-## Appendix D — Traceability Link Representations
+### Appendix D — Traceability Link Representations
 
 The representation of traceability links is an implementation choice,
 not part of the framework normative contract.
@@ -1210,7 +1296,7 @@ or graph databases.
 
 ---
 
-## Appendix E — Source Inventory and Validator Implementation
+### Appendix E — Source Inventory and Validator Implementation
 
 The coverage validator needs an exact inventory of source elements with boundary information.
 Several implementation strategies exist, in increasing order of rigour:
@@ -1231,7 +1317,7 @@ covered / eliminated / unmatched, with a citation for every claim.
 
 ---
 
-## Appendix F — Semantic Discrepancy Taxonomy
+### Appendix F — Semantic Discrepancy Taxonomy
 
 A real project will discover its own taxonomy. The pattern is that discrepancies cluster
 into a small number of categories (fewer than 50 in most systems),
@@ -1257,7 +1343,7 @@ The taxonomy drives two things:
 
 ---
 
-## Appendix G — Integration Pipeline Contracts
+### Appendix G — Integration Pipeline Contracts
 
 Per-element verification catches per-element defects.
 Defects also emerge at element boundaries: data produced in one element
@@ -1286,7 +1372,7 @@ Verification walks the pipeline end-to-end, checking that neighbouring steps agr
 
 ---
 
-## Appendix H — Data Migration and Transformations
+### Appendix H — Data Migration and Transformations
 
 Data migration covers all forms of persistent and streaming state —
 not just relational databases. The approach depends on the data type.
@@ -1317,7 +1403,38 @@ a rollback plan, and verification criteria.
 
 ---
 
-## Appendix I — Skill Library
+### Appendix I — Agent Integration
+
+This appendix gathers the two artifacts that connect the framework to the
+underlying AI agent: the governance file at the repository root, and the
+library of reusable skills.
+
+#### I.1 Governance file — AGENTS.md and alternatives
+
+AGENTS.md is the cross-tool open-source standard for AI-agent instructions,
+stewarded by the Linux Foundation's Agentic AI Foundation and honoured by most
+modern AI coding agents. A single AGENTS.md at the repository root is the
+recommended container for both agent instructions and the project's ordered
+governing principles.
+
+Projects with a pre-existing governance convention may substitute an equivalent
+container, provided agents can find it. Common alternatives:
+
+| Container                               | Origin / convention                    |
+| --------------------------------------- | -------------------------------------- |
+| `AGENTS.md` (recommended)               | Cross-tool OSS standard                |
+| `AGENTS.md` + separate `PRINCIPLES.md`  | Larger projects that separate concerns |
+| `.github/copilot-instructions.md`       | GitHub Copilot convention              |
+| `CLAUDE.md`                             | Anthropic Claude Code convention       |
+| `.cursorrules` / `.cursor/rules/`       | Cursor convention                      |
+| `constitution.md` + `AGENTS.md` pointer | Spec-kit convention (Agile-flavoured)  |
+| Bespoke governance document             | Regulated-industry programmes          |
+
+The framework is neutral over the physical container — it only requires that
+principles be version-controlled, ordered, and cited by every phase that
+depends on them.
+
+#### I.2 Skill library
 
 The framework is implemented on top of a library of reusable skills.
 Copies are maintained in `.agents/skills/` within this project for self-containment.

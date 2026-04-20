@@ -9,7 +9,7 @@
 This document describes a reproducible architecture for large-scale, AI-assisted software migration.
 The framework is technology-agnostic: the same pipeline applies to language migrations,
 framework shifts, monolith-to-microservices decompositions, data pipeline rewrites,
-protocol library ports, and modernizations in which a single source repository
+protocol library ports, and modernisations in which a single source repository
 becomes many target repositories (or many sources consolidate into one).
 
 The framework rests on one foundational concept and three operational mechanisms.
@@ -35,7 +35,7 @@ deep research on the source and target technologies (for example,
 The catalogue grows through every later phase as new divergences surface during
 semantic verification, and it feeds back into Gap Resolution and audit checklists.
 See [Appendix F](#appendix-f--semantic-discrepancy-taxonomy) for a representative
-40-category catalogue from one reference application of the framework.
+representative catalogue from one end-to-end reference project.
 
 **Three operational mechanisms.**
 
@@ -50,7 +50,7 @@ See [Appendix F](#appendix-f--semantic-discrepancy-taxonomy) for a representativ
   are interpreted by an AI agent, placed into the target architecture,
   and either generate new target code or enhance existing target code.
   The same cycle rewrites or corrects previously generated target code
-  when coverage analysis exposes behavioral or structural defects in it.
+  when coverage analysis exposes behavioural or structural defects in it.
 
 Together these mechanisms turn AI-assisted migration from a probabilistic,
 best-effort activity into an auditable, measurable process
@@ -142,7 +142,7 @@ operational logs, and any external specifications or contracts the system implem
 2. **Requirements document** — Mission / Goals / Premises / Constraints
    plus a Requirements Traceability Matrix (RTM).
 3. **Platform-divergence catalogue** — behavioural divergences between the source and target platforms
-   (40+ categories in the reference application; see
+   (40+ categories in the reference project; see
    [Appendix F](#appendix-f--semantic-discrepancy-taxonomy)).
    The catalogue starts in Phase 1 and grows through every later phase.
 
@@ -166,7 +166,7 @@ Dimensions serve four operational purposes across the pipeline:
 #### Common dimensions
 
 Real projects typically infer six to twelve dimensions; the catalogue in
-[Appendix A](#appendix-a--dimension-catalogue) lists thirty-plus,
+[Appendix A](#appendix-a--dimension-catalogue) lists twenty-plus,
 and [Appendix B](#appendix-b--artifacts--lifecycle) shows
 the concrete set produced for one worked example.
 
@@ -274,10 +274,9 @@ Deep research on the source and target platforms invariably surfaces patterns
 where the two behave differently despite superficially similar code.
 These patterns are the most common source of silent semantic defects during migration,
 and a project-specific catalogue of them pays for itself very quickly.
-One end-to-end reference application of the framework produced a catalogue
-of 40 categories affecting 600+ call sites (see
-[Appendix F](#appendix-f--semantic-discrepancy-taxonomy) for the taxonomy
-and [Appendix B](#appendix-b--artifacts--lifecycle) for where it was stored).
+See [Appendix F](#appendix-f--semantic-discrepancy-taxonomy) for a representative
+taxonomy, and [Appendix B](#appendix-b--artifacts--lifecycle) for how a concrete
+catalogue was stored in one reference project.
 
 Each catalogue entry records, at minimum:
 
@@ -383,12 +382,12 @@ a developer or reviewer needs:
 - **How do we get there?** — order of batches, dependencies, scope boundaries
 - **When is it done?** — acceptance criteria, exit-gate checklist, coverage thresholds
 
-> _Example (from the reference application): the Phase-4 migration-phase spec for
-> authentication answered all four questions in a single document — target
-> structure (Flask-Login + Redis), preserved behaviour (session-cookie compatibility
-> with existing clients), order of batches (models → verifier → endpoints → tests),
-> and exit gate (argon2id upgrade path verified, zero coverage gaps in the `auth/`
-> dimension)._
+> _Example (from the reference project — see [Appendix B.4](#appendix-b--artifacts--lifecycle)):_
+> _the migration-phase spec for authentication answered all four questions in_
+> _a single document — target structure (server-side session store), preserved_
+> _behaviour (session-cookie compatibility with existing clients), order of_
+> _batches (models → verifier → endpoints → tests), and exit gate_
+> _(legacy-password upgrade path verified; zero coverage gaps in the auth dimension)._
 
 The three artifact types are:
 
@@ -440,7 +439,7 @@ back to Phase 2 whenever a deferred decision becomes needed:
 The loop terminates when the accepted-decisions set plus the already-generated
 migration-phase specs cover every requirement in the RTM.
 
-**Illustrative order** (from the reference application, P0/P1 only):
+**Illustrative order** (from the reference project, P0/P1 only):
 
 1. Generate the spec set for the first unblocked phase (often a walking skeleton
    or foundational slice).
@@ -580,7 +579,7 @@ many-to-many migrations are all natural outputs of the same loop.
     - Coverage report shows zero unmatched in-scope elements
     - All automated tests green (unit + integration + end-to-end)
     - All decision records the phase depended on are in "accepted" status
-    - New pattern-catalogue entries merged
+    - New platform-divergence catalogue entries merged
     - Session handoff note written for the next session
 ```
 
@@ -656,7 +655,7 @@ programmatically parseable. Representation options are described in [Appendix D]
 ### Structural Coverage Analysis and Gap Resolution
 
 A common misconception is that a traceability-driven pipeline works like a transpiler —
-feeding source code line-by-line into an AI model and receiving target code back.
+feeding source code line-by-line into an AI agent and receiving target code back.
 **It does not.** The pipeline works for any migration style, including full architectural
 redesigns (monolith -> microservices, server-rendered -> SPA, SQL triggers -> stream processing,
 single repository -> many repositories).
@@ -664,7 +663,7 @@ single repository -> many repositories).
 The key insight:
 **traceability is used to detect what has not yet been accounted for;
 it is never used to constrain how migration is done.**
-The AI model is free to redesign, restructure, and re-architect the target system
+The AI agent is free to redesign, restructure, and re-architect the target system
 in whatever way the accepted decisions prescribe. Traceability only tracks
 which source elements have been accounted for.
 
@@ -807,19 +806,18 @@ Semantic verification compares source / target element pairs according to a dept
 | 4    | Data models, schemas                                | Field-by-field                   |
 
 Tier-1 reviews quote raw source lines from both files.
-Summarize reviews without source quotes systematically miss structural defects
-(absentminded loop bodies, dropped branches, inverted conditions).
+Summarised reviews without source quotes systematically miss structural defects
+(misindented loop bodies, dropped branches, inverted conditions).
 A concrete, representative discrepancy taxonomy is given in [Appendix F](#appendix-f--semantic-discrepancy-taxonomy).
 
-### Platform-knowledge catalogue
+### Use of the platform-divergence catalogue
 
-During migration the team accumulates a catalogue of patterns where the source
-and target platforms diverge despite superficially similar code.
-Each entry documents the source pattern, how the target differs,
-an estimated frequency, and the recommended remediation.
-The catalogue becomes the reference used during semantic verification
-and prevents the same class of error from recurring across phases.
-See [Appendix F](#appendix-f--semantic-discrepancy-taxonomy) for a representative example.
+Semantic verification reads from the platform-divergence catalogue
+introduced in [Phase 1.3](#13-platform-divergence-catalogue):
+the checklist for each element is the set of catalogue entries known to
+apply to that element's source pattern. New divergences discovered during
+verification are appended to the catalogue so that every subsequent migration
+phase benefits from them.
 
 ### Integration-pipeline verification
 
@@ -844,7 +842,7 @@ The framework provides three integration points for product and subject-matter-e
 
 1. **Feature scope review** (during Phase 1). Product confirms which features are kept as-is,
    enhanced, deprecated, or eliminated. The outcome is a feature scope matrix
-   referenced by all later stages.
+   referenced by all later phases.
 2. **SME knowledge ingestion** (any time). Recordings, screenshots, spreadsheets,
    and walkthroughs of the working source application are ingested, transcribed,
    and used to generate end-to-end test scenarios and to discover features
@@ -1009,7 +1007,7 @@ Nothing in the appendices is prescriptive.
 Dimensions commonly discovered during Phase 1.
 Every real project should infer its own set.
 
-### Structural dimensions (common to most systems)
+#### Structural dimensions (common to most systems)
 
 | Dimension                  | Captures                                            | Migration impact                      |
 | -------------------------- | --------------------------------------------------- | ------------------------------------- |
@@ -1021,7 +1019,7 @@ Every real project should infer its own set.
 | Event / message flow graph | Producers, topics, subscribers                      | Event-driven migration order          |
 | Infrastructure dependency  | Services <-> infrastructure (DB, cache, queue)      | Cloud / platform migration            |
 
-### Domain-specific dimensions (examples)
+#### Domain-specific dimensions (examples)
 
 | Dimension                            | Example system types                             |
 | ------------------------------------ | ------------------------------------------------ |
@@ -1044,7 +1042,7 @@ Every real project should infer its own set.
 | Multi-tenant isolation boundary      | SaaS platforms                                   |
 | Observability topology               | Systems with custom metrics / log pipelines      |
 
-### Applicability matrix
+#### Applicability matrix
 
 | System type                | Typical primary dimension   | Typical secondary dimensions         |
 | -------------------------- | --------------------------- | ------------------------------------ |
@@ -1136,7 +1134,7 @@ decisions.
 | Phase specifications                     | 6                                                                                         |
 | Architecture decisions                   | 19                                                                                        |
 | Automated tests at completion            | 1,474 (unit + integration + end-to-end)                                                   |
-| Platform-knowledge patterns catalogued   | 40 categories, 600+ affected call sites                                                   |
+| Platform-divergence entries catalogued   | 40 categories, 600+ affected call sites                                                   |
 | Integration pipelines verified           | 8                                                                                         |
 | Final structural coverage                | 100% (458 / 458 in-scope elements)                                                        |
 | Eliminated source elements               | 27+                                                                                       |
@@ -1184,12 +1182,12 @@ plus `docs/decisions/README.md` (index and dependency graph) and
 | specs/005-semantic-verification/{spec,plan,tasks}.md | 40-category taxonomy, 105+ remediations, 598 tests, 0 unresolved gaps |
 | specs/006-deployment/{spec,plan,tasks}.md            | CI, coverage gate, Docker / Compose / reverse proxy, data migration   |
 
-**Governing files (produced once, referenced from every stage).**
+**Governing files (produced once, referenced from every phase).**
 
 | Path                                            | Role                                                                |
 | ----------------------------------------------- | ------------------------------------------------------------------- |
 | AGENTS.md                                       | Cross-tool agent instructions (OSS standard)                        |
-| Ordered principles (in AGENTS.md or standalone) | Project-level rules consulted at every stage gate                   |
+| Ordered principles (in AGENTS.md or standalone) | Project-level rules consulted at every phase gate                   |
 | `.agents/skills/`                               | Reusable prompt-engineering methods (requirements extraction, etc.) |
 
 ### B.5 Representative artifact shapes
@@ -1260,7 +1258,7 @@ The list below is illustrative — real projects frequently combine or adapt ent
 | Compliance-first          | Regulated boundaries first                 | Finance, health, defence          | —                                         |
 | Repository-split          | One dimension per target repository        | Monolith-to-microservices         | Cross-repository CI complexity            |
 
-### Factors that favour each variant
+#### Factors that favour each variant
 
 | Factor                    | Favours                                      |
 | ------------------------- | -------------------------------------------- |
@@ -1377,7 +1375,7 @@ Verification walks the pipeline end-to-end, checking that neighbouring steps agr
 Data migration covers all forms of persistent and streaming state —
 not just relational databases. The approach depends on the data type.
 
-### Database migration
+#### Database migration
 
 1. **Schema mapping.** Source schema analysed dimension-by-dimension;
    target models generated and reviewed.
@@ -1387,7 +1385,7 @@ not just relational databases. The approach depends on the data type.
    foreign-key-ordered insertion, personally-identifiable-information anonymisation.
 4. **Verification.** Post-migration row counts, foreign-key integrity, spot-check queries.
 
-### Other data types
+#### Other data types
 
 | Data type                    | Considerations                                                             |
 | ---------------------------- | -------------------------------------------------------------------------- |

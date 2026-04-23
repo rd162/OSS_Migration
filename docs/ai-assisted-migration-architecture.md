@@ -2,6 +2,10 @@
 
 **A Dimension-Driven, Traceability-First Framework for Migrating Software Systems Across Technology Stacks**
 
+
+
+**Version**: 0.9 - Draft
+
 ---
 
 ## Abstract
@@ -1191,7 +1195,7 @@ plus `docs/decisions/README.md` (index and dependency graph) and
 
 ### B.5 Representative artifact shapes
 
-**Decision record excerpt (MADR 4.0 format, one of many equivalents):**
+**Decision record excerpt (one of several equivalent templates):**
 
 ```markdown
 # 0002 — Select Target Web Framework
@@ -1462,219 +1466,327 @@ Diagrams are given in Mermaid; text slides use short theses only.
 
 #### Slide 1 — Title
 
-**AI-Assisted Software Migration**
+**AI-Assisted Software Migration & Modernization**
 
-A Dimension-Driven, Traceability-First Framework
+An auditable, measurable approach for LLM-driven migrations and modernizations.
 
-- Technology-agnostic: language shifts, framework migrations,
-  monolith decomposition, data-pipeline rewrites, protocol ports
-- Output topology can be one-to-one, one-to-many, many-to-one, or many-to-many
-- Five-phase pipeline; iterative; decisions can be deferred
+**What it solves**
 
----
+- Missed source functionality that traditional LLM-driven migrations silently drop
+- Behavioral divergences between source and target that only show up in production
+- Untracked decisions and untraceable target code that block audit and hand-off
+- Locked-in output shape (single-repo ports, monolith → microservices splits,
+  consolidations, and full reshapes are all supported by the same pipeline)
 
-#### Slide 2 — Why a new framework
+**What you get**
 
-- Traditional AI-assisted migration: "N% done" with no independent check
-- Large-context models still miss source elements systematically
-- Transpilers cannot re-open an already-produced target element
-- Purely agentic approaches have no categorical signal for _what_ needs correction
-- The framework below makes completeness a **measurable predicate**
-
----
-
-#### Slide 3 — The foundation: Dimensions
-
-A _dimension_ is a structural axis along which source elements are related.
-
-Dimensions are **discovered per project**, not prescribed. They drive:
-
-| Purpose               | Phase   |
-| --------------------- | ------- |
-| Knowledge extraction  | Phase 1 |
-| Phase ordering        | Phase 3 |
-| Coverage verification | Phase 4 |
-| Semantic verification | Phase 4 |
-
-Examples: call graph, entity graph, event flow, protocol state machine, plugin graph,
-security surface, configuration surface, API contracts.
+- Complete, reviewable source knowledge — the starting point for every decision
+- Explicitly accepted architecture and migration decisions with named stakeholders
+- Target code that is traceable back to source, to specs, and to decisions
+- Progressive deployment alongside the source system until full cutover
 
 ---
 
-#### Slide 4 — The three operational mechanisms
+#### Slide 2 — The four pillars
 
-- **Traceability** — every target element links back to source + specs + decisions
-- **Coverage Validation** — each source element is _covered_, _eliminated_, or _unmatched_,
-  reported _per dimension_
-- **Gap Resolution** — unmatched elements drive generation of new code
-  **or correction / enhancement of already-generated code**
+Four concepts turn AI-assisted migration from a one-shot translation into an
+**auditable, measurable modernization** process. Each pillar answers one
+hazard that LLM-driven migrations routinely fail on.
 
-Together these turn AI-assisted migration into an auditable, measurable process.
+| Pillar                             | Hazard it neutralizes                                        | What stakeholders gain                                                                                     |
+| ---------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| **① Dimensions**                   | Migration planned on the wrong axis; blind spots in source   | Structured source model; migration order that respects reality                                             |
+| **② Traceability**                 | Target code of unknown provenance; no way to review fidelity | **SMEs can review fast** — every target element cites source + spec + decision                             |
+| **③ Coverage Validation**          | "N% done" self-assessments; silent omissions                 | "Done" is a **measurable predicate** — per-dimension, auditable                                            |
+| **④ Modernization-Gap Resolution** | Errors only surface in production; target cannot be enhanced | **Confidence** — gaps are detected and the target is iteratively corrected or enhanced, not only generated |
+
+> **Phases run concurrently and can re-enter one another.**
+> The five phases that follow are not strictly sequential. Work in Phase 4
+> routinely triggers short returns to Phase 2 (accept a deferred decision),
+> Phase 3 (generate the next migration-phase spec), or Phase 1
+> (a new dimension or divergence is discovered). Phase 5 overlaps Phase 4
+> once enough target is ready to deploy alongside the source.
+
+The next three slides zoom into each pillar:
+Slide 3 — **Dimensions** · Slide 4 — **Traceability, Coverage, Gap Resolution**.
 
 ---
 
-#### Slide 5 — Pipeline (one diagram)
+#### Slide 3 — Pillar ① Dimensions
+
+A _dimension_ is a structural axis along which **source architecture elements**
+are related. Dimensions are **discovered per project**, not prescribed,
+and they determine migration order, partitioning, and what "complete" means.
+
+**Examples** (named by the relationship they capture):
+
+- **Code** — caller ↔ callee relationships between functions, classes, modules
+- **Data** — foreign-key and joinable-column relationships between tables
+- **API** — client ↔ endpoint relationships (inbound and outbound)
+- **Events** — producer → topic → consumer relationships
+- **Plugins / hooks** — hook-site ↔ handler relationships
+- **Protocol state** — transitions and timers between states
+- **Security** — principal ↔ resource ↔ permission relationships
+- **Configuration** — feature-flag ↔ code-path relationships
+
+**From the reference project (PHP → Python web application):** Phase 1 discovered
+fifteen dimensions, each stored as a separate source architecture specification:
+
+- `specs/architecture/02-database.md` — the data dimension (foreign-key relationships)
+- `specs/architecture/05-plugin-system.md` — the plugin/hook dimension
+- `specs/architecture/06-security.md` — the security dimension
+- ...and twelve more, listed together in
+  [Appendix B.4](#appendix-b--artifacts--lifecycle)
+
+---
+
+#### Slide 4 — Pillars ②③④ Traceability, Coverage, Gap Resolution
+
+These three work together as an auditable loop. Each addresses a distinct
+stakeholder need.
+
+- **② Traceability** — every target element links back to its source origin
+  **and** to the specs and decisions under which it was produced.
+  _SME benefit:_ review becomes a mechanical walk of cited pairs — no more
+  hunting for "where did this code come from?"
+
+- **③ Coverage Validation** — every source architecture element is classified
+  as _covered_ · _eliminated_ · _unmatched_, reported **per dimension**.
+  _Stakeholder benefit:_ "done" is a predicate, not a percentage; missing
+  hook sites or unmapped tables are flagged immediately.
+
+- **④ Modernization-Gap Resolution** — unmatched or low-confidence elements
+  trigger either **new** target code or **correction / enhancement** of
+  already-generated target code; new source ↔ target divergences feed the
+  project's divergence catalogue so every later phase benefits.
+  _Team benefit:_ confidence to iterate — the target is not frozen after
+  first generation; modernization continues as knowledge deepens.
+
+---
+
+#### Slide 5 — The five phases at a glance
+
+For each phase: **who works**, **what they produce**, **how it is validated**.
 
 ```mermaid
-flowchart TD
-    S[Source System] --> P1
-    P1[Phase 1<br/>Knowledge Extraction] --> P2
-    P2[Phase 2<br/>Decisions] --> P3
-    P3[Phase 3<br/>Target Specifications] --> P4
-    P4[Phase 4<br/>Migration Execution] --> P5
-    P5[Phase 5<br/>Hybrid Deployment & Cutover] --> T[Target System<br/>in Production]
+---
+config:
+  flowchart:
+    htmlLabels: true
+---
+flowchart TB
+    Src[(Source system)]
 
-    P4 -.deferred decision needed.-> P2
-    P4 -.new dimension found.-> P1
-    P4 -.next migration-phase spec.-> P3
+    subgraph P1 ["**Phase 1 · Knowledge Extraction & Source Specification**"]
+      direction TB
+      L1[LLM analyses source]:::ai --> O1[Source architecture specs,<br/>requirements document,<br/>divergence catalogue]:::art
+    end
+
+    subgraph P2 ["**Phase 2 · Architect, Product, SME Decisions**"]
+      direction TB
+      L2[LLM proposes options]:::ai --> H2[Product team, Architect, SMEs<br/>review specs + accept decisions]:::human
+      H2 --> O2[Decision records]:::art
+    end
+
+    subgraph P3 ["**Phase 3 · Target Specifications**"]
+      direction TB
+      L3[LLM drafts target-architecture<br/>and migration specs]:::ai --> H3[Architect reviews]:::human
+      H3 --> O3[Migration-phase spec sets]:::art
+    end
+
+    subgraph P4 ["**Phase 4 · Modernisation**"]
+      direction TB
+      L4[LLM implements code with<br/>traceability; runs coverage<br/>+ semantic verification]:::ai --> V4[Unit + integration +<br/>end-to-end tests]:::valid
+      V4 --> O4[Target artifacts +<br/>coverage/semantic reports]:::art
+    end
+
+    subgraph P5 ["**Phase 5 · Hybrid Deployment & Cutover**"]
+      direction TB
+      L5[LLM generates IaC,<br/>deployment, cutover scripts]:::ai --> H5[Operations + Product<br/>approve traffic shifts]:::human
+      H5 --> O5[Coexistence architecture,<br/>cutover plan, sunset schedule]:::art
+    end
+
+    Tgt[(Target system<br/>in production)]
+
+    Src --> P1 --> P2 --> P3 --> P4 --> P5 --> Tgt
+
+    %% Mid-phase re-entries — phases are NOT strictly sequential
+    P4 == deferred decision ==> P2
+    P4 == next migration-phase spec ==> P3
+    P4 == new dimension or divergence ==> P1
+    P5 -. overlap: target runs alongside source .-> P4
+
+    classDef ai fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#0c1c4a;
+    classDef human fill:#fed7aa,stroke:#c2410c,stroke-width:2px,color:#3a1a00;
+    classDef valid fill:#d1fae5,stroke:#059669,stroke-width:2px,color:#064e3b;
+    classDef art fill:#f3f4f6,stroke:#6b7280,stroke-width:1px,color:#111827;
 ```
 
-Phases 1–3 run once at inception; Phase 4 loops per migration phase;
-Phase 5 begins when enough of the target is ready.
+> **Bold thick arrows** mark mid-phase re-entries; Phase 4 routinely loops back
+> to Phases 1-3, and Phase 5 overlaps Phase 4 during the coexistence period.
+
+**Colour legend:** blue = LLM work · orange = human judgement · green = automated validation · grey = artifacts produced.
+
+**Validation per phase**
+
+- Phase 1 output is reviewed by the Product team, Architect and SMEs **inside Phase 2**
+  as part of accepting decisions — that is how knowledge extraction is gated.
+- Phases 3 onwards are validated by automated tests (unit + integration + end-to-end)
+  run inside the Phase 4 loop, after every batch of implemented code.
 
 ---
 
-#### Slide 6 — Who does what (RACI-style)
-
-```mermaid
-flowchart LR
-    subgraph P1 [Phase 1 - Knowledge Extraction]
-      A1[LLM / agent]:::ai
-      B1[Architect + SME review]:::human
-    end
-    subgraph P2 [Phase 2 - Decisions]
-      A2[LLM proposes options]:::ai
-      B2[Product + Architect + SME accept]:::human
-    end
-    subgraph P3 [Phase 3 - Target Specifications]
-      A3[LLM generates spec sets]:::ai
-      B3[Architect reviews]:::human
-    end
-    subgraph P4 [Phase 4 - Migration Execution]
-      A4[LLM implements + validates]:::ai
-      B4[Dev lead approves exit gate]:::human
-    end
-    subgraph P5 [Phase 5 - Hybrid Deployment]
-      A5[LLM generates IaC + cutover scripts]:::ai
-      B5[Ops + Product approve traffic shifts]:::human
-    end
-    P1 --> P2 --> P3 --> P4 --> P5
-    classDef ai fill:#dbeafe,stroke:#1d4ed8;
-    classDef human fill:#fed7aa,stroke:#c2410c;
-```
-
-Blue boxes: automated by the agent. Orange boxes: human judgement required.
-
----
-
-#### Slide 7 — Phase 1 · Knowledge Extraction
+#### Slide 6 — Phase 1 · Knowledge Extraction & Source Specification
 
 **Input:** source repository, domain docs, SME recordings, configs, logs.
 
 **Output (three artifact families):**
 
 - **Source architecture specifications** — one per dimension
-- **Requirements document** — Mission / Goals / Premises / Constraints + RTM
-- **Platform-divergence catalogue** — behavioural divergences between
-  source and target platforms (living artifact; grows through every later phase)
+- **Requirements document** — Mission / Goals / Premises / Constraints + traceability matrix
+- **Platform-divergence catalogue** — behavioural divergences between source and target
+  platforms (living artifact; grows through every later phase)
+
+**Reference project example artifacts:**
+
+- `specs/architecture/00-project-charter.md` — requirements document
+- `specs/architecture/01-architecture.md` .. `15-sme-review.md` — source architecture specs
+- `specs/architecture/14-semantic-discrepancies.md` — platform-divergence catalogue
 
 ---
 
-#### Slide 8 — Phase 1 · Flow
-
-```mermaid
-flowchart LR
-    Src[Source repo<br/>docs / SME input] --> D[Deep research]
-    D --> Dim[Dimension specs<br/>e.g. call graph,<br/>entity graph, ...]
-    D --> Req[Requirements<br/>Mission/Goals/<br/>Premises/Constraints]
-    D --> Cat[Platform-divergence<br/>catalogue]
-    Dim --> P2[To Phase 2]
-    Req --> P2
-    Cat --> P2
-```
-
----
-
-#### Slide 9 — Phase 2 · Decisions
+#### Slide 7 — Phase 2 · Architect, Product, SME Team Decisions
 
 **Input:** Phase-1 artifacts; research findings.
 
-**Output:** decision records (context, options, trade-offs, decision, consequences).
+**Output:** decision records (context, options, trade-offs, decision, consequences),
+plus a decision index linking them together.
 
 **Who accepts each decision:**
 
-| Role                                 | Accountable for                                    |
-| ------------------------------------ | -------------------------------------------------- |
-| Product team                         | Business impact; scope; keep/deprecate/enhance     |
-| Project architect                    | Target architecture coherence; flow variant        |
-| Subject-matter experts               | Domain constraints; behavioural parity             |
-| Security / Ops / Dev leads           | Trust; deployment; implementability                |
+| Role                       | Accountable for                                |
+| -------------------------- | ---------------------------------------------- |
+| Product team               | Business impact; scope; keep/deprecate/enhance |
+| Project architect          | Target architecture coherence; flow variant    |
+| Subject-matter experts     | Domain constraints; behavioural parity         |
+| Security / Ops / Dev leads | Trust; deployment; implementability            |
 
 **Acceptance modes:** up-front · just-in-time · parallel with implementation.
 
+**Reference project example artifacts:**
+
+- `docs/decisions/README.md` — decision index and dependency graph
+- `docs/decisions/0001-migration-flow-variant.md` — a P0 decision (flow variant)
+- `docs/decisions/0002-python-framework.md` — a P0 decision (target framework)
+- `docs/decisions/0014-feed-parsing-library.md` — a P1 decision (accepted just-in-time)
+
 ---
 
-#### Slide 10 — Phase 3 · Target Specifications
+#### Slide 8 — Phase 3 · Target Specifications
 
-**One unified spec set** — target architecture AND migration strategy in the same documents.
+Each migration phase gets a spec set of three files that describe the same
+target scope from two angles:
 
-Per migration phase:
-
-- **Migration-phase spec** — behaviour, FRs, acceptance criteria
-- **Migration-phase plan** — batches in dependency order, entry/exit gates
+- **Migration-phase spec** — behaviour, functional requirements, acceptance criteria
+  (_"what the target should look like"_)
+- **Migration-phase plan** — batches in dependency order, entry and exit gates
+  (_"how we get there"_)
 - **Migration-phase tasks** — actionable steps with source cross-references
+  (_"the work to do"_)
 
-Generated **iteratively**: one phase at a time; deferred decisions trigger a short loop back to Phase 2.
+Generated **iteratively**: one migration phase at a time; decisions that are
+still deferred trigger a short loop back to Phase 2.
+
+**Reference project example artifacts:**
+
+- `specs/001-foundation/{spec,plan,tasks}.md` — foundation (walking skeleton)
+- `specs/002-core-logic/{spec,plan,tasks}.md` — core business logic
+- `specs/004-api-handlers/{spec,plan,tasks}.md` — API layer
+- `specs/005-semantic-verification/{spec,plan,tasks}.md` — verification phase
+- `specs/006-deployment/{spec,plan,tasks}.md` — deployment phase
 
 ---
 
-#### Slide 11 — Phase 3 · Iteration
+#### Slide 9 — Phase 3 · Iteration
 
 ```mermaid
-flowchart LR
-    Start([Accepted decisions +<br/>dimension specs]) --> Gen[Generate spec set<br/>for next unblocked phase]
-    Gen --> Exec[Execute via Phase 4]
-    Exec --> Check{All requirements<br/>in RTM covered?}
-    Check -- no, deferred<br/>decision needed --> P2[Return to Phase 2]
+---
+config:
+  flowchart:
+    htmlLabels: true
+---
+flowchart TB
+    Start(["**Accepted decisions +<br/>dimension specs**"]):::art --> Gen["**Generate spec set<br/>for next unblocked phase**"]:::ai
+    Gen --> Exec["**Execute via Phase 4**"]:::ai
+    Exec --> Check{"**All requirements<br/>in RTM covered?**"}
+    Check == "no — deferred<br/>decision needed" ==> P2["**Return to Phase 2**"]:::human
     P2 --> Gen
-    Check -- no, more<br/>phases to migrate --> Gen
-    Check -- yes --> Done([Phase 3 complete])
+    Check -- "no — more<br/>phases to migrate" --> Gen
+    Check == "yes" ==> Done(["**Phase 3 complete**"]):::art
+
+    classDef ai fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#0c1c4a;
+    classDef human fill:#fed7aa,stroke:#c2410c,stroke-width:2px,color:#3a1a00;
+    classDef art fill:#f3f4f6,stroke:#6b7280,stroke-width:1px,color:#111827;
 ```
 
 ---
 
-#### Slide 12 — Phase 4 · Migration Execution (per migration-phase loop)
+#### Slide 10 — Phase 4 · Migration Execution (per migration-phase loop)
 
 ```mermaid
+---
+config:
+  flowchart:
+    htmlLabels: true
+---
 flowchart TD
-    Start([Migration-phase<br/>spec / plan / tasks]) --> A[a. Produce target code<br/>with traceability links]
-    A --> B[b. Coverage analysis<br/>per dimension]
-    B --> C{Gaps?}
-    C -- yes --> D[c. Gap resolution<br/>generate new OR enhance existing]
+    Start(["**Migration-phase<br/>spec / plan / tasks**"]):::art --> A["**a. Produce target code<br/>with traceability links**"]:::ai
+    A --> B["**b. Coverage analysis<br/>per dimension**"]:::valid
+    B --> C{"**Gaps?**"}
+    C -- yes --> D["**c. Gap resolution**<br/>generate new OR enhance existing"]:::ai
     D --> A
-    C -- no --> E[d. Semantic verification<br/>on high-risk elements]
-    E --> F[e. Unit / integration / E2E tests]
-    F --> G{All pass?}
+    C -- no --> E["**d. Semantic verification**<br/>on high-risk elements"]:::valid
+    E --> F["**e. Unit / integration / E2E tests**"]:::valid
+    F --> G{"**All pass?**"}
     G -- no --> A
-    G -- yes --> Exit([Migration-phase exit gate])
+    G == yes ==> Exit(["**Migration-phase exit gate**"]):::art
+
+    classDef ai fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#0c1c4a;
+    classDef valid fill:#d1fae5,stroke:#059669,stroke-width:2px,color:#064e3b;
+    classDef art fill:#f3f4f6,stroke:#6b7280,stroke-width:1px,color:#111827;
 ```
 
 Exit gate: zero unmatched in-scope elements · all tests green · all required decisions accepted.
 
+**Reference project example artifacts:**
+
+- `target-repos/ttrss-python/` — target code with inline traceability links
+- `tools/graph_analysis/validate_coverage.py` — the coverage validator
+- `docs/reports/semantic-verification.md` — the semantic verification report
+
 ---
 
-#### Slide 13 — The core mechanism (why it works)
+#### Slide 11 — The core mechanism: traceability, coverage, gap resolution
 
 ```mermaid
-flowchart LR
-    Src[Source inventory] --> V[Coverage validator]
-    Tgt[Target code + traceability] --> V
-    V -->|per dimension| R{Status}
-    R -->|covered ∪ eliminated| OK([Accounted for])
-    R -->|unmatched| GAP[Gap report]
-    GAP --> AI[AI agent]
-    AI -->|add new<br/>OR enhance existing<br/>OR correct previous| Tgt
-    Tgt -.revalidate.-> V
+---
+config:
+  flowchart:
+    htmlLabels: true
+---
+flowchart TB
+    Src["**Source inventory**"]:::art --> V["**Coverage validator**"]:::valid
+    Tgt["**Target code + traceability**"]:::art --> V
+    V == per dimension ==> R{"**Status**"}
+    R == "covered ∪ eliminated" ==> OK(["**Accounted for**"]):::valid
+    R == unmatched ==> GAP["**Gap report**"]:::valid
+    GAP --> AI["**AI agent**"]:::ai
+    AI == "add new<br/>OR enhance existing<br/>OR correct previous" ==> Tgt
+    Tgt -. revalidate .-> V
+
+    classDef ai fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#0c1c4a;
+    classDef valid fill:#d1fae5,stroke:#059669,stroke-width:2px,color:#064e3b;
+    classDef art fill:#f3f4f6,stroke:#6b7280,stroke-width:1px,color:#111827;
 ```
 
 The agent is **not** told to translate lines. It is told **which source
@@ -1682,19 +1794,24 @@ element has not been accounted for**, and decides where it belongs in the target
 
 ---
 
-#### Slide 14 — Why generate-or-enhance matters
+#### Slide 12 — Why generate-or-enhance matters
 
-| Approach                | Can correct target after first pass? | Signal for _which_ element to revisit? |
-| ----------------------- | ------------------------------------ | -------------------------------------- |
-| Transpiler              | No (must re-run whole translation)   | —                                      |
-| Pure agentic            | In principle                         | No                                     |
-| **This framework**      | Yes — every phase                    | Per-dimension coverage delta           |
+When the coverage validator flags a source element as unmatched or low-confidence,
+the agent treats that as a signal to **correct or enhance the existing target element**
+as well as to add new code. This differs from approaches that can only generate new
+code in response to a new gap:
 
-This is what makes **modernisation** possible, not just translation.
+| Capability                                   | Pure LLM generation | Pure agentic loop | This framework                         |
+| -------------------------------------------- | ------------------- | ----------------- | -------------------------------------- |
+| Can correct already-produced target code     | No                  | In principle      | **Yes**                                |
+| Has a categorical signal for _which_ element | No                  | No                | **Yes (per-dimension coverage delta)** |
+| Detects silent behavioural divergence        | No                  | Ad-hoc            | **Checklist-driven against catalogue** |
+
+Result: gradual **modernisation**, not only line-for-line translation.
 
 ---
 
-#### Slide 15 — Phase 5 · Hybrid Deployment & Cutover
+#### Slide 13 — Phase 5 · Hybrid Deployment & Cutover
 
 **Goal.** Run the target alongside the source under realistic conditions;
 shift traffic progressively; decommission the source.
@@ -1707,32 +1824,49 @@ Release modes (choose per project):
 - Read-first / write-later
 - Parallel-run comparison
 
-Output topology may reshape the repository set — single, 1→N, N→1, N→M.
+Output topology may reshape the repository set — single repo, one-to-many,
+many-to-one, or many-to-many.
+
+**Reference project example artifacts:**
+
+- `specs/006-deployment/plan.md` — staging + cutover plan
+- `target-repos/ttrss-python/docker-compose.prod.yml` — production compose
+- `target-repos/ttrss-python/nginx/nginx.conf` — reverse-proxy config
+- `target-repos/ttrss-python/pgloader.load` — data-migration script
 
 ---
 
-#### Slide 16 — Artifact flow (one picture)
+#### Slide 14 — Artifact flow
 
 ```mermaid
+---
+config:
+  flowchart:
+    htmlLabels: true
+---
 flowchart TB
-    P1[Phase 1<br/>Knowledge Extraction] -->|source architecture specs<br/>requirements + RTM<br/>platform-divergence catalogue| P2[Phase 2<br/>Decisions]
-    P2 -->|decision records<br/>decision index| P3[Phase 3<br/>Target Specs]
-    P3 -->|migration-phase specs<br/>plans + tasks| P4[Phase 4<br/>Migration Execution]
-    P4 -->|target artifacts<br/>traceability<br/>coverage + semantic reports| P5[Phase 5<br/>Hybrid Deployment]
-    P4 -.new divergences.-> P1
-    P4 -.deferred decision needed.-> P2
-    P4 -.next migration-phase.-> P3
+    P1["**Phase 1**<br/>Knowledge Extraction"]:::phase ==>|source architecture specs<br/>requirements + RTM<br/>divergence catalogue| P2["**Phase 2**<br/>Decisions"]:::phase
+    P2 ==>|decision records<br/>decision index| P3["**Phase 3**<br/>Target Specs"]:::phase
+    P3 ==>|migration-phase specs<br/>plans + tasks| P4["**Phase 4**<br/>Modernisation"]:::phase
+    P4 ==>|target artifacts<br/>traceability<br/>coverage + semantic reports| P5["**Phase 5**<br/>Hybrid Deployment"]:::phase
+    P4 -. new divergences .-> P1
+    P4 -. deferred decision needed .-> P2
+    P4 -. next migration-phase .-> P3
 
-    GF[AGENTS.md<br/>Governing Principles<br/>Skills] -.consulted by every phase.-> P1
-    GF -.consulted by every phase.-> P2
-    GF -.consulted by every phase.-> P3
-    GF -.consulted by every phase.-> P4
-    GF -.consulted by every phase.-> P5
+    GF["**AGENTS.md**<br/>Governing Principles<br/>Skills"]:::gov
+    GF -. consulted by every phase .-> P1
+    GF -. consulted by every phase .-> P2
+    GF -. consulted by every phase .-> P3
+    GF -. consulted by every phase .-> P4
+    GF -. consulted by every phase .-> P5
+
+    classDef phase fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#0c1c4a;
+    classDef gov fill:#fef3c7,stroke:#b45309,stroke-width:2px,color:#3a1a00;
 ```
 
 ---
 
-#### Slide 17 — Example artifact: a dimension spec
+#### Slide 15 — Example artifact: a dimension spec
 
 ```markdown
 # specs/architecture/02-database.md
@@ -1749,29 +1883,33 @@ Source-file cross-references by relative path + line number; no duplication.
 
 ---
 
-#### Slide 18 — Example artifact: a decision record (MADR)
+#### Slide 16 — Example artifact: a decision record
 
 ```markdown
 # 0002 — Select Target Web Framework
 
 ## Considered Options
+
 1. Framework A — closest match to source handler dispatch
 2. Framework B — modern async, but no built-in sessions
 3. Framework C — full-featured but over-engineered
 
 ## Decision: Framework A
+
 Rationale: minimises translation distance; preserves client-server contract.
 
 ## Consequences
-+  zero client-side changes
--  synchronous runtime; async deferred to workers
+
+- zero client-side changes
+
+* synchronous runtime; async deferred to workers
 ```
 
 Every non-trivial choice recorded; accepted by named stakeholders.
 
 ---
 
-#### Slide 19 — Example artifact: a traceability link
+#### Slide 17 — Example artifact: a traceability link
 
 ```python
 # Source: ttrss/include/functions.php:authenticate_user (lines 706-771)
@@ -1788,35 +1926,40 @@ Two links:
 
 ---
 
-#### Slide 20 — Example artifact: a migration-phase spec
+#### Slide 18 — Example artifact: a migration-phase spec
 
 ```markdown
 # specs/001-foundation/spec.md
 
 ## Migration Phase 1: Foundation (walking skeleton)
+
 ### What the target looks like
+
 - App factory + dependency injection
 - Core 10 ORM models (users, feeds, entries, ...)
 - Server-side session store
 
 ### What must be preserved from the source
+
 - Existing client-server contract unchanged
 - Password upgrade path (legacy hash → modern hash on next login)
 
 ### How we get there
+
 1. Models (`ttrss/models/`)
 2. Auth verifier
 3. Login endpoint
 4. Test suite
 
 ### Exit gate
+
 - All unit tests green · zero coverage gaps in `auth/` dimension
 - ADR-0007, ADR-0008 accepted
 ```
 
 ---
 
-#### Slide 21 — Benefits (fundamental)
+#### Slide 19 — Fundamental Benefits
 
 - **Completeness as a predicate.** Every source element is covered, eliminated, or unmatched.
 - **Dimensional coverage, not file coverage.** Per-axis reporting, not one number.
@@ -1827,39 +1970,39 @@ Two links:
 
 ---
 
-#### Slide 22 — Applicability
+#### Slide 20 — Applicability
 
-| System type               | Primary dimension           |
-| ------------------------- | --------------------------- |
-| Web application           | Entity graph                |
-| CLI tool                  | Call graph                  |
-| Network protocol library  | State machine               |
-| Microservices             | Service dependency graph    |
-| Data pipeline             | DAG topology                |
-| Event-driven architecture | Message topics              |
-| Embedded / IoT            | Hardware abstraction        |
-| Stored-procedure system   | Pipeline topology           |
+| System type               | Primary relationships that drive migration       |
+| ------------------------- | ------------------------------------------------ |
+| Web application           | Data — table joins, foreign keys                 |
+| CLI tool                  | Code — caller / callee                           |
+| Network protocol library  | State — transitions and timers between states    |
+| Microservices             | Services — inter-service call and contract edges |
+| Data pipeline             | Data flow — source → transform → sink            |
+| Event-driven architecture | Events — producer → topic → consumer             |
+| Embedded / IoT            | Hardware — device ↔ driver ↔ application         |
+| Stored-procedure system   | Data flow — trigger → procedure → procedure      |
 
 Same five-phase pipeline; only the dimensions and decisions change.
 
 ---
 
-#### Slide 23 — When the framework fits (and when it doesn't)
+#### Slide 21 — When the framework fits
 
 **Fits:** large codebases, regulated industries, long-running migrations,
 modernisation (not just translation), projects where "completeness" must be auditable.
 
 **Over-kill:** small one-off ports (<5,000 LOC), pure code-style refactors, prototypes.
 
-**Unique strengths vs. alternatives:**
+**Unique strengths:**
 
-- vs. transpilers — supports architectural redesign
-- vs. pure agents — gives a categorical completeness signal
-- vs. ad-hoc migration — produces auditable records for every decision
+- Supports architectural redesign (not only 1:1 translation)
+- Provides a per-dimension completeness signal, not a single percentage
+- Produces auditable records for every decision and every target element
 
 ---
 
-#### Slide 24 — How to start
+#### Slide 22 — How to start
 
 1. **Install the governance file** (AGENTS.md) and skill library at the repository root.
 2. **Run Phase 1** — deep research on the source + first pass at dimensions.
@@ -1871,7 +2014,7 @@ modernisation (not just translation), projects where "completeness" must be audi
 
 ---
 
-#### Slide 25 — Summary in one sentence
+#### Slide 23 — Summary
 
 > Dimensions make the source system inspectable;
 > traceability makes the target auditable;

@@ -76,7 +76,7 @@ Build a custom key-value translation system (e.g., JSON files per locale, loaded
 
 Migration steps:
 1. Copy existing `locale/` directory to Python project
-2. Rename `__()` calls to `_()` during code migration
+2. Rename `__()` calls to `_()` during code modernization
 3. Run `pybabel extract` to generate a fresh `.pot` template
 4. Run `pybabel update` to merge new/changed strings into existing `.po` files
 5. Translators review and update only the changed strings

@@ -113,7 +113,7 @@ REQUIREMENTS:
 SOLUTION:
 [The current target codebase state — list all files and their contents]
 
-You are a compliance reviewer for a PHP-to-Python migration.
+You are a compliance reviewer for a PHP-to-Python modernization.
 The PHP schema at source-repos/ttrss-php/ttrss/schema/ttrss_schema_pgsql.sql is AUTHORITATIVE.
 Every Python model column must match it EXACTLY.
 Every code element must have a traceability comment per AGENTS.md Rule 10.

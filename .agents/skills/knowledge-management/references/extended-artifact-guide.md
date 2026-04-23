@@ -175,13 +175,13 @@ Migrate production database schema without downtime.
 ## Steps
 
 1. Create backup of current database
-2. Test migration on staging environment
-3. Apply migration during low-traffic window
-4. Verify data integrity post-migration
+2. Test modernization on staging environment
+3. Apply modernization during low-traffic window
+4. Verify data integrity post-modernization
 
 ## Observations
 
-- [requirement] Zero-downtime migration during deployment #availability
+- [requirement] Zero-downtime modernization during deployment #availability
 - [risk] Data loss if backup verification step skipped #critical
 - [constraint] Must complete within 2-hour maintenance window #timing
 - [technique] Blue-green deployment for rollback capability #deployment

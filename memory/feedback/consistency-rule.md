@@ -8,7 +8,7 @@ When accepting ADRs, completing phases, or changing any tracked status, update A
 
 **Why:** This pattern has failed TWICE now:
 1. **P0 ADR acceptance** — sub-agents updated ADR files and AGENTS.md but left the charter's Solution Space table saying "preliminary recommendations... pending acceptance", the Traceability Matrix showing "Not started" for completed items, and "SHA1-to-bcrypt" instead of the accepted "argon2id".
-2. **P1 ADR acceptance** — adversarial-thinking pipeline updated ADR files, AGENTS.md, docs/decisions/README.md, and memory, but skipped `specs/00-project-charter.md` entirely (Solution Space, Traceability Matrix, Cross-Reference tables) and skipped checking `specs/10-migration-dimensions.md`.
+2. **P1 ADR acceptance** — adversarial-thinking pipeline updated ADR files, AGENTS.md, docs/decisions/README.md, and memory, but skipped `specs/00-project-charter.md` entirely (Solution Space, Traceability Matrix, Cross-Reference tables) and skipped checking `specs/10-modernization-dimensions.md`.
 
 **How to apply:**
 - Before finishing ANY status-changing task, run through the checklist in AGENTS.md Rule 16.

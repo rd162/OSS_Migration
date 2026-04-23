@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines the **analysis dimensions** for driving the PHP→Python migration, and proposes **multi-dimensional migration flow variants** to be discussed and selected before starting the actual migration work.
+This document defines the **analysis dimensions** for driving the PHP→Python migration, and proposes **multi-dimensional modernization flow variants** to be discussed and selected before starting the actual modernization work.
 
 ## Analysis Dimensions
 
@@ -158,7 +158,7 @@ Files ranked by migration complexity (considering size, coupling, and criticalit
 
 ---
 
-## Migration Flow Variants
+## Modernization Flow Variants
 
 ### Variant A: Entity-First (Bottom-Up)
 
@@ -522,7 +522,7 @@ Rationale:
 
 ## Next Steps
 
-1. **Choose migration variant** (this document provides the options)
+1. **Choose modernization variant** (this document provides the options)
 2. **Set up Python project skeleton** in `target-repos/`
 3. **Build automated call graph** using NetworkX from PHP source
 4. **Validate entity clusters** against actual SQL query patterns

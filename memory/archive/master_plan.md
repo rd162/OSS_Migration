@@ -1,10 +1,10 @@
 ---
 name: master_plan
-description: Unified migration plan — graph-driven from Phase 1 through Phase 6, tree-sitter+NetworkX as native analysis tool at every gate
+description: Unified modernization plan — graph-driven from Phase 1 through Phase 6, tree-sitter+NetworkX as native analysis tool at every gate
 type: project
 ---
 
-# Master Migration Plan: TT-RSS PHP → Python
+# Master Modernization Plan: TT-RSS PHP → Python
 
 **Approach:** Graph-driven migration using tree-sitter-php + NetworkX + Leiden community detection.
 Five dependency dimensions (call, class, db_table, hook, include) are analyzed before each phase

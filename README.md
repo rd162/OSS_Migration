@@ -4,7 +4,7 @@ This repository documents and delivers the full migration of [Tiny Tiny RSS](htt
 
 **Source:** `source-repos/ttrss-php/` — original PHP application  
 **Target:** `target-repos/ttrss-python/` — migrated Python application  
-**Status:** All 6 migration phases complete. Ready for production release.
+**Status:** All 6 modernization phases complete. Ready for production release.
 
 ## Repository layout
 
@@ -51,7 +51,7 @@ Stable, read-only specifications used across all phases:
 | [07-caching-performance](specs/architecture/07-caching-performance.md) | Redis caching, counter cache |
 | [08-deployment](specs/architecture/08-deployment.md) | Docker, gunicorn, nginx, CI/CD |
 | [09-source-index](specs/architecture/09-source-index.md) | PHP source file inventory |
-| [10-migration-dimensions](specs/architecture/10-migration-dimensions.md) | What changes, what stays the same |
+| [10-migration-dimensions](specs/architecture/10-modernization-dimensions.md) | What changes, what stays the same |
 | [11-business-rules](specs/architecture/11-business-rules.md) | Preserved business rules catalogue |
 | [12-testing-strategy](specs/architecture/12-testing-strategy.md) | Test pyramid and coverage gates |
 | [13-decomposition-map](specs/architecture/13-decomposition-map.md) | PHP→Python module mapping |
@@ -62,7 +62,7 @@ Stable, read-only specifications used across all phases:
 
 | ADR | Decision | Status |
 |-----|----------|--------|
-| [0001](docs/decisions/0001-migration-flow-variant.md) | Migration flow: variant D-revised (schema-first) | accepted |
+| [0001](docs/decisions/0001-modernization-flow-variant.md) | Migration flow: variant D-revised (schema-first) | accepted |
 | [0002](docs/decisions/0002-python-framework.md) | Python framework: Flask | accepted |
 | [0003](docs/decisions/0003-database-engine.md) | Database: PostgreSQL (MySQL dropped) | accepted |
 | [0004](docs/decisions/0004-frontend-strategy.md) | Frontend strategy → resolved by ADR-0017 | accepted |

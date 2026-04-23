@@ -7,7 +7,7 @@
 
 ## Context
 
-The migration dimensions analysis (`specs/10-migration-dimensions.md`) identified 6 analysis dimensions and proposed using NetworkX + Leiden community detection to validate and refine the manually-identified module boundaries.
+The migration dimensions analysis (`specs/10-modernization-dimensions.md`) identified 6 analysis dimensions and proposed using NetworkX + Leiden community detection to validate and refine the manually-identified module boundaries.
 
 This ADR decides whether to invest in building automated source code analysis tooling before starting migration, or proceed with the manual analysis already completed.
 
@@ -68,5 +68,5 @@ Use existing PHP static analysis tools:
 
 - If Option A: creates a reusable toolset for migration progress tracking
 - If Option A: may reveal unexpected dependency clusters not caught manually
-- If Option B: risk of discovering hidden dependencies mid-migration
+- If Option B: risk of discovering hidden dependencies mid-modernization
 - If Option C: partial validation without custom investment

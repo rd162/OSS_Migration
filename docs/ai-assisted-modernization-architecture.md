@@ -1,8 +1,6 @@
-# AI-Assisted Software Migration Architecture
+# AI-Assisted Software Modernization Architecture
 
 **A Dimension-Driven, Traceability-First Framework for Migrating Software Systems Across Technology Stacks**
-
-
 
 **Version**: 0.9 - Draft
 
@@ -10,8 +8,8 @@
 
 ## Abstract
 
-This document describes a reproducible architecture for large-scale, AI-assisted software migration.
-The framework is technology-agnostic: the same pipeline applies to language migrations,
+This document describes a reproducible architecture for large-scale, AI-assisted software modernization.
+The framework is technology-agnostic: the same pipeline applies to language modernizations,
 framework shifts, monolith-to-microservices decompositions, data pipeline rewrites,
 protocol library ports, and modernisations in which a single source repository
 becomes many target repositories (or many sources consolidate into one).
@@ -23,7 +21,7 @@ A _dimension_ is a structural axis along which source elements are related
 (dependency graph, data-model graph, service graph, event flow, protocol state machine,
 security surface, and so on). Dimensions are **discovered per project**, not prescribed.
 They are the substrate on which the mechanisms below operate:
-they drive knowledge extraction in Phase 1, partition work into migration phases in Phase 3,
+they drive knowledge extraction in Phase 1, partition work into modernization phases in Phase 3,
 and define the per-axis correspondence checks performed during coverage and semantic verification.
 See the [Phase 1](#phase-1--knowledge-extraction) section for how
 dimensions are inferred and the full catalogue in
@@ -55,12 +53,25 @@ See [Appendix F](#appendix-f--semantic-discrepancy-taxonomy) for a representativ
   The same cycle rewrites or corrects previously generated target code
   when coverage analysis exposes behavioural or structural defects in it.
 
-Together these mechanisms turn AI-assisted migration from a probabilistic,
+Together these mechanisms turn AI-assisted modernization from a probabilistic,
 best-effort activity into an auditable, measurable process
 with an explicit and verifiable notion of _completeness_.
 
 For a catalogue of artifacts produced by an end-to-end application of the framework,
 see [Appendix B](#appendix-b--artifacts--lifecycle).
+
+**A note on agent integration.**
+The framework is implemented on top of a small library of reusable **skills**
+(portable cross-tool playbooks) bound to the phase pipeline through a handful of
+thin **agent wrappers** (Claude-specific runtime harnesses). Skills carry every
+methodology the framework uses; agent files carry only runtime concerns
+(tool whitelist, model selection, context isolation, worktree isolation).
+This split — "skills drive agents, agents load skills" — is the
+post-Skills-GA (Oct 2025) pattern; it replaces the earlier practice of packing
+methodology into static agent markdown bodies. The full inventory, composition
+diagram, and authoring rules live in [Appendix I — Agent Integration](#appendix-i--agent-integration).
+The 2025 cross-vendor research that informs the split is collected in
+[Appendix K — Agent Architecture in 2025 CLI Coding Assistants](#appendix-k--agent-architecture-in-2025-cli-coding-assistants).
 
 ---
 
@@ -68,7 +79,7 @@ see [Appendix B](#appendix-b--artifacts--lifecycle).
 
 The framework is a five-phase pipeline. Phases 1–3 run once at project inception
 (though they may be re-entered iteratively as evidence accumulates).
-Phase 4 executes repeatedly — one migration phase per working session.
+Phase 4 executes repeatedly — one modernization phase per working session.
 Phase 5 begins once enough of the target is ready to run alongside the source.
 
 ```text
@@ -85,7 +96,7 @@ Phase 5 begins once enough of the target is ready to run alongside the source.
                               v
   +--------------------------------------------------------------------+
   | PHASE 2. Decisions                                                 |
-  |   Propose target-architecture and migration-strategy options;      |
+  |   Propose target-architecture and modernization-strategy options;      |
   |   accept each decision with product team, project architect, SMEs. |
   |   -> Decision records (priority-ordered; acceptance may be         |
   |      up-front, just-in-time, or parallel with implementation)      |
@@ -94,17 +105,17 @@ Phase 5 begins once enough of the target is ready to run alongside the source.
   +--------------------------------------------------------------------+
   | PHASE 3. Target Specifications                                     |
   |   ONE unified set of specs covering both the target architecture   |
-  |   AND migration strategy (order, partitioning, exit gates).        |
+  |   AND modernization strategy (order, partitioning, exit gates).        |
   |   Generated iteratively from accepted decisions; specs for later   |
-  |   migration phases may defer on decisions not yet needed.          |
+  |   modernization phases may defer on decisions not yet needed.          |
   |   -> Migration-phase specifications (spec + plan + tasks)          |
   +--------------------------------------------------------------------+
                               v
   +--------------------------------------------------------------------+
-  | PHASE 4. Migration Execution (per-migration-phase loop)            |
+  | PHASE 4. Modernization Execution (per-modernization-phase loop)            |
   |   Traceability + Coverage Validation + Gap Resolution +            |
   |   Semantic verification + Integration / End-to-end testing.        |
-  |   Loops once per migration phase; each run produces target         |
+  |   Loops once per modernization phase; each run produces target         |
   |   artifacts, reports, and a handoff note.                          |
   |   -> Target artifacts (code, schema, IaC, CI/CD, manifests)        |
   |   -> Coverage and semantic verification reports                    |
@@ -122,7 +133,7 @@ Phase 5 begins once enough of the target is ready to run alongside the source.
 
 Every arrow in the diagram is a concrete artifact hand-off, not a narrative transition.
 The pipeline is iterative: a Phase-4 discovery can send work back to Phase 3
-(new migration-phase spec), Phase 2 (a deferred decision becomes needed),
+(new modernization-phase spec), Phase 2 (a deferred decision becomes needed),
 or Phase 1 (a new dimension or pattern is discovered).
 A complete artifact inventory is given in [Appendix B](#appendix-b--artifacts--lifecycle).
 
@@ -131,7 +142,7 @@ A complete artifact inventory is given in [Appendix B](#appendix-b--artifacts--l
 ## Phase 1 — Knowledge Extraction
 
 **Goal.** Produce a complete, evidence-based model of the source system
-and bind it to the business intent of the migration.
+and bind it to the business intent of the modernization.
 Everything downstream is derived from what Phase 1 finds.
 
 **Inputs.** Source repository (treated as read-only), domain documentation,
@@ -155,7 +166,7 @@ and line number rather than duplicating source content.
 ### 1.1 Dimensions — what they are and what they are for
 
 A _dimension_ is any axis along which source elements are related in a way that
-materially constrains migration. Every software system exposes its own set;
+materially constrains modernization. Every software system exposes its own set;
 the framework does not fix the list in advance.
 Dimensions serve four operational purposes across the pipeline:
 
@@ -204,12 +215,12 @@ Most current agent tooling (including the widely-adopted spec-kit) defaults to
 Agile-flavoured containers; the framework is neutral over the choice — see
 [Appendix B.1](#appendix-b--artifacts--lifecycle) for a short list of equivalents.
 
-| Component       | Definition                                                             |
-| --------------- | ---------------------------------------------------------------------- |
-| **Mission**     | Single-sentence terminal value answering _why_ the migration exists    |
-| **Goals**       | Concrete objectives that, if changed, change the solution type         |
-| **Premises**    | Assumptions that must hold for the goals to be achievable              |
-| **Constraints** | Hard (violation = rejection) and soft (violation = penalty) boundaries |
+| Component       | Definition                                                              |
+| --------------- | ----------------------------------------------------------------------- |
+| **Mission**     | Single-sentence terminal value answering _why_ the modernization exists |
+| **Goals**       | Concrete objectives that, if changed, change the solution type          |
+| **Premises**    | Assumptions that must hold for the goals to be achievable               |
+| **Constraints** | Hard (violation = rejection) and soft (violation = penalty) boundaries  |
 
 The four components are produced by combining bottom-up knowledge expansion
 (which surfaces implicit Premises and Constraints) with top-down intent inference
@@ -220,7 +231,7 @@ that produced it.
 
 Phase 1 also produces a **requirements traceability matrix** linking every requirement
 to the dimension specification where it was discovered, the decision record(s)
-where trade-offs about it will be resolved (Phase 2), and the migration-phase
+where trade-offs about it will be resolved (Phase 2), and the modernization-phase
 specification(s) where it will be satisfied (Phase 3). The RTM is the primary device
 that keeps every later phase mutually consistent.
 
@@ -275,7 +286,7 @@ the container name and the surrounding governance artifacts are project-specific
 
 Deep research on the source and target platforms invariably surfaces patterns
 where the two behave differently despite superficially similar code.
-These patterns are the most common source of silent semantic defects during migration,
+These patterns are the most common source of silent semantic defects during modernization,
 and a project-specific catalogue of them pays for itself very quickly.
 See [Appendix F](#appendix-f--semantic-discrepancy-taxonomy) for a representative
 taxonomy, and [Appendix B](#appendix-b--artifacts--lifecycle) for how a concrete
@@ -298,7 +309,7 @@ and feeds every audit checklist thereafter.
 
 ## Phase 2 — Decisions
 
-**Goal.** Propose every non-trivial target-architecture and migration-strategy choice,
+**Goal.** Propose every non-trivial target-architecture and modernization-strategy choice,
 accept each decision with the right stakeholders, and record the rationale
 so that the decision is auditable and re-openable if circumstances change.
 
@@ -331,18 +342,18 @@ solely by the implementer is a design note, not a governance artifact.
 
 ### 2.3 Priority classes and acceptance modes
 
-| Priority | Scope                                                     | Accepted before      |
-| -------- | --------------------------------------------------------- | -------------------- |
-| P0       | Blocks all work (flow variant, target stack, data engine) | Phase 3 can begin    |
-| P1       | Blocks a specific migration phase (ORM, auth, workers)    | That migration phase |
-| P2       | Deferrable, no blocking dependency                        | The final release    |
+| Priority | Scope                                                      | Accepted before          |
+| -------- | ---------------------------------------------------------- | ------------------------ |
+| P0       | Blocks all work (flow variant, target stack, data engine)  | Phase 3 can begin        |
+| P1       | Blocks a specific modernization phase (ORM, auth, workers) | That modernization phase |
+| P2       | Deferrable, no blocking dependency                         | The final release        |
 
 **Decisions may be accepted in deferred mode.** A decision does not have to be closed
 during inception. The framework supports three acceptance modes explicitly:
 
 - **Up-front.** P0 decisions are normally accepted in Phase 2 itself.
-- **Just-in-time.** A P1 decision can remain in _proposed_ state until the migration phase
-  that first needs it; the migration phase's entry gate then requires its acceptance.
+- **Just-in-time.** A P1 decision can remain in _proposed_ state until the modernization phase
+  that first needs it; the modernization phase's entry gate then requires its acceptance.
 - **Parallel with implementation.** A decision about an incremental concern
   (logging, observability, i18n) may evolve alongside early implementation
   as evidence accumulates; the decision is accepted once the design stabilises.
@@ -370,13 +381,13 @@ A concrete consistency checklist is captured in [Appendix B.2](#appendix-b--arti
 ## Phase 3 — Target Specifications
 
 **Goal.** Produce a single unified set of specifications that covers both
-the target architecture _and_ the migration strategy — what to build,
+the target architecture _and_ the modernization strategy — what to build,
 in what order, under which decisions, with which exit gates.
 
 ### 3.1 Unified spec set
 
 The framework does not separate "target architecture specs" from
-"migration plan specs" — they are the same set of documents. Each migration
+"modernization plan specs" — they are the same set of documents. Each modernization
 phase is described by three artifacts that together answer every question
 a developer or reviewer needs:
 
@@ -386,7 +397,7 @@ a developer or reviewer needs:
 - **When is it done?** — acceptance criteria, exit-gate checklist, coverage thresholds
 
 > _Example (from the reference project — see [Appendix B.4](#appendix-b--artifacts--lifecycle)):_
-> _the migration-phase spec for authentication answered all four questions in_
+> _the modernization-phase spec for authentication answered all four questions in_
 > _a single document — target structure (server-side session store), preserved_
 > _behaviour (session-cookie compatibility with existing clients), order of_
 > _batches (models → verifier → endpoints → tests), and exit gate_
@@ -394,15 +405,15 @@ a developer or reviewer needs:
 
 The three artifact types are:
 
-- a **migration-phase specification** — user-visible behaviour, functional requirements,
+- a **modernization-phase specification** — user-visible behaviour, functional requirements,
   acceptance criteria, success criteria, explicit scope and anti-scope
-- a **migration-phase plan** — technical context, the decision records the phase depends on,
-  the migration batches in dependency order, risk assessment, entry and exit gates
-- a **migration-phase task list** — actionable steps, parallel markers, and cross-references
+- a **modernization-phase plan** — technical context, the decision records the phase depends on,
+  the modernization batches in dependency order, risk assessment, entry and exit gates
+- a **modernization-phase task list** — actionable steps, parallel markers, and cross-references
   to the source elements each step covers
 
 The primary driver dimension (chosen in Phase 2 as the flow-variant decision)
-determines the order in which migration phases are sequenced. A catalogue of
+determines the order in which modernization phases are sequenced. A catalogue of
 flow variants and the factors that favour each is given in
 [Appendix C](#appendix-c--flow-variants).
 
@@ -440,7 +451,7 @@ back to Phase 2 whenever a deferred decision becomes needed:
 ```
 
 The loop terminates when the accepted-decisions set plus the already-generated
-migration-phase specs cover every requirement in the RTM.
+modernization-phase specs cover every requirement in the RTM.
 
 **Illustrative order** (from the reference project, P0/P1 only):
 
@@ -450,14 +461,14 @@ migration-phase specs cover every requirement in the RTM.
 3. Return to Phase 3 to generate the next phase's specs — at this point
    previously deferred decisions may become needed; that triggers a short
    loop back into Phase 2 to accept them.
-4. Continue until every migration phase is complete.
+4. Continue until every modernization phase is complete.
 
 Every spec cites the decisions it depends on so that the dependency is
 explicit and auditable.
 
 ### 3.3 Exit gates
 
-Every migration phase has an explicit exit gate listing machine-checkable conditions:
+Every modernization phase has an explicit exit gate listing machine-checkable conditions:
 tests passing, coverage thresholds, semantic verification clean,
 referenced decisions accepted. The gate is a checklist, not a narrative.
 
@@ -491,13 +502,13 @@ live in [Appendix B — Artifacts & Lifecycle](#appendix-b--artifacts--lifecycle
       consumes  <-  Requirements document
                  <- Decision records (P0 required; P1/P2 may be deferred)
                  <- Source architecture specifications
-      produces  ->  Migration-phase specifications (one set per migration phase)
+      produces  ->  Migration-phase specifications (one set per modernization phase)
                  +  Migration-phase plans
                  +  Migration-phase task lists
-                 [iterative: one migration-phase spec set at a time;
+                 [iterative: one modernization-phase spec set at a time;
                   deferred decisions trigger a return to Phase 2]
 
-  PHASE 4: Migration Execution (one pass per migration phase)
+  PHASE 4: Modernization Execution (one pass per modernization phase)
       consumes  <-  Migration-phase spec / plan / tasks
                  <- Requirements document (RTM lookups)
                  <- Decision records
@@ -558,17 +569,17 @@ framework-specific conventions) are listed in
 
 ---
 
-## Phase 4 — Migration Execution
+## Phase 4 — Modernization Execution
 
-**Goal.** Turn each migration-phase spec into verified target artifacts.
-Phase 4 runs once per migration phase from Phase 3. Each run proceeds in a
+**Goal.** Turn each modernization-phase spec into verified target artifacts.
+Phase 4 runs once per modernization phase from Phase 3. Each run proceeds in a
 fresh working session so that context is clean and the session handoff artifact
 is the only carrier of cross-phase state. A run may emit artifacts into any
 number of target repositories — single-repository, one-to-many, and
 many-to-many migrations are all natural outputs of the same loop.
 
 ```text
-  For each batch in the migration phase:
+  For each batch in the modernization phase:
     (a) Produce target artifacts with traceability links
     (b) Structural coverage analysis  ->  gap report
     (c) Gap resolution                ->  generate new OR enhance existing
@@ -610,7 +621,7 @@ Traceability, Coverage Validation, and Gap Resolution — are described next.
 ### Why AI models miss elements of the source
 
 Even with large-context models capable of loading an entire repository,
-source elements are systematically missed during migration:
+source elements are systematically missed during modernization:
 
 - **Attention dilution.** Long source files cause attention to concentrate on prominent
   elements while skipping less prominent ones.
@@ -659,13 +670,13 @@ programmatically parseable. Representation options are described in [Appendix D]
 
 A common misconception is that a traceability-driven pipeline works like a transpiler —
 feeding source code line-by-line into an AI agent and receiving target code back.
-**It does not.** The pipeline works for any migration style, including full architectural
+**It does not.** The pipeline works for any modernization style, including full architectural
 redesigns (monolith -> microservices, server-rendered -> SPA, SQL triggers -> stream processing,
 single repository -> many repositories).
 
 The key insight:
 **traceability is used to detect what has not yet been accounted for;
-it is never used to constrain how migration is done.**
+it is never used to constrain how modernization is done.**
 The AI agent is free to redesign, restructure, and re-architect the target system
 in whatever way the accepted decisions prescribe. Traceability only tracks
 which source elements have been accounted for.
@@ -742,7 +753,7 @@ Instead the agent:
    or contradicted by a later-accepted decision;
 5. adds a traceability link so the validator treats the source element as accounted for.
 
-This generate-_or_-enhance property is the decisive advantage of coverage-driven migration
+This generate-_or_-enhance property is the decisive advantage of coverage-driven modernization
 over direct translation and over purely agentic approaches.
 In direct translation, once a target element is produced, further source analysis
 cannot correct it without re-running the whole translation.
@@ -752,7 +763,7 @@ a source element whose current coverage is weak, inconsistent, or contradicted
 becomes an input to the next gap-resolution cycle regardless of whether target code
 already exists for it. The framework therefore supports gradual enhancement
 and correction of already-written code, not just addition of new code —
-which is what makes correct migration and modernisation possible at scale.
+which is what makes correct modernization and modernization possible at scale.
 
 The mechanism applies equally well to:
 
@@ -819,7 +830,7 @@ Semantic verification reads from the platform-divergence catalogue
 introduced in [Phase 1.3](#13-platform-divergence-catalogue):
 the checklist for each element is the set of catalogue entries known to
 apply to that element's source pattern. New divergences discovered during
-verification are appended to the catalogue so that every subsequent migration
+verification are appended to the catalogue so that every subsequent modernization
 phase benefits from them.
 
 ### Integration-pipeline verification
@@ -838,7 +849,7 @@ the data shape produced at step _k_ must match the shape consumed at step _k + 1
 
 ## Functionality Adjustment
 
-**Goal.** Align migration scope with business needs _before and during_ implementation,
+**Goal.** Align modernization scope with business needs _before and during_ implementation,
 using the same artifact-driven pipeline.
 
 The framework provides three integration points for product and subject-matter-expert input:
@@ -854,6 +865,191 @@ The framework provides three integration points for product and subject-matter-e
    element pairs are reviewed by SMEs. This catches divergences that no automated
    check can detect (domain-specific behaviour, undocumented business rules,
    cosmetic expectations).
+
+---
+
+## Skill / Agent Composition
+
+**Goal.** Bind the five-phase pipeline to a small set of reusable AI-agent
+skills, arranged so that each phase has a single entry-point skill that
+composes lower-level skills in a fixed sequence. The composition is
+deliberately thin: every phase's entry-point is a **macro-skill** that
+carries no methodology of its own — it sequences atomic skills that do.
+
+This section is normative for the reference implementation and
+recommended for new projects that adopt the framework on a platform
+that honours the Agent Skills open standard (published December 2025).
+Projects on other runtimes MUST translate the composition to their
+native primitives but SHOULD preserve the skills-drive-agents layering.
+
+### Why this layering exists
+
+Until October 2025, static per-agent markdown files (Claude's
+`.claude/agents/*.md`, Cursor's `.cursor/agents/*.md`, equivalents in
+Copilot chatmodes) were the only mechanism for packaging a specialised
+agent with its persona, tool whitelist, model choice, and methodology.
+Methodology therefore lived in the agent file's body. That is the
+**pre-Skills-era pattern**; it is still visible in most public
+examples, and it couples methodology to one runtime.
+
+After Skills reached GA on 16 October 2025, and especially after the
+Agent Skills open standard was published on 18 December 2025,
+methodology can live in a skill that is consumable by Claude Code,
+OpenAI Codex CLI, Sourcegraph Amp, Cognition Devin, Google Jules,
+Moonshot Kimi, and any compliant runtime. The agent file's remaining
+job is runtime binding — the capabilities a cross-platform skill
+cannot express:
+
+| Capability                                   | Skill alone | Agent wrapper |
+| -------------------------------------------- | :---------: | :-----------: |
+| Deliver methodology / playbook               |      ✓      |       —       |
+| Progressive disclosure of resources          |      ✓      |       —       |
+| Cross-tool portability                       |      ✓      |       ✗       |
+| `/command` invocation                        |      ✓      |       ✗       |
+| **Enforced tool whitelist**                  |      ✗      |       ✓       |
+| **Isolated context window**                  |      ✗      |       ✓       |
+| **Per-agent model pin**                      |      ✗      |       ✓       |
+| **Session-wide launch** (`claude --agent X`) |      ✗      |       ✓       |
+| **Worktree isolation**                       |      ✗      |       ✓       |
+| **Per-agent persistent memory**              |      ✗      |       ✓       |
+| **Managed / org-tier override**              |      ✗      |       ✓       |
+
+Every row in the right column is a runtime concern. Every row in the
+left column is a content concern. The framework places each kind of
+artifact in the column where it naturally belongs — skills carry
+content, wrappers carry runtime — and treats duplication between them
+as a build-breaking defect.
+
+### Atomic skills and macro-skills
+
+The skill library is organised in two layers:
+
+- **Atomic skills** — single-responsibility playbooks usable in any
+  project: `deep-research-t1`, `requirements-extractor`,
+  `knowledge-management`, `adversarial-thinking`, `adversarial-self-refine`.
+- **Macro-skills** — framework-specific compositions that orchestrate
+  atomic skills into one phase's worth of work.
+
+| Macro-skill              | Phase                             | Composes                                                                                                                     | Produces                                                                                                              |
+| ------------------------ | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `specs-extractor`        | Phase 1 — Knowledge Extraction    | `deep-research-t1` + `requirements-extractor` + `knowledge-management`                                                       | Source architecture specs (one per dimension), MGPC + RTM, seeded platform-divergence catalogue                       |
+| `decisions-generator`    | Phase 2 — Decisions               | `adversarial-thinking` + `deep-research-t1`                                                                                  | Stress-tested ADRs; atomic cross-reference updates across the document set                                            |
+| `target-specs-generator` | Phase 3 — Target Specifications   | `adversarial-self-refine` + `deep-research-t1` + `requirements-extractor`                                                    | `spec.md` / `plan.md` / `tasks.md` triplet per unblocked modernization phase, each refined to convergence             |
+| `target-code-refiner`    | Phase 4 — Modernization Execution | `ai-modernization` (per-batch loop) + `adversarial-self-refine` + `deep-research-t1`                                         | Verified target artifacts with traceability; coverage and semantic-verification reports; explicit loop-backs          |
+| `ai-modernization`       | Spine — Phases 0 → 5              | Provides per-batch execution rules, traceability format, coverage-validator patterns, semantic trap catalogue, directory map | End-to-end modernization reference, plus Phase-0 and Phase-5 playbook content consumed by the four phase macro-skills |
+
+Each macro-skill is described in full in
+[Appendix I.3](#appendix-i--agent-integration). The important point
+here is compositional: every macro-skill is under one page of
+coordination logic, and every line of methodology it relies on lives
+in a skill that can be updated in one place.
+
+### Composition diagram
+
+```mermaid
+---
+config:
+  flowchart:
+    htmlLabels: true
+---
+flowchart TB
+    subgraph SRC["Source repository (read-only) + SME inputs"]
+      SRC_R["source code"]
+      SRC_D["domain docs"]
+      SRC_S["SME recordings"]
+    end
+
+    subgraph P1["Phase 1 — specs-extractor (macro)"]
+      P1_DR["deep-research-t1"]:::atomic
+      P1_KM["knowledge-management"]:::atomic
+      P1_RE["requirements-extractor"]:::atomic
+    end
+
+    subgraph P2["Phase 2 — decisions-generator (macro)"]
+      P2_DR["deep-research-t1"]:::atomic
+      P2_AT["adversarial-thinking"]:::atomic
+    end
+
+    subgraph P3["Phase 3 — target-specs-generator (macro)"]
+      P3_DR["deep-research-t1"]:::atomic
+      P3_RE["requirements-extractor"]:::atomic
+      P3_SR["adversarial-self-refine"]:::atomic
+    end
+
+    subgraph P4["Phase 4 — target-code-refiner (macro)"]
+      P4_AM["ai-modernization (per-batch loop)"]:::atomic
+      P4_SR["adversarial-self-refine"]:::atomic
+      P4_DR["deep-research-t1"]:::atomic
+    end
+
+    P5["Phase 5 — Hybrid Deployment"]:::phase
+
+    SRC ==> P1
+    P1 ==>|"architecture specs + MGPC +<br/>divergence catalogue"| P2
+    P2 ==>|"accepted ADRs"| P3
+    P3 ==>|"spec / plan / tasks"| P4
+    P4 ==>|"verified target artifacts"| P5
+
+    P4 -. "evidence invalidates ADR" .-> P2
+    P4 -. "evidence invalidates spec" .-> P3
+    P3 -. "deferred ADR needed" .-> P2
+
+    GF["AGENTS.md<br/>constitution.md<br/>skill library"]:::gov
+    GF -. consulted by every phase .-> P1
+    GF -. consulted by every phase .-> P2
+    GF -. consulted by every phase .-> P3
+    GF -. consulted by every phase .-> P4
+    GF -. consulted by every phase .-> P5
+
+    classDef atomic fill:#e0f2fe,stroke:#0369a1,stroke-width:1px,color:#0c4a6e;
+    classDef phase fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#0c1c4a;
+    classDef gov fill:#fef3c7,stroke:#b45309,stroke-width:2px,color:#3a1a00;
+```
+
+Solid arrows carry forward the artifact set each phase produces.
+Dashed arrows are loop-back edges triggered by evidence discovered in
+Phase 3 or Phase 4 — a deferred decision that now blocks work
+(Phase 3 → Phase 2), a Phase-4 finding that invalidates an accepted
+ADR (Phase 4 → Phase 2), or a Phase-4 finding that invalidates the
+phase spec itself (Phase 4 → Phase 3). These loop-backs are first-class
+behaviour, not exceptions.
+
+### Invocation modes (skill, wrapper, or dynamic spawn)
+
+The same macro-skill can be executed three ways; projects pick the
+lightest binding that meets their needs:
+
+| Mode                        | When to use                                                                       | How                                                                       |
+| --------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| **Main-thread direct**      | Interactive use; no isolation needed.                                             | `/macro-skill-name` slash command or description-based auto-invocation.   |
+| **Static subagent wrapper** | Session-wide persona; enforced tool whitelist; model pin; team-shared review.     | `@agent-name` or `claude --agent agent-name`; wrapper preloads the skill. |
+| **Dynamic subagent spawn**  | Parallel fan-out; one-shot isolation; dynamic task parameterisation at call time. | Orchestrator agent calls the `Agent` tool with a task description.        |
+
+Nested subagent spawning is forbidden on Claude Code (a subagent
+cannot spawn further subagents) and configurable but discouraged on
+Codex CLI. Orchestration therefore runs from the main thread or from a
+single top-level orchestrator agent; deeper work is decomposed into
+skills the orchestrator invokes in sequence or in parallel. The
+research supporting these constraints is in
+[Appendix K](#appendix-k--agent-architecture-in-2025-cli-coding-assistants).
+
+### What this buys the framework
+
+- **Single source of truth for every playbook.** Updating a skill
+  updates every invocation mode and every tool that honours it.
+- **Cross-platform portability by construction.** The playbooks run
+  unchanged on Claude Code, Codex CLI, Amp, Devin, Jules, or any
+  compliant Agent-Skills runtime; the per-platform wrapper layer is
+  the only thing that needs re-binding.
+- **Auditability.** A phase spec's claim to have run the adversarial
+  refine loop is verifiable — the transcript is retained, the skill
+  whose convergence signal was observed is named, and the wrapper
+  that enforced tool-whitelist and model pin is version-controlled.
+- **Stability of content under churn of runtime.** The 2025 CLI agent
+  landscape is moving quickly (Gemini CLI shipped subagents in
+  April 2026; Copilot shipped `/fleet` parallel spawning the same
+  month); the framework absorbs that churn at the wrapper layer,
+  without touching the playbooks.
 
 ---
 
@@ -873,7 +1069,7 @@ and repository topologies.
 
 | Release mode                  | When appropriate                                                           | Consequence                                                                     |
 | ----------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| **Big-bang, single cutover**  | Small and mid-scale projects; full regression coverage feasible            | Entire migration verified in one release; shortest timeline                     |
+| **Big-bang, single cutover**  | Small and mid-scale projects; full regression coverage feasible            | Entire modernization verified in one release; shortest timeline                 |
 | **Gradual coexistence**       | Large systems where full cutover risk is unacceptable                      | Source and target run side-by-side for months or years with a documented sunset |
 | **Incremental traffic shift** | Systems with a gateway, service mesh, or feature-flag layer                | A percentage of traffic is routed to the target; percentage increases over time |
 | **Read-first / write-later**  | Data-heavy systems where writes are the highest risk                       | Target serves reads while source remains authoritative for writes, then flipped |
@@ -887,9 +1083,9 @@ CI/CD pipelines, infrastructure-as-code (IaC) modules, and deployment manifests
 the accepted architecture prescribes. The Phase-1 dimensions and the Phase-2 decisions
 together determine the target topology.
 
-| Source topology  | Target topology   | Typical migration                                                            |
+| Source topology  | Target topology   | Typical modernization                                                        |
 | ---------------- | ----------------- | ---------------------------------------------------------------------------- |
-| 1 repository     | 1 repository      | Language or framework migration; near-identical shape preserved              |
+| 1 repository     | 1 repository      | Language or framework modernization; near-identical shape preserved          |
 | 1 repository     | _N_ repositories  | Monolith decomposition into services; one repo per service + shared libs     |
 | _N_ repositories | 1 repository      | Consolidation of legacy component repositories into a single modular target  |
 | _N_ repositories | _M_ repositories  | Full reshaping — service boundaries redrawn, new shared libraries extracted  |
@@ -927,7 +1123,7 @@ and the flow variant chosen in Phase 3.
 [Appendix C](#appendix-c--flow-variants) catalogues flow variants.
 
 The three core mechanisms (Traceability, Coverage Validation, Gap Resolution)
-apply unchanged to language migrations, framework shifts, monolith decompositions,
+apply unchanged to language modernizations, framework shifts, monolith decompositions,
 CLI ports, desktop-to-web moves, network-protocol library ports,
 data pipeline rewrites, stored-procedure extractions, and embedded / IoT modernisations.
 
@@ -937,14 +1133,14 @@ data pipeline rewrites, stored-procedure extractions, and embedded / IoT moderni
 
 The framework combines several established practices (decision records, requirements
 traceability, spec-driven development) with a small number of fundamental contributions
-that change what AI-assisted migration can do.
+that change what AI-assisted modernization can do.
 
 ### Fundamental contributions
 
 - **Completeness is a measurable property, not a claim.**
-  Traditional AI-assisted migration reports progress as "N% done" with no independent
+  Traditional AI-assisted modernization reports progress as "N% done" with no independent
   check. Here, every source element is in exactly one of three states
-  (covered / eliminated / unmatched), and the phase exit gate rejects the migration
+  (covered / eliminated / unmatched), and the phase exit gate rejects the modernization
   phase until the count of unmatched in-scope elements is zero.
   "Done" becomes a programmatically verifiable predicate.
 
@@ -958,30 +1154,30 @@ that change what AI-assisted migration can do.
 - **Generate-or-enhance, driven by coverage signals.**
   Unmatched or low-confidence coverage on an already-implemented target element
   triggers _correction or enhancement of that element_, not only generation of new
-  code. This breaks the one-shot ceiling of transpiler-style migration (where an
+  code. This breaks the one-shot ceiling of transpiler-style modernization (where an
   element once produced cannot be improved without re-running the whole translation)
   and the "no categorical signal" failure mode of purely agentic approaches
   (where nothing tells the agent _which_ element to revisit).
   The same cycle gracefully absorbs late-breaking source discoveries and
   newly-accepted decisions.
 
-- **Unified target-architecture and migration-strategy specification.**
+- **Unified target-architecture and modernization-strategy specification.**
   Phase 3 produces one spec set, not two. The question "what should this look like?"
   and the question "how do we migrate to it?" are answered in the same document,
-  which eliminates the drift that accumulates when architecture and migration plans
+  which eliminates the drift that accumulates when architecture and modernization plans
   are maintained separately.
 
 - **Platform-divergence catalogue as a living artifact.**
   A project-specific catalogue of source/target behavioural divergences is seeded in
   Phase 1 and grown in every later phase. It transforms semantic verification from
   ad-hoc review into a checklist-driven audit with falsifiable entries, and
-  prevents the same class of error from recurring across migration phases.
+  prevents the same class of error from recurring across modernization phases.
 
-- **Iterative, deferrable decisions bound to migration phases.**
+- **Iterative, deferrable decisions bound to modernization phases.**
   P1/P2 decisions can be accepted just-in-time, or in parallel with implementation,
   without blocking progress on unrelated phases. The RTM and the decision index
   keep the dependency graph explicit; a Phase-4 discovery can legitimately re-open
-  a Phase-2 decision without invalidating already-completed migration phases.
+  a Phase-2 decision without invalidating already-completed modernization phases.
 
 ### Standard benefits (delivered as side effects of the contributions above)
 
@@ -990,7 +1186,7 @@ that change what AI-assisted migration can do.
 - **Early error detection.** Errors are caught within the same session they are introduced,
   not during final integration.
 - **Test-coverage uplift for legacy systems.** The target ends with richer automated test
-  coverage than the source ever had — migration becomes a quality event, not a risk event.
+  coverage than the source ever had — modernization becomes a quality event, not a risk event.
 - **Flexible output topology.** The pipeline produces whatever set of repositories,
   CI/CD pipelines, infrastructure-as-code, and deployment manifests the accepted
   architecture prescribes — single-repo, one-to-many, many-to-one, or many-to-many.
@@ -1012,15 +1208,15 @@ Every real project should infer its own set.
 
 #### Structural dimensions (common to most systems)
 
-| Dimension                  | Captures                                            | Migration impact                      |
-| -------------------------- | --------------------------------------------------- | ------------------------------------- |
-| Call graph                 | Which elements call which others                    | Dependency order for migration        |
-| Data model / entity graph  | Tables, schemas, relationships, clusters            | Models required before business logic |
-| Module / package graph     | Import and include chains between packages          | Build order; circular-dependency risk |
-| File relationship graph    | Static include and dynamic load edges between files | File-level partitioning               |
-| Service dependency graph   | Inter-service calls                                 | Distributed-system migration order    |
-| Event / message flow graph | Producers, topics, subscribers                      | Event-driven migration order          |
-| Infrastructure dependency  | Services <-> infrastructure (DB, cache, queue)      | Cloud / platform migration            |
+| Dimension                  | Captures                                            | Migration impact                       |
+| -------------------------- | --------------------------------------------------- | -------------------------------------- |
+| Call graph                 | Which elements call which others                    | Dependency order for modernization     |
+| Data model / entity graph  | Tables, schemas, relationships, clusters            | Models required before business logic  |
+| Module / package graph     | Import and include chains between packages          | Build order; circular-dependency risk  |
+| File relationship graph    | Static include and dynamic load edges between files | File-level partitioning                |
+| Service dependency graph   | Inter-service calls                                 | Distributed-system modernization order |
+| Event / message flow graph | Producers, topics, subscribers                      | Event-driven modernization order       |
+| Infrastructure dependency  | Services <-> infrastructure (DB, cache, queue)      | Cloud / platform modernization         |
 
 #### Domain-specific dimensions (examples)
 
@@ -1125,43 +1321,43 @@ decisions.
 
 **Summary metrics.**
 
-| Metric                                   | Value                                                                                     |
-| ---------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Source lines of code                     | ~18,600                                                                                   |
-| Source files                             | 138                                                                                       |
-| Database tables                          | 35 (31 active, 4 deprecated / eliminated)                                                 |
-| Plugin hooks                             | 24                                                                                        |
-| Inbound API endpoints                    | 17 REST, 40+ RPC                                                                          |
-| Working sessions                         | 19                                                                                        |
-| Dimension specifications                 | 15 (architecture root + per-dimension documents)                                          |
-| Phase specifications                     | 6                                                                                         |
-| Architecture decisions                   | 19                                                                                        |
-| Automated tests at completion            | 1,474 (unit + integration + end-to-end)                                                   |
-| Platform-divergence entries catalogued   | 40 categories, 600+ affected call sites                                                   |
-| Integration pipelines verified           | 8                                                                                         |
-| Final structural coverage                | 100% (458 / 458 in-scope elements)                                                        |
-| Eliminated source elements               | 27+                                                                                       |
-| Security modernisations during migration | Password-hash upgrade, credential encryption, prepared statements, CSRF, security headers |
+| Metric                                       | Value                                                                                     |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Source lines of code                         | ~18,600                                                                                   |
+| Source files                                 | 138                                                                                       |
+| Database tables                              | 35 (31 active, 4 deprecated / eliminated)                                                 |
+| Plugin hooks                                 | 24                                                                                        |
+| Inbound API endpoints                        | 17 REST, 40+ RPC                                                                          |
+| Working sessions                             | 19                                                                                        |
+| Dimension specifications                     | 15 (architecture root + per-dimension documents)                                          |
+| Phase specifications                         | 6                                                                                         |
+| Architecture decisions                       | 19                                                                                        |
+| Automated tests at completion                | 1,474 (unit + integration + end-to-end)                                                   |
+| Platform-divergence entries catalogued       | 40 categories, 600+ affected call sites                                                   |
+| Integration pipelines verified               | 8                                                                                         |
+| Final structural coverage                    | 100% (458 / 458 in-scope elements)                                                        |
+| Eliminated source elements                   | 27+                                                                                       |
+| Security modernizations during modernization | Password-hash upgrade, credential encryption, prepared statements, CSRF, security headers |
 
 **Phase 1 — Source architecture specifications.**
 
-| Path                                            | Content                                                              |
-| ----------------------------------------------- | -------------------------------------------------------------------- |
-| specs/architecture/01-architecture.md           | Application layering, patterns, request lifecycle                    |
-| specs/architecture/02-database.md               | Entity / schema dimension                                            |
-| specs/architecture/03-api-routing.md            | Inbound API contract surface                                         |
-| specs/architecture/04-frontend.md               | Frontend / backend coupling                                          |
-| specs/architecture/05-plugin-system.md          | Plugin / extension-point graph                                       |
-| specs/architecture/06-security.md               | Security surface                                                     |
-| specs/architecture/07-caching-performance.md    | Caching, concurrency, scheduling                                     |
-| specs/architecture/08-deployment.md             | Deployment topology                                                  |
-| specs/architecture/09-source-index.md           | File relationship graph (roles, dependencies, annotations)           |
-| specs/architecture/10-migration-dimensions.md   | Call-graph communities; cross-dimension synthesis                    |
-| specs/architecture/11-business-rules.md         | Business-rule inventory                                              |
-| specs/architecture/12-testing-strategy.md       | Test-category matrix                                                 |
-| specs/architecture/13-decomposition-map.md      | Source-element -> target-module decomposition                        |
-| specs/architecture/14-semantic-discrepancies.md | 40-category discrepancy taxonomy, semantic traps, pipeline contracts |
-| specs/architecture/15-sme-review.md             | Feature inventory from SME walkthrough                               |
+| Path                                              | Content                                                              |
+| ------------------------------------------------- | -------------------------------------------------------------------- |
+| specs/architecture/01-architecture.md             | Application layering, patterns, request lifecycle                    |
+| specs/architecture/02-database.md                 | Entity / schema dimension                                            |
+| specs/architecture/03-api-routing.md              | Inbound API contract surface                                         |
+| specs/architecture/04-frontend.md                 | Frontend / backend coupling                                          |
+| specs/architecture/05-plugin-system.md            | Plugin / extension-point graph                                       |
+| specs/architecture/06-security.md                 | Security surface                                                     |
+| specs/architecture/07-caching-performance.md      | Caching, concurrency, scheduling                                     |
+| specs/architecture/08-deployment.md               | Deployment topology                                                  |
+| specs/architecture/09-source-index.md             | File relationship graph (roles, dependencies, annotations)           |
+| specs/architecture/10-modernization-dimensions.md | Call-graph communities; cross-dimension synthesis                    |
+| specs/architecture/11-business-rules.md           | Business-rule inventory                                              |
+| specs/architecture/12-testing-strategy.md         | Test-category matrix                                                 |
+| specs/architecture/13-decomposition-map.md        | Source-element -> target-module decomposition                        |
+| specs/architecture/14-semantic-discrepancies.md   | 40-category discrepancy taxonomy, semantic traps, pipeline contracts |
+| specs/architecture/15-sme-review.md               | Feature inventory from SME walkthrough                               |
 
 **Phase 1 — Requirements document.**
 
@@ -1170,7 +1366,7 @@ decisions.
 | specs/architecture/00-project-charter.md | Mission, Goals, Premises, Constraints, requirements traceability matrix (Agile container) |
 
 **Phase 2 — Decision records.**
-`docs/decisions/0001-migration-flow-variant.md` through `0019-preferences-modal-pattern.md`,
+`docs/decisions/0001-modernization-flow-variant.md` through `0019-preferences-modal-pattern.md`,
 plus `docs/decisions/README.md` (index and dependency graph) and
 `docs/decisions/compliance-review-response.md` (cross-decision review).
 
@@ -1406,17 +1602,25 @@ a rollback plan, and verification criteria.
 
 ### Appendix I — Agent Integration
 
-This appendix gathers the two artifacts that connect the framework to the
-underlying AI agent: the governance file at the repository root, and the
-library of reusable skills.
+This appendix gathers the artifacts that connect the framework to the
+underlying AI agent: the governance file at the repository root, the
+library of reusable skills (atomic and macro), and the thin
+Claude-specific agent wrappers that bind those skills to one runtime.
+
+The structural background — why the framework splits methodology
+(skills) from runtime binding (agent wrappers), and why macro-skills
+compose atomic skills rather than reimplementing them — is covered in
+the main document's [Skill / Agent Composition](#skill--agent-composition)
+section. This appendix is the inventory and the authoring rules.
 
 #### I.1 Governance file — AGENTS.md and alternatives
 
 AGENTS.md is the cross-tool open-source standard for AI-agent instructions,
-stewarded by the Linux Foundation's Agentic AI Foundation and honoured by most
-modern AI coding agents. A single AGENTS.md at the repository root is the
-recommended container for both agent instructions and the project's ordered
-governing principles.
+stewarded since 9 December 2025 by the Linux Foundation's Agentic AI
+Foundation (founding members AWS, Anthropic, Block, Bloomberg, Cloudflare,
+Google, Microsoft, OpenAI). It is honoured by most modern AI coding agents.
+A single AGENTS.md at the repository root is the recommended container for
+both agent instructions and the project's ordered governing principles.
 
 Projects with a pre-existing governance convention may substitute an equivalent
 container, provided agents can find it. Common alternatives:
@@ -1435,24 +1639,180 @@ The framework is neutral over the physical container — it only requires that
 principles be version-controlled, ordered, and cited by every phase that
 depends on them.
 
-#### I.2 Skill library
+**On Claude Code and AGENTS.md.** As of late 2025, Claude Code does not
+read `AGENTS.md` natively; it reads `CLAUDE.md`. The Anthropic-documented
+pattern is a one-line `CLAUDE.md` containing `@AGENTS.md`, which imports
+the cross-tool file. The reference project uses this pattern. Other
+vendors (Codex CLI, Cursor, Windsurf, Amp, Devin, Jules, Kimi, Zed)
+read AGENTS.md directly. See [Appendix K](#appendix-k--agent-architecture-in-2025-cli-coding-assistants)
+for the full cross-vendor table.
 
-The framework is implemented on top of a library of reusable skills.
-Copies are maintained in `.agents/skills/` within this project for self-containment.
+#### I.2 Skill library — atomic skills
 
-| Skill                      | Purpose                                                                                                         |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `requirements-extractor`   | Two-phase (bottom-up Chain-of-Knowledge -> top-down intent) Mission / Goals / Premises / Constraints derivation |
-| `deep-research-t1`         | Tier-1 deep research pipeline for grounding decisions in authoritative sources                                  |
-| `knowledge-management`     | Chain-of-Knowledge saturation across a large corpus                                                             |
-| `document-ingestion`       | Ingestion of transcripts, video frames, spreadsheets into structured knowledge                                  |
-| `adversarial-thinking`     | Multi-candidate divergent design with pairwise comparison                                                       |
-| `adversarial-self-refine`  | Independent reviewer / author loop for iterative output refinement                                              |
-| `continuation-and-handoff` | Multi-session continuity and checkpoint protocols                                                               |
-| `selecting-pe-methods`     | Selection of prompt-engineering method per task archetype                                                       |
+Atomic skills are single-responsibility playbooks usable in any project.
+They are copied into `.agents/skills/` within this project for
+self-containment, and are consumable by any runtime that honours the
+Agent Skills open standard (Anthropic, 18 December 2025).
 
-Skills are consumed by invoking them through the agent skill loader;
-each skill is self-describing and includes termination conditions and anti-patterns.
+| Skill                     | Purpose                                                                                                         |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `requirements-extractor`  | Two-phase (bottom-up Chain-of-Knowledge -> top-down intent) Mission / Goals / Premises / Constraints derivation |
+| `deep-research-t1`        | Tier-1 deep research pipeline for grounding decisions in authoritative sources                                  |
+| `knowledge-management`    | Chain-of-Knowledge saturation across a large corpus                                                             |
+| `adversarial-thinking`    | Multi-candidate divergent design with attacker / defender stress-testing and pairwise comparison                |
+| `adversarial-self-refine` | Isolated CRITIC / AUTHOR loop for iterative output refinement with emergent termination via author defence      |
+
+Each atomic skill is self-describing and includes its own termination
+conditions and anti-patterns. Atomic skills must **not** reference
+macro-skills; the dependency direction is macro → atomic only.
+
+#### I.3 Skill library — macro-skills (phase compositions)
+
+Macro-skills are framework-specific compositions that orchestrate atomic
+skills into one phase's worth of work. Each macro-skill is under one
+page of coordination logic; every line of methodology it invokes lives
+in an atomic skill.
+
+| Macro-skill              | Phase                             | Composes                                                                                                                     | Produces                                                                                                                    |
+| ------------------------ | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `specs-extractor`        | Phase 1 — Knowledge Extraction    | `deep-research-t1` + `requirements-extractor` + `knowledge-management`                                                       | Source architecture specs (one per dimension), MGPC + RTM, seeded platform-divergence catalogue                             |
+| `decisions-generator`    | Phase 2 — Decisions               | `adversarial-thinking` + `deep-research-t1`                                                                                  | Stress-tested ADRs with divergent candidates + attacker/defender rounds; atomic cross-reference updates                     |
+| `target-specs-generator` | Phase 3 — Target Specifications   | `adversarial-self-refine` + `deep-research-t1` + `requirements-extractor`                                                    | `spec.md` / `plan.md` / `tasks.md` triplet per unblocked modernization phase, each refined to convergence                   |
+| `target-code-refiner`    | Phase 4 — Modernization Execution | `ai-modernization` (per-batch loop) + `adversarial-self-refine` + `deep-research-t1`                                         | Verified target artifacts with traceability; coverage + semantic verification reports; explicit loop-backs                  |
+| `ai-modernization`       | Spine — Phases 0 → 5              | Provides per-batch execution rules, traceability format, coverage-validator patterns, semantic trap catalogue, directory map | End-to-end modernization reference, plus Phase-0 and Phase-5 playbook content consumed by the four phase macro-skills above |
+
+**Composition invariant.** A macro-skill contains only (a) when-to-use
+guidance, (b) input / output contract, (c) a numbered ∆-step sequence
+that invokes atomic skills, (d) termination signals, (e) anti-patterns.
+Any methodology that leaks from an atomic skill into a macro-skill is a
+defect — fix by moving the content back into the atomic skill.
+
+**Loop-backs as first-class edges.** Macro-skills explicitly enumerate
+their loop-back edges. For example, `target-code-refiner` (Phase 4)
+declares two loop-back triggers: semantic-verification failure rooted
+in an ADR's assumption → re-enter `decisions-generator` and supersede
+the ADR with a forward link; coverage gap that reveals a wrong phase
+spec → re-enter `target-specs-generator` and revise the triplet.
+Loop-backs are the mechanism by which Phase-4 evidence feeds back into
+Phases 2 and 3; they are not exceptions.
+
+#### I.4 Claude agent wrappers — thin runtime harnesses
+
+Agent wrappers live in `.claude/agents/*.md` and carry only
+Claude-Code-specific runtime concerns. Each file is ≤ 80 lines of body,
+preloads one macro-skill via the `skills:` frontmatter, and declares
+what it does and does not do. **None of these files carries
+methodology content** — that would couple the playbook to one runtime.
+
+| Wrapper                         | Primary preloaded skill  | Phase | Model | Isolation | Purpose                                                    |
+| ------------------------------- | ------------------------ | :---: | :---: | :-------: | ---------------------------------------------------------- |
+| `modernization-orchestrator.md` | `ai-modernization`       | 0 – 5 | opus  |     —     | End-to-end phase detection and dispatch                    |
+| `specs-extractor.md`            | `specs-extractor`        |   1   | opus  |     —     | Source knowledge extraction (dimensions, MGPC, divergence) |
+| `decisions-generator.md`        | `decisions-generator`    |   2   | opus  |     —     | ADR drafting via adversarial stress-testing                |
+| `target-specs-generator.md`     | `target-specs-generator` |   3   | opus  |     —     | Per-phase spec / plan / tasks triplet with critic / author |
+| `target-code-refiner.md`        | `target-code-refiner`    |   4   | opus  | worktree  | Per-batch execution, coverage, semantic verification       |
+
+Each wrapper also preloads the sub-skills its macro-skill composes with
+(`deep-research-t1`, `adversarial-thinking`, `adversarial-self-refine`,
+`requirements-extractor`, `knowledge-management`,
+`requirements-extractor`, `knowledge-management`), so those sub-skills
+are available without additional discovery round-trips during a
+multi-step run.
+
+#### I.5 Contrast with the pre-Skills-GA era
+
+Before Agent Skills reached GA on 16 October 2025, the only mechanism
+for packaging a specialised agent with its persona, methodology,
+tool whitelist, and model choice was a static markdown file per agent
+(Claude's `.claude/agents/*.md`, Cursor's `.cursor/agents/*.md`,
+Copilot VS Code chatmodes, Windsurf personas). Methodology therefore
+lived in the agent file's body. That pattern is still visible in the
+majority of public examples and in most community blog posts.
+
+| Axis                            | Pre-Skills-GA pattern                                                | Post-Skills-GA pattern (this framework)                                                                                                                                                                    |
+| ------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Where methodology lives**     | Inside the agent file body (`.claude/agents/<name>.md`, ~500+ lines) | Inside the skill file (`.agents/skills/<name>/SKILL.md`); agent file is a ≤ 80-line runtime harness                                                                                                        |
+| **Portability across runtimes** | None — each vendor's agent file schema is incompatible               | Skills portable across every Agent-Skills-compliant runtime (Claude Code, Codex CLI, Amp, Devin, Jules, Kimi)                                                                                              |
+| **Single source of truth**      | Duplicated per-vendor if the project targets multiple tools          | One skill; the wrapper layer is replaced per vendor                                                                                                                                                        |
+| **Update cost**                 | Edit every vendor's agent file                                       | Edit one skill; every invocation mode benefits                                                                                                                                                             |
+| **Review surface**              | Long agent file; hard to diff                                        | Short wrapper diff + skill diff tracked separately                                                                                                                                                         |
+| **Nested delegation**           | Attempted via agent-body instructions; constrained by runtime        | Explicit: macro-skill orchestrates from main thread; wrapper carries no orchestration logic; Claude's no-nested-subagent rule is not a problem because the skill invokes other skills, not other subagents |
+| **Composition**                 | Copy-paste between agent files                                       | Macro-skill lists composed skills in frontmatter; one compositional graph                                                                                                                                  |
+| **Auditability**                | Agent file is reviewed; skill-use is implicit                        | Skill convergence signal and wrapper tool-whitelist are both version-controlled                                                                                                                            |
+| **Tool-whitelist enforcement**  | Declared in agent file, same file as methodology — easy to skip      | Enforced by wrapper frontmatter; methodology is in a file that does not have authority to change tools                                                                                                     |
+
+The framework adopts the post-Skills-GA pattern universally. Appendix K
+collects the 2025 cross-vendor research that makes this choice
+defensible: skills are now portable (Agent Skills published as an open
+standard on 18 December 2025), agent file formats diverge across
+vendors (Claude's MD+YAML vs Codex's TOML vs Cursor's MD+YAML-with-
+different-fields vs Copilot's `.agent.md`), and nested subagent spawning
+is forbidden or tightly gated on every mainstream runtime.
+
+#### I.6 Authoring rules
+
+1. **Methodology in skills, runtime in wrappers.** If a claim can be
+   expressed in plain Markdown and would be useful to an agent on any
+   runtime, it goes in a skill. If it depends on `.claude/*` paths, the
+   `Agent` tool, or the `claude --agent` launch semantics, it goes in a
+   wrapper.
+2. **Atomic before macro.** When writing a new playbook, first check
+   whether the logic belongs in an existing atomic skill; only escalate
+   to a new macro-skill if the work is genuinely a phase-scale
+   composition specific to this framework.
+3. **Macro-skills declare composition in frontmatter.** The
+   `composes: [ ... ]` list is the dependency declaration; CI can use
+   it to verify no macro-skill references a non-existent atomic skill.
+4. **Wrappers preload skills, not instructions.** The wrapper's
+   `skills:` frontmatter is how content arrives in the subagent's
+   context; the body is only the runtime-binding rationale plus the
+   return contract.
+5. **Loop-backs are typed edges, not prose.** A macro-skill's
+   Termination section lists loop-back signals (BLOCKED-ADR,
+   BLOCKED-SPEC, REOPENED, SESSION-END) and the target skill each
+   signal routes to. Prose-only descriptions of loop-back behaviour
+   are a defect.
+6. **Consistency rule applies to this appendix.** When the macro-skill
+   inventory, atomic-skill inventory, or wrapper inventory changes,
+   the corresponding table in `.agents/skills/README.md` and the
+   `AGENTS.md` skill index MUST be updated in the same commit. Partial
+   updates create contradictions.
+7. **No inlining of atomic playbooks.** A macro-skill that begins to
+   paste in deep-research or adversarial-thinking steps is a defect.
+   The macro-skill is a sequencer, not a repository.
+
+#### I.7 Directory layout (reference project)
+
+```text
+.agents/skills/
+├── README.md                       ← skill inventory + authoring notes
+│
+├── adversarial-self-refine/        ← atomic
+├── adversarial-thinking/           ← atomic
+├── deep-research-t1/               ← atomic
+├── knowledge-management/           ← atomic
+├── requirements-extractor/         ← atomic
+│
+├── ai-modernization/                   ← spine (Phases 0 → 5 reference)
+│
+├── specs-extractor/                ← macro, Phase 1
+├── decisions-generator/            ← macro, Phase 2
+├── target-specs-generator/         ← macro, Phase 3
+└── target-code-refiner/            ← macro, Phase 4
+
+.claude/agents/
+├── README.md                       ← wrapper pattern + inventory
+├── modernization-orchestrator.md       ← end-to-end
+├── specs-extractor.md              ← wraps specs-extractor skill
+├── decisions-generator.md          ← wraps decisions-generator skill
+├── target-specs-generator.md       ← wraps target-specs-generator skill
+└── target-code-refiner.md          ← wraps target-code-refiner skill
+```
+
+Other AI runtimes replace `.claude/agents/` with their native wrapper
+layer (Codex `.codex/agents/*.toml`, Cursor `.cursor/agents/*.md`,
+etc.); the `.agents/skills/` tree is left untouched and is consumed
+directly.
 
 ---
 
@@ -1466,7 +1826,7 @@ Diagrams are given in Mermaid; text slides use short theses only.
 
 #### Slide 1 — Title
 
-**AI-Assisted Software Migration & Modernization**
+**AI-Assisted Software Modernization & Modernization**
 
 An auditable, measurable approach for LLM-driven migrations and modernizations.
 
@@ -1481,7 +1841,7 @@ An auditable, measurable approach for LLM-driven migrations and modernizations.
 **What you get**
 
 - Complete, reviewable source knowledge — the starting point for every decision
-- Explicitly accepted architecture and migration decisions with named stakeholders
+- Explicitly accepted architecture and modernization decisions with named stakeholders
 - Target code that is traceable back to source, to specs, and to decisions
 - Progressive deployment alongside the source system until full cutover
 
@@ -1489,21 +1849,21 @@ An auditable, measurable approach for LLM-driven migrations and modernizations.
 
 #### Slide 2 — The four pillars
 
-Four concepts turn AI-assisted migration from a one-shot translation into an
+Four concepts turn AI-assisted modernization from a one-shot translation into an
 **auditable, measurable modernization** process. Each pillar answers one
 hazard that LLM-driven migrations routinely fail on.
 
-| Pillar                             | Hazard it neutralizes                                        | What stakeholders gain                                                                                     |
-| ---------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
-| **① Dimensions**                   | Migration planned on the wrong axis; blind spots in source   | Structured source model; migration order that respects reality                                             |
-| **② Traceability**                 | Target code of unknown provenance; no way to review fidelity | **SMEs can review fast** — every target element cites source + spec + decision                             |
-| **③ Coverage Validation**          | "N% done" self-assessments; silent omissions                 | "Done" is a **measurable predicate** — per-dimension, auditable                                            |
-| **④ Modernization-Gap Resolution** | Errors only surface in production; target cannot be enhanced | **Confidence** — gaps are detected and the target is iteratively corrected or enhanced, not only generated |
+| Pillar                             | Hazard it neutralizes                                          | What stakeholders gain                                                                                     |
+| ---------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **① Dimensions**                   | Modernization planned on the wrong axis; blind spots in source | Structured source model; modernization order that respects reality                                         |
+| **② Traceability**                 | Target code of unknown provenance; no way to review fidelity   | **SMEs can review fast** — every target element cites source + spec + decision                             |
+| **③ Coverage Validation**          | "N% done" self-assessments; silent omissions                   | "Done" is a **measurable predicate** — per-dimension, auditable                                            |
+| **④ Modernization-Gap Resolution** | Errors only surface in production; target cannot be enhanced   | **Confidence** — gaps are detected and the target is iteratively corrected or enhanced, not only generated |
 
 > **Phases run concurrently and can re-enter one another.**
 > The five phases that follow are not strictly sequential. Work in Phase 4
 > routinely triggers short returns to Phase 2 (accept a deferred decision),
-> Phase 3 (generate the next migration-phase spec), or Phase 1
+> Phase 3 (generate the next modernization-phase spec), or Phase 1
 > (a new dimension or divergence is discovered). Phase 5 overlaps Phase 4
 > once enough target is ready to deploy alongside the source.
 
@@ -1516,7 +1876,7 @@ Slide 3 — **Dimensions** · Slide 4 — **Traceability, Coverage, Gap Resoluti
 
 A _dimension_ is a structural axis along which **source architecture elements**
 are related. Dimensions are **discovered per project**, not prescribed,
-and they determine migration order, partitioning, and what "complete" means.
+and they determine modernization order, partitioning, and what "complete" means.
 
 **Examples** (named by the relationship they capture):
 
@@ -1590,7 +1950,7 @@ flowchart TB
 
     subgraph P3 ["**Phase 3 · Target Specifications**"]
       direction TB
-      L3[LLM drafts target-architecture<br/>and migration specs]:::ai --> H3[Architect reviews]:::human
+      L3[LLM drafts target-architecture<br/>and modernization specs]:::ai --> H3[Architect reviews]:::human
       H3 --> O3[Migration-phase spec sets]:::art
     end
 
@@ -1612,7 +1972,7 @@ flowchart TB
 
     %% Mid-phase re-entries — phases are NOT strictly sequential
     P4 == deferred decision ==> P2
-    P4 == next migration-phase spec ==> P3
+    P4 == next modernization-phase spec ==> P3
     P4 == new dimension or divergence ==> P1
     P5 -. overlap: target runs alongside source .-> P4
 
@@ -1676,7 +2036,7 @@ plus a decision index linking them together.
 **Reference project example artifacts:**
 
 - `docs/decisions/README.md` — decision index and dependency graph
-- `docs/decisions/0001-migration-flow-variant.md` — a P0 decision (flow variant)
+- `docs/decisions/0001-modernization-flow-variant.md` — a P0 decision (flow variant)
 - `docs/decisions/0002-python-framework.md` — a P0 decision (target framework)
 - `docs/decisions/0014-feed-parsing-library.md` — a P1 decision (accepted just-in-time)
 
@@ -1684,7 +2044,7 @@ plus a decision index linking them together.
 
 #### Slide 8 — Phase 3 · Target Specifications
 
-Each migration phase gets a spec set of three files that describe the same
+Each modernization phase gets a spec set of three files that describe the same
 target scope from two angles:
 
 - **Migration-phase spec** — behaviour, functional requirements, acceptance criteria
@@ -1694,7 +2054,7 @@ target scope from two angles:
 - **Migration-phase tasks** — actionable steps with source cross-references
   (_"the work to do"_)
 
-Generated **iteratively**: one migration phase at a time; decisions that are
+Generated **iteratively**: one modernization phase at a time; decisions that are
 still deferred trigger a short loop back to Phase 2.
 
 **Reference project example artifacts:**
@@ -1731,7 +2091,7 @@ flowchart TB
 
 ---
 
-#### Slide 10 — Phase 4 · Migration Execution (per migration-phase loop)
+#### Slide 10 — Phase 4 · Modernization Execution (per modernization-phase loop)
 
 ```mermaid
 ---
@@ -1847,11 +2207,11 @@ config:
 flowchart TB
     P1["**Phase 1**<br/>Knowledge Extraction"]:::phase ==>|source architecture specs<br/>requirements + RTM<br/>divergence catalogue| P2["**Phase 2**<br/>Decisions"]:::phase
     P2 ==>|decision records<br/>decision index| P3["**Phase 3**<br/>Target Specs"]:::phase
-    P3 ==>|migration-phase specs<br/>plans + tasks| P4["**Phase 4**<br/>Modernisation"]:::phase
+    P3 ==>|modernization-phase specs<br/>plans + tasks| P4["**Phase 4**<br/>Modernisation"]:::phase
     P4 ==>|target artifacts<br/>traceability<br/>coverage + semantic reports| P5["**Phase 5**<br/>Hybrid Deployment"]:::phase
     P4 -. new divergences .-> P1
     P4 -. deferred decision needed .-> P2
-    P4 -. next migration-phase .-> P3
+    P4 -. next modernization-phase .-> P3
 
     GF["**AGENTS.md**<br/>Governing Principles<br/>Skills"]:::gov
     GF -. consulted by every phase .-> P1
@@ -1926,12 +2286,12 @@ Two links:
 
 ---
 
-#### Slide 18 — Example artifact: a migration-phase spec
+#### Slide 18 — Example artifact: a modernization-phase spec
 
 ```markdown
 # specs/001-foundation/spec.md
 
-## Migration Phase 1: Foundation (walking skeleton)
+## Modernization Phase 1: Foundation (walking skeleton)
 
 ### What the target looks like
 
@@ -1964,15 +2324,15 @@ Two links:
 - **Completeness as a predicate.** Every source element is covered, eliminated, or unmatched.
 - **Dimensional coverage, not file coverage.** Per-axis reporting, not one number.
 - **Generate-or-enhance.** Coverage signals drive correction, not only generation.
-- **Unified target-arch and migration-strategy specs.** No drift between two sets of docs.
+- **Unified target-arch and modernization-strategy specs.** No drift between two sets of docs.
 - **Platform-divergence catalogue.** Ad-hoc review becomes checklist-driven audit.
-- **Deferrable decisions.** P1/P2 decisions bound to migration phases, not inception.
+- **Deferrable decisions.** P1/P2 decisions bound to modernization phases, not inception.
 
 ---
 
 #### Slide 20 — Applicability
 
-| System type               | Primary relationships that drive migration       |
+| System type               | Primary relationships that drive modernization   |
 | ------------------------- | ------------------------------------------------ |
 | Web application           | Data — table joins, foreign keys                 |
 | CLI tool                  | Code — caller / callee                           |
@@ -2007,9 +2367,9 @@ modernisation (not just translation), projects where "completeness" must be audi
 1. **Install the governance file** (AGENTS.md) and skill library at the repository root.
 2. **Run Phase 1** — deep research on the source + first pass at dimensions.
 3. **Run Phase 2** — accept P0 decisions only; defer the rest.
-4. **Run Phase 3** for the first unblocked migration phase (often a walking skeleton).
+4. **Run Phase 3** for the first unblocked modernization phase (often a walking skeleton).
 5. **Run Phase 4** — implement, validate, verify, test.
-6. **Iterate** — later migration phases trigger loops back to Phase 2 when needed.
+6. **Iterate** — later modernization phases trigger loops back to Phase 2 when needed.
 7. **Run Phase 5** — hybrid deployment once enough target is ready.
 
 ---
@@ -2019,4 +2379,288 @@ modernisation (not just translation), projects where "completeness" must be audi
 > Dimensions make the source system inspectable;
 > traceability makes the target auditable;
 > coverage and gap-resolution together make **completeness** a measurable, achievable property —
-> which is what turns AI-assisted migration into something you can actually ship.
+> which is what turns AI-assisted modernization into something you can actually ship.
+
+---
+
+#### Slide 24 — Skill / Agent Composition
+
+The framework's methodology lives in a library of **skills** (portable,
+cross-tool). Each phase has a single-entry **macro-skill** that
+orchestrates atomic skills; a thin **wrapper** per Claude agent file
+adds runtime concerns only.
+
+```mermaid
+---
+config:
+  flowchart:
+    htmlLabels: true
+---
+flowchart LR
+    subgraph P1["Phase 1<br/>specs-extractor"]
+      A1["deep-research-t1"]:::atomic
+      A2["requirements-extractor"]:::atomic
+      A3["knowledge-management"]:::atomic
+    end
+    subgraph P2["Phase 2<br/>decisions-generator"]
+      B1["adversarial-thinking"]:::atomic
+      B2["deep-research-t1"]:::atomic
+    end
+    subgraph P3["Phase 3<br/>target-specs-generator"]
+      C1["adversarial-self-refine"]:::atomic
+      C2["deep-research-t1"]:::atomic
+    end
+    subgraph P4["Phase 4<br/>target-code-refiner"]
+      D1["ai-modernization"]:::atomic
+      D2["adversarial-self-refine"]:::atomic
+      end
+
+    P1 ==> P2 ==> P3 ==> P4 ==> P5["Phase 5"]:::phase
+    P4 -. "evidence<br/>invalidates ADR" .-> P2
+    P4 -. "evidence<br/>invalidates spec" .-> P3
+    P3 -. "deferred ADR<br/>needed" .-> P2
+
+    classDef atomic fill:#e0f2fe,stroke:#0369a1,stroke-width:1px,color:#0c4a6e;
+    classDef phase fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#0c1c4a;
+```
+
+- Playbook in the **skill** (portable, one file, cross-tool).
+- Runtime (tools, model, isolation) in the **wrapper** (Claude-specific).
+- Update a skill → every invocation mode and every runtime benefits.
+- Remove a wrapper → skills still work; invoke directly in main thread.
+
+---
+
+#### Slide 25 — Pre-Skills-GA vs Post-Skills-GA pattern
+
+Before Anthropic's Agent Skills GA (16 October 2025) and the open-standard
+publication (18 December 2025), static per-agent markdown files carried
+the full playbook in their body. After GA, methodology moves into skills
+and the agent file becomes a thin runtime harness.
+
+| Axis                         | Pre-Skills-GA                            | Post-Skills-GA (this framework)                                        |
+| ---------------------------- | ---------------------------------------- | ---------------------------------------------------------------------- |
+| **Methodology lives in**     | Agent file body (~500 lines)             | `SKILL.md` (portable)                                                  |
+| **Portability across tools** | None — per-vendor schema                 | Yes — Agent Skills standard                                            |
+| **Single source of truth**   | Duplicated per-vendor                    | One skill; wrapper replaced per vendor                                 |
+| **Update cost**              | Edit every vendor's agent file           | Edit one skill                                                         |
+| **Review surface**           | Long agent file; hard to diff            | Short wrapper diff + skill diff                                        |
+| **Nested delegation**        | Instructed in prose; runtime-constrained | Skills invoke skills; wrappers never nest (Claude forbids it anyway)   |
+| **Tool whitelist**           | Same file as methodology — easy to drift | Enforced by wrapper; methodology file has no authority to change tools |
+
+**What this buys the framework.** Content portability (skills run on
+Claude Code, Codex CLI, Amp, Devin, Jules, Kimi); audit evidence
+(convergence signals + wrapper tool-whitelist both version-controlled);
+stability of playbooks under CLI-landscape churn (Gemini CLI shipped
+subagents April 2026; Copilot shipped `/fleet` April 2026 — the
+framework absorbs that at the wrapper layer, not the playbook layer).
+
+See `docs/ai-assisted-modernization-architecture.md` §"Skill / Agent
+Composition" and Appendix I for inventory and authoring rules;
+Appendix K for the 2025 cross-vendor research.
+
+---
+
+### Appendix K — Agent Architecture in 2025 CLI Coding Assistants
+
+This appendix records the cross-vendor research that underpins the
+Skill / Agent Composition design. It is a reference appendix — a future
+reader should be able to verify that the design is defensible against
+the state of the CLI-agent ecosystem as of late 2025 / early 2026
+without re-running the research.
+
+The research was performed in December 2025 with fan-out across four
+parallel deep-research sub-agents (Claude Code agent system; OpenAI /
+Google / GitHub CLI agents; secondary-tier agents including Cursor,
+Windsurf, Amp, Zed, Devin, Jules, Kimi; AGENTS.md standard and the
+static-vs-dynamic paradigm debate). Citations are T1 (vendor primary
+sources — docs.claude.com, developers.openai.com, GitHub docs, Google
+Developers Blog, vendor doc sites) where available, T2 (reputable
+tech press) otherwise, T3 (community analysis) only when T1 is silent.
+
+#### K.1 Claude Code agent system (late 2025)
+
+- **Subagents** live at `.claude/agents/*.md` (project) or
+  `~/.claude/agents/` (user). Frontmatter: `name`, `description` required;
+  `tools`, `disallowedTools`, `model`, `permissionMode`, `maxTurns`,
+  `skills`, `mcpServers`, `hooks`, `memory`, `effort`, `isolation`,
+  `color` optional. Each runs in its own isolated context window. The
+  spawning tool is `Agent` (renamed from `Task` in v2.1.63; old name is
+  an alias). [T1 docs.claude.com/en/docs/claude-code/sub-agents]
+- **Subagents cannot spawn other subagents.** The platform filters the
+  `Agent` tool from subagent contexts; the docs state this three times
+  on the sub-agents page: "Subagents cannot spawn other subagents. If
+  your workflow requires nested delegation, use Skills or chain
+  subagents from the main conversation."
+  [T1 docs.claude.com/en/docs/claude-code/sub-agents]
+- **Skills** launched on 16 October 2025; published as an open
+  standard on 18 December 2025. They live at `.claude/skills/*/SKILL.md`
+  (or, portably, at `.agents/skills/*/SKILL.md`). Invocation is
+  "model-invoked" with progressive disclosure: only the YAML
+  `description` (~100 tokens) is pre-loaded; the full `SKILL.md` body
+  loads when Claude judges the skill relevant; bundled files load only
+  when referenced. [T1 anthropic.com/news/skills;
+  T1 anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills]
+- **Plugins** launched on 9 October 2025 (public beta). Plugins bundle
+  commands + subagents + skills + hooks + MCP servers via
+  `.claude-plugin/plugin.json`. Plugin wrappers are Claude-proprietary;
+  the Skills they contain are portable as Agent Skills.
+  [T1 anthropic.com/news/claude-code-plugins]
+- **AGENTS.md is not read natively** by Claude Code. The official
+  memory docs state: "Claude Code reads `CLAUDE.md`, not `AGENTS.md`.
+  If your repository already uses `AGENTS.md`, create a `CLAUDE.md`
+  that imports it." The recommended shim is `@AGENTS.md` as the first
+  line of `CLAUDE.md`. [T1 docs.claude.com/en/docs/claude-code/memory]
+
+#### K.2 Other CLI coding assistants (late 2025 / Q1 2026)
+
+- **OpenAI Codex CLI** reads AGENTS.md natively with hierarchical
+  discovery (`~/.codex/AGENTS.md` + git-root-to-cwd walk) and an
+  `AGENTS.override.md` extension. Subagents ship as TOML files under
+  `.codex/agents/*.toml`; spawning is gated by `agents.max_depth`
+  (default 1, explicitly discouraged from raising).
+  [T1 developers.openai.com/codex/guides/agents-md;
+  T1 developers.openai.com/codex/multi-agent]
+- **Google Gemini CLI** uses `GEMINI.md` natively; can read AGENTS.md
+  via the `context.fileName` config. Custom slash commands are TOML
+  under `.gemini/commands/`. Subagents shipped in April 2026 at
+  `.gemini/agents/*.md` with YAML frontmatter and `@agent-name`
+  invocation. [T1 github.com/google-gemini/gemini-cli;
+  T1 developers.googleblog.com/subagents-have-arrived-in-gemini-cli]
+- **GitHub Copilot** (CLI + Coding Agent) reads AGENTS.md since
+  28 August 2025 (GitHub Changelog). Custom agents for Copilot CLI
+  live at `.github/agents/*.agent.md` (MD + YAML). `/fleet` parallel
+  subagent dispatch shipped April 2026. VS Code has a separate
+  `.chatmode.md` convention (IDE-only, not the CLI/cloud-agent
+  analogue). [T1 github.blog/changelog/2025-08-28-copilot-coding-agent-now-supports-agents-md-custom-instructions]
+- **Cursor** reads AGENTS.md (root and nested). Subagents at
+  `.cursor/agents/*.md`; Cursor 2.5+ allows child subagents. Cursor is
+  the only vendor that cross-reads `.claude/agents/` and `.codex/agents/`.
+  [T1 cursor.com/docs/agent/subagents]
+- **Windsurf** auto-scopes AGENTS.md (root = always-on, subdir = glob).
+  Single Cascade agent with Code / Plan / Ask modes; no user-defined
+  subagent files. [T1 docs.windsurf.com]
+- **Amp** (now independent from Sourcegraph) reads AGENTS.md across
+  cwd / parent / subtree / home / system. Skills at `.agents/skills/SKILL.md`.
+  Subagents via generic Task tool, not markdown files.
+  [T1 ampcode.com/manual]
+- **Zed** uses the Agent Client Protocol (ACP) to host external agents
+  (Gemini CLI, Claude, Codex, Copilot); `.rules` fallback list includes
+  AGENTS.md. [T1 zed.dev/docs/ai/rules]
+- **Devin** reads AGENTS.md; skills discovered in seven locations
+  including `.agents/skills/`, `.claude/skills/`, `.codex/skills/`.
+  Agent loop not openly documented. [T1 docs.devin.ai/onboard-devin/agents-md]
+- **Jules** (Google async agent) reads AGENTS.md; no user-authored
+  subagent files. Jules Tools CLI shipped October 2025.
+  [T1 jules.google/docs]
+- **Moonshot Kimi / Kimi Code CLI** reads AGENTS.md; exposes agent
+  via ACP (`kimi acp`). Built on Kimi K2 (open-weight).
+  [T1 moonshotai.github.io/kimi-cli; T1 kimi.com/blog/kimi-k2]
+
+#### K.3 AGENTS.md cross-tool standard
+
+- **Steward**: Linux Foundation's Agentic AI Foundation, since
+  9 December 2025. Founding platinum members: AWS, Anthropic, Block,
+  Bloomberg, Cloudflare, Google, Microsoft, OpenAI.
+  [T1 linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation]
+- **Origin**: OpenAI, August 2025, initially for Codex CLI.
+- **Adoption**: ~60,000 open-source repositories; 30+ tools listed on
+  agents.md as native readers. [T1 agents.md]
+- **Spec shape**: Plain Markdown; no required fields, no frontmatter,
+  no schema. Nested AGENTS.md for monorepos with closest-to-edited-file
+  precedence. [T1 agents.md FAQ]
+- **Intended content**: project overview, tech stack, build / test /
+  lint commands, code style, boundaries. **NOT** for: session logs,
+  retrospectives, operational status, continuation narratives.
+
+#### K.4 Static vs dynamic agent paradigm
+
+- **Static** (one markdown file per agent, pre-wired) is supported by
+  Claude, Codex, Cursor, Copilot, Gemini CLI (April 2026).
+  Advantages: reviewable, version-controlled, enforced tool whitelist,
+  session-wide launch, org-managed override tier. Limits: prompt is
+  largely fixed, schemas diverge per vendor, and — critically — on
+  Claude a static subagent cannot spawn further subagents.
+- **Dynamic** (master inlines sub-agent task at dispatch time) is
+  supported by Claude (`Agent` tool), Codex (`spawn_agent`,
+  `spawn_agents_on_csv`), Copilot CLI (`/fleet`), Gemini CLI
+  (`@agent-name` auto-routing). Advantages: full context control,
+  parametrisable, composable. Limits: no review surface.
+- **Hybrid** (static shape + dynamic task payload + preloaded skills)
+  is the pattern Anthropic's November 2025 "Skills explained" post
+  endorses: "A code-review subagent can use Skills for language-specific
+  best practices, combining the independence of a subagent with the
+  portable expertise of Skills." [T1 claude.com/blog/skills-explained]
+- **Portability of static agent files** across vendors: effectively
+  none. Claude MD+YAML, Codex TOML, Cursor MD+YAML-with-different-
+  fields, Copilot `.agent.md`. Cursor is the only cross-reader.
+  Proposed cross-tool standards (OSSA, JSON Agents / PAM, ADP, ccpkg)
+  are unadopted as of early 2026.
+- **Portability of Claude plugins**: none. The plugin wrapper
+  (`.claude-plugin/plugin.json`, marketplace format, hooks schema, MCP
+  bundle) is Claude-specific. Only the Skills inside a plugin are
+  portable. [T1 docs.claude.com/en/docs/claude-code/plugins]
+
+#### K.5 Skills vs agents as the orchestration unit
+
+Anthropic's stated position (T1, November 2025): "Use Skills to teach
+expertise that any agent can apply; use subagents when you need
+independent task execution with specific tool permissions and context
+isolation." And: "In Claude Code and the Agent SDK, subagents can
+access and use Skills just like the main agent."
+[T1 claude.com/blog/skills-explained]
+
+Anthropic does **not** frame skills as a replacement for subagents.
+Community posts that do (e.g., "Don't Build Agents, Build Skills
+Instead" on Medium, January 2026) overstate the official position.
+
+Decision matrix distilled from T1 sources:
+
+| Need                                              |               →                |
+| ------------------------------------------------- | :----------------------------: |
+| Portable expertise reused across agents           |             Skill              |
+| Context isolation from parent                     |            Subagent            |
+| Platform-enforced tool whitelist                  |       Subagent (wrapper)       |
+| Parallel fan-out across N items                   |       Subagent (dynamic)       |
+| Procedural knowledge (how to format X, convert Y) |             Skill              |
+| Deterministic linear workflow                     |             Skill              |
+| Verbose intermediate output, not wanted in main   |            Subagent            |
+| Org policy enforcement                            | Static subagent (managed tier) |
+
+#### K.6 What the research changes about this framework
+
+- **Validates the skill-driven layering.** The framework's decision to
+  keep every playbook in a skill is defensible given (a) the Agent
+  Skills open standard exists, (b) no cross-vendor standard exists for
+  static agent files, (c) Anthropic explicitly endorses the
+  "subagent wraps skill" pattern.
+- **Validates the no-nested-subagents design.** The reference
+  implementation's orchestration runs from the main thread / top-level
+  orchestrator agent; all deeper work is skill-invocation. This is
+  correct under Claude's hard rule and under Codex's
+  `agents.max_depth: 1` default.
+- **Validates the AGENTS.md + CLAUDE.md shim.** Claude Code does not
+  read AGENTS.md natively; the `@AGENTS.md` import pattern in
+  CLAUDE.md is the documented workaround. The reference project
+  already uses this pattern.
+- **Highlights one real divergence the framework must watch**:
+  "nested AGENTS.md" semantics differ between Codex (startup-only
+  root→cwd walk) and Copilot (subtree-scoped application). If the
+  framework's governance file grows beyond a single root AGENTS.md,
+  this divergence will matter.
+
+#### K.7 Contradictions exposed rather than resolved
+
+1. **"Skills replace subagents"** (community framing) vs **"Skills and
+   subagents are complementary"** (Anthropic T1). T1 position wins.
+2. **AGENTS.md adoption count**: agents.md says "60k+"; SiliconANGLE
+   (9 Dec 2025) says "over 40k". 60k is the current number; 40k was a
+   Q3 2025 snapshot.
+3. **Codex `AGENTS.override.md`** (Codex-specific extension) vs
+   agents.md canonical "nearest wins" — same outcome, different
+   mechanism, not documented as a divergence by either side.
+4. **Sub-agent nesting**: Claude hard-bans; Codex configurable with
+   depth=1 default; Copilot allowlist-gated. A real philosophical
+   split, not a spec conflict.
+
+---

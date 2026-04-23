@@ -14,7 +14,7 @@ Each ADR follows the standard template:
 
 | ADR | Title | Status | Priority |
 |-----|-------|--------|----------|
-| [0001](0001-migration-flow-variant.md) | Migration Flow Variant | **accepted** | P0 — blocks all migration work |
+| [0001](0001-modernization-flow-variant.md) | Modernization Flow Variant | **accepted** | P0 — blocks all modernization work |
 | — [response](compliance-review-response.md) | Compliance Review Response | reference | — |
 | [0002](0002-python-framework.md) | Python Web Framework | **accepted** | P0 — blocks project skeleton |
 | [0003](0003-database-engine.md) | Database Engine Choice | **accepted** | P0 — blocks model layer |
@@ -37,7 +37,7 @@ Each ADR follows the standard template:
 ```
 0001 (Flow Variant)
   ├── depends on: 0002, 0003 (framework + DB inform flow)
-  └── blocks: all migration phases
+  └── blocks: all modernization phases
 
 0002 (Framework) + 0003 (DB)
   └── block: 0001 final decision, project skeleton creation

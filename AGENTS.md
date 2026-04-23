@@ -1,4 +1,4 @@
-# AGENTS.md — PHP-to-Python Migration Project
+# AGENTS.md — PHP-to-Python Modernization Project
 
 ## Mission
 
@@ -47,7 +47,7 @@ OSS_Migration/
 │
 ├── rules/                       ← Supplementary verification rules
 ├── source-repos/                ← READ-ONLY: PHP source
-└── target-repos/                ← Python migration output
+└── target-repos/                ← Python modernization output
 ```
 
 ## Spec-Kit Conventions (MANDATORY)
@@ -226,12 +226,12 @@ No test without PHP source citation may be committed.
 ### Analysis Rules
 10. Use deep web research for any complicated architectural topic (PHP patterns, 3-tier architecture, ORM vs transactional script, etc.)
 11. For source code analysis dimensions (call graph, entity graph, etc.), consider using NetworkX and Leiden community detection
-12. Migration flow is driven by dimensions documented in `specs/10-migration-dimensions.md` — discuss and choose flow before starting migration
+12. Migration flow is driven by dimensions documented in `specs/10-modernization-dimensions.md` — discuss and choose flow before starting modernization
 
 ### Quality Rules
 13. Preserve all functional behavior from the PHP source
-14. Fix known security issues during migration (SHA1→argon2id, prepared statements, etc.) — document deviations in specs
-15. Maintain spec-to-code traceability throughout the migration
+14. Fix known security issues during modernization (SHA1→argon2id, prepared statements, etc.) — document deviations in specs
+15. Maintain spec-to-code traceability throughout the modernization
 
 ### No-Skip Rule (HARD PROHIBITION)
 16. **NEVER skip a test, and NEVER write a workaround that causes a test to skip.** This is a hard constraint with zero exceptions.
@@ -260,7 +260,7 @@ No test without PHP source citation may be committed.
     - [ ] `specs/00-project-charter.md` — Solution Space table (decision + status columns)
     - [ ] `specs/00-project-charter.md` — Requirements Traceability Matrix (status column)
     - [ ] `specs/00-project-charter.md` — Cross-Reference table (if new ADR linkages discovered)
-    - [ ] `specs/10-migration-dimensions.md` — Recommendation Matrix (if flow variant affected)
+    - [ ] `specs/10-modernization-dimensions.md` — Recommendation Matrix (if flow variant affected)
     - [ ] `memory/session_*.md` — session memory (current state for next session)
 
     **Applies to**: ADR acceptance/rejection, phase completion, security finding remediation, requirement status changes, any table row that tracks status or decisions.
@@ -292,7 +292,7 @@ All under `specs/architecture/` — stable, read-only reference:
 | `07-caching-performance.md` | Counter cache, HTTP caching, daemon architecture |
 | `08-deployment.md` | Docker, Nginx, CI/CD, environment config |
 | `09-source-index.md` | Complete PHP file inventory with annotations |
-| `10-migration-dimensions.md` | Call graph, entity graph, migration flow variants |
+| `10-modernization-dimensions.md` | Call graph, entity graph, modernization flow variants |
 | `11-business-rules.md` | 20 business rules with exact PHP line refs |
 | `12-testing-strategy.md` | Parity verification, 5 test categories, fixtures |
 | `13-decomposition-map.md` | functions.php decomposition into Python modules |
@@ -302,7 +302,7 @@ All under `specs/architecture/` — stable, read-only reference:
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| 0001 | Migration Flow Variant | **accepted** — P0, Variant D-revised |
+| 0001 | Modernization Flow Variant | **accepted** — P0, Variant D-revised |
 | 0002 | Python Web Framework | **accepted** — P0, Flask |
 | 0003 | Database Engine Choice | **accepted** — P0, PostgreSQL + psycopg2 |
 | 0004 | Frontend Migration Strategy | proposed — P1, Tier 3 (Phase 2 exit) |
@@ -341,9 +341,6 @@ See `docs/decisions/README.md` for decision dependencies. ADR format follows [MA
 
 **Additional recommended skills** (install manually if needed):
 
-- **inferring-requirements** — requirements discovery before each migration phase
+- **inferring-requirements** — requirements discovery before each modernization phase
 - **deep-research-t1** — research Python equivalents for PHP patterns
-- **document-ingestion** — if external specs/docs need processing
-- **continuation-and-handoff** — multi-session migration continuity
 - **adversarial-self-refine** — iterative quality improvement of migrated code
-- **selecting-pe-methods** — choose optimal reasoning strategy per migration task

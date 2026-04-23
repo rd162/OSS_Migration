@@ -7,7 +7,7 @@
 
 ## Context
 
-After completing the PHP-to-Python code migration (Phases 1–5), SME review confirmed that the generated Python code contained semantic discrepancies across all modules — functional logic, business rules, and non-functional requirements were lost despite structural and traceability coverage being at 100%.
+After completing the PHP-to-Python code modernization (Phases 1–5), SME review confirmed that the generated Python code contained semantic discrepancies across all modules — functional logic, business rules, and non-functional requirements were lost despite structural and traceability coverage being at 100%.
 
 A systematic verification methodology is needed. The challenge: the codebase has 472 functions + 37 ORM models across 91 Python files, and PHP→Python translation introduces discrepancies at multiple levels:
 

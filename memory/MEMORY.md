@@ -23,7 +23,7 @@ OSS_Migration/
 │   │   ├── 07-caching-performance.md
 │   │   ├── 08-deployment.md
 │   │   ├── 09-source-index.md
-│   │   ├── 10-migration-dimensions.md
+│   │   ├── 10-modernization-dimensions.md
 │   │   ├── 11-business-rules.md
 │   │   ├── 12-testing-strategy.md
 │   │   ├── 13-decomposition-map.md
@@ -138,7 +138,7 @@ Run: `just test-int` (requires docker compose services on :5433/:6380)
 
 | ADR | Decision | Status |
 |-----|----------|--------|
-| [0001](../docs/decisions/0001-migration-flow-variant.md) | Migration flow variant (D-revised) | accepted |
+| [0001](../docs/decisions/0001-modernization-flow-variant.md) | Migration flow variant (D-revised) | accepted |
 | [0002](../docs/decisions/0002-python-framework.md) | Python framework (Flask) | accepted |
 | [0003](../docs/decisions/0003-database-engine.md) | Database engine (PostgreSQL) | accepted |
 | [0004](../docs/decisions/0004-frontend-strategy.md) | Frontend strategy → resolved by ADR-0017 | accepted |

@@ -41,7 +41,7 @@ Use `AES-GCM` directly from the `cryptography` package. GCM provides authenticat
 
 Use a Python mcrypt-compatible library (e.g., `pycryptodome` in mcrypt compat mode) to read/write the same AES-128-CBC format. This allows the PHP and Python systems to share the same encrypted values during a transition period.
 
-- Zero migration effort for existing data
+- Zero modernization effort for existing data
 - Maintains deprecated, unauthenticated encryption (CBC without HMAC)
 - Vulnerable to padding oracle attacks
 - No path forward for key rotation
@@ -80,5 +80,5 @@ Use a Python mcrypt-compatible library (e.g., `pycryptodome` in mcrypt compat mo
 - If Option A: Fernet tokens are ~2x larger than raw AES-CBC ciphertext (base64 + HMAC + timestamp)
 - If Option A: MultiFernet enables future key rotation without downtime
 - If Option B: similar benefits to A but requires careful nonce management
-- If Option C: no migration effort but perpetuates a known-vulnerable encryption scheme
+- If Option C: no modernization effort but perpetuates a known-vulnerable encryption scheme
 - All options: the `FEED_CRYPT_KEY` secret must be securely transferred to the Python deployment

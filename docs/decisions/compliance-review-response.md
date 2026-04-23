@@ -10,7 +10,7 @@
 
 ### R1 (Solo/small-team execution) -- Variant E has 11 passes, rated "OK" not "Best"
 
-**VERDICT: CONFIRMED.** The project's own recommendation matrix in `specs/10-migration-dimensions.md` rates Variant E as "OK" for solo dev, "High" planning overhead, and "Slow" time to first runnable code. Variant D is explicitly rated "Best" for solo dev with "Medium" planning overhead. The compliance review correctly identifies this as a violation -- choosing a variant rated "OK" over one rated "Best" for the project's primary constraint (solo/small-team) requires justification that was not provided.
+**VERDICT: CONFIRMED.** The project's own recommendation matrix in `specs/10-modernization-dimensions.md` rates Variant E as "OK" for solo dev, "High" planning overhead, and "Slow" time to first runnable code. Variant D is explicitly rated "Best" for solo dev with "Medium" planning overhead. The compliance review correctly identifies this as a violation -- choosing a variant rated "OK" over one rated "Best" for the project's primary constraint (solo/small-team) requires justification that was not provided.
 
 ### R4 (CSRF) -- FastAPI has no built-in CSRF; fastapi-csrf-protect uses Double Submit Cookie
 
@@ -177,7 +177,7 @@ Phase 6 -- Deployment (testable: end-to-end + smoke tests)
 
 **Why Variant D satisfies R1**: Rated "Best" for solo dev in the project's own recommendation matrix. 6 phases vs 11 passes reduces planning overhead from "High" to "Medium". HTTP endpoints are testable from Phase 4 (4th phase, not 7th pass).
 
-Per `specs/10-migration-dimensions.md`: "Models-first gives a solid, validated foundation. Call-graph ordering prevents missing dependency issues. Entity clusters keep related business logic together."
+Per `specs/10-modernization-dimensions.md`: "Models-first gives a solid, validated foundation. Call-graph ordering prevents missing dependency issues. Entity clusters keep related business logic together."
 
 **Requirement R1 satisfied**: Variant D is explicitly rated "Best" for solo dev with "Medium" planning overhead and "Medium" time to first runnable code.
 
@@ -264,11 +264,11 @@ This addresses AR7: async is applied **only** to the feed-fetching hot path via 
 
 | Requirement | Status | Evidence |
 |------------|--------|----------|
-| R1: Solo/small-team | **SATISFIED** | Variant D rated "Best" for solo dev per `specs/10-migration-dimensions.md` |
+| R1: Solo/small-team | **SATISFIED** | Variant D rated "Best" for solo dev per `specs/10-modernization-dimensions.md` |
 | R2: Behavioral parity | **SATISFIED** | Flask `jsonify()` produces identical loose-typed JSON; Jinja2 renders identical HTML fragments |
 | R3: Database compatibility | **SATISFIED** | SQLAlchemy models 35 tables; Alembic migrations; one-time MySQL-to-PostgreSQL script |
 | R4: Framework features | **SATISFIED** | Flask-WTF (CSRF), Flask-Session+Redis (sessions), Jinja2 (templates), Celery (background), pluggy (plugins) |
-| R5: Scale (18.6K PHP, 35 tables) | **SATISFIED** | Variant D phases match code communities from `specs/10-migration-dimensions.md` |
+| R5: Scale (18.6K PHP, 35 tables) | **SATISFIED** | Variant D phases match code communities from `specs/10-modernization-dimensions.md` |
 | R6: API contract | **SATISFIED** | Flask `request.args` dispatch preserves `?op=X&method=Y` pattern natively |
 | R7: Plugin system (24 hooks) | **SATISFIED** | Sync hooks with pluggy or custom registry; no async complexity |
 | R8: Security modernization | **SATISFIED** | bcrypt (ADR-0008), parameterized queries (SQLAlchemy), SSL verification (httpx), Fernet (ADR-0009) |

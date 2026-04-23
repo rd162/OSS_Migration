@@ -1,6 +1,6 @@
 # 00 — Project Charter
 
-Mission, Goals, Premises, Constraints, and Traceability for the TT-RSS PHP-to-Python migration.
+Mission, Goals, Premises, Constraints, and Traceability for the TT-RSS PHP-to-Python modernization.
 
 ## Requirements Discovery
 
@@ -55,7 +55,7 @@ Migrating TT-RSS from PHP to Python serves a terminal value: **reliable, secure,
 | C3 | **Behavioral parity** — same input → same output for all endpoints | Migration definition |
 | C4 | **Database compatibility** — must work with existing data (or provide automated migration) | Data preservation requirement |
 | C5 | **No secrets in repo** — config via environment variables | Security best practice |
-| C6 | **Spec traceability** — every migration phase references specs/ documents | Project rule (AGENTS.md) |
+| C6 | **Spec traceability** — every modernization phase references specs/ documents | Project rule (AGENTS.md) |
 | C7 | **Source code traceability** — every function, class, method, model, route in target code MUST have a comment tracing it to the PHP source origin (see AGENTS.md Rule 10) | AGENTS.md mandatory rule |
 
 #### Soft Constraints (violation = penalty, not rejection)
@@ -129,7 +129,7 @@ These are specific to patterns found in the TT-RSS PHP source:
 | P8 (i18n) | 08-deployment | ADR-0013 |
 | C1-C7 (hard constraints) | AGENTS.md | — |
 | C8 (single DB engine) | 02-database | ADR-0003 |
-| Solution Space | 10-migration-dimensions | ADR-0001 through ADR-0015 |
+| Solution Space | 10-modernization-dimensions | ADR-0001 through ADR-0015 |
 | Testing strategy | 12-testing-strategy | ADR-0001, ADR-0005 |
 | Semantic verification | 14-semantic-discrepancies | ADR-0016 |
 

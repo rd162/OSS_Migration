@@ -21,7 +21,7 @@ Every migrated function belongs in a named service module, not a monolithic god-
 
 ### P2 — Test-First: Coverage is a Gate, Not a Metric
 
-No migration phase is complete without passing its test gate.
+No modernization phase is complete without passing its test gate.
 
 - Minimum coverage: **>80% per module** (`pytest --cov-fail-under=80`).
 - 598+ unit tests must pass before any phase is marked DONE.

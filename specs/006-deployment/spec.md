@@ -75,7 +75,7 @@ source: memory/phase6_plan_2026-04-04.md
 - [ ] pre_migration_audit.sh exits 0
 - [ ] pgloader --dry-run exits 0
 - [ ] convert_php_serialized.py exits 0 on sample data
-- [ ] All 18 sequences aligned post-migration
+- [ ] All 18 sequences aligned post-modernization
 
 ### B6 Gate (FINAL — all hard)
 - [ ] CI coverage-gate exits 0 at ≥95% (no continue-on-error)

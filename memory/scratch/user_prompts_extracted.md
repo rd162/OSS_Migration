@@ -36,7 +36,7 @@ You job for now:
         - First migrate related entities and source code around it, such as DB transactions, or APIs working with that models
         - OR build source code call graph and drive migration by that graph first.
         - It can be model/db/entities in first pass, the having this base -- migrate full source graph, or more granular: first API models, then DB tables/entities, then business logic. And so on. 
-        - For now, just document possible variants of such multi-dimensional migration flows. We will discuss and choose best flow later.
+        - For now, just document possible variants of such multi-dimensional modernization flows. We will discuss and choose best flow later.
         - We can use NetworkX and leiden graph comunity detection to analyse source code dimensions.
 
 MUST: never store any things in HOME/.claude . All must be in this local project specs (spec-kit), memory, rules, and so on - use standartized  dir specs structure for this, (eg like memories, rules, specs, etc). Do not store it in .claude -- to make this cross platform. Store in .claude only the things specific for claude, like skills. (Also -- propose what skill to install into project to make it success). Never add anything into `source-repos` -- store all files in root dir (where we also have stub target-repos - where mnigrated Python project will grows in). --> store all these critical rules in AGENTS.md (link to it in CLAUDE.md).
@@ -85,7 +85,7 @@ Diff: /Users/rd/devel/Capgemini/Capgemini_Internal/OSS_Migration/adl/README.md
 ```
 # Architecture Decision Log (ADL)
 
-This directory contains Architecture Decision Records (ADRs) for the TT-RSS PHP→Python migration project.
+This directory contains Architecture Decision Records (ADRs) for the TT-RSS PHP→Python modernization project.
 
 ### Session 001 — User #6
 
@@ -283,7 +283,7 @@ Status: Completed
     66→### Analysis Rules
     67→10. Use deep web research for any complicated architectural topic (PHP patterns, 3-tier architecture, ORM vs transactional script, etc.)
     68→11. For source code analysis dimensions (call graph, entity graph, etc.), consider using NetworkX and Leiden community detection
-    69→12. Migration flow is driven by dimensions documented in `specs/10-migration-dimensions.md` — discuss and choose flow before starting migration
+    69→12. Migration flow is driven by dimensions documented in `specs/10-modernization-dimensions.md` — discuss and choose flow before starting migration
 ```
 
 **Tool Call: Read AGENTS.md (58 - 67)**
@@ -398,7 +398,7 @@ Status: Completed
     21→- 07-caching-performance.md — 4 cache layers, daemon architecture, locking, timeouts
     22→- 08-deployment.md — Docker (legacy+modern), Nginx/PHP-FPM, CI/CD, env config
     23→- 09-source-index.md — 138-file inventory with spec cross-references
-    24→- 10-migration-dimensions.md — 6 dimensions, 5 flow variants, recommendation matrix
+    24→- 10-modernization-dimensions.md — 6 dimensions, 5 flow variants, recommendation matrix
     25→- 11-business-rules.md — 20 business rules with exact file:line refs, edge cases
     26→- 12-testing-strategy.md — Parity verification, 5 test categories, test matrix for 20 endpoints
     27→
@@ -464,9 +464,9 @@ Status: Completed
     87→
     88→**Files created/modified:**
     89→- NEW: `docs/decisions/0001-compliance-review-response.md` (full analysis)
-    90→- MODIFIED: `docs/decisions/0001-migration-flow-variant.md` (Variant D-revised)
+    90→- MODIFIED: `docs/decisions/0001-modernization-flow-variant.md` (Variant D-revised)
     91→- MODIFIED: `docs/decisions/0002-python-framework.md` (async strategy section)
-    92→- MODIFIED: `specs/10-migration-dimensions.md` (revised Variant D + matrix)
+    92→- MODIFIED: `specs/10-modernization-dimensions.md` (revised Variant D + matrix)
     93→- MODIFIED: `docs/decisions/README.md` (status updates + compliance doc link)
     94→
     95→**ADR status changes:** ADR-0001, ADR-0002, and ADR-0003 changed to `accepted`.
@@ -491,7 +491,7 @@ Status: Completed
    114→
    115→**Files created/modified:**
    116→- NEW: `docs/decisions/compliance-review-response.md` (full research + revised solution)
-   117→- MODIFIED: `docs/decisions/0001-migration-flow-variant.md` (decision accepted)
+   117→- MODIFIED: `docs/decisions/0001-modernization-flow-variant.md` (decision accepted)
    118→- MODIFIED: `docs/decisions/0002-python-framework.md` (decision accepted with compliance rationale)
    119→- MODIFIED: `docs/decisions/0003-database-engine.md` (decision accepted, psycopg2 not asyncpg)
    120→- MODIFIED: `docs/decisions/README.md` (all P0 statuses updated to accepted)
@@ -522,7 +522,7 @@ Status: Completed
     99→### Analysis Rules
    100→10. Use deep web research for any complicated architectural topic (PHP patterns, 3-tier architecture, ORM vs transactional script, etc.)
    101→11. For source code analysis dimensions (call graph, entity graph, etc.), consider using NetworkX and Leiden community detection
-   102→12. Migration flow is driven by dimensions documented in `specs/10-migration-dimensions.md` — discuss and choose flow before starting migration
+   102→12. Migration flow is driven by dimensions documented in `specs/10-modernization-dimensions.md` — discuss and choose flow before starting migration
    103→
    104→### Quality Rules
    105→13. Preserve all functional behavior from the PHP source
@@ -543,7 +543,7 @@ Status: Completed
    120→| `07-caching-performance.md` | Counter cache, file cache, HTTP caching, daemon architecture |
    121→| `08-deployment.md` | Docker, Nginx/PHP-FPM, CI/CD, environment config |
    122→| `09-source-index.md` | Complete file inventory with purpose annotations and cross-references |
-   123→| `10-migration-dimensions.md` | Call graph, entity graph, frontend/backend dimensions, migration flow variants |
+   123→| `10-modernization-dimensions.md` | Call graph, entity graph, frontend/backend dimensions, modernization flow variants |
    124→| `11-business-rules.md` | 20 business rules with exact line refs, edge cases, search, digest, OPML, registration |
    125→| `12-testing-strategy.md` | Parity verification, 5 test categories, fixtures, test matrix for top 20 endpoints |
    126→
@@ -551,7 +551,7 @@ Status: Completed
    128→
    129→| ADR | Title | Status |
    130→|-----|-------|--------|
-   131→| 0001 | Migration Flow Variant | **accepted** — P0, Variant D-revised |
+   131→| 0001 | Modernization Flow Variant | **accepted** — P0, Variant D-revised |
    132→| 0002 | Python Web Framework | **accepted** — P0, Flask |
    133→| 0003 | Database Engine Choice | **accepted** — P0, PostgreSQL + psycopg2 |
    134→| 0004 | Frontend Migration Strategy | proposed — P1, Tier 3 (Phase 2 exit) |
@@ -573,7 +573,7 @@ Status: Completed
    150→
    151→Skills that should be installed in `.claude/skills/` for this project:
    152→
-   153→- **inferring-requirements** — requirements discovery before each migration phase
+   153→- **inferring-requirements** — requirements discovery before each modernization phase
    154→- **deep-research-t1** — research Python equivalents for PHP patterns
    155→- **document-ingestion** — if external specs/docs need processing
    156→- **continuation-and-handoff** — multi-session migration continuity
@@ -601,7 +601,7 @@ Diff: /Users/rd/devel/Capgemini/Capgemini_Internal/OSS_Migration/AGENTS.md
     - [ ] `specs/00-project-charter.md` — Solution Space table (decision + status columns)
     - [ ] `specs/00-project-charter.md` — Requirements Traceability Matrix (status column)
     - [ ] `specs/00-project-charter.md` — Cross-Reference table (if new ADR linkages discovered)
-    - [ ] `specs/10-migration-dimensions.md` — Recommendation Matrix (if flow variant affected)
+    - [ ] `specs/10-modernization-dimensions.md` — Recommendation Matrix (if flow variant affected)
     - [ ] `memory/session_*.md` — session memory (current state for next session)
 
     **Applies to**: ADR acceptance/rejection, phase completion, security finding remediation, requirement status changes, any table row that tracks status or decisions.
@@ -1010,7 +1010,7 @@ Status: Completed
    165→
    166→Skills that should be installed in `.claude/skills/` for this project:
    167→
-   168→- **inferring-requirements** — requirements discovery before each migration phase
+   168→- **inferring-requirements** — requirements discovery before each modernization phase
    169→- **deep-research-t1** — research Python equivalents for PHP patterns
    170→- **document-ingestion** — if external specs/docs need processing
    171→- **continuation-and-handoff** — multi-session migration continuity
@@ -1097,7 +1097,7 @@ Summary:
    - Deprecated section rewritten: 4 tables (themes, labels, filters, scheduled_updates) have no CREATE TABLE in v124, actual count is 31 active tables
    - Schema Extensions section added: last_etag, last_modified on ttrss_feeds (ADR-0015)
 
-   **specs/10-migration-dimensions.md**
+   **specs/10-modernization-dimensions.md**
    - counters_cache + cat_counters_cache moved from Level 3 → Level 2 (only FK is owner_uid → ttrss_users)
    - Recommendation Matrix note updated to record Celery+httpx ADR acceptance
 
@@ -1180,7 +1180,7 @@ Summary:
    - **Integration tests hanging for minutes**: Root cause was zombie pytest processes (from earlier background bash task attempts) holding DB locks, preventing `_db.create_all()` from acquiring schema lock. Fixed by: killing all zombie processes (`pkill -f "pytest tests/"`), adding TCP port probe, Redis ping check, connect_timeout=5 on Postgres URL, and `_db.session.remove()` before `drop_all()`.
    - **ttrss_themes phantom model**: The spec listed ttrss_themes as an active table, but migration v83 dropped it. No CREATE TABLE in schema v124. Removed from plan; spec corrected.
    - **Deprecated tables (labels, filters, scheduled_updates)**: Same issue — listed in spec but dropped before v124. No models needed. Spec corrected. Actual table count: 31 not 35.
-   - **counters_cache phantom FK**: specs/02-database.md incorrectly listed `ttrss_counters_cache → ttrss_feeds`. Verified SQL: feed_id is a bare integer, no REFERENCES clause. Both specs/02-database.md and specs/10-migration-dimensions.md corrected.
+   - **counters_cache phantom FK**: specs/02-database.md incorrectly listed `ttrss_counters_cache → ttrss_feeds`. Verified SQL: feed_id is a bare integer, no REFERENCES clause. Both specs/02-database.md and specs/10-modernization-dimensions.md corrected.
    - **ADR 0015 last_etag/last_modified**: These columns don't exist in PHP schema. Correctly documented as schema extensions with "# New:" traceability comments.
 
 5. Problem Solving:
@@ -1245,12 +1245,12 @@ This session is being continued from a previous conversation that ran out of con
 
 Summary:
 1. Primary Request and Intent:
-   - **Primary**: `/adversarial-thinking continue current phase` — resume the adversarial thinking pipeline for the TT-RSS PHP-to-Python migration project (Phase 1b completion)
+   - **Primary**: `/adversarial-thinking continue current phase` — resume the adversarial thinking pipeline for the TT-RSS PHP-to-Python modernization project (Phase 1b completion)
    - **Secondary**: `document decisions --> process C` — record the adversarial thinking outcome (Solution C won 2-0 in Condorcet voting) into session memory and then implement Solution C across 5 parallel streams
    - **Tertiary**: `please, continue` and `Continue from where you left off` — resume interrupted implementation mid-stream
 
 2. Key Technical Concepts:
-   - **TT-RSS PHP-to-Python migration**: Phase 1b completion — 31 SQLAlchemy models done; remaining: Celery feed tasks, Alembic baseline migration, Pluggy hookspecs, decomposition map, tests
+   - **TT-RSS PHP-to-Python modernization**: Phase 1b completion — 31 SQLAlchemy models done; remaining: Celery feed tasks, Alembic baseline migration, Pluggy hookspecs, decomposition map, tests
    - **Celery + Redis (ADR-0011)**: Two-task fan-out pattern — `dispatch_feed_updates` (Beat-triggered, queries due feeds) → `update_feed` (per-feed, httpx + feedparser + lxml)
    - **`worker_pool = "prefork"`**: Mandatory because `asyncio.run()` inside tasks is incompatible with gevent/eventlet pools
    - **httpx async (ADR-0015)**: `asyncio.run()` wraps async fetch inside prefork workers; `httpx.Timeout(connect=10.0, read=45.0, write=10.0, pool=5.0)`; conditional GET via ETag/Last-Modified

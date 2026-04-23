@@ -79,80 +79,76 @@ and Appendix I (Agent Integration).
 
 **When to run**: The project has source code but no specs, no dimension analysis, no ADRs.
 
-### Steps
+> **Preferred execution**: this project defines a dedicated Phase-1 macro-skill,
+> `specs-extractor`, that carries the authoritative ten-step workflow for this
+> phase (research-driven dimension inference, per-dimension graph extraction via
+> NetworkX + Leiden, per-community deep research with a budget cap, and
+> evidence-based synthesis of the final spec set).
+>
+> When running inside this project, invoke `specs-extractor` directly
+> (`@specs-extractor` or `claude --agent specs-extractor`) instead of executing
+> the condensed steps below. The macro-skill produces the same outputs at
+> higher fidelity and enforces the exit gate.
+>
+> The steps below remain as a minimal fallback for runtimes where the
+> macro-skill is unavailable.
 
-1. **Inventory the source**
-   - List every source file with size, language, and one-line purpose annotation
-   - Store as `specs/architecture/NN-source-index.md`
+### Fallback steps (when `specs-extractor` unavailable)
 
-2. **Analyze architecture via deep research**
-   - Use web research tools to understand the source technology's common patterns:
-     architectural layers, design patterns (MVC, microservices, event-driven, etc.),
-     database patterns (ORM, raw SQL, triggers), messaging patterns, session management,
-     authentication patterns, deployment patterns
-   - Research the target technology's best practices and ecosystem for each pattern area
-   - Research known modernization pitfalls for this specific technology pair
+1. **Inventory + archetype detection** — list source files; detect the
+   application archetype (web app, CLI, daemon, ETL, protocol, library,
+   embedded, plugin host, etc.) from entry points and dependencies.
 
-3. **Discover analysis dimensions**
-   Every software system decomposes along structural dimensions. Discover which ones
-   matter most for THIS project. Universal dimensions (almost always relevant):
+2. **External knowledge grounding** — invoke `deep-research-t1` (or any web
+   research tool) with three fan-outs: source-platform patterns for this
+   archetype, target-platform best practices for the same archetype, and
+   modernization pitfalls for the specific source→target pair.
 
-   | Dimension           | How to extract                                                                 |
-   | ------------------- | ------------------------------------------------------------------------------ |
-   | Call Graph          | AST-parse source files; build caller→callee edges; identify dependency levels  |
-   | Entity/Data Model   | Find schema definitions, model classes, table references; map FK relationships |
-   | Module Dependencies | Trace import/include/require chains between files                              |
+3. **Dimension inference** — derive the set of dimensions relevant to this
+   specific application from (a) the archetype, (b) research findings,
+   (c) source evidence. Do NOT use a fixed slot list.
 
-   Domain-specific dimensions to consider (select those that apply):
+4. **Per-dimension graph extraction** — build NetworkX graphs (AST-parse
+   source, emit typed nodes + edges per dimension). Apply Leiden community
+   detection; compute dependency levels via SCC condensation. Reference
+   implementation for PHP is at `tools/graph_analysis/build_php_graphs.py`;
+   the same pipeline adapts to any source language by swapping the AST parser.
 
-   | Dimension                 | Check if relevant                                  |
-   | ------------------------- | -------------------------------------------------- |
-   | Frontend/Backend Coupling | Does the system have a UI layer?                   |
-   | Plugin/Extension System   | Does the system support plugins or hooks?          |
-   | Protocol State Machine    | Is this a network protocol implementation?         |
-   | Data Pipeline Topology    | Is this an ETL or data processing system?          |
-   | Configuration Surface     | Does the system have extensive config constants?   |
-   | Security Surface          | Does the system handle auth, encryption, sessions? |
-   | Concurrency Model         | Is this multi-threaded, async, or event-driven?    |
-   | API Contract Surface      | Are there external API consumers?                  |
-   | CLI Interface             | Is this a command-line tool?                       |
-   | Desktop UI Event Model    | Is this a desktop application?                     |
+5. **Per-community research** — for each (dimension, community) pair, invoke
+   deep research for target-side patterns, known traps, and open-source
+   comparables. Group aggressively to stay under a hard cap of 50 research
+   passes.
 
-   For each discovered dimension, create `specs/architecture/NN-dimension-name.md` with:
-   - Graph structure (nodes, edges, dependency levels)
-   - Communities (natural groupings found via graph analysis)
-   - Migration impact assessment
+6. **Spec synthesis** — one spec file per discovered dimension, named by the
+   dimension (not by a pre-fixed slot). Every non-trivial claim cites a
+   source `file:line` or a tier-annotated research URL.
 
-4. **Propose modernization flow variants**
-   Based on the dimensions, propose at least 3 flow variants with trade-offs.
-   See `references/flow-variants.md` for the five standard variants.
-   Store analysis in `specs/architecture/NN-modernization-dimensions.md`
+7. **Modernization flow variants** — derive at least three variants from the
+   actual community structure discovered above.
 
-5. **Generate architecture specs**
-   Create a spec for each major architectural concern discovered:
-   - Application architecture (layers, patterns, request lifecycle)
-   - Database design (tables, FK map, migration system)
-   - API/routing (entry points, dispatch, endpoints)
-   - Security (findings by severity, auth flow)
-   - Caching/performance (cache layers, daemon architecture)
-   - Deployment (containers, CI/CD, environment config)
-   - Business rules (with exact source file:line references)
-   - Testing strategy (parity verification, test categories)
+8. **Requirements document** — invoke `requirements-extractor` to produce the
+   project charter (Mission / Goals / Premises / Constraints + RTM).
 
-6. **Create project governance files**
-   - `AGENTS.md` -- project rules, conventions, directory structure, spec index
-   - `CLAUDE.md` -- points to AGENTS.md
-   - `constitution.md` -- governing principles ordered by priority
-   - `memory/MEMORY.md` -- cross-session memory index
+9. **Divergence catalogue (seed)** — aggregate all divergences surfaced in
+   research into the initial `NN-semantic-discrepancies.md`.
+
+10. **Project governance** — `AGENTS.md` with phase index + spec pointers;
+    `CLAUDE.md` with the `@AGENTS.md` shim for Claude Code.
 
 ### Phase 0 Exit Gate
 
-- [ ] Source index complete (every file annotated)
-- [ ] At least 3 dimensions analyzed with dependency levels
-- [ ] At least 3 modernization flow variants proposed with trade-offs
-- [ ] Architecture specs cover all major concerns
-- [ ] AGENTS.md and constitution.md created
-- [ ] Product team review point: confirm feature scope, deprecated features, enhancement requests
+- [ ] Source inventory complete; archetype recorded.
+- [ ] External research grounded with T1 citations.
+- [ ] Dimension set inferred from evidence (not a fixed slot list).
+- [ ] At least three dimensions have extracted graphs + communities + levels.
+- [ ] Per-community research notes exist for every retained community
+      (or grouped community under the 50-pass cap).
+- [ ] One dimension-spec file per discovered dimension.
+- [ ] `00-project-charter.md` with MGPC + RTM.
+- [ ] `NN-modernization-dimensions.md` with at least three flow variants
+      derived from actual community structure.
+- [ ] `NN-semantic-discrepancies.md` seeded with research entries.
+- [ ] AGENTS.md + CLAUDE.md (or equivalents) written.
 
 ---
 

@@ -5,7 +5,7 @@
   "community_count": 55,
   "nodes": {
     "API": {
-      "file": "ttrss/classes/api.php",
+      "file": "classes/api.php",
       "line": 3,
       "label": "API",
       "kind": "class"
@@ -13,11 +13,11 @@
     "Handler": {
       "label": "Handler",
       "kind": "class",
-      "file": "ttrss/classes/handler.php",
+      "file": "classes/handler.php",
       "line": 2
     },
     "Article": {
-      "file": "ttrss/classes/article.php",
+      "file": "classes/article.php",
       "line": 2,
       "label": "Article",
       "kind": "class"
@@ -25,83 +25,83 @@
     "Handler_Protected": {
       "label": "Handler_Protected",
       "kind": "class",
-      "file": "ttrss/classes/handler/protected.php",
+      "file": "classes/handler/protected.php",
       "line": 2
     },
     "Auth_Base": {
-      "file": "ttrss/classes/auth/base.php",
+      "file": "classes/auth/base.php",
       "line": 2,
       "label": "Auth_Base",
       "kind": "class"
     },
     "Backend": {
-      "file": "ttrss/classes/backend.php",
+      "file": "classes/backend.php",
       "line": 2,
       "label": "Backend",
       "kind": "class"
     },
     "Db_Mysql": {
-      "file": "ttrss/classes/db/mysql.php",
+      "file": "classes/db/mysql.php",
       "line": 2,
       "label": "Db_Mysql",
       "kind": "class"
     },
     "Db_Mysqli": {
-      "file": "ttrss/classes/db/mysqli.php",
+      "file": "classes/db/mysqli.php",
       "line": 2,
       "label": "Db_Mysqli",
       "kind": "class"
     },
     "Db_PDO": {
-      "file": "ttrss/classes/db/pdo.php",
+      "file": "classes/db/pdo.php",
       "line": 2,
       "label": "Db_PDO",
       "kind": "class"
     },
     "Db_Pgsql": {
-      "file": "ttrss/classes/db/pgsql.php",
+      "file": "classes/db/pgsql.php",
       "line": 2,
       "label": "Db_Pgsql",
       "kind": "class"
     },
     "Db_Prefs": {
-      "file": "ttrss/classes/db/prefs.php",
+      "file": "classes/db/prefs.php",
       "line": 2,
       "label": "Db_Prefs",
       "kind": "class"
     },
     "Db_Stmt": {
-      "file": "ttrss/classes/db/stmt.php",
+      "file": "classes/db/stmt.php",
       "line": 2,
       "label": "Db_Stmt",
       "kind": "class"
     },
     "Db": {
-      "file": "ttrss/classes/db.php",
+      "file": "classes/db.php",
       "line": 2,
       "label": "Db",
       "kind": "class"
     },
     "DbUpdater": {
-      "file": "ttrss/classes/dbupdater.php",
+      "file": "classes/dbupdater.php",
       "line": 2,
       "label": "DbUpdater",
       "kind": "class"
     },
     "Dlg": {
-      "file": "ttrss/classes/dlg.php",
+      "file": "classes/dlg.php",
       "line": 2,
       "label": "Dlg",
       "kind": "class"
     },
     "FeedEnclosure": {
-      "file": "ttrss/classes/feedenclosure.php",
+      "file": "classes/feedenclosure.php",
       "line": 2,
       "label": "FeedEnclosure",
       "kind": "class"
     },
     "FeedItem_Atom": {
-      "file": "ttrss/classes/feeditem/atom.php",
+      "file": "classes/feeditem/atom.php",
       "line": 2,
       "label": "FeedItem_Atom",
       "kind": "class"
@@ -109,125 +109,125 @@
     "FeedItem_Common": {
       "label": "FeedItem_Common",
       "kind": "class",
-      "file": "ttrss/classes/feeditem/common.php",
+      "file": "classes/feeditem/common.php",
       "line": 2
     },
     "FeedItem": {
       "label": "FeedItem",
       "kind": "class",
-      "file": "ttrss/classes/feeditem.php",
+      "file": "classes/feeditem.php",
       "line": 2
     },
     "FeedItem_RSS": {
-      "file": "ttrss/classes/feeditem/rss.php",
+      "file": "classes/feeditem/rss.php",
       "line": 2,
       "label": "FeedItem_RSS",
       "kind": "class"
     },
     "FeedParser": {
-      "file": "ttrss/classes/feedparser.php",
+      "file": "classes/feedparser.php",
       "line": 2,
       "label": "FeedParser",
       "kind": "class"
     },
     "Feeds": {
-      "file": "ttrss/classes/feeds.php",
+      "file": "classes/feeds.php",
       "line": 4,
       "label": "Feeds",
       "kind": "class"
     },
     "Handler_Public": {
-      "file": "ttrss/classes/handler/public.php",
+      "file": "classes/handler/public.php",
       "line": 2,
       "label": "Handler_Public",
       "kind": "class"
     },
     "Logger_SQL": {
-      "file": "ttrss/classes/logger/sql.php",
+      "file": "classes/logger/sql.php",
       "line": 2,
       "label": "Logger_SQL",
       "kind": "class"
     },
     "Logger_Syslog": {
-      "file": "ttrss/classes/logger/syslog.php",
+      "file": "classes/logger/syslog.php",
       "line": 2,
       "label": "Logger_Syslog",
       "kind": "class"
     },
     "Logger": {
-      "file": "ttrss/classes/logger.php",
+      "file": "classes/logger.php",
       "line": 2,
       "label": "Logger",
       "kind": "class"
     },
     "Opml": {
-      "file": "ttrss/classes/opml.php",
+      "file": "classes/opml.php",
       "line": 2,
       "label": "Opml",
       "kind": "class"
     },
     "Plugin": {
-      "file": "ttrss/classes/plugin.php",
+      "file": "classes/plugin.php",
       "line": 2,
       "label": "Plugin",
       "kind": "class"
     },
     "PluginHandler": {
-      "file": "ttrss/classes/pluginhandler.php",
+      "file": "classes/pluginhandler.php",
       "line": 2,
       "label": "PluginHandler",
       "kind": "class"
     },
     "PluginHost": {
-      "file": "ttrss/classes/pluginhost.php",
+      "file": "classes/pluginhost.php",
       "line": 2,
       "label": "PluginHost",
       "kind": "class"
     },
     "Pref_Feeds": {
-      "file": "ttrss/classes/pref/feeds.php",
+      "file": "classes/pref/feeds.php",
       "line": 2,
       "label": "Pref_Feeds",
       "kind": "class"
     },
     "Pref_Filters": {
-      "file": "ttrss/classes/pref/filters.php",
+      "file": "classes/pref/filters.php",
       "line": 2,
       "label": "Pref_Filters",
       "kind": "class"
     },
     "Pref_Labels": {
-      "file": "ttrss/classes/pref/labels.php",
+      "file": "classes/pref/labels.php",
       "line": 2,
       "label": "Pref_Labels",
       "kind": "class"
     },
     "Pref_Prefs": {
-      "file": "ttrss/classes/pref/prefs.php",
+      "file": "classes/pref/prefs.php",
       "line": 3,
       "label": "Pref_Prefs",
       "kind": "class"
     },
     "Pref_System": {
-      "file": "ttrss/classes/pref/system.php",
+      "file": "classes/pref/system.php",
       "line": 3,
       "label": "Pref_System",
       "kind": "class"
     },
     "Pref_Users": {
-      "file": "ttrss/classes/pref/users.php",
+      "file": "classes/pref/users.php",
       "line": 2,
       "label": "Pref_Users",
       "kind": "class"
     },
     "RPC": {
-      "file": "ttrss/classes/rpc.php",
+      "file": "classes/rpc.php",
       "line": 2,
       "label": "RPC",
       "kind": "class"
     },
     "ttrssMailer": {
-      "file": "ttrss/classes/ttrssmailer.php",
+      "file": "classes/ttrssmailer.php",
       "line": 12,
       "label": "ttrssMailer",
       "kind": "class"
@@ -235,77 +235,77 @@
     "PHPMailer": {
       "label": "PHPMailer",
       "kind": "class",
-      "file": "ttrss/lib/phpmailer/class.phpmailer.php",
+      "file": "lib/phpmailer/class.phpmailer.php",
       "line": 43
     },
     "MiniTemplator": {
-      "file": "ttrss/lib/MiniTemplator.class.php",
+      "file": "lib/MiniTemplator.class.php",
       "line": 74,
       "label": "MiniTemplator",
       "kind": "class"
     },
     "Mobile_Detect": {
-      "file": "ttrss/lib/Mobile_Detect.php",
+      "file": "lib/Mobile_Detect.php",
       "line": 16,
       "label": "Mobile_Detect",
       "kind": "class"
     },
     "floIconIcon": {
-      "file": "ttrss/lib/floIcon.php",
+      "file": "lib/floIcon.php",
       "line": 6,
       "label": "floIconIcon",
       "kind": "class"
     },
     "floIcon": {
-      "file": "ttrss/lib/floIcon.php",
+      "file": "lib/floIcon.php",
       "line": 12,
       "label": "floIcon",
       "kind": "class"
     },
     "gettext_reader": {
-      "file": "ttrss/lib/gettext/gettext.php",
+      "file": "lib/gettext/gettext.php",
       "line": 36,
       "label": "gettext_reader",
       "kind": "class"
     },
     "StreamReader": {
-      "file": "ttrss/lib/gettext/streams.php",
+      "file": "lib/gettext/streams.php",
       "line": 26,
       "label": "StreamReader",
       "kind": "class"
     },
     "StringReader": {
-      "file": "ttrss/lib/gettext/streams.php",
+      "file": "lib/gettext/streams.php",
       "line": 48,
       "label": "StringReader",
       "kind": "class"
     },
     "FileReader": {
-      "file": "ttrss/lib/gettext/streams.php",
+      "file": "lib/gettext/streams.php",
       "line": 84,
       "label": "FileReader",
       "kind": "class"
     },
     "CachedFileReader": {
-      "file": "ttrss/lib/gettext/streams.php",
+      "file": "lib/gettext/streams.php",
       "line": 145,
       "label": "CachedFileReader",
       "kind": "class"
     },
     "jimIcon": {
-      "file": "ttrss/lib/jimIcon.php",
+      "file": "lib/jimIcon.php",
       "line": 19,
       "label": "jimIcon",
       "kind": "class"
     },
     "Minifier": {
-      "file": "ttrss/lib/jshrink/Minifier.php",
+      "file": "lib/jshrink/Minifier.php",
       "line": 58,
       "label": "Minifier",
       "kind": "class"
     },
     "Text_LanguageDetect_Exception": {
-      "file": "ttrss/lib/languagedetect/Text/LanguageDetect/Exception.php",
+      "file": "lib/languagedetect/Text/LanguageDetect/Exception.php",
       "line": 2,
       "label": "Text_LanguageDetect_Exception",
       "kind": "class"
@@ -315,13 +315,13 @@
       "kind": "class"
     },
     "Text_LanguageDetect_ISO639": {
-      "file": "ttrss/lib/languagedetect/Text/LanguageDetect/ISO639.php",
+      "file": "lib/languagedetect/Text/LanguageDetect/ISO639.php",
       "line": 29,
       "label": "Text_LanguageDetect_ISO639",
       "kind": "class"
     },
     "Text_LanguageDetect_Parser": {
-      "file": "ttrss/lib/languagedetect/Text/LanguageDetect/Parser.php",
+      "file": "lib/languagedetect/Text/LanguageDetect/Parser.php",
       "line": 33,
       "label": "Text_LanguageDetect_Parser",
       "kind": "class"
@@ -331,7 +331,7 @@
       "kind": "class"
     },
     "HOTP": {
-      "file": "ttrss/lib/otphp/lib/hotp.php",
+      "file": "lib/otphp/lib/hotp.php",
       "line": 37,
       "label": "HOTP",
       "kind": "class"
@@ -339,149 +339,149 @@
     "OTP": {
       "label": "OTP",
       "kind": "class",
-      "file": "ttrss/lib/otphp/lib/otp.php",
+      "file": "lib/otphp/lib/otp.php",
       "line": 36
     },
     "TOTP": {
-      "file": "ttrss/lib/otphp/lib/totp.php",
+      "file": "lib/otphp/lib/totp.php",
       "line": 37,
       "label": "TOTP",
       "kind": "class"
     },
     "Base32": {
-      "file": "ttrss/lib/otphp/vendor/base32.php",
+      "file": "lib/otphp/vendor/base32.php",
       "line": 11,
       "label": "Base32",
       "kind": "class"
     },
     "phpmailerException": {
-      "file": "ttrss/lib/phpmailer/class.phpmailer.php",
+      "file": "lib/phpmailer/class.phpmailer.php",
       "line": 2816,
       "label": "phpmailerException",
       "kind": "class"
     },
     "SMTP": {
-      "file": "ttrss/lib/phpmailer/class.smtp.php",
+      "file": "lib/phpmailer/class.smtp.php",
       "line": 46,
       "label": "SMTP",
       "kind": "class"
     },
     "QRcode": {
-      "file": "ttrss/lib/phpqrcode/qrencode.php",
+      "file": "lib/phpqrcode/qrencode.php",
       "line": 156,
       "label": "QRcode",
       "kind": "class"
     },
     "qrstr": {
-      "file": "ttrss/lib/phpqrcode/qrconst.php",
+      "file": "lib/phpqrcode/qrconst.php",
       "line": 50,
       "label": "qrstr",
       "kind": "class"
     },
     "QRtools": {
-      "file": "ttrss/lib/phpqrcode/qrtools.php",
+      "file": "lib/phpqrcode/qrtools.php",
       "line": 25,
       "label": "QRtools",
       "kind": "class"
     },
     "QRspec": {
-      "file": "ttrss/lib/phpqrcode/qrspec.php",
+      "file": "lib/phpqrcode/qrspec.php",
       "line": 42,
       "label": "QRspec",
       "kind": "class"
     },
     "QRimage": {
-      "file": "ttrss/lib/phpqrcode/qrimage.php",
+      "file": "lib/phpqrcode/qrimage.php",
       "line": 27,
       "label": "QRimage",
       "kind": "class"
     },
     "QRinputItem": {
-      "file": "ttrss/lib/phpqrcode/qrinput.php",
+      "file": "lib/phpqrcode/qrinput.php",
       "line": 31,
       "label": "QRinputItem",
       "kind": "class"
     },
     "QRinput": {
-      "file": "ttrss/lib/phpqrcode/qrinput.php",
+      "file": "lib/phpqrcode/qrinput.php",
       "line": 274,
       "label": "QRinput",
       "kind": "class"
     },
     "QRbitstream": {
-      "file": "ttrss/lib/phpqrcode/qrbitstream.php",
+      "file": "lib/phpqrcode/qrbitstream.php",
       "line": 28,
       "label": "QRbitstream",
       "kind": "class"
     },
     "QRsplit": {
-      "file": "ttrss/lib/phpqrcode/qrsplit.php",
+      "file": "lib/phpqrcode/qrsplit.php",
       "line": 33,
       "label": "QRsplit",
       "kind": "class"
     },
     "QRrsItem": {
-      "file": "ttrss/lib/phpqrcode/qrrscode.php",
+      "file": "lib/phpqrcode/qrrscode.php",
       "line": 31,
       "label": "QRrsItem",
       "kind": "class"
     },
     "QRrs": {
-      "file": "ttrss/lib/phpqrcode/qrrscode.php",
+      "file": "lib/phpqrcode/qrrscode.php",
       "line": 187,
       "label": "QRrs",
       "kind": "class"
     },
     "QRmask": {
-      "file": "ttrss/lib/phpqrcode/qrmask.php",
+      "file": "lib/phpqrcode/qrmask.php",
       "line": 33,
       "label": "QRmask",
       "kind": "class"
     },
     "QRrsblock": {
-      "file": "ttrss/lib/phpqrcode/qrencode.php",
+      "file": "lib/phpqrcode/qrencode.php",
       "line": 28,
       "label": "QRrsblock",
       "kind": "class"
     },
     "QRrawcode": {
-      "file": "ttrss/lib/phpqrcode/qrencode.php",
+      "file": "lib/phpqrcode/qrencode.php",
       "line": 47,
       "label": "QRrawcode",
       "kind": "class"
     },
     "FrameFiller": {
-      "file": "ttrss/lib/phpqrcode/qrencode.php",
+      "file": "lib/phpqrcode/qrencode.php",
       "line": 306,
       "label": "FrameFiller",
       "kind": "class"
     },
     "QRencode": {
-      "file": "ttrss/lib/phpqrcode/qrencode.php",
+      "file": "lib/phpqrcode/qrencode.php",
       "line": 396,
       "label": "QRencode",
       "kind": "class"
     },
     "Publisher": {
-      "file": "ttrss/lib/pubsubhubbub/publisher.php",
+      "file": "lib/pubsubhubbub/publisher.php",
       "line": 8,
       "label": "Publisher",
       "kind": "class"
     },
     "Subscriber": {
-      "file": "ttrss/lib/pubsubhubbub/subscriber.php",
+      "file": "lib/pubsubhubbub/subscriber.php",
       "line": 8,
       "label": "Subscriber",
       "kind": "class"
     },
     "SphinxClient": {
-      "file": "ttrss/lib/sphinxapi.php",
+      "file": "lib/sphinxapi.php",
       "line": 384,
       "label": "SphinxClient",
       "kind": "class"
     },
     "Auth_Internal": {
-      "file": "ttrss/plugins/auth_internal/init.php",
+      "file": "plugins/auth_internal/init.php",
       "line": 2,
       "label": "Auth_Internal",
       "kind": "class"

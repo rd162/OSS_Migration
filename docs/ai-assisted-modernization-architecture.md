@@ -22,19 +22,28 @@ a categorical signal that turns probabilistic agent output into auditable, measu
 A _dimension_ is a structural axis along which source architecture elements are related
 (call graph, data-model graph, service graph, event flow, protocol state machine,
 security surface, plugin / hook surface, configuration surface, and so on).
-Dimensions are **discovered per project**, not prescribed. Each dimension is naturally
-represented as a graph, and modern community-detection algorithms (Leiden, Louvain, and
-hierarchical variants) partition each graph into cohesive clusters that become natural
-modernization batches — an LLM asked to migrate a coherent community reasons over a
-related slice of the source rather than an arbitrary file selection. Dimensions drive
-knowledge extraction in Phase 1, partition work into modernization phases in Phase 3,
-and define the per-axis correspondence checks performed during coverage and semantic verification.
-See the [Phase 1](#phase-1--knowledge-extraction) section for how dimensions are inferred
-and the full catalogue in [Appendix A](#appendix-a--dimension-catalogue).
+Dimensions are **discovered per project**, not prescribed. The academic lineage is
+software-clustering research: Mancoridis's Bunch (IWPC 1998) and Tzerpos & Holt's ACDC
+(WCRE 2000) established that automatic clustering of source dependency graphs produces
+decompositions a human architect recognises as meaningful subsystems. Modern
+community-detection algorithms — Louvain and, with stronger connectivity guarantees,
+the Leiden algorithm of Traag, Waltman, and van Eck (Scientific Reports 2019) — partition
+each dimension graph into cohesive communities that become natural modernization batches.
+An LLM asked to migrate a coherent community reasons over a related slice of the source
+rather than an arbitrary file selection. Dimensions drive knowledge extraction in Phase 1,
+partition work into modernization phases in Phase 3, and define the per-axis correspondence
+checks performed during coverage and semantic verification. See the
+[Phase 1](#phase-1--knowledge-extraction) section for how dimensions are inferred and the
+full catalogue in [Appendix A](#appendix-a--dimension-catalogue).
 
 **Pillar ② — Traceability (with deterministic coverage validation and gap resolution as sub-disciplines).**
 This pillar is the discipline on which the framework's defeat of confirmation bias rests.
-It contains three sub-disciplines:
+The academic basis for the discipline is Stechly, Marquez, and Kambhampati's controlled
+experiments on LLM self-verification (NeurIPS 2024 workshop / ICLR 2025), which report
+**significant performance collapse under self-critique and significant performance gains
+under sound external verification** across reasoning and planning tasks. The framework's
+response is to keep the LLM out of the grading loop entirely. The pillar contains three
+sub-disciplines:
 
 - **Traceability links.** Every meaningful target element carries a categorical link
   back to the source element(s) that shaped it _and_ to the specification(s) and decision(s)
@@ -45,10 +54,10 @@ It contains three sub-disciplines:
 - **Deterministic Coverage Validation.** A static script — _not another LLM_ — performs
   a programmatic comparison of the source inventory against the target traceability graph,
   producing a categorical status (covered / eliminated / unmatched) for every source
-  element, broken down _per dimension_, as a percentage that the team can verify line
-  by line. **The script must be deterministic.** Substituting an LLM grader, even a
-  more capable one, re-introduces confirmation bias — the failure mode the framework
-  exists to defeat.
+  element, broken down _per dimension_, as a percentage the team can verify line by line.
+  **The script must be deterministic.** Substituting an LLM grader — even a more capable
+  one in a separate session — reproduces the Stechly–Kambhampati failure mode. The script
+  is the part of the architecture that the model is structurally forbidden to touch.
 - **Gap Resolution.** When the script flags a source element as unmatched, the agent
   treats that as a signal to generate new target code _or_ enhance an already-implemented
   target element. The same cycle fires when a new dimension is discovered, when a deferred
@@ -64,27 +73,39 @@ See [Appendix F](#appendix-f--semantic-discrepancy-taxonomy) for a representativ
 from one end-to-end reference project.
 
 **Pillar ③ — Autonomous Cross-Vendor Multi-Agent Architecture.**
-The framework executes inside a vendor-neutral multi-agent topology. It works with any
-AI coding tool that supports three capabilities now converging into an industry baseline:
-**sub-agents** (isolated contexts and parallel dispatch), **MCP** (the Model Context
-Protocol for tool and data integration), and **Skills** (the Agent Skills open standard
-published by Anthropic in late 2025, now adopted across Claude Code, OpenAI Codex CLI,
-GitHub Copilot CLI, Cursor, Google Gemini CLI, Sourcegraph Amp, Cognition Devin, Google Jules,
-and others). The framework's methodology lives in portable skills; per-vendor wrappers
-carry only runtime concerns. Five sub-patterns operationalize the pillar:
+The framework executes inside a vendor-neutral multi-agent topology. It runs on any AI
+coding tool that supports three capabilities now converging into an industry baseline:
+**sub-agents** (isolated contexts and parallel dispatch), the **Model Context Protocol**
+(MCP, Anthropic's open standard for connecting models to tools and data, donated to the
+Linux Foundation's Agentic AI Foundation in late 2025), and the **Agent Skills** open
+standard (Anthropic, October–December 2025). Tools that satisfy all three include
+Claude Code, OpenAI Codex CLI, GitHub Copilot CLI, Cursor, Google Gemini CLI, Sourcegraph
+Amp, Cognition Devin, Google Jules, and others. Methodology lives in portable skills;
+per-vendor wrappers carry only runtime concerns. Four sub-patterns operationalise the
+pillar — each grounded in current published research and vendor guidance:
 
 - **Long-running autonomous pipelines** — a skill loads a phase specification and proceeds
-  to completion through the inner loop without prompt-by-prompt human supervision.
-- **Tiered-model collaboration** — a high-capability model performs triage and fix-strategy
-  inference; a cheaper, faster model executes the inferred fixes mechanically. Up to an
-  order-of-magnitude cost reduction on long-running pipelines.
-- **Divergent-then-convergent decision making** — parallel sub-agents propose alternative
-  candidates; an orchestrator runs structured pairwise comparison and selects the strongest.
+  through the inner loop without prompt-by-prompt human supervision. Anthropic's published
+  guidance frames this as the workflow-vs-agent distinction and recommends orchestrator-with-
+  sub-agents topology for open-ended work (_Building Effective Agents_, Dec 2024;
+  _Multi-Agent Research System_, June 2025).
+- **LLM cascading for cost optimisation** — a high-capability model performs triage and
+  fix-strategy inference; a cheaper, faster model executes the inferred fixes mechanically.
+  The academic basis is Chen, Zaharia, and Zou's _FrugalGPT_ (Stanford / TMLR 2024), which
+  formalises LLM cascade and reports up to **98 % cost reduction** while matching the
+  strongest individual model on representative tasks.
+- **Multi-agent ensemble and debate** — parallel sub-agents propose alternative candidates;
+  an orchestrator selects the strongest or composes them. The anchoring citations are Du et al.'s
+  _Multi-Agent Debate_ (MIT / ICML 2024) for parallel critique improving factual reliability,
+  and Wang et al.'s _Mixture-of-Agents_ (Duke / Together AI 2024) for layered ensembles of
+  open-source models beating single frontier models on representative benchmarks.
 - **Pipeline completeness gates** — the orchestrator must dispatch _every_ phase the
   methodology defines; silently skipping an expensive verification phase to save tokens
   is treated as a structural defect, not a model preference.
-- **Cross-session continuity through skills, not chat history** — state lives in versioned
-  artifacts (specs, decision records, traceability links, coverage reports), not agent memory.
+
+State lives in versioned artifacts (specs, decision records, traceability links, coverage
+reports), not in agent memory — this is what makes the architecture survive context-window
+limits, model swaps, and team handovers.
 
 The full inventory, composition diagram, and authoring rules live in
 [Appendix I — Agent Integration](#appendix-i--agent-integration). The cross-vendor
@@ -94,18 +115,25 @@ research underpinning the pillar is collected in
 **Pillar ④ — Spec-Driven Approach.**
 Specs are the durable source of truth that the autonomous agent loop runs against. A spec
 survives sessions, models, agents, and team handovers; chat messages do not. Each target
-component is described by a generic constitutional-style specification framework —
-**Mission**, **Goals**, **Premises**, **Constraints** — that the agent reasons under as
-principles, not prompts. The four components map onto established traditions (PMBOK Project
-Charter, RUP Vision, INCOSE stakeholder needs and constraints, Lean canvases) so adopting
-the framework does not force a new vocabulary on existing governance practice. Each project
-picks its own governance container (charter, vision, project initiation document, programme
-vision) and specs framework (GitHub Spec-Kit for constitution-first work, Fission-AI's
-OpenSpec for brownfield delta-style work, or bespoke layouts). The framework is neutral
-over both choices. The Spec-Driven pillar scales from one repository to portfolios of
-many — a microservices portfolio of 100+ services is modernized by treating each service's
-spec set as a node in a cross-repo dependency graph and applying the same five-phase
-pipeline per node, with shared cross-repo decision records and cross-repo coverage reports.
+component is described in the **Mission / Goals / Premises / Constraints (MGPC)** shape —
+the operational vocabulary of Goal-Oriented Requirements Engineering (GORE) and specifically
+of Axel van Lamsweerde's KAOS framework (goals, domain assumptions, constraints, agents
+responsible for satisfying them), which is the academic origin of the four-component
+decomposition. MGPC composes with the related traditions a project may already use — PMBOK
+Project Charter, RUP Vision, INCOSE stakeholder needs and constraints, Lean canvases — so
+adopting the framework does not force a new vocabulary on existing governance practice.
+(MGPC is sometimes called a _constitution_ in industry usage — for example by GitHub's
+Spec-Kit — but that usage should not be confused with Anthropic's _Constitutional AI_,
+which is an unrelated training methodology.)
+
+Each project picks its own governance container (charter, vision, project initiation
+document, programme vision) and specs framework (GitHub Spec-Kit for constitution-first
+work; Fission-AI's OpenSpec for explicitly brownfield delta-style work; bespoke layouts
+where the project has strong prior art). The framework is neutral over both choices.
+The Spec-Driven pillar scales from one repository to portfolios of many — a microservices
+portfolio of 100+ services is modernized by treating each service's spec set as a node in
+a cross-repo dependency graph and applying the same five-phase pipeline per node, with
+shared cross-repo decision records and cross-repo coverage reports.
 
 **Pillar ⑤ — Flexible Decision-Making with Human-in-the-Loop.**
 Decisions are the interface between specs and execution. The framework partitions decisions

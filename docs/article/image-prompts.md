@@ -99,16 +99,16 @@ no overly busy detail, no rainbow colours, no random typography
 
 ---
 
-## Image 2 — The four pillars (2Slides; alt Nano Banana)
+## Image 2 — The five pillars (2Slides; alt Nano Banana)
 
-**Use:** illustrating the "Four Pillars" section.
+**Use:** illustrating the "Five Pillars" section.
 
-**Note on changes:** the pillars table in the body changed columns. The
-hazard column became "failure mode addressed", and the stakeholder-gain
-column became "categorical signal it produces". The pillar names use the
-new spelling ("Modernisation-Gap Resolution"). The image should reflect
-this updated semantics — pillars do not promise stakeholder convenience;
-they emit categorical signals that replace the model's self-report.
+**Note on changes:** the pillars table was restructured. Coverage Validation
+and Modernisation-Gap Resolution are no longer separate pillars; they are
+sub-disciplines of Pillar ② Traceability. Three new pillars have been added:
+Autonomous Cross-Vendor Multi-Agent Architecture, Spec-Driven Approach, and
+Flexible Decision-Making with Human-in-the-Loop. The image should reflect
+this updated five-column structure.
 
 **Structure (2Slides input):**
 
@@ -119,17 +119,20 @@ flowchart TB
     Top --- P2
     Top --- P3
     Top --- P4
+    Top --- P5
 
-    P1["**① Dimensions**<br/>Failure mode: wrong axis,<br/>structural blind spots<br/>—<br/>Signal: structured source model<br/>with explicit relational axes"]:::pillar
-    P2["**② Traceability**<br/>Failure mode: unknown provenance,<br/>no way to match work to spec<br/>—<br/>Signal: every target element<br/>machine-resolvable to<br/>source + spec + decision"]:::pillar
-    P3["**③ Coverage Validation**<br/>Failure mode: 'N% done'<br/>self-assessments, silent omissions<br/>—<br/>Signal: per-dimension covered /<br/>eliminated / unmatched count,<br/>externally graded"]:::pillar
-    P4["**④ Modernisation-Gap Resolution**<br/>Failure mode: target cannot<br/>be improved after first pass<br/>—<br/>Signal: iterative generate-or-enhance<br/>that closes unmatched count"]:::pillar
+    P1["**① Dimensions**<br/>Failure mode: wrong axis,<br/>structural blind spots<br/>—<br/>Signal: graph-based source model<br/>with cohesive communities"]:::pillar
+    P2["**② Traceability**<br/>(incl. coverage + gap resolution)<br/>Failure mode: unknown provenance,<br/>'N% done' self-assessments<br/>—<br/>Signal: per-dimension count,<br/>graded by deterministic script,<br/>NOT an LLM"]:::pillar
+    P3["**③ Autonomous Cross-Vendor<br/>Multi-Agent Architecture**<br/>Failure mode: chat-driven work,<br/>vendor lock-in, uniform-tier waste<br/>—<br/>Signal: long-running pipelines<br/>portable across Claude/Codex/<br/>Copilot/Cursor/Gemini"]:::pillar
+    P4["**④ Spec-Driven Approach**<br/>Failure mode: ad-hoc instructions,<br/>session drift, no cross-repo coord.<br/>—<br/>Signal: specs as durable source<br/>of truth, scales 1 repo → 100+"]:::pillar
+    P5["**⑤ Flexible Decision-Making<br/>with Human-in-the-Loop**<br/>Failure mode: naive HITL Q&A,<br/>big-bang scope, frozen decisions<br/>—<br/>Signal: priority-classified<br/>decisions with deferred acceptance"]:::pillar
 
     Base["Source system → modernised target system"]:::base
     P1 --- Base
     P2 --- Base
     P3 --- Base
     P4 --- Base
+    P5 --- Base
 
     classDef cap fill:#0c1c4a,color:#ffffff,stroke:#0c1c4a,stroke-width:2px;
     classDef pillar fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#0c1c4a;
@@ -138,27 +141,27 @@ flowchart TB
 
 **Stylistic guidance for 2Slides:**
 
-- Render as **four vertical columns / pillars** holding up the dark navy
+- Render as **five vertical columns / pillars** holding up the dark navy
   capstone ("Auditable, measurable AI-driven modernisation") and resting
   on the orange base ("Source → modernised target"). Each column body
   has two stacked sections separated by a thin divider: the failure mode
   on top, the categorical signal on the bottom.
 - Use the colour palette: navy `#0c1c4a`, pillar fill `#dbeafe`, pillar
   border `#1d4ed8`, base fill `#fed7aa`, base border `#c2410c`.
-- The pillar numbers (① ② ③ ④) should be large and bold inside each pillar.
-- Title above the figure: **"The Four Pillars"**.
+- The pillar numbers (① ② ③ ④ ⑤) should be large and bold inside each pillar.
+- Title above the figure: **"The Five Pillars"**.
 
 **Free-form prompt (if rendering in Nano Banana instead):**
 
 ```
-Clean editorial infographic: a stylised classical temple with four blue
-columns, each labelled with a circled number ① ② ③ ④. The columns hold up
+Clean editorial infographic: a stylised classical temple with five blue
+columns, each labelled with a circled number ① ② ③ ④ ⑤. The columns hold up
 a dark navy capstone labelled "Auditable, measurable AI-driven modernisation",
 and rest on a warm-amber base labelled "Source system → modernised target system".
 Each column is annotated in two stacked panes — the upper pane states the
 failure mode the pillar addresses; the lower pane states the categorical
 signal the pillar emits. Short labels in clean sans-serif type: "Dimensions",
-"Traceability", "Coverage Validation", "Modernisation-Gap Resolution".
+"Traceability", "Autonomous Multi-Agent", "Spec-Driven", "Flexible Decisions".
 Minimal, flat, magazine-infographic style; navy / blue / amber palette;
 16:9 horizontal layout. Crisp text rendering.
 ```
@@ -167,18 +170,18 @@ Minimal, flat, magazine-infographic style; navy / blue / amber palette;
 
 ## Image 3 — Coverage + Gap Resolution mechanism (2Slides)
 
-**Use:** illustrating Pillar ④ (Modernisation-Gap Resolution).
+**Use:** illustrating Pillar ② (Traceability sub-disciplines 2.2 and 2.3).
 
-**Note on placement:** in the previous draft this diagram had its own
-section. In the current article it lives inside Pillar ④, illustrating
-the monolith → microservices worked example. The diagram itself is
-unchanged in shape; the caption is updated to match the new placement.
+**Note on placement:** this diagram lives inside Pillar ② (Traceability),
+illustrating the deterministic coverage validation and gap-resolution loop
+that together form the discipline's audit core. Note: the validator is a
+**static script, not another LLM** — the diagram should make this visually clear.
 
 **Structure (2Slides input):**
 
 ```mermaid
 flowchart TB
-    Src["**Source inventory**"]:::art --> V["**Coverage validator**"]:::valid
+    Src["**Source inventory**"]:::art --> V["**Deterministic coverage validator**<br/>(static script, NOT an LLM)"]:::valid
     Tgt["**Target code + traceability**"]:::art --> V
     V == "per dimension" ==> R{"**Status**"}
     R == "covered ∪ eliminated" ==> OK(["**Accounted for**"]):::valid

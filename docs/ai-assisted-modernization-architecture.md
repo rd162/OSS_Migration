@@ -10,68 +10,123 @@
 
 This document describes a reproducible architecture for large-scale, AI-assisted software modernization.
 The framework is technology-agnostic: the same pipeline applies to language modernizations,
-framework shifts, monolith-to-microservices decompositions, data pipeline rewrites,
-protocol library ports, and modernisations in which a single source repository
-becomes many target repositories (or many sources consolidate into one).
+framework shifts, monolith-to-microservices decompositions, ETL-to-streaming-data-mesh rewrites,
+federation-overlay modernizations, protocol library ports, and modernisations in which a single
+source repository becomes many target repositories (or many sources consolidate into one).
 
-The framework rests on one foundational concept and three operational mechanisms.
+The framework rests on **five architectural pillars**. Each pillar addresses one
+failure mode that LLM-driven modernization routinely exhibits, and each contributes
+a categorical signal that turns probabilistic agent output into auditable, measurable progress.
 
-**Foundational concept — Dimensional Analysis.**
-A _dimension_ is a structural axis along which source elements are related
-(dependency graph, data-model graph, service graph, event flow, protocol state machine,
-security surface, and so on). Dimensions are **discovered per project**, not prescribed.
-They are the substrate on which the mechanisms below operate:
-they drive knowledge extraction in Phase 1, partition work into modernization phases in Phase 3,
+**Pillar ① — Dimensions.**
+A _dimension_ is a structural axis along which source architecture elements are related
+(call graph, data-model graph, service graph, event flow, protocol state machine,
+security surface, plugin / hook surface, configuration surface, and so on).
+Dimensions are **discovered per project**, not prescribed. Each dimension is naturally
+represented as a graph, and modern community-detection algorithms (Leiden, Louvain, and
+hierarchical variants) partition each graph into cohesive clusters that become natural
+modernization batches — an LLM asked to migrate a coherent community reasons over a
+related slice of the source rather than an arbitrary file selection. Dimensions drive
+knowledge extraction in Phase 1, partition work into modernization phases in Phase 3,
 and define the per-axis correspondence checks performed during coverage and semantic verification.
-See the [Phase 1](#phase-1--knowledge-extraction) section for how
-dimensions are inferred and the full catalogue in
-[Appendix A](#appendix-a--dimension-catalogue).
+See the [Phase 1](#phase-1--knowledge-extraction) section for how dimensions are inferred
+and the full catalogue in [Appendix A](#appendix-a--dimension-catalogue).
 
-**Supporting artifact — Platform-Divergence Catalogue.**
-Alongside the dimension specifications, Phase 1 produces a project-specific
-catalogue of platform-specific behavioural divergences mined from
-deep research on the source and target technologies (for example,
-"source-platform falsy-value semantics differ from target-platform",
-"source-platform implicit transaction nesting is not portable",
-"source-platform HTTP header handling requires explicit retention in target").
-The catalogue grows through every later phase as new divergences surface during
-semantic verification, and it feeds back into Gap Resolution and audit checklists.
-See [Appendix F](#appendix-f--semantic-discrepancy-taxonomy) for a representative catalogue from one end-to-end reference project.
+**Pillar ② — Traceability (with deterministic coverage validation and gap resolution as sub-disciplines).**
+This pillar is the discipline on which the framework's defeat of confirmation bias rests.
+It contains three sub-disciplines:
 
-**Three operational mechanisms.**
+- **Traceability links.** Every meaningful target element carries a categorical link
+  back to the source element(s) that shaped it _and_ to the specification(s) and decision(s)
+  under which it was produced. Links are many-to-many, not one-to-one; the representation
+  is an implementation choice (inline comments, sidecar index files, graph databases,
+  commit-level metadata) and the only architectural requirement is that the links be
+  programmatically parseable.
+- **Deterministic Coverage Validation.** A static script — _not another LLM_ — performs
+  a programmatic comparison of the source inventory against the target traceability graph,
+  producing a categorical status (covered / eliminated / unmatched) for every source
+  element, broken down _per dimension_, as a percentage that the team can verify line
+  by line. **The script must be deterministic.** Substituting an LLM grader, even a
+  more capable one, re-introduces confirmation bias — the failure mode the framework
+  exists to defeat.
+- **Gap Resolution.** When the script flags a source element as unmatched, the agent
+  treats that as a signal to generate new target code _or_ enhance an already-implemented
+  target element. The same cycle fires when a new dimension is discovered, when a deferred
+  decision becomes available, or when source/target divergence surfaces during semantic
+  verification. This _generate-or-enhance_ property breaks the one-shot ceiling of
+  translation-style approaches.
 
-- **Traceability** — every meaningful target element carries a link back to
-  the source element(s) that shaped it _and_ to the specification(s) and decision(s)
-  under which it was produced.
-- **Coverage Validation** — programmatic comparison of the source inventory
-  against the target traceability graph, producing a categorical status
-  (covered / eliminated / unmatched) for every source element, broken down
-  _per dimension_.
-- **Gap Resolution** — a review cycle in which unmatched source elements
-  are interpreted by an AI agent, placed into the target architecture,
-  and either generate new target code or enhance existing target code.
-  The same cycle rewrites or corrects previously generated target code
-  when coverage analysis exposes behavioural or structural defects in it.
+A **platform-divergence catalogue** of behavioural differences between source and target
+platforms is seeded in Phase 1 and grown through every later phase. It transforms what
+would otherwise be ad-hoc semantic review into a checklist-driven audit with falsifiable
+entries, and it feeds back into Gap Resolution.
+See [Appendix F](#appendix-f--semantic-discrepancy-taxonomy) for a representative catalogue
+from one end-to-end reference project.
 
-Together these mechanisms turn AI-assisted modernization from a probabilistic,
-best-effort activity into an auditable, measurable process
-with an explicit and verifiable notion of _completeness_.
+**Pillar ③ — Autonomous Cross-Vendor Multi-Agent Architecture.**
+The framework executes inside a vendor-neutral multi-agent topology. It works with any
+AI coding tool that supports three capabilities now converging into an industry baseline:
+**sub-agents** (isolated contexts and parallel dispatch), **MCP** (the Model Context
+Protocol for tool and data integration), and **Skills** (the Agent Skills open standard
+published by Anthropic in late 2025, now adopted across Claude Code, OpenAI Codex CLI,
+GitHub Copilot CLI, Cursor, Google Gemini CLI, Sourcegraph Amp, Cognition Devin, Google Jules,
+and others). The framework's methodology lives in portable skills; per-vendor wrappers
+carry only runtime concerns. Five sub-patterns operationalize the pillar:
+
+- **Long-running autonomous pipelines** — a skill loads a phase specification and proceeds
+  to completion through the inner loop without prompt-by-prompt human supervision.
+- **Tiered-model collaboration** — a high-capability model performs triage and fix-strategy
+  inference; a cheaper, faster model executes the inferred fixes mechanically. Up to an
+  order-of-magnitude cost reduction on long-running pipelines.
+- **Divergent-then-convergent decision making** — parallel sub-agents propose alternative
+  candidates; an orchestrator runs structured pairwise comparison and selects the strongest.
+- **Pipeline completeness gates** — the orchestrator must dispatch _every_ phase the
+  methodology defines; silently skipping an expensive verification phase to save tokens
+  is treated as a structural defect, not a model preference.
+- **Cross-session continuity through skills, not chat history** — state lives in versioned
+  artifacts (specs, decision records, traceability links, coverage reports), not agent memory.
+
+The full inventory, composition diagram, and authoring rules live in
+[Appendix I — Agent Integration](#appendix-i--agent-integration). The cross-vendor
+research underpinning the pillar is collected in
+[Appendix K — Agent Architecture in 2025 CLI Coding Assistants](#appendix-k--agent-architecture-in-2025-cli-coding-assistants).
+
+**Pillar ④ — Spec-Driven Approach.**
+Specs are the durable source of truth that the autonomous agent loop runs against. A spec
+survives sessions, models, agents, and team handovers; chat messages do not. Each target
+component is described by a generic constitutional-style specification framework —
+**Mission**, **Goals**, **Premises**, **Constraints** — that the agent reasons under as
+principles, not prompts. The four components map onto established traditions (PMBOK Project
+Charter, RUP Vision, INCOSE stakeholder needs and constraints, Lean canvases) so adopting
+the framework does not force a new vocabulary on existing governance practice. Each project
+picks its own governance container (charter, vision, project initiation document, programme
+vision) and specs framework (GitHub Spec-Kit for constitution-first work, Fission-AI's
+OpenSpec for brownfield delta-style work, or bespoke layouts). The framework is neutral
+over both choices. The Spec-Driven pillar scales from one repository to portfolios of
+many — a microservices portfolio of 100+ services is modernized by treating each service's
+spec set as a node in a cross-repo dependency graph and applying the same five-phase
+pipeline per node, with shared cross-repo decision records and cross-repo coverage reports.
+
+**Pillar ⑤ — Flexible Decision-Making with Human-in-the-Loop.**
+Decisions are the interface between specs and execution. The framework partitions decisions
+into priority classes — P0 (blocks all work, accepted up-front), P1 (blocks a specific
+modernization phase, accepted just-in-time), P2 (deferrable, accepted in parallel with
+implementation) — and the ability to **defer** the bulk of decisions is what makes
+continuous modernization possible. Big-bang modernization is the corner case in which the
+deferred set is empty and every decision is treated as P0; for projects of any meaningful
+size the default is continuous, with the team choosing which functions to modernize now
+and which to defer. The framework's HITL surface is decision-shaped (accept a record once;
+proceed autonomously afterwards), not naive-prompt-shaped (ask the human a question every
+few steps). The framework spans the full range of team modes, from solo-developer presale
+demos to enterprise programmes routed through an established RACI of product, architecture,
+security, operations, and SME leads.
+
+Together these five pillars turn AI-assisted modernization from a probabilistic,
+best-effort activity into an auditable, measurable process with an explicit and verifiable
+notion of _completeness_.
 
 For a catalogue of artifacts produced by an end-to-end application of the framework,
 see [Appendix B](#appendix-b--artifacts--lifecycle).
-
-**A note on agent integration.**
-The framework is implemented on top of a small library of reusable **skills**
-(portable cross-tool playbooks) bound to the phase pipeline through a handful of
-thin **agent wrappers** (Claude-specific runtime harnesses). Skills carry every
-methodology the framework uses; agent files carry only runtime concerns
-(tool whitelist, model selection, context isolation, worktree isolation).
-This split — "skills drive agents, agents load skills" — is the
-post-Skills-GA (Oct 2025) pattern; it replaces the earlier practice of packing
-methodology into static agent markdown bodies. The full inventory, composition
-diagram, and authoring rules live in [Appendix I — Agent Integration](#appendix-i--agent-integration).
-The 2025 cross-vendor research that informs the split is collected in
-[Appendix K — Agent Architecture in 2025 CLI Coding Assistants](#appendix-k--agent-architecture-in-2025-cli-coding-assistants).
 
 ---
 
@@ -1060,20 +1115,22 @@ production alongside the source — to exercise it under realistic load and data
 progressively shift responsibility, and decommission the source system when
 every responsibility is covered.
 
-For most systems a big-bang cutover is prohibitively risky; source and target must coexist
-for some period. The framework treats the coexistence architecture itself as a decision,
-not a default. The pipeline is flexible enough to span the full range of project scales
-and repository topologies.
+The pipeline treats the coexistence architecture itself as a decision, not a default.
+For projects of any meaningful size, source and target must coexist for some period;
+continuous, traceable cutover is the norm. **Single-event cutover** is the corner case —
+appropriate only for small projects where every behaviour fits in one head and full
+regression coverage in one release is feasible. The pipeline is flexible enough to span
+the full range of project scales and repository topologies.
 
 ### Release modes
 
-| Release mode                  | When appropriate                                                           | Consequence                                                                     |
-| ----------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| **Big-bang, single cutover**  | Small and mid-scale projects; full regression coverage feasible            | Entire modernization verified in one release; shortest timeline                 |
-| **Gradual coexistence**       | Large systems where full cutover risk is unacceptable                      | Source and target run side-by-side for months or years with a documented sunset |
-| **Incremental traffic shift** | Systems with a gateway, service mesh, or feature-flag layer                | A percentage of traffic is routed to the target; percentage increases over time |
-| **Read-first / write-later**  | Data-heavy systems where writes are the highest risk                       | Target serves reads while source remains authoritative for writes, then flipped |
-| **Parallel-run comparison**   | Pipelines, reports, or computations where output correctness is observable | Both systems process the same inputs; outputs are diffed until convergence      |
+| Release mode                  | When appropriate                                                              | Consequence                                                                     |
+| ----------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| **Gradual coexistence**       | The default for non-trivial systems where full cutover risk is unacceptable   | Source and target run side-by-side for months or years with a documented sunset |
+| **Incremental traffic shift** | Systems with a gateway, service mesh, or feature-flag layer                   | A percentage of traffic is routed to the target; percentage increases over time |
+| **Read-first / write-later**  | Data-heavy systems where writes are the highest risk                          | Target serves reads while source remains authoritative for writes, then flipped |
+| **Parallel-run comparison**   | Pipelines, reports, or computations where output correctness is observable    | Both systems process the same inputs; outputs are diffed until convergence      |
+| **Single-event cutover**      | Corner case: small projects; full regression coverage feasible in one release | Entire modernization verified in one release; shortest timeline                 |
 
 ### Output topology
 
@@ -1131,53 +1188,73 @@ data pipeline rewrites, stored-procedure extractions, and embedded / IoT moderni
 
 ## Benefits
 
-The framework combines several established practices (decision records, requirements
-traceability, spec-driven development) with a small number of fundamental contributions
-that change what AI-assisted modernization can do.
+The framework's benefits map directly onto its five pillars. Each pillar removes a
+specific failure mode and contributes a categorical signal that turns probabilistic
+AI output into auditable, measurable modernization progress.
 
-### Fundamental contributions
+### Fundamental contributions (per pillar)
 
-- **Completeness is a measurable property, not a claim.**
-  Traditional AI-assisted modernization reports progress as "N% done" with no independent
-  check. Here, every source element is in exactly one of three states
-  (covered / eliminated / unmatched), and the phase exit gate rejects the modernization
-  phase until the count of unmatched in-scope elements is zero.
-  "Done" becomes a programmatically verifiable predicate.
+- **① Dimension-driven, graph-based modernization batches.**
+  Each dimension is represented as a graph, and community-detection algorithms
+  (Leiden, Louvain) partition each graph into cohesive clusters that become natural
+  modernization batches. An LLM asked to migrate a coherent community reasons over a
+  related slice of the source rather than an arbitrary file selection. This replaces
+  ad-hoc "start somewhere" partitioning with structurally justified ordering.
 
-- **Dimensional coverage, not file coverage.**
-  Coverage is reported _per dimension_ — one report for the call graph, one for the
-  entity graph, one for the event flow, and so on. A target that covers 95% of
-  source functions but misses 40% of hook sites is flagged immediately, rather than
-  shipping with a silent feature gap. This replaces single-number coverage metrics
-  with a vector that reflects actual structural risk.
+- **② Completeness as a deterministic predicate.**
+  Every source element is in exactly one of three states (covered / eliminated /
+  unmatched), graded **by a static script, not another LLM**, broken down _per
+  dimension_. The script is the categorical signal that defeats confirmation bias
+  structurally — a more capable LLM is still an LLM and inherits the same
+  alignment-shaped failure mode. "Done" becomes a programmatically verifiable
+  predicate, not a sentence the model wrote about itself.
 
-- **Generate-or-enhance, driven by coverage signals.**
-  Unmatched or low-confidence coverage on an already-implemented target element
-  triggers _correction or enhancement of that element_, not only generation of new
-  code. This breaks the one-shot ceiling of transpiler-style modernization (where an
-  element once produced cannot be improved without re-running the whole translation)
-  and the "no categorical signal" failure mode of purely agentic approaches
-  (where nothing tells the agent _which_ element to revisit).
-  The same cycle gracefully absorbs late-breaking source discoveries and
-  newly-accepted decisions.
+  This pillar also delivers the **generate-or-enhance** property: unmatched or
+  low-confidence coverage on an already-implemented target element triggers
+  _correction or enhancement of that element_, not only generation of new code.
+  This breaks the one-shot ceiling of translation-style modernization and the
+  "no categorical signal" failure mode of purely agentic loops.
+
+- **③ Vendor-neutral autonomous multi-agent execution.**
+  The framework runs on any AI coding tool that supports sub-agents, MCP, and
+  Skills (Claude Code, Codex CLI, Copilot CLI, Cursor, Gemini CLI, Devin, Jules,
+  Amp). Long-running pipelines proceed autonomously through phases without
+  prompt-by-prompt human supervision. **Tiered-model collaboration** delivers up
+  to an order-of-magnitude cost reduction — high-capability models perform triage
+  and fix-strategy inference, cheaper models execute the inferred fixes
+  mechanically. **Divergent-then-convergent decision making** runs multiple
+  candidate generators in parallel before selection. **Pipeline completeness gates**
+  prevent the orchestrator from silently skipping expensive verification phases
+  to "save tokens."
+
+- **④ Spec-driven scalability from one repo to portfolios of 100+.**
+  Specs are the durable source of truth; chat messages are not. The constitutional
+  Mission / Goals / Premises / Constraints framework gives every component the same
+  shape, and the framework is neutral over governance container (charter, vision,
+  programme vision) and specs framework (Spec-Kit, OpenSpec, bespoke). A portfolio
+  of many services is modernized by treating each service's spec set as a node in
+  a cross-repo dependency graph and applying the same five-phase pipeline per node.
+
+- **⑤ Continuous modernization through deferred decisions.**
+  Priority-classified decisions (P0 up-front, P1 just-in-time, P2 in parallel
+  with implementation) make continuous modernization possible. Big-bang modernization
+  becomes the corner case in which every decision is treated as P0; the default is
+  to start work on the unblocked parts of the system while specific architectural
+  choices for later parts of the system remain genuinely open. The HITL surface is
+  **decision-shaped** (accept a record once; proceed autonomously afterwards) rather
+  than **prompt-shaped** (ask the human a question every few steps).
 
 - **Unified target-architecture and modernization-strategy specification.**
-  Phase 3 produces one spec set, not two. The question "what should this look like?"
-  and the question "how do we migrate to it?" are answered in the same document,
-  which eliminates the drift that accumulates when architecture and modernization plans
-  are maintained separately.
+  Phase 3 produces one spec set, not two. The questions "what should this look like?"
+  and "how do we migrate to it?" are answered in the same document, which eliminates
+  the drift that accumulates when architecture and modernization plans are maintained
+  separately.
 
 - **Platform-divergence catalogue as a living artifact.**
   A project-specific catalogue of source/target behavioural divergences is seeded in
   Phase 1 and grown in every later phase. It transforms semantic verification from
-  ad-hoc review into a checklist-driven audit with falsifiable entries, and
-  prevents the same class of error from recurring across modernization phases.
-
-- **Iterative, deferrable decisions bound to modernization phases.**
-  P1/P2 decisions can be accepted just-in-time, or in parallel with implementation,
-  without blocking progress on unrelated phases. The RTM and the decision index
-  keep the dependency graph explicit; a Phase-4 discovery can legitimately re-open
-  a Phase-2 decision without invalidating already-completed modernization phases.
+  ad-hoc review into a checklist-driven audit with falsifiable entries, and prevents
+  the same class of error from recurring across modernization phases.
 
 ### Standard benefits (delivered as side effects of the contributions above)
 
@@ -1872,18 +1949,19 @@ An auditable, measurable approach for LLM-driven migrations and modernizations.
 
 ---
 
-#### Slide 2 — The four pillars
+#### Slide 2 — The five pillars
 
-Four concepts turn AI-assisted modernization from a one-shot translation into an
+Five concepts turn AI-assisted modernization from a one-shot translation into an
 **auditable, measurable modernization** process. Each pillar answers one
 hazard that LLM-driven migrations routinely fail on.
 
-| Pillar                             | Hazard it neutralizes                                          | What stakeholders gain                                                                                     |
-| ---------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| **① Dimensions**                   | Modernization planned on the wrong axis; blind spots in source | Structured source model; modernization order that respects reality                                         |
-| **② Traceability**                 | Target code of unknown provenance; no way to review fidelity   | **SMEs can review fast** — every target element cites source + spec + decision                             |
-| **③ Coverage Validation**          | "N% done" self-assessments; silent omissions                   | "Done" is a **measurable predicate** — per-dimension, auditable                                            |
-| **④ Modernization-Gap Resolution** | Errors only surface in production; target cannot be enhanced   | **Confidence** — gaps are detected and the target is iteratively corrected or enhanced, not only generated |
+| Pillar                                                 | Hazard it neutralizes                                                           | What stakeholders gain                                                                                       |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **① Dimensions**                                       | Modernization planned on the wrong axis; blind spots in source                  | Structured source model with graph-based community decomposition; modernization order that respects reality  |
+| **② Traceability** (incl. coverage and gap resolution) | Target code of unknown provenance; "N% done" self-assessments; one-shot ceiling | Per-dimension covered / eliminated / unmatched count, **graded by a deterministic script, not an LLM**       |
+| **③ Autonomous Cross-Vendor Multi-Agent Architecture** | Chat-driven prompt-by-prompt work; vendor lock-in; uniform-tier model waste     | Long-running autonomous pipelines portable across Claude, Codex, Copilot, Cursor, Gemini, Devin; tiered-cost |
+| **④ Spec-Driven Approach**                             | Ad-hoc instructions; session drift; no cross-repo coordination                  | Specs as durable source of truth, scalable from one repo to portfolios of 100+                               |
+| **⑤ Flexible Decision-Making with Human-in-the-Loop**  | Naive HITL-by-Q&A; big-bang scope; decisions frozen before evidence exists      | Priority-classified decisions with deferred acceptance — continuous modernization by default                 |
 
 > **Phases run concurrently and can re-enter one another.**
 > The five phases that follow are not strictly sequential. Work in Phase 4
@@ -1892,8 +1970,9 @@ hazard that LLM-driven migrations routinely fail on.
 > (a new dimension or divergence is discovered). Phase 5 overlaps Phase 4
 > once enough target is ready to deploy alongside the source.
 
-The next three slides zoom into each pillar:
-Slide 3 — **Dimensions** · Slide 4 — **Traceability, Coverage, Gap Resolution**.
+The next two slides zoom into the two pillars most distinctive to this framework:
+Slide 3 — **Dimensions** · Slide 4 — **Traceability + Coverage + Gap Resolution**.
+Pillars ③–⑤ are operationalized through Appendices I and K.
 
 ---
 
@@ -1914,6 +1993,15 @@ and they determine modernization order, partitioning, and what "complete" means.
 - **Security** — principal ↔ resource ↔ permission relationships
 - **Configuration** — feature-flag ↔ code-path relationships
 
+**Graph-based community detection.** Each dimension is naturally a graph, and modern
+community-detection algorithms (Leiden, Louvain, hierarchical variants) partition each
+graph into cohesive clusters that become natural modernization batches. An LLM asked
+to migrate _"the authentication community"_ reasons over a coherent slice of the source
+rather than an arbitrary file selection. The reference engagement used NetworkX with
+Leiden detection over five dimension graphs (call, class, schema, hook, include) to
+produce the per-community modernization plan; supplemental graph and community files
+travel alongside the dimension specifications.
+
 **From the reference project (PHP → Python web application):** Phase 1 discovered
 fifteen dimensions, each stored as a separate source architecture specification:
 
@@ -1925,22 +2013,28 @@ fifteen dimensions, each stored as a separate source architecture specification:
 
 ---
 
-#### Slide 4 — Pillars ②③④ Traceability, Coverage, Gap Resolution
+#### Slide 4 — Pillar ② Traceability + Coverage + Gap Resolution
 
-These three work together as an auditable loop. Each addresses a distinct
-stakeholder need.
+The traceability pillar combines three sub-disciplines into one auditable loop.
+This is the discipline that defeats confirmation bias structurally.
 
-- **② Traceability** — every target element links back to its source origin
-  **and** to the specs and decisions under which it was produced.
+- **2.1 Traceability links** — every target element links back to its source origin
+  **and** to the specs and decisions under which it was produced. Many-to-many,
+  not one-to-one. Representation is an implementation choice (inline comments,
+  sidecar indexes, graph databases, commit-level metadata) — only programmatic
+  parseability is required.
   _SME benefit:_ review becomes a mechanical walk of cited pairs — no more
   hunting for "where did this code come from?"
 
-- **③ Coverage Validation** — every source architecture element is classified
-  as _covered_ · _eliminated_ · _unmatched_, reported **per dimension**.
+- **2.2 Deterministic Coverage Validation** — a **static script, not another LLM**
+  classifies every source architecture element as _covered_ · _eliminated_ ·
+  _unmatched_, reported **per dimension** as a percentage. Substituting an LLM
+  grader — even a more capable one — re-introduces confirmation bias, the
+  failure mode the framework exists to defeat.
   _Stakeholder benefit:_ "done" is a predicate, not a percentage; missing
   hook sites or unmapped tables are flagged immediately.
 
-- **④ Modernization-Gap Resolution** — unmatched or low-confidence elements
+- **2.3 Modernization-Gap Resolution** — unmatched or low-confidence elements
   trigger either **new** target code or **correction / enhancement** of
   already-generated target code; new source ↔ target divergences feed the
   project's divergence catalogue so every later phase benefits.
@@ -2160,7 +2254,7 @@ config:
     htmlLabels: true
 ---
 flowchart TB
-    Src["**Source inventory**"]:::art --> V["**Coverage validator**"]:::valid
+    Src["**Source inventory**"]:::art --> V["**Deterministic coverage validator**<br/>(static script, NOT an LLM)"]:::valid
     Tgt["**Target code + traceability**"]:::art --> V
     V == per dimension ==> R{"**Status**"}
     R == "covered ∪ eliminated" ==> OK(["**Accounted for**"]):::valid
@@ -2174,8 +2268,10 @@ flowchart TB
     classDef art fill:#f3f4f6,stroke:#6b7280,stroke-width:1px,color:#111827;
 ```
 
-The agent is **not** told to translate lines. It is told **which source
-element has not been accounted for**, and decides where it belongs in the target.
+The validator is a **deterministic static script**, not another LLM — this is what
+defeats confirmation bias structurally. The agent is **not** told to translate lines.
+It is told **which source element has not been accounted for**, and decides where it
+belongs in the target.
 
 ---
 
@@ -2201,13 +2297,14 @@ Result: gradual **modernisation**, not only line-for-line translation.
 **Goal.** Run the target alongside the source under realistic conditions;
 shift traffic progressively; decommission the source.
 
-Release modes (choose per project):
+Release modes (choose per project; **continuous coexistence is the default**,
+single-event cutover is the corner case for small projects):
 
-- Big-bang single cutover
-- Gradual coexistence
+- Gradual coexistence (default for non-trivial systems)
 - Incremental traffic shift (gateway / service mesh / feature flag)
 - Read-first / write-later
 - Parallel-run comparison
+- Single-event cutover (corner case: small projects only)
 
 Output topology may reshape the repository set — single repo, one-to-many,
 many-to-one, or many-to-many.
@@ -2346,12 +2443,18 @@ Two links:
 
 #### Slide 19 — Fundamental Benefits
 
-- **Completeness as a predicate.** Every source element is covered, eliminated, or unmatched.
-- **Dimensional coverage, not file coverage.** Per-axis reporting, not one number.
-- **Generate-or-enhance.** Coverage signals drive correction, not only generation.
+- **① Graph-based dimensional batches.** Community detection (Leiden) on each dimension
+  graph yields cohesive modernization batches — not arbitrary file selections.
+- **② Deterministic completeness.** A static script (not an LLM) reports covered /
+  eliminated / unmatched per dimension. Confirmation bias is defeated structurally.
+- **② Generate-or-enhance.** Coverage signals drive correction, not only generation.
+- **③ Vendor-neutral autonomous pipelines.** Same skills run on Claude, Codex, Copilot,
+  Cursor, Gemini, Devin. Tiered-model collaboration cuts cost by an order of magnitude.
+- **④ Spec-driven, multi-repo scale.** One spec format from single repo to portfolios of 100+.
+- **⑤ Deferred decisions → continuous modernization.** Big-bang is the corner case;
+  continuous batch-by-batch progress is the default.
 - **Unified target-arch and modernization-strategy specs.** No drift between two sets of docs.
 - **Platform-divergence catalogue.** Ad-hoc review becomes checklist-driven audit.
-- **Deferrable decisions.** P1/P2 decisions bound to modernization phases, not inception.
 
 ---
 
